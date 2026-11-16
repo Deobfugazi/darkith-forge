@@ -1,3 +1,13 @@
 __pycache__/
 *.pyc
 dl/
+.forge_work/
+.tools/
+*.log
+
+# Generated delivery output: rebuild with the build/*.py packagers rather than
+# committing the archives. Only the webapps are versioned, never the zips.
+delivery/
+darkith-forge-bundle.zip
+darkith_source_fixed.zip
+savf1-bundle.zip

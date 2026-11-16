@@ -202,11 +202,14 @@ def _finding(rule, phi, path, line, msg, sev):
     return {"rule": rule, "phi": phi, "file": path, "line": line, "msg": msg, "sev": sev}
 
 
-def scan_file(path, local):
+def scan_file(path, local, installed=None):
     try:
         src = open(path, encoding="utf-8").read()
         tree = ast.parse(src, path)
-    except (SyntaxError, UnicodeDecodeError) as e:
+    except (SyntaxError, UnicodeDecodeError, RecursionError, ValueError) as e:
+        # CPython's own compiler recurses, so a long enough expression raises
+        # RecursionError.  That is a failure to parse, not a reason to abort the
+        # whole scan: report it as a parse finding like any other.
         return [_finding("PARSE", 1, path, getattr(e, "lineno", 0) or 0, f"cannot parse: {e}", "high")]
     test_file = is_test_file(path)
     F = []
@@ -234,11 +237,17 @@ def scan_file(path, local):
                 if root in STDLIB and bound and "." not in full:
                     mod_alias[bound] = root
                 continue
-            try:
-                if _LOAD_SPEC(root) is not None:
+            if installed is not None:
+                # An explicit set keeps the verdict identical on every host and
+                # every interpreter, instead of depending on what is installed.
+                if root in installed:
                     continue
-            except (ImportError, ValueError):
-                pass
+            else:
+                try:
+                    if _LOAD_SPEC(root) is not None:
+                        continue
+                except (ImportError, ValueError):
+                    pass
             F.append(_finding("PHANTOM_IMPORT", 2, path, line,
                               f"'{root}' is not stdlib, installed, or local", "high"))
     for n in ast.walk(tree):  # hallucinated stdlib attribute: json.loads_async
@@ -247,10 +256,20 @@ def scan_file(path, local):
             if m in NO_IMPORT:
                 continue
             try:
-                if not hasattr(importlib.import_module(m), n.attr):
-                    F.append(_finding("PHANTOM_API", 2, path, n.lineno, f"{m}.{n.attr} does not exist", "high"))
+                mod = importlib.import_module(m)
+            except Exception:
+                continue
+            if hasattr(mod, n.attr):
+                continue
+            # A dotted access to a real submodule (logging.handlers, email.message)
+            # is valid once that submodule is imported, but hasattr() only sees it
+            # if something already imported it.  find_spec() is order-independent.
+            try:
+                if importlib.util.find_spec(m + "." + n.attr) is not None:
+                    continue
             except Exception:
                 pass
+            F.append(_finding("PHANTOM_API", 2, path, n.lineno, f"{m}.{n.attr} does not exist", "high"))
     # stubs (phi1) and swallowed exceptions (phi6)
     proto_classes = set()
     for c in ast.walk(tree):
@@ -326,11 +345,11 @@ def _check_test(path, fn):
     return out
 
 
-def scan(root):
+def scan(root, installed=None):
     local = local_modules(root)
     F = []
     for p in py_files(root):
-        F += scan_file(p, local)
+        F += scan_file(p, local, installed)
     return F
 
 
@@ -845,6 +864,8 @@ def main(argv=None):
     c.add_argument("--axis", choices="xyz", required=True); c.add_argument("--move", choices=sorted(MOVES), required=True)
     sp.add_parser("selftest", help="execute the corrected-core checks")
     s = sp.add_parser("scan", help="phi1/2/3/6 static scan"); s.add_argument("path"); s.add_argument("--json", action="store_true")
+    s.add_argument("--installed", default=None,
+                   help="comma-separated third-party modules to treat as importable")
     r = sp.add_parser("reach", help="phi4: functions never entered by tests")
     r.add_argument("--root", default="."); r.add_argument("--src", required=True)
     r.add_argument("--test", required=True, help='module and args, e.g. "unittest discover -s tests"')
@@ -879,7 +900,10 @@ def main(argv=None):
         print("selftest: ok" if good else "selftest: FAILED")
         return 0 if good else 1
     elif A.cmd == "scan":
-        F = scan(A.path)
+        inst = None
+        if A.installed is not None:
+            inst = {x.strip() for x in A.installed.split(",") if x.strip()}
+        F = scan(A.path, inst)
         if A.json:
             print(json.dumps(F, indent=2))
         else:

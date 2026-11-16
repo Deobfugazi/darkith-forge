@@ -412,6 +412,14 @@ idx = shell.rfind("</body>")
 if idx < 0:
     sys.exit("shell has no </body>")
 
+# The shell now carries the integrated studio itself (carrier, bridge and patch
+# are inlined).  Re-injecting would duplicate all three, so the fused artifact
+# is the shell verbatim in that case.
+if 'id="studio-src"' in shell and "DarkithBridge" in shell:
+    OUT.write_text(shell, encoding="utf-8")
+    print("wrote", OUT.name, len(shell), "bytes (shell already self-contained)")
+    sys.exit(0)
+
 css_block   = "<style>\n" + CSS + "\n</style>\n"
 bridge_block = BRIDGE_JS.replace("__STUDIO__", studio_carried)
 patch_block  = PATCH_JS
