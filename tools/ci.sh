@@ -233,6 +233,37 @@ else
   printf -- '--- discrepancy detectors: SKIP (not a git checkout)\n'
 fi
 
+# ── the one-shot installer: the Operator's single build+install entrypoint ──────
+# It must exist, be tracked, carry a payload that matches the tree, and contain the
+# native toolchain libs the on-device forge execs. Without this check the one-shot
+# can silently vanish again (it did: it was referenced by three packagers and absent).
+if have python3 && [ -f build/make-oneshot.py ]; then
+  if python3 build/make-oneshot.py --check >/tmp/oneshot_check.$$ 2>&1; then
+    printf -- '--- one-shot installer: PASS (%s)\n' "$(tail -1 /tmp/oneshot_check.$$ | sed 's/^ *//')"
+  else
+    printf -- '--- one-shot installer: FAIL (payload stale or missing)\n'
+    cat /tmp/oneshot_check.$$ | sed 's/^/    /'
+    FAILED=1
+  fi
+  rm -f /tmp/oneshot_check.$$
+fi
+
+# The Operator's one-shot entrypoint (build&install.sh) must exist, be valid bash,
+# invoke the raw chain (never Gradle: SPI-1), and be reachable. It is the "drop
+# Termux" surface; it has silently gone missing before, so it is gated.
+if [ -f 'build&install.sh' ]; then
+  if bash -n 'build&install.sh' 2>/dev/null && grep -q 'build.sh' 'build&install.sh' \
+     && ! grep -Eq '^\s*gradle|gradlew|gradle\.bat' 'build&install.sh'; then
+    printf -- '--- build&install.sh entrypoint: PASS (valid, Gradle-free)\n'
+  else
+    printf -- '--- build&install.sh entrypoint: FAIL (syntax error or Gradle reference)\n'
+    FAILED=1
+  fi
+else
+  printf -- '--- build&install.sh entrypoint: FAIL (missing — the one-shot is the deliverable)\n'
+  FAILED=1
+fi
+
 printf '\nCI: %s\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)"
 exit "$FAILED"
 

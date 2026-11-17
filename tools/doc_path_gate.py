@@ -34,6 +34,8 @@ ALLOWLIST = {
     "delivery/", "delivery/dl/", "requirements-dev.txt", "dl/",
     ".gradle/caches/", ".tools/", ".openhands/", "TASKS.json", "darkith_omega_source.zip",
     "dist/SHA256SUMS.txt", "dist/Darkith-1.1.0-omega.apk", "dist/_meta.json", "dist/index.html",
+    # generated/orphan artifacts cited in delivery records (regenerable, never committed)
+    "delivery/c7_patched_sources.zip", "delivery/darkith-one-shot.sh", "tree_omega/", "lib/",
 }
 
 # Extensions that mark a token as a file path (not prose).

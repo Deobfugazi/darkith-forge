@@ -102,6 +102,12 @@ def build() -> int:
 
 
 def check() -> int:
+    # delivery/ zips are regenerable output that .gitignore forbids committing, so a
+    # clean checkout has none. Absent is a skip, not a failure (same rule as
+    # verify.py check_sync): the gate must pass from a clean clone.
+    if not (SOURCE_ZIP.exists() and BUNDLE_ZIP.exists()):
+        print("  legacy zips: absent (regenerable, not committed) — skip")
+        return 0
     cur = (ROOT / "darkith forge.html").read_bytes()
     ok = True
     for label, path, member in [

@@ -201,6 +201,19 @@ with zipfile.ZipFile(base) as zin, zipfile.ZipFile(tmp,"w") as zo:
                 zi=zipfile.ZipInfo("assets/"+rel, date_time=(1980,1,1,0,0,0))
                 zi.compress_type=zipfile.ZIP_DEFLATED
                 zo.writestr(zi, open(os.path.join(b,f),"rb").read())
+    # Native toolchain libs: the on-device forge execs libaapt2.so / libzipalign.so from
+    # nativeLibraryDir, and Android only extracts them from lib/<abi>/. Without this the APK
+    # installs but ChimeraBuilder/BuildEngine throw ToolFailure("libaapt2.so missing").
+    jd=os.path.join(proj,"jniLibs")
+    if os.path.isdir(jd):
+        for b,_,fs in os.walk(jd):
+            abi=os.path.basename(b)
+            for f in fs:
+                zi=zipfile.ZipInfo("lib/"+abi+"/"+f, date_time=(1980,1,1,0,0,0))
+                zi.compress_type=zipfile.ZIP_STORED
+                zi.external_attr=0o100755 << 16
+                zo.writestr(zi, open(os.path.join(b,f),"rb").read())
+                print("   [native lib] lib/"+abi+"/"+f)
 os.replace(tmp, base)
 PY
 say "5/7 package        ok -> base.apk (classes.dex + assets; arsc/so kept STORED)"

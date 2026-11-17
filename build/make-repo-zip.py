@@ -104,9 +104,12 @@ def build() -> int:
 
 
 def check() -> int:
+    # delivery/ zips are regenerable output that .gitignore forbids committing, so a
+    # clean checkout has none. Absent is a skip, not a failure (same rule as
+    # verify.py check_sync): the gate must pass from a clean clone.
     if not REPO_ZIP.exists():
-        print("repo zip: MISSING", file=sys.stderr)
-        return 1
+        print("repo zip: absent (regenerable, not committed) — skip")
+        return 0
     z = zipfile.ZipFile(REPO_ZIP)
     cur = (ROOT / "darkith forge.html").read_bytes()
     got = z.read(PREFIX + "webapp/darkith-forge.html")

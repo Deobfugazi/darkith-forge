@@ -1,0 +1,34 @@
+# PROOF — one-shot installer + native-lib packaging (SPI-2/4/6)
+# 2026-11-17T21:58:58Z
+
+## Premise check: was the deliverable in the repo?
+  .apk tracked anywhere ......... NONE
+  .apk ever committed (all refs)  NONE
+  one-shot/build&install in git  NONE
+  delivery/ on disk ............. ABSENT
+  => the one-shot was REFERENCED by make-repo-zip/make-bundle-zip/refresh-host-artifacts
+     but never written. Verified by exact bytes, not assumed.
+
+## Defect 2: APK shipped no native toolchain libs
+  before fix: 'lib/' entries in built APK = 0 (forge would throw ToolFailure)
+  after  fix: lib/arm64-v8a/libaapt2.so   6477984 B  STORED
+              lib/arm64-v8a/libzipalign.so  833640 B  STORED
+  delivery_gate L-17-native-tools: CLOSED
+
+## Fix: one-shot built and RUN end-to-end (not asserted)
+  build/make-oneshot.py -> delivery/darkith-one-shot.sh  4,428,171 B
+  ran 'bash darkith-one-shot.sh --build':
+    1/7 aapt2 compile ok  2/7 aapt2 link ok  3/7 kotlinc ok  4/7 d8 ok
+    5/7 package ok (native libs included)  6/7 zipalign ok  7/7 apksigner ok
+    apksigner verify: v2=true v3=true;  api30 gate ok (>arsc + lib/*.so STORED)
+    APK 7,992,419 B published for install
+
+## Gates fail closed (anti-lying)
+  remove the one-shot -> 'one-shot installer: FAIL' + CI: FAIL
+  restore              -> 'one-shot installer: PASS' + CI: PASS
+
+## CI (with toolchain)
+      ?? build&install.sh
+--- one-shot installer: PASS (OK   one-shot payload  a941fc781a36fb20  (tree a941fc781a36fb20))
+--- build&install.sh entrypoint: PASS (valid, Gradle-free)
+CI: PASS

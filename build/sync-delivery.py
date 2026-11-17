@@ -184,6 +184,12 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.check:
+        # `delivery/` is regenerable output that .gitignore forbids committing, so a
+        # clean checkout has no index.html. Absent is a skip, not a failure (the same
+        # rule verify.py check_sync applies): the gate must pass from a clean clone.
+        if not INDEX.exists():
+            print("delivery: no index.html bundle (regenerable, not committed) — skip")
+            return 0
         ok = True
         index = INDEX.read_text(encoding="utf-8")
         if refresh_index(index) != index:
