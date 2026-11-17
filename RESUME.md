@@ -48,3 +48,30 @@ material ever becomes tracked.
 2. Read `DARKITH.md` (single source of truth) and `AGENTS.md` (repo knowledge).
 3. Re-run the gates (`build/verify.py`, and the Android build once the toolchain
    is present) to see what actually holds — do not trust a stale claim.
+
+## 6. Rebuilding the Android toolchain (it is NOT in git)
+
+The build tools live in the ephemeral VM and vanish with it. Re-create them:
+
+```bash
+sudo apt-get update -qq
+sudo apt-get install -y default-jdk-headless android-sdk-build-tools \
+                        android-sdk apksigner zipalign aapt
+# aapt2/zipalign/apksigner are then on PATH; d8 comes from the R8 jar.
+
+# Kotlin compiler (1.9.24):
+curl -sL -o /tmp/kotlinc.zip \
+  https://github.com/JetBrains/kotlin/releases/download/v1.9.24/kotlin-compiler-1.9.24.zip
+python3 -c "import zipfile;zipfile.ZipFile('/tmp/kotlinc.zip').extractall('/tmp/ktc')"
+
+# android.jar stand-in (real Android 14 framework) + R8 + apksig:
+curl -sL -o /tmp/android-all.jar \
+  https://repo1.maven.org/maven2/org/robolectric/android-all/14-robolectric-10818077/android-all-14-robolectric-10818077.jar
+curl -sL -o /tmp/r8.jar \
+  https://dl.google.com/dl/android/maven2/com/android/tools/r8/8.2.42/r8-8.2.42.jar
+curl -sL -o /tmp/apksig.jar \
+  https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/8.1.1/apksig-8.1.1.jar
+```
+
+`dist/` and `tools/` are committed; `dist/` holds built artifacts when a session
+produces one.
