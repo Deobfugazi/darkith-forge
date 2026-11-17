@@ -70,7 +70,9 @@ Delta in **1.1.0-omega (code 2)**:
 ## The gates (why this cannot silently recur)
 
 - `tools/app/fork_integrity_gate.sh` — §19 laws (one tree, no foreign symbol, inputs versioned, compile clean).
-- `tools/app/delivery_gate.sh` — 16 named loophole checks; refuses to say DELIVERED while any is open.
+- `tools/app/delivery_gate.sh` — 18 named loophole checks; refuses to say DELIVERED while any is open.
+- `tools/app/install_gate.py` — the "App not installed" registry (14 checks; the package installer accepts the APK).
+- `tools/app/runtime_gate.py` — the UI the OS hands to Zygote/AMS/WMS actually paints at 360×800 (0 JS errors).
 - `tools/app/bridge_contract_audit.py` — UI↔bridge method contract.
 
 Run before every delivery:
@@ -268,7 +270,8 @@ legitimately headless: `version`, `apkVersion`, `storageGranted`, `browserClose`
 
 | # | mechanism | what it stops |
 |---|---|---|
-| F1 | `tools/app/delivery_gate.sh` — 16 named loophole checks; refuses "delivered" while any is open | blind delivery (W-041) |
+| F1 | `tools/app/delivery_gate.sh` — 18 named loophole checks; refuses "delivered" while any is open | blind delivery (W-041) |
+| F1b | `tools/app/install_gate.py` + `tools/app/runtime_gate.py` — the APK installs and the UI renders | "App not installed" / blank screen |
 | F2 | `tools/app/fork_integrity_gate.sh` — §19 laws | decoupled silos / stale forks (W-036/37) |
 | F3 | `singularity_progressive_continuum.md` §19–§20 | laws as gates, not notes |
 | F4 | `AGENTS.md` §19/§20 | carried into every future session |
@@ -550,6 +553,14 @@ L-07 fork-singularity       §19 gate: one tree, no androidx/foreign symbol (W-0
 L-08 bridge-contract        UI<->bridge contract complete (W-023 tool, corrected)
 L-09 asset-parity           every tree asset ships inside the APK (W-039)
 L-10 currency               the tree compiles clean vs a real android.jar (W-024)
+L-12 one-surface            a hub page (delivery/index.html) lists every artifact as a download
+L-13 no-doc-dup             one canonical doc; the four docs DARKITH.md replaces are gone
+L-14 family-whole           the shell* family (6/6) is present in the dex
+L-15 signer-identity        signerSignature+verifySignerSignature (HMAC-SHA256) in the dex
+L-16 arsc-stored            resources.arsc is STORED (API 30+ refuses a DEFLATED arsc)
+L-17 native-tools           lib/*/libaapt2.so+libzipalign.so ship and extractNativeLibs=true
+L-18 install-gate           the package installer accepts the APK (no "App not installed")
+L-19 runtime-render         the launcher UI paints at 360×800 with 0 JS errors
 L-11 registry-nonempty      the gate itself has checks (a gate with none gates nothing)
 
 ─── NEVER #14 (ENUMERATE BEFORE DELIVERING) ───
