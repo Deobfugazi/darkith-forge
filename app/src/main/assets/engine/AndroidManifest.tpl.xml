@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Child-APK manifest template used by ChimeraBuilder.forgeChimera.
+     Placeholders {{PKG_NAME}} and {{APP_NAME}} are filled at forge time.
+     The launcher activity is the host's HomekeeperActivity, which ships inside
+     the template.dex (the host classes.dex). Every forged child is therefore a
+     self-contained Darkith surface: one Activity, one WebView, one bridge. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="{{PKG_NAME}}">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
+    <application
+        android:label="{{APP_NAME}}"
+        android:allowBackup="false"
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true">
+
+        <activity
+            android:name="com.darkith.transliaison.HomekeeperActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

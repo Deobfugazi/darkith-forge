@@ -47,12 +47,19 @@ which_tool(){
   return 1
 }
 
-AAPT2=$(which_tool aapt2   || true)
-ZIPALIGN=$(which_tool zipalign || true)
-APKSIGNER=$(which_tool apksigner || true)
-KOTLINC=$(which_tool kotlinc || true)
+AAPT2="${AAPT2:-$(which_tool aapt2   || true)}"
+ZIPALIGN="${ZIPALIGN:-$(which_tool zipalign || true)}"
+APKSIGNER="${APKSIGNER:-$(which_tool apksigner || true)}"
+KOTLINC="${KOTLINC:-$(which_tool kotlinc || true)}"
 KEYTOOL=$(which_tool keytool || true)
 PY3=$(which_tool python3 || true); [ -n "$PY3" ] || PY3=$(which_tool python || true)
+
+# JDK kotlinc fallback: Termux 'kotlinc' is a wrapper; a real JDK kotlinc may sit elsewhere.
+if [ -z "$KOTLINC" ]; then
+  for c in "${KOTLINC_BIN:-}" /tmp/ktc/kotlinc/bin/kotlinc /opt/kotlinc/bin/kotlinc "$HOME"/kotlinc/bin/kotlinc; do
+    [ -n "$c" ] && [ -x "$c" ] && { KOTLINC="$c"; break; }
+  done
+fi
 
 SELF_DIR=$(cd "$(dirname "$0")" && pwd)
 PYZIP=""
@@ -131,8 +138,10 @@ say "2/7 aapt2 link     ok -> base.apk"
 if [ "$HAS_SRC" = 1 ]; then
   GEN_JAVA=""
   [ -f "$WORK/gen/${PKG//.//}/R.java" ] && GEN_JAVA="$WORK/gen/${PKG//.//}/R.java"
-  # -J-Xmx512m is honoured by the kotlinc launcher: keeps the compile inside RAM.
-  if ! "$KOTLINC" "$SRC_DIR" $GEN_JAVA -classpath "$ANDROID_JAR" -J-Xmx512m -d "$WORK/classes" -nowarn 2>"$WORK/kotlinc.log"; then
+  KCP="$ANDROID_JAR"
+  for j in "$ROOT"/libs/*.jar "$PROJ_DIR"/libs/*.jar; do [ -r "$j" ] && KCP="$KCP:$j"; done
+  # -J-Xmx${KOTLINC_XMX:-512m} is honoured by the kotlinc launcher: keeps the compile inside RAM.
+  if ! "$KOTLINC" "$SRC_DIR" $GEN_JAVA -classpath "$KCP" -J-Xmx${KOTLINC_XMX:-512m} -d "$WORK/classes" -nowarn 2>"$WORK/kotlinc.log"; then
     say "--- kotlinc errors (first 20) ---"
     grep -E 'error:' "$WORK/kotlinc.log" | head -20 || tail -20 "$WORK/kotlinc.log"
     die "kotlinc failed (see $WORK/kotlinc.log)"
@@ -162,7 +171,17 @@ tmp=base+".tmp"
 with zipfile.ZipFile(base) as zin, zipfile.ZipFile(tmp,"w",zipfile.ZIP_DEFLATED) as zo:
     for e in zin.infolist():
         if e.filename=="classes.dex": continue
-        zo.writestr(e.filename, zin.read(e.filename))
+        # Android 11+ (API 30) requires resources.arsc and lib/*.so to be STORED, not
+        # DEFLATED: the loader mmaps them in place. Re-adding them to a ZIP_DEFLATED
+        # archive silently compresses them and the installer then refuses with a bare
+        # "App not installed". Preserve STORED for exactly those entries.
+        if e.filename=="resources.arsc" or e.filename.startswith("lib/"):
+            zi=zipfile.ZipInfo(e.filename)
+            zi.compress_type=zipfile.ZIP_STORED
+            zi.external_attr=e.external_attr
+            zo.writestr(zi, zin.read(e.filename))
+        else:
+            zo.writestr(e.filename, zin.read(e.filename))
     zo.writestr("classes.dex", open(dex,"rb").read())
     ad=os.path.join(proj,"assets")
     if os.path.isdir(ad):

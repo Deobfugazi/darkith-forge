@@ -1,0 +1,123 @@
+package com.darkith.transliaison
+
+import java.io.File
+import java.io.FileOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
+
+class AxmlRewriter(private val context: android.content.Context) {
+
+    companion object {
+        const val SCAFFOLD_PACKAGE = "com.darkith.zeron_sovereign_autophagic_receptacle_scaffold"
+        const val SCAFFOLD_LABEL = "Darkith Zeron Sovereign Autophagic Receptacle Scaffold"
+        val SCAFFOLD_PACKAGE_LEN = SCAFFOLD_PACKAGE.length
+        val SCAFFOLD_LABEL_LEN = SCAFFOLD_LABEL.length
+    }
+
+    fun deriveIdentity(projectTitle: String): Pair<String, String> {
+        val safe = projectTitle.lowercase().replace(Regex("[^a-z0-9]+"), "_").trim('_').take(38).ifEmpty { "app" }
+        val pkg = "com.darkith.$safe.app"
+        val lbl = projectTitle.take(SCAFFOLD_LABEL_LEN)
+        return pkg to lbl
+    }
+
+    /**
+     * Scans the donor's AndroidManifest.xml for the scaffold package string in BOTH
+     * UTF-16LE and UTF-8 encodings. Returns true if found in either.
+     */
+    fun donorIsScaffold(donorApk: File): Boolean {
+        return try {
+            ZipFile(donorApk).use { zip ->
+                val e = zip.getEntry("AndroidManifest.xml") ?: return false
+                val bytes = zip.getInputStream(e).readBytes()
+                containsBytes(bytes, SCAFFOLD_PACKAGE.toByteArray(Charsets.UTF_16LE))
+                    || containsBytes(bytes, SCAFFOLD_PACKAGE.toByteArray(Charsets.UTF_8))
+            }
+        } catch (e: Exception) { false }
+    }
+
+    private fun containsBytes(haystack: ByteArray, needle: ByteArray): Boolean {
+        if (needle.isEmpty() || haystack.size < needle.size) return false
+        var i = 0
+        while (i <= haystack.size - needle.size) {
+            var j = 0
+            while (j < needle.size && haystack[i + j] == needle[j]) j++
+            if (j == needle.size) return true
+            i++
+        }
+        return false
+    }
+
+    fun rewrite(donorApk: File, outputApk: File, newPackage: String, newLabel: String): Boolean {
+        if (newPackage.length > SCAFFOLD_PACKAGE_LEN) return false
+        if (newLabel.length > SCAFFOLD_LABEL_LEN) return false
+        try {
+            ZipFile(donorApk).use { zin ->
+                val entry = zin.getEntry("AndroidManifest.xml") ?: return false
+                val axmlIn = zin.getInputStream(entry).readBytes()
+                val patched = patchAxml(axmlIn, newPackage, newLabel) ?: return false
+                ZipOutputStream(FileOutputStream(outputApk)).use { out ->
+                    val en = zin.entries()
+                    while (en.hasMoreElements()) {
+                        val e = en.nextElement()
+                        if (e.name == "AndroidManifest.xml") continue
+                        val copy = ZipEntry(e.name)
+                        if (e.method == ZipEntry.STORED) {
+                            copy.method = ZipEntry.STORED; copy.size = e.size; copy.compressedSize = e.compressedSize; copy.crc = e.crc
+                        } else copy.method = ZipEntry.DEFLATED
+                        out.putNextEntry(copy); zin.getInputStream(e).copyTo(out); out.closeEntry()
+                    }
+                    val me = ZipEntry("AndroidManifest.xml"); me.method = ZipEntry.DEFLATED
+                    out.putNextEntry(me); out.write(patched); out.closeEntry()
+                }
+            }
+            return true
+        } catch (e: Exception) { return false }
+    }
+
+    private fun patchAxml(axml: ByteArray, newPackage: String, newLabel: String): ByteArray? {
+        val out = axml.copyOf()
+        val okPkg = replaceUtf16(out, SCAFFOLD_PACKAGE, newPackage) || replaceUtf8(out, SCAFFOLD_PACKAGE, newPackage)
+        if (!okPkg) return null
+        replaceUtf16(out, SCAFFOLD_LABEL, newLabel) || replaceUtf8(out, SCAFFOLD_LABEL, newLabel)
+        return out
+    }
+
+    private fun replaceUtf16(buf: ByteArray, needle: String, replacement: String): Boolean {
+        val n = needle.toByteArray(Charsets.UTF_16LE)
+        val r = replacement.toByteArray(Charsets.UTF_16LE)
+        if (r.size > n.size) return false
+        var i = 0; var found = false
+        while (i <= buf.size - n.size) {
+            var j = 0
+            while (j < n.size && buf[i + j] == n[j]) j++
+            if (j == n.size) {
+                found = true
+                System.arraycopy(r, 0, buf, i, r.size)
+                for (k in r.size until n.size) buf[i + k] = 0
+                i += n.size
+            } else i += 1
+        }
+        return found
+    }
+
+    private fun replaceUtf8(buf: ByteArray, needle: String, replacement: String): Boolean {
+        val n = needle.toByteArray(Charsets.UTF_8)
+        val r = replacement.toByteArray(Charsets.UTF_8)
+        if (r.size > n.size) return false
+        var i = 0; var found = false
+        while (i <= buf.size - n.size) {
+            var j = 0
+            while (j < n.size && buf[i + j] == n[j]) j++
+            if (j == n.size) {
+                found = true
+                System.arraycopy(r, 0, buf, i, r.size)
+                for (k in r.size until n.size) buf[i + k] = 0
+                i += n.size
+            } else i += 1
+        }
+        return found
+    }
+}
+
