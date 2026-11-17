@@ -36,6 +36,7 @@ have() { command -v "$1" >/dev/null 2>&1; }
 if have python3; then
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
   run "savf cli contract"                 python3 build/savf-cli-test.py
+  run "darkbot self-test"                 python3 tools/darkbot.py selftest
 else
   echo "SKIP: python3 not found"; FAILED=1
 fi

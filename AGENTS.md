@@ -69,6 +69,8 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
   `task add|list|do|focus|defer|tag|next|rm`.
 
 ## Verification
+- `bash tools/ci.sh` — the one command that runs every suite, provider-neutral. Any CI
+  (or a phone) calls this; vendor YAML is only a thin adapter around it. Exit 0 == green.
 - `node tools/test_darktools.js` — 46/46 (tasks, explicit+passive learning, ledger, omega,
   tk host, persistence). `NODE_PATH=/tmp/node_modules node tools/test_inscriber.js` — 14/14
   (jsdom drives real Enter keydowns). `node /tmp/difftest3.js` — shell parity vs bash
@@ -97,6 +99,20 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
   path is `IRBuilder`/`OmegaRenderer`).
 - **Comment checker gotcha**: a naive `/* */` scanner false-flags Kotlin comments containing
   apostrophes (e.g. "renderer's"). Only kotlinc is authoritative (W-023).
+
+## Dependency watching (darkbot — replaces the hosted service)
+- `tools/darkbot.py` + `tools/deps.txt` are the source of truth. No vendor config.
+  `tools/deps.txt` holds `<ecosystem> <name> <version>` (pypi|npm); `requirements-dev.txt`
+  is GENERATED from it by `python3 tools/darkbot.py export` — never hand-edit that file.
+- Commands: `report|check` (drift vs the public registry), `update` (bump pins),
+  `export` (write requirements-dev.txt), `selftest` (offline, no network — in ci.sh),
+  `digest <eco> <name> [ver]` (registry sha256 per artifact), `verify <file> <sha256>`.
+- stdlib only: runs on the phone in Termux with no installs. Talks to PyPI/npm, never to a
+  CI vendor, so changing code host does not touch it.
+- `.github/workflows/auto-merge.yml` is the thin GitHub adapter: tests (tools/ci.sh) then
+  merges a dependency PR (Dependabot and darkbot authors). The bot's own bumps are tested
+  and committed directly, because a PR opened with GITHUB_TOKEN never triggers a second
+  workflow run (approval-required state) — the recursion trap. No PAT, no pull_request_target.
 
 ## §19 ANTI-DIVERGENCE LAWS (binding — see singularity_progressive_continuum.md §19)
 NEVER #11 One Tree: never keep two divergent live copies of a file. Reconcile into one; the

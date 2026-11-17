@@ -1,0 +1,13 @@
+# deps.txt — neutral dependency manifest.
+#
+# One line per dependency:  <ecosystem>  <name>  <pinned-version>
+# Blank lines and # comments are ignored. Whitespace-separated, so it survives a
+# phone, a diff, and any editor.
+#
+# This file, not a vendor's config, is the source of truth. tools/darkbot.py reads it,
+# asks the public registry (PyPI, npm) for the latest version, and reports or updates
+# drift. Nothing here is specific to GitHub, GitLab, Bitbucket, Jenkins or Termux.
+#
+# ecosystems: pypi | npm
+
+pypi  playwright  1.65.2
