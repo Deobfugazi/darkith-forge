@@ -79,3 +79,5 @@ validation, contrast checks.
 | F5 | Synchrony bylaw §31: every app + bot carries a generated clock | done | `build/gen_synchrony.py`, `build/inject_synchrony.py`, `tools/synchrony_gate.py` |
 | F6 | Editor stamps saves with a diachronic ISO key | done | `saveDoc`/`stampedBody` in `app/src/main/assets/darkith_ui.html`; proven by `tools/synchrony_gate.py` |
 | F7 | Bots log with timestamps via the generated clock | done | `tools/darkbot.py` routes through `build/gen/omega_time_runtime.py` (`tlog`) |
+
+<!-- real-time pulse test -->
