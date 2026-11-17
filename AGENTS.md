@@ -255,3 +255,17 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
 - CLASSIFY ERRORS (SPI-22): before fixing source, classify the compile log. 147 errors here were
   almost all `unresolved reference android` — the classpath lacked `android.jar`, not a source
   defect. Fixing source would have been motion, not progress.
+
+## §25 DELIVERY RECORD — API 30 install fix + pre-run evidence (2026-11-17)
+- INSTALL DEFECT FIXED (both shipped APKs): `resources.arsc` and `lib/*.so` were
+  DEFLATED, so Android 11+ refused the install ("App not installed"). Repacked
+  STORED, `zipalign -f -p 4`, re-signed with the SAME release identity
+  (`CN=Darkith Release`). `build.sh` step 5 preserves STORED; `tools/ci.sh` gates
+  every `delivery/*.apk`. Real bytes, not claims:
+  `darkith-homekeeper-debug.apk` 16,377,082 B `2ea7e1dd…`; `darkith-forged-proof.apk`
+  987,679 B `ec17b014…`.
+- PRE-RUN (not inferred): `build/omega/ui-test.py` in headless Chromium at 360x800
+  -> **OMEGA-UI 26/26 PASS**, 0 console errors, no overflow, in-app browser loads
+  its frame. `savf.py selftest` -> ok; in-page SAVF self-test -> 9/9, 0 errors.
+- TWO-TAB CONVERGENCE (§0b): `tools/sync.sh` + `tools/converge.sh` proven by a
+  real divergence (two tabs, both commits survived, linear history).
