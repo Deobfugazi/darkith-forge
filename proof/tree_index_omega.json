@@ -1,0 +1,9036 @@
+[
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 7,
+        "name": "AegisCircuitBreaker"
+      },
+      {
+        "kind": "fun",
+        "line": 8,
+        "name": "checkAndRollback"
+      },
+      {
+        "kind": "val",
+        "line": 9,
+        "name": "am"
+      },
+      {
+        "kind": "val",
+        "line": 10,
+        "name": "exitInfo"
+      },
+      {
+        "kind": "val",
+        "line": 12,
+        "name": "marker"
+      },
+      {
+        "kind": "fun",
+        "line": 21,
+        "name": "arm"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 3,
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/AegisCircuitBreaker.kt",
+    "imports": [
+      "android.app.ActivityManager",
+      "android.app.ApplicationExitInfo",
+      "android.content.Context",
+      "java.io.File"
+    ],
+    "loc": 24,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 4,
+        "name": "AegisDatalog"
+      },
+      {
+        "kind": "fun",
+        "line": 7,
+        "name": "assertFailed"
+      },
+      {
+        "kind": "val",
+        "line": 8,
+        "name": "entry"
+      },
+      {
+        "kind": "fun",
+        "line": 12,
+        "name": "isBlacklisted"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/AegisDatalog.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 16,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 4,
+        "name": "AegisEnvelope"
+      },
+      {
+        "kind": "fun",
+        "line": 7,
+        "name": "create"
+      },
+      {
+        "kind": "val",
+        "line": 8,
+        "name": "canonical"
+      },
+      {
+        "kind": "val",
+        "line": 9,
+        "name": "hash"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/AegisEnvelope.kt",
+    "imports": [
+      "java.security.MessageDigest"
+    ],
+    "loc": 14,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 3,
+        "name": "AegisOracle"
+      },
+      {
+        "kind": "fun",
+        "line": 7,
+        "name": "predict"
+      },
+      {
+        "kind": "val",
+        "line": 13,
+        "name": "intersection"
+      },
+      {
+        "kind": "val",
+        "line": 14,
+        "name": "fatal"
+      },
+      {
+        "kind": "val",
+        "line": 15,
+        "name": "resolvable"
+      },
+      {
+        "kind": "val",
+        "line": 16,
+        "name": "benign"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/AegisOracle.kt",
+    "imports": [],
+    "loc": 27,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 11,
+        "name": "AegisReaper"
+      },
+      {
+        "kind": "val",
+        "line": 17,
+        "name": "channel"
+      },
+      {
+        "kind": "val",
+        "line": 18,
+        "name": "manager"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "notification"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 7
+    },
+    "file": "com/darkith/transliaison/AegisReaper.kt",
+    "imports": [
+      "android.app.Notification",
+      "android.app.NotificationChannel",
+      "android.app.NotificationManager",
+      "android.app.Service",
+      "android.content.Intent",
+      "android.os.Build",
+      "android.os.IBinder"
+    ],
+    "loc": 38,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 4,
+        "name": "AegisShadowWorktree"
+      },
+      {
+        "kind": "fun",
+        "line": 9,
+        "name": "create"
+      },
+      {
+        "kind": "val",
+        "line": 10,
+        "name": "shadowDir"
+      },
+      {
+        "kind": "fun",
+        "line": 17,
+        "name": "destroy"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/AegisShadowWorktree.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 20,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 6,
+        "name": "AegisVM"
+      },
+      {
+        "kind": "fun",
+        "line": 9,
+        "name": "executeAbsolution"
+      },
+      {
+        "kind": "fun",
+        "line": 16,
+        "name": "executeCommand"
+      },
+      {
+        "kind": "val",
+        "line": 18,
+        "name": "envelope"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "nativeDir"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "bash"
+      },
+      {
+        "kind": "val",
+        "line": 38,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 40,
+        "name": "env"
+      },
+      {
+        "kind": "val",
+        "line": 45,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "reader"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 65,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 66,
+        "name": "code"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/AegisVM.kt",
+    "imports": [
+      "android.content.Context",
+      "java.io.File"
+    ],
+    "loc": 69,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 5,
+        "name": "AegisWAEL"
+      },
+      {
+        "kind": "fun",
+        "line": 8,
+        "name": "append"
+      },
+      {
+        "kind": "val",
+        "line": 9,
+        "name": "prevHash"
+      },
+      {
+        "kind": "val",
+        "line": 17,
+        "name": "entry"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 2
+    },
+    "file": "com/darkith/transliaison/AegisWAEL.kt",
+    "imports": [
+      "java.io.File",
+      "java.security.MessageDigest"
+    ],
+    "loc": 20,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 15,
+        "name": "ApkInstaller"
+      },
+      {
+        "kind": "fun",
+        "line": 22,
+        "name": "install"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 33,
+        "name": "pi"
+      },
+      {
+        "kind": "var",
+        "line": 34,
+        "name": "sessionId"
+      },
+      {
+        "kind": "var",
+        "line": 35,
+        "name": "receiver"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "params"
+      },
+      {
+        "kind": "val",
+        "line": 39,
+        "name": "session"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "rcv"
+      },
+      {
+        "kind": "val",
+        "line": 48,
+        "name": "status"
+      },
+      {
+        "kind": "val",
+        "line": 49,
+        "name": "msg"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "confirm"
+      },
+      {
+        "kind": "val",
+        "line": 65,
+        "name": "filter"
+      },
+      {
+        "kind": "val",
+        "line": 69,
+        "name": "intent"
+      },
+      {
+        "kind": "val",
+        "line": 70,
+        "name": "flags"
+      },
+      {
+        "kind": "val",
+        "line": 71,
+        "name": "pending"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 10,
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/ApkInstaller.kt",
+    "imports": [
+      "android.app.PendingIntent",
+      "android.content.BroadcastReceiver",
+      "android.content.Context",
+      "android.content.Intent",
+      "android.content.IntentFilter",
+      "android.content.pm.PackageInstaller",
+      "android.net.Uri",
+      "android.os.Build",
+      "android.provider.Settings",
+      "android.util.Log",
+      "java.io.File"
+    ],
+    "loc": 83,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 12,
+        "name": "ApkSignerRunner"
+      },
+      {
+        "kind": "fun",
+        "line": 21,
+        "name": "sign"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "privateKey"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "cert"
+      },
+      {
+        "kind": "val",
+        "line": 30,
+        "name": "signer"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "com": 1,
+      "java": 6
+    },
+    "file": "com/darkith/transliaison/ApkSignerRunner.kt",
+    "imports": [
+      "android.content.Context",
+      "com.android.apksig.ApkSigner",
+      "java.io.File",
+      "java.security.KeyFactory",
+      "java.security.PrivateKey",
+      "java.security.cert.CertificateFactory",
+      "java.security.cert.X509Certificate",
+      "java.security.spec.PKCS8EncodedKeySpec"
+    ],
+    "loc": 42,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 9,
+        "name": "AuditWriter"
+      },
+      {
+        "kind": "fun",
+        "line": 20,
+        "name": "write"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "now"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "apkSha"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "apkSize"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "bridge"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "bridgeText"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "gaps"
+      },
+      {
+        "kind": "val",
+        "line": 38,
+        "name": "done"
+      },
+      {
+        "kind": "val",
+        "line": 39,
+        "name": "total"
+      },
+      {
+        "kind": "val",
+        "line": 40,
+        "name": "pct"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 68,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 94,
+        "name": "events"
+      },
+      {
+        "kind": "val",
+        "line": 100,
+        "name": "ledger"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "lines"
+      },
+      {
+        "kind": "val",
+        "line": 109,
+        "name": "blog"
+      },
+      {
+        "kind": "val",
+        "line": 111,
+        "name": "lines"
+      },
+      {
+        "kind": "val",
+        "line": 118,
+        "name": "plog"
+      },
+      {
+        "kind": "val",
+        "line": 120,
+        "name": "lines"
+      },
+      {
+        "kind": "val",
+        "line": 121,
+        "name": "auto"
+      },
+      {
+        "kind": "val",
+        "line": 133,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 154,
+        "name": "row"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 5
+    },
+    "file": "com/darkith/transliaison/AuditWriter.kt",
+    "imports": [
+      "java.io.File",
+      "java.text.SimpleDateFormat",
+      "java.util.Date",
+      "java.util.Locale",
+      "java.util.TimeZone"
+    ],
+    "loc": 158,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 7,
+        "name": "Axml"
+      },
+      {
+        "kind": "var",
+        "line": 32,
+        "name": "ns"
+      },
+      {
+        "kind": "var",
+        "line": 33,
+        "name": "name"
+      },
+      {
+        "kind": "val",
+        "line": 34,
+        "name": "attrs"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "children"
+      },
+      {
+        "kind": "fun",
+        "line": 56,
+        "name": "parse"
+      },
+      {
+        "kind": "val",
+        "line": 58,
+        "name": "bb"
+      },
+      {
+        "kind": "val",
+        "line": 59,
+        "name": "magic"
+      },
+      {
+        "kind": "val",
+        "line": 61,
+        "name": "headerSize"
+      },
+      {
+        "kind": "var",
+        "line": 63,
+        "name": "strings"
+      },
+      {
+        "kind": "var",
+        "line": 64,
+        "name": "resMap"
+      },
+      {
+        "kind": "var",
+        "line": 65,
+        "name": "offset"
+      },
+      {
+        "kind": "val",
+        "line": 66,
+        "name": "len"
+      },
+      {
+        "kind": "val",
+        "line": 67,
+        "name": "stack"
+      },
+      {
+        "kind": "var",
+        "line": 68,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 71,
+        "name": "type"
+      },
+      {
+        "kind": "val",
+        "line": 72,
+        "name": "cHeaderSize"
+      },
+      {
+        "kind": "val",
+        "line": 73,
+        "name": "cSize"
+      },
+      {
+        "kind": "val",
+        "line": 79,
+        "name": "count"
+      },
+      {
+        "kind": "val",
+        "line": 80,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 85,
+        "name": "nsIdx"
+      },
+      {
+        "kind": "val",
+        "line": 86,
+        "name": "nameIdx"
+      },
+      {
+        "kind": "val",
+        "line": 87,
+        "name": "attrStart"
+      },
+      {
+        "kind": "val",
+        "line": 88,
+        "name": "attrSize"
+      },
+      {
+        "kind": "val",
+        "line": 89,
+        "name": "attrCount"
+      },
+      {
+        "kind": "val",
+        "line": 91,
+        "name": "elemNs"
+      },
+      {
+        "kind": "val",
+        "line": 92,
+        "name": "elemName"
+      },
+      {
+        "kind": "val",
+        "line": 93,
+        "name": "el"
+      },
+      {
+        "kind": "val",
+        "line": 95,
+        "name": "attrBase"
+      },
+      {
+        "kind": "val",
+        "line": 97,
+        "name": "aOff"
+      },
+      {
+        "kind": "val",
+        "line": 98,
+        "name": "aNs"
+      },
+      {
+        "kind": "val",
+        "line": 99,
+        "name": "aName"
+      },
+      {
+        "kind": "val",
+        "line": 100,
+        "name": "aRaw"
+      },
+      {
+        "kind": "val",
+        "line": 101,
+        "name": "aType"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "aData"
+      },
+      {
+        "kind": "var",
+        "line": 104,
+        "name": "attrName"
+      },
+      {
+        "kind": "var",
+        "line": 105,
+        "name": "attrNs"
+      },
+      {
+        "kind": "val",
+        "line": 107,
+        "name": "rm"
+      },
+      {
+        "kind": "val",
+        "line": 117,
+        "name": "value"
+      },
+      {
+        "kind": "val",
+        "line": 119,
+        "name": "idx"
+      },
+      {
+        "kind": "val",
+        "line": 134,
+        "name": "parent"
+      },
+      {
+        "kind": "val",
+        "line": 147,
+        "name": "count"
+      },
+      {
+        "kind": "val",
+        "line": 148,
+        "name": "flags"
+      },
+      {
+        "kind": "val",
+        "line": 149,
+        "name": "stringsStart"
+      },
+      {
+        "kind": "val",
+        "line": 150,
+        "name": "isUtf8"
+      },
+      {
+        "kind": "val",
+        "line": 151,
+        "name": "offsets"
+      },
+      {
+        "kind": "val",
+        "line": 153,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 155,
+        "name": "strOff"
+      },
+      {
+        "kind": "var",
+        "line": 162,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 163,
+        "name": "b0"
+      },
+      {
+        "kind": "val",
+        "line": 165,
+        "name": "b1"
+      },
+      {
+        "kind": "val",
+        "line": 166,
+        "name": "byteLen"
+      },
+      {
+        "kind": "val",
+        "line": 174,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 180,
+        "name": "v"
+      },
+      {
+        "kind": "val",
+        "line": 181,
+        "name": "charLen"
+      },
+      {
+        "kind": "val",
+        "line": 182,
+        "name": "dataOff"
+      },
+      {
+        "kind": "val",
+        "line": 190,
+        "name": "sb"
+      },
+      {
+        "kind": "fun",
+        "line": 195,
+        "name": "encode"
+      },
+      {
+        "kind": "val",
+        "line": 197,
+        "name": "pool"
+      },
+      {
+        "kind": "val",
+        "line": 198,
+        "name": "index"
+      },
+      {
+        "kind": "fun",
+        "line": 199,
+        "name": "intern"
+      },
+      {
+        "kind": "val",
+        "line": 201,
+        "name": "j"
+      },
+      {
+        "kind": "val",
+        "line": 208,
+        "name": "spBytes"
+      },
+      {
+        "kind": "val",
+        "line": 210,
+        "name": "resSet"
+      },
+      {
+        "kind": "val",
+        "line": 212,
+        "name": "resIds"
+      },
+      {
+        "kind": "val",
+        "line": 213,
+        "name": "resMapStream"
+      },
+      {
+        "kind": "val",
+        "line": 215,
+        "name": "resMapBytes"
+      },
+      {
+        "kind": "val",
+        "line": 217,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 221,
+        "name": "bodyBytes"
+      },
+      {
+        "kind": "val",
+        "line": 223,
+        "name": "xmlHeaderSize"
+      },
+      {
+        "kind": "val",
+        "line": 224,
+        "name": "total"
+      },
+      {
+        "kind": "val",
+        "line": 225,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 226,
+        "name": "head"
+      },
+      {
+        "kind": "val",
+        "line": 249,
+        "name": "count"
+      },
+      {
+        "kind": "val",
+        "line": 250,
+        "name": "encoded"
+      },
+      {
+        "kind": "val",
+        "line": 252,
+        "name": "utf8"
+      },
+      {
+        "kind": "val",
+        "line": 253,
+        "name": "baos"
+      },
+      {
+        "kind": "val",
+        "line": 260,
+        "name": "headerSize"
+      },
+      {
+        "kind": "val",
+        "line": 261,
+        "name": "offsetTableSize"
+      },
+      {
+        "kind": "val",
+        "line": 262,
+        "name": "stringsStartRel"
+      },
+      {
+        "kind": "var",
+        "line": 263,
+        "name": "running"
+      },
+      {
+        "kind": "val",
+        "line": 264,
+        "name": "offsets"
+      },
+      {
+        "kind": "val",
+        "line": 266,
+        "name": "dataLen"
+      },
+      {
+        "kind": "val",
+        "line": 267,
+        "name": "pad"
+      },
+      {
+        "kind": "val",
+        "line": 268,
+        "name": "chunkSize"
+      },
+      {
+        "kind": "val",
+        "line": 269,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 285,
+        "name": "size"
+      },
+      {
+        "kind": "val",
+        "line": 286,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 293,
+        "name": "attrSize"
+      },
+      {
+        "kind": "val",
+        "line": 294,
+        "name": "startHeaderSize"
+      },
+      {
+        "kind": "val",
+        "line": 295,
+        "name": "startSize"
+      },
+      {
+        "kind": "val",
+        "line": 296,
+        "name": "start"
+      },
+      {
+        "kind": "val",
+        "line": 312,
+        "name": "endSize"
+      },
+      {
+        "kind": "val",
+        "line": 313,
+        "name": "end"
+      },
+      {
+        "kind": "fun",
+        "line": 331,
+        "name": "setAttr"
+      },
+      {
+        "kind": "fun",
+        "line": 338,
+        "name": "getAttr"
+      },
+      {
+        "kind": "fun",
+        "line": 341,
+        "name": "findChild"
+      },
+      {
+        "kind": "val",
+        "line": 351,
+        "name": "existing"
+      },
+      {
+        "kind": "val",
+        "line": 353,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 356,
+        "name": "appIdx"
+      },
+      {
+        "kind": "fun",
+        "line": 360,
+        "name": "ensureInt"
+      },
+      {
+        "kind": "val",
+        "line": 361,
+        "name": "a"
+      },
+      {
+        "kind": "val",
+        "line": 367,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 376,
+        "name": "rev"
+      },
+      {
+        "kind": "fun",
+        "line": 378,
+        "name": "walk"
+      },
+      {
+        "kind": "val",
+        "line": 381,
+        "name": "id"
+      },
+      {
+        "kind": "val",
+        "line": 394,
+        "name": "headerSize"
+      },
+      {
+        "kind": "val",
+        "line": 395,
+        "name": "chunkSize"
+      },
+      {
+        "kind": "val",
+        "line": 396,
+        "name": "buf"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 3
+    },
+    "file": "com/darkith/transliaison/Axml.kt",
+    "imports": [
+      "java.io.ByteArrayOutputStream",
+      "java.nio.ByteBuffer",
+      "java.nio.ByteOrder"
+    ],
+    "loc": 405,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 13,
+        "name": "AxmlWriter"
+      },
+      {
+        "kind": "fun",
+        "line": 20,
+        "name": "findApplicationInsertionPoint"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "buf"
+      },
+      {
+        "kind": "var",
+        "line": 22,
+        "name": "pos"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "type"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "chunkSize"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "nameIdx"
+      },
+      {
+        "kind": "fun",
+        "line": 36,
+        "name": "spliceActivity"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 41,
+        "name": "spliced"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "bb"
+      },
+      {
+        "kind": "fun",
+        "line": 47,
+        "name": "stringAt"
+      },
+      {
+        "kind": "val",
+        "line": 48,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "count"
+      },
+      {
+        "kind": "val",
+        "line": 53,
+        "name": "off"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "abs"
+      },
+      {
+        "kind": "var",
+        "line": 56,
+        "name": "p"
+      },
+      {
+        "kind": "var",
+        "line": 57,
+        "name": "len"
+      },
+      {
+        "kind": "val",
+        "line": 59,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 61,
+        "name": "b"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 3
+    },
+    "file": "com/darkith/transliaison/AxmlWriter.kt",
+    "imports": [
+      "java.io.ByteArrayOutputStream",
+      "java.nio.ByteBuffer",
+      "java.nio.ByteOrder"
+    ],
+    "loc": 78,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 10,
+        "name": "BuildEngine"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "build"
+      },
+      {
+        "kind": "val",
+        "line": 16,
+        "name": "manifestTpl"
+      },
+      {
+        "kind": "val",
+        "line": 17,
+        "name": "manifest"
+      },
+      {
+        "kind": "val",
+        "line": 18,
+        "name": "manifestFile"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "assetsDir"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "injected"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "vendorDir"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "resDir"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "valuesDir"
+      },
+      {
+        "kind": "val",
+        "line": 32,
+        "name": "resZip"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "androidJar"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "baseApk"
+      },
+      {
+        "kind": "val",
+        "line": 40,
+        "name": "templateDex"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "mergedApk"
+      },
+      {
+        "kind": "val",
+        "line": 49,
+        "name": "signedApk"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "aligned"
+      },
+      {
+        "kind": "val",
+        "line": 59,
+        "name": "tag"
+      },
+      {
+        "kind": "val",
+        "line": 70,
+        "name": "seen"
+      },
+      {
+        "kind": "val",
+        "line": 71,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 73,
+        "name": "entry"
+      },
+      {
+        "kind": "val",
+        "line": 74,
+        "name": "data"
+      },
+      {
+        "kind": "val",
+        "line": 77,
+        "name": "crc"
+      },
+      {
+        "kind": "val",
+        "line": 78,
+        "name": "ne"
+      },
+      {
+        "kind": "val",
+        "line": 88,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 98,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 99,
+        "name": "process"
+      },
+      {
+        "kind": "val",
+        "line": 100,
+        "name": "output"
+      },
+      {
+        "kind": "val",
+        "line": 101,
+        "name": "code"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 5
+    },
+    "file": "com/darkith/transliaison/BuildEngine.kt",
+    "imports": [
+      "android.content.Context",
+      "java.io.File",
+      "java.io.FileOutputStream",
+      "java.util.zip.ZipEntry",
+      "java.util.zip.ZipFile",
+      "java.util.zip.ZipOutputStream"
+    ],
+    "loc": 105,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 11,
+        "name": "ChimeraBuilder"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "forgeChimera"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "nativeDir"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "aapt2"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "zipalign"
+      },
+      {
+        "kind": "val",
+        "line": 34,
+        "name": "engineDir"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "androidJar"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "templateDex"
+      },
+      {
+        "kind": "val",
+        "line": 40,
+        "name": "pkg"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "safeName"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "manifestText"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "work"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "manifestFile"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "unaligned"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "link"
+      },
+      {
+        "kind": "val",
+        "line": 56,
+        "name": "versionCode"
+      },
+      {
+        "kind": "val",
+        "line": 62,
+        "name": "staged"
+      },
+      {
+        "kind": "fun",
+        "line": 71,
+        "name": "copyAssetsRecursively"
+      },
+      {
+        "kind": "val",
+        "line": 72,
+        "name": "files"
+      },
+      {
+        "kind": "val",
+        "line": 74,
+        "name": "fullPath"
+      },
+      {
+        "kind": "val",
+        "line": 77,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 89,
+        "name": "aligned"
+      },
+      {
+        "kind": "val",
+        "line": 94,
+        "name": "signedTmp"
+      },
+      {
+        "kind": "val",
+        "line": 103,
+        "name": "name"
+      },
+      {
+        "kind": "val",
+        "line": 104,
+        "name": "finalFile"
+      },
+      {
+        "kind": "val",
+        "line": 105,
+        "name": "dl"
+      },
+      {
+        "kind": "val",
+        "line": 110,
+        "name": "alt"
+      },
+      {
+        "kind": "val",
+        "line": 123,
+        "name": "wanted"
+      },
+      {
+        "kind": "val",
+        "line": 125,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 127,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 132,
+        "name": "xml"
+      },
+      {
+        "kind": "var",
+        "line": 133,
+        "name": "fgsXml"
+      },
+      {
+        "kind": "val",
+        "line": 137,
+        "name": "idx"
+      },
+      {
+        "kind": "val",
+        "line": 143,
+        "name": "dest"
+      },
+      {
+        "kind": "var",
+        "line": 144,
+        "name": "len"
+      },
+      {
+        "kind": "val",
+        "line": 146,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 154,
+        "name": "segs"
+      },
+      {
+        "kind": "var",
+        "line": 155,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 166,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 167,
+        "name": "ne"
+      },
+      {
+        "kind": "val",
+        "line": 169,
+        "name": "crc"
+      },
+      {
+        "kind": "val",
+        "line": 181,
+        "name": "ne"
+      },
+      {
+        "kind": "val",
+        "line": 186,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 188,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 189,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 190,
+        "name": "reader"
+      },
+      {
+        "kind": "val",
+        "line": 193,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 195,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 208,
+        "name": "code"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 6
+    },
+    "file": "com/darkith/transliaison/ChimeraBuilder.kt",
+    "imports": [
+      "android.content.Context",
+      "java.io.File",
+      "java.util.concurrent.TimeUnit",
+      "java.util.zip.CRC32",
+      "java.util.zip.ZipEntry",
+      "java.util.zip.ZipFile",
+      "java.util.zip.ZipOutputStream"
+    ],
+    "loc": 211,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 10,
+        "name": "DarkithAlpineGuest"
+      },
+      {
+        "kind": "fun",
+        "line": 16,
+        "name": "isAvailable"
+      },
+      {
+        "kind": "fun",
+        "line": 18,
+        "name": "status"
+      },
+      {
+        "kind": "fun",
+        "line": 20,
+        "name": "apkAdd"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/DarkithAlpineGuest.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 31,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 18,
+        "name": "DarkithBridge"
+      },
+      {
+        "kind": "fun",
+        "line": 21,
+        "name": "donorShip"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "donor"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "downloads"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "safe"
+      },
+      {
+        "kind": "val",
+        "line": 30,
+        "name": "staged"
+      },
+      {
+        "kind": "val",
+        "line": 31,
+        "name": "merged"
+      },
+      {
+        "kind": "val",
+        "line": 32,
+        "name": "outcome"
+      },
+      {
+        "kind": "val",
+        "line": 33,
+        "name": "final"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "zf"
+      },
+      {
+        "kind": "val",
+        "line": 38,
+        "name": "names"
+      },
+      {
+        "kind": "fun",
+        "line": 56,
+        "name": "attachWebView"
+      },
+      {
+        "kind": "val",
+        "line": 75,
+        "name": "zin"
+      },
+      {
+        "kind": "val",
+        "line": 76,
+        "name": "arr"
+      },
+      {
+        "kind": "var",
+        "line": 77,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 79,
+        "name": "o"
+      },
+      {
+        "kind": "val",
+        "line": 85,
+        "name": "dest"
+      },
+      {
+        "kind": "val",
+        "line": 86,
+        "name": "zin"
+      },
+      {
+        "kind": "var",
+        "line": 87,
+        "name": "count"
+      },
+      {
+        "kind": "val",
+        "line": 89,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 97,
+        "name": "expected"
+      },
+      {
+        "kind": "val",
+        "line": 98,
+        "name": "md"
+      },
+      {
+        "kind": "val",
+        "line": 99,
+        "name": "buf"
+      },
+      {
+        "kind": "var",
+        "line": 100,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "actual"
+      },
+      {
+        "kind": "val",
+        "line": 114,
+        "name": "o"
+      },
+      {
+        "kind": "val",
+        "line": 115,
+        "name": "url"
+      },
+      {
+        "kind": "val",
+        "line": 116,
+        "name": "conn"
+      },
+      {
+        "kind": "val",
+        "line": 118,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 122,
+        "name": "tm"
+      },
+      {
+        "kind": "val",
+        "line": 127,
+        "name": "ctx"
+      },
+      {
+        "kind": "val",
+        "line": 131,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 133,
+        "name": "status"
+      },
+      {
+        "kind": "val",
+        "line": 134,
+        "name": "stream"
+      },
+      {
+        "kind": "val",
+        "line": 135,
+        "name": "respBody"
+      },
+      {
+        "kind": "val",
+        "line": 136,
+        "name": "hdrs"
+      },
+      {
+        "kind": "val",
+        "line": 144,
+        "name": "result"
+      },
+      {
+        "kind": "val",
+        "line": 145,
+        "name": "quoted"
+      },
+      {
+        "kind": "val",
+        "line": 146,
+        "name": "id"
+      },
+      {
+        "kind": "val",
+        "line": 147,
+        "name": "js"
+      },
+      {
+        "kind": "val",
+        "line": 153,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 155,
+        "name": "code"
+      },
+      {
+        "kind": "val",
+        "line": 157,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 159,
+        "name": "head"
+      },
+      {
+        "kind": "val",
+        "line": 175,
+        "name": "downloads"
+      },
+      {
+        "kind": "val",
+        "line": 176,
+        "name": "work"
+      },
+      {
+        "kind": "val",
+        "line": 177,
+        "name": "apk"
+      },
+      {
+        "kind": "val",
+        "line": 183,
+        "name": "apk"
+      },
+      {
+        "kind": "val",
+        "line": 188,
+        "name": "manifest"
+      },
+      {
+        "kind": "val",
+        "line": 189,
+        "name": "apk"
+      },
+      {
+        "kind": "fun",
+        "line": 248,
+        "name": "donorCopyEntry"
+      },
+      {
+        "kind": "val",
+        "line": 250,
+        "name": "src"
+      },
+      {
+        "kind": "val",
+        "line": 251,
+        "name": "srcE"
+      },
+      {
+        "kind": "val",
+        "line": 253,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 255,
+        "name": "dst"
+      },
+      {
+        "kind": "val",
+        "line": 257,
+        "name": "tmp"
+      },
+      {
+        "kind": "val",
+        "line": 260,
+        "name": "buf"
+      },
+      {
+        "kind": "var",
+        "line": 261,
+        "name": "wrote"
+      },
+      {
+        "kind": "val",
+        "line": 263,
+        "name": "e"
+      },
+      {
+        "kind": "var",
+        "line": 271,
+        "name": "n"
+      },
+      {
+        "kind": "fun",
+        "line": 292,
+        "name": "donorDexClasses"
+      },
+      {
+        "kind": "val",
+        "line": 294,
+        "name": "zip"
+      },
+      {
+        "kind": "val",
+        "line": 295,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 296,
+        "name": "seen"
+      },
+      {
+        "kind": "val",
+        "line": 297,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 299,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 301,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 310,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 315,
+        "name": "strSize"
+      },
+      {
+        "kind": "val",
+        "line": 316,
+        "name": "strOff"
+      },
+      {
+        "kind": "var",
+        "line": 319,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 321,
+        "name": "so"
+      },
+      {
+        "kind": "val",
+        "line": 323,
+        "name": "off"
+      },
+      {
+        "kind": "var",
+        "line": 325,
+        "name": "p2"
+      },
+      {
+        "kind": "var",
+        "line": 326,
+        "name": "shift"
+      },
+      {
+        "kind": "var",
+        "line": 327,
+        "name": "len"
+      },
+      {
+        "kind": "val",
+        "line": 329,
+        "name": "x"
+      },
+      {
+        "kind": "val",
+        "line": 336,
+        "name": "s2"
+      },
+      {
+        "kind": "fun",
+        "line": 346,
+        "name": "donorArscIds"
+      },
+      {
+        "kind": "val",
+        "line": 348,
+        "name": "zip"
+      },
+      {
+        "kind": "val",
+        "line": 349,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 350,
+        "name": "b"
+      },
+      {
+        "kind": "var",
+        "line": 354,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 355,
+        "name": "tblSize"
+      },
+      {
+        "kind": "val",
+        "line": 356,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 357,
+        "name": "seen"
+      },
+      {
+        "kind": "val",
+        "line": 359,
+        "name": "ct"
+      },
+      {
+        "kind": "val",
+        "line": 360,
+        "name": "cs"
+      },
+      {
+        "kind": "val",
+        "line": 363,
+        "name": "pkgId"
+      },
+      {
+        "kind": "var",
+        "line": 364,
+        "name": "q"
+      },
+      {
+        "kind": "val",
+        "line": 365,
+        "name": "pkgEnd"
+      },
+      {
+        "kind": "val",
+        "line": 367,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 368,
+        "name": "sz"
+      },
+      {
+        "kind": "val",
+        "line": 371,
+        "name": "typeId"
+      },
+      {
+        "kind": "val",
+        "line": 372,
+        "name": "rid"
+      },
+      {
+        "kind": "fun",
+        "line": 385,
+        "name": "donorManifestComponents"
+      },
+      {
+        "kind": "val",
+        "line": 387,
+        "name": "zip"
+      },
+      {
+        "kind": "val",
+        "line": 388,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 389,
+        "name": "b"
+      },
+      {
+        "kind": "var",
+        "line": 391,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 393,
+        "name": "ct"
+      },
+      {
+        "kind": "val",
+        "line": 394,
+        "name": "cs"
+      },
+      {
+        "kind": "val",
+        "line": 397,
+        "name": "cnt"
+      },
+      {
+        "kind": "val",
+        "line": 398,
+        "name": "flags"
+      },
+      {
+        "kind": "val",
+        "line": 399,
+        "name": "strStart"
+      },
+      {
+        "kind": "val",
+        "line": 400,
+        "name": "isUtf8"
+      },
+      {
+        "kind": "val",
+        "line": 402,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 403,
+        "name": "hdr"
+      },
+      {
+        "kind": "var",
+        "line": 404,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 406,
+        "name": "offPos"
+      },
+      {
+        "kind": "val",
+        "line": 408,
+        "name": "off"
+      },
+      {
+        "kind": "val",
+        "line": 409,
+        "name": "sp"
+      },
+      {
+        "kind": "val",
+        "line": 411,
+        "name": "s2"
+      },
+      {
+        "kind": "var",
+        "line": 429,
+        "name": "p"
+      },
+      {
+        "kind": "var",
+        "line": 434,
+        "name": "len"
+      },
+      {
+        "kind": "var",
+        "line": 443,
+        "name": "len"
+      },
+      {
+        "kind": "val",
+        "line": 450,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 452,
+        "name": "c"
+      },
+      {
+        "kind": "fun",
+        "line": 462,
+        "name": "donorSoList"
+      },
+      {
+        "kind": "val",
+        "line": 464,
+        "name": "zip"
+      },
+      {
+        "kind": "val",
+        "line": 465,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 466,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 468,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 470,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 471,
+        "name": "aligned"
+      },
+      {
+        "kind": "val",
+        "line": 485,
+        "name": "phOff"
+      },
+      {
+        "kind": "val",
+        "line": 486,
+        "name": "phEnt"
+      },
+      {
+        "kind": "val",
+        "line": 487,
+        "name": "phNum"
+      },
+      {
+        "kind": "var",
+        "line": 489,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 491,
+        "name": "ph"
+      },
+      {
+        "kind": "val",
+        "line": 494,
+        "name": "aLo"
+      },
+      {
+        "kind": "val",
+        "line": 495,
+        "name": "aHi"
+      },
+      {
+        "kind": "val",
+        "line": 496,
+        "name": "al"
+      },
+      {
+        "kind": "fun",
+        "line": 519,
+        "name": "deviceZip"
+      },
+      {
+        "kind": "fun",
+        "line": 523,
+        "name": "deviceUnzipList"
+      },
+      {
+        "kind": "fun",
+        "line": 527,
+        "name": "deviceUnzipExtract"
+      },
+      {
+        "kind": "fun",
+        "line": 531,
+        "name": "deviceUnzipOne"
+      },
+      {
+        "kind": "fun",
+        "line": 535,
+        "name": "donorListAll"
+      },
+      {
+        "kind": "val",
+        "line": 536,
+        "name": "dir"
+      },
+      {
+        "kind": "val",
+        "line": 537,
+        "name": "a"
+      },
+      {
+        "kind": "fun",
+        "line": 553,
+        "name": "appendFile"
+      },
+      {
+        "kind": "val",
+        "line": 554,
+        "name": "f"
+      },
+      {
+        "kind": "fun",
+        "line": 561,
+        "name": "getAuditMarkdown"
+      },
+      {
+        "kind": "val",
+        "line": 562,
+        "name": "f"
+      },
+      {
+        "kind": "fun",
+        "line": 567,
+        "name": "laborTodaySeconds"
+      },
+      {
+        "kind": "fun",
+        "line": 570,
+        "name": "laborCumulativeHours"
+      },
+      {
+        "kind": "fun",
+        "line": 573,
+        "name": "emitProgressEvent"
+      },
+      {
+        "kind": "fun",
+        "line": 579,
+        "name": "executeAbsolutionVM"
+      },
+      {
+        "kind": "fun",
+        "line": 584,
+        "name": "installApkNative"
+      },
+      {
+        "kind": "val",
+        "line": 586,
+        "name": "file"
+      },
+      {
+        "kind": "fun",
+        "line": 594,
+        "name": "aegisSplitFile"
+      },
+      {
+        "kind": "val",
+        "line": 596,
+        "name": "inputFile"
+      },
+      {
+        "kind": "val",
+        "line": 599,
+        "name": "outDir"
+      },
+      {
+        "kind": "val",
+        "line": 602,
+        "name": "splitCmd"
+      },
+      {
+        "kind": "val",
+        "line": 603,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 606,
+        "name": "manifestPath"
+      },
+      {
+        "kind": "val",
+        "line": 607,
+        "name": "hashCmd"
+      },
+      {
+        "kind": "val",
+        "line": 608,
+        "name": "hp"
+      },
+      {
+        "kind": "val",
+        "line": 609,
+        "name": "reader"
+      },
+      {
+        "kind": "val",
+        "line": 610,
+        "name": "originalHash"
+      },
+      {
+        "kind": "val",
+        "line": 612,
+        "name": "manifestJson"
+      },
+      {
+        "kind": "val",
+        "line": 617,
+        "name": "chunks"
+      },
+      {
+        "kind": "val",
+        "line": 630,
+        "name": "zipPath"
+      },
+      {
+        "kind": "val",
+        "line": 631,
+        "name": "zipCmd"
+      },
+      {
+        "kind": "val",
+        "line": 632,
+        "name": "zp"
+      },
+      {
+        "kind": "fun",
+        "line": 643,
+        "name": "forgeChimera"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 4,
+      "java": 4,
+      "javax": 4,
+      "org": 2
+    },
+    "file": "com/darkith/transliaison/DarkithBridge.kt",
+    "imports": [
+      "android.content.Context",
+      "android.os.Environment",
+      "android.webkit.JavascriptInterface",
+      "android.webkit.WebView",
+      "org.json.JSONArray",
+      "org.json.JSONObject",
+      "java.io.File",
+      "java.net.HttpURLConnection",
+      "java.net.URL",
+      "java.security.SecureRandom",
+      "javax.net.ssl.HostnameVerifier",
+      "javax.net.ssl.HttpsURLConnection",
+      "javax.net.ssl.SSLContext",
+      "javax.net.ssl.X509TrustManager"
+    ],
+    "loc": 646,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 10,
+        "name": "DarkithChainReader"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "isAvailable"
+      },
+      {
+        "kind": "fun",
+        "line": 17,
+        "name": "start"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "cmd"
+      },
+      {
+        "kind": "fun",
+        "line": 31,
+        "name": "localEndpoint"
+      },
+      {
+        "kind": "fun",
+        "line": 32,
+        "name": "status"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/DarkithChainReader.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 33,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 10,
+        "name": "DarkithContentStore"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "isAvailable"
+      },
+      {
+        "kind": "fun",
+        "line": 17,
+        "name": "status"
+      },
+      {
+        "kind": "fun",
+        "line": 19,
+        "name": "pin"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "f"
+      },
+      {
+        "kind": "fun",
+        "line": 26,
+        "name": "gateway"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/DarkithContentStore.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 27,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 8,
+        "name": "DarkithEVMKit"
+      },
+      {
+        "kind": "fun",
+        "line": 10,
+        "name": "isAvailable"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "status"
+      },
+      {
+        "kind": "fun",
+        "line": 17,
+        "name": "supportedChains"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/DarkithEVMKit.kt",
+    "imports": [],
+    "loc": 21,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 10,
+        "name": "DarkithRuntimeHost"
+      },
+      {
+        "kind": "fun",
+        "line": 20,
+        "name": "isAvailable"
+      },
+      {
+        "kind": "fun",
+        "line": 22,
+        "name": "list"
+      },
+      {
+        "kind": "fun",
+        "line": 26,
+        "name": "run"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "bin"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "script"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/DarkithRuntimeHost.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 37,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 10,
+        "name": "DarkithSolidityCompiler"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "isAvailable"
+      },
+      {
+        "kind": "fun",
+        "line": 17,
+        "name": "status"
+      },
+      {
+        "kind": "fun",
+        "line": 19,
+        "name": "compile"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "src"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "out"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/DarkithSolidityCompiler.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 33,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 12,
+        "name": "DonorBuilder"
+      },
+      {
+        "kind": "fun",
+        "line": 21,
+        "name": "selfApkPath"
+      },
+      {
+        "kind": "fun",
+        "line": 23,
+        "name": "scaffoldApkPath"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "s"
+      },
+      {
+        "kind": "fun",
+        "line": 28,
+        "name": "listEntries"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 33,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 34,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "e"
+      },
+      {
+        "kind": "fun",
+        "line": 49,
+        "name": "readEntry"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 56,
+        "name": "text"
+      },
+      {
+        "kind": "val",
+        "line": 57,
+        "name": "printable"
+      },
+      {
+        "kind": "fun",
+        "line": 64,
+        "name": "writeEntry"
+      },
+      {
+        "kind": "val",
+        "line": 66,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 69,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 71,
+        "name": "tmp"
+      },
+      {
+        "kind": "val",
+        "line": 74,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 76,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 81,
+        "name": "ne"
+      },
+      {
+        "kind": "fun",
+        "line": 90,
+        "name": "deleteEntry"
+      },
+      {
+        "kind": "val",
+        "line": 92,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 94,
+        "name": "tmp"
+      },
+      {
+        "kind": "val",
+        "line": 97,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 99,
+        "name": "e"
+      },
+      {
+        "kind": "fun",
+        "line": 110,
+        "name": "shipProject"
+      },
+      {
+        "kind": "val",
+        "line": 111,
+        "name": "dir"
+      },
+      {
+        "kind": "val",
+        "line": 113,
+        "name": "files"
+      },
+      {
+        "kind": "val",
+        "line": 116,
+        "name": "donor"
+      },
+      {
+        "kind": "val",
+        "line": 117,
+        "name": "src"
+      },
+      {
+        "kind": "fun",
+        "line": 122,
+        "name": "buildFromManifest"
+      },
+      {
+        "kind": "val",
+        "line": 123,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 124,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 125,
+        "name": "files"
+      },
+      {
+        "kind": "val",
+        "line": 127,
+        "name": "o"
+      },
+      {
+        "kind": "val",
+        "line": 131,
+        "name": "donor"
+      },
+      {
+        "kind": "val",
+        "line": 132,
+        "name": "src"
+      },
+      {
+        "kind": "fun",
+        "line": 137,
+        "name": "listDonors"
+      },
+      {
+        "kind": "val",
+        "line": 138,
+        "name": "dir"
+      },
+      {
+        "kind": "val",
+        "line": 146,
+        "name": "children"
+      },
+      {
+        "kind": "val",
+        "line": 149,
+        "name": "rel"
+      },
+      {
+        "kind": "val",
+        "line": 155,
+        "name": "safe"
+      },
+      {
+        "kind": "val",
+        "line": 160,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 164,
+        "name": "app"
+      },
+      {
+        "kind": "val",
+        "line": 171,
+        "name": "work"
+      },
+      {
+        "kind": "val",
+        "line": 174,
+        "name": "entries"
+      },
+      {
+        "kind": "var",
+        "line": 175,
+        "name": "donorManifest"
+      },
+      {
+        "kind": "val",
+        "line": 177,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 179,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 181,
+        "name": "data"
+      },
+      {
+        "kind": "val",
+        "line": 185,
+        "name": "inManifest"
+      },
+      {
+        "kind": "val",
+        "line": 193,
+        "name": "unsigned"
+      },
+      {
+        "kind": "val",
+        "line": 198,
+        "name": "crc"
+      },
+      {
+        "kind": "val",
+        "line": 199,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 204,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 209,
+        "name": "safeName"
+      },
+      {
+        "kind": "val",
+        "line": 210,
+        "name": "downloads"
+      },
+      {
+        "kind": "val",
+        "line": 212,
+        "name": "finalApk"
+      },
+      {
+        "kind": "val",
+        "line": 214,
+        "name": "aligned"
+      },
+      {
+        "kind": "val",
+        "line": 216,
+        "name": "cacheSigned"
+      },
+      {
+        "kind": "val",
+        "line": 222,
+        "name": "syncStatus"
+      },
+      {
+        "kind": "val",
+        "line": 243,
+        "name": "me"
+      },
+      {
+        "kind": "val",
+        "line": 245,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 246,
+        "name": "parsed"
+      },
+      {
+        "kind": "val",
+        "line": 248,
+        "name": "seenPkg"
+      },
+      {
+        "kind": "val",
+        "line": 250,
+        "name": "names"
+      },
+      {
+        "kind": "val",
+        "line": 251,
+        "name": "it"
+      },
+      {
+        "kind": "val",
+        "line": 260,
+        "name": "copy"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 5,
+      "org": 2
+    },
+    "file": "com/darkith/transliaison/DonorBuilder.kt",
+    "imports": [
+      "android.content.Context",
+      "org.json.JSONArray",
+      "org.json.JSONObject",
+      "java.io.File",
+      "java.io.FileOutputStream",
+      "java.util.zip.ZipEntry",
+      "java.util.zip.ZipFile",
+      "java.util.zip.ZipOutputStream"
+    ],
+    "loc": 268,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 7,
+        "name": "DonorUiConcat"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "merge"
+      },
+      {
+        "kind": "val",
+        "line": 17,
+        "name": "ui"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "ext"
+      },
+      {
+        "kind": "val",
+        "line": 34,
+        "name": "donorHtml"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "cssBlock"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "jsBlock"
+      },
+      {
+        "kind": "val",
+        "line": 45,
+        "name": "ext"
+      },
+      {
+        "kind": "val",
+        "line": 60,
+        "name": "donorBody"
+      },
+      {
+        "kind": "val",
+        "line": 61,
+        "name": "projectBody"
+      },
+      {
+        "kind": "val",
+        "line": 63,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 78,
+        "name": "merged"
+      },
+      {
+        "kind": "val",
+        "line": 79,
+        "name": "lo"
+      },
+      {
+        "kind": "val",
+        "line": 80,
+        "name": "so"
+      },
+      {
+        "kind": "val",
+        "line": 81,
+        "name": "sc"
+      },
+      {
+        "kind": "val",
+        "line": 82,
+        "name": "to"
+      },
+      {
+        "kind": "val",
+        "line": 83,
+        "name": "tc"
+      },
+      {
+        "kind": "val",
+        "line": 89,
+        "name": "lo"
+      },
+      {
+        "kind": "val",
+        "line": 90,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 91,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 93,
+        "name": "gt"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 3
+    },
+    "file": "com/darkith/transliaison/DonorUiConcat.kt",
+    "imports": [
+      "java.io.ByteArrayOutputStream",
+      "java.io.File",
+      "java.util.zip.ZipFile"
+    ],
+    "loc": 98,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 15,
+        "name": "EntryPointRewriter"
+      },
+      {
+        "kind": "fun",
+        "line": 29,
+        "name": "rewrite"
+      },
+      {
+        "kind": "val",
+        "line": 31,
+        "name": "entries"
+      },
+      {
+        "kind": "val",
+        "line": 33,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 39,
+        "name": "mi"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "origManifest"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "writer"
+      },
+      {
+        "kind": "val",
+        "line": 45,
+        "name": "template"
+      },
+      {
+        "kind": "var",
+        "line": 49,
+        "name": "patchedManifest"
+      },
+      {
+        "kind": "var",
+        "line": 50,
+        "name": "status"
+      },
+      {
+        "kind": "var",
+        "line": 51,
+        "name": "reason"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "at"
+      },
+      {
+        "kind": "val",
+        "line": 66,
+        "name": "target"
+      },
+      {
+        "kind": "val",
+        "line": 69,
+        "name": "receptorDex"
+      },
+      {
+        "kind": "val",
+        "line": 75,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 80,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 84,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 88,
+        "name": "e"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 5
+    },
+    "file": "com/darkith/transliaison/EntryPointRewriter.kt",
+    "imports": [
+      "android.content.Context",
+      "java.io.File",
+      "java.io.FileOutputStream",
+      "java.util.zip.ZipEntry",
+      "java.util.zip.ZipFile",
+      "java.util.zip.ZipOutputStream"
+    ],
+    "loc": 95,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 36,
+        "name": "HomekeeperActivity"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "am"
+      },
+      {
+        "kind": "val",
+        "line": 57,
+        "name": "desc"
+      },
+      {
+        "kind": "val",
+        "line": 70,
+        "name": "serviceIntent"
+      },
+      {
+        "kind": "val",
+        "line": 91,
+        "name": "url"
+      },
+      {
+        "kind": "val",
+        "line": 94,
+        "name": "path"
+      },
+      {
+        "kind": "val",
+        "line": 95,
+        "name": "file"
+      },
+      {
+        "kind": "fun",
+        "line": 128,
+        "name": "askAllFiles"
+      },
+      {
+        "kind": "val",
+        "line": 132,
+        "name": "intent"
+      },
+      {
+        "kind": "val",
+        "line": 154,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 158,
+        "name": "t"
+      },
+      {
+        "kind": "fun",
+        "line": 169,
+        "name": "launchChooser"
+      },
+      {
+        "kind": "val",
+        "line": 173,
+        "name": "intent"
+      },
+      {
+        "kind": "val",
+        "line": 177,
+        "name": "mimes"
+      },
+      {
+        "kind": "val",
+        "line": 199,
+        "name": "cb"
+      },
+      {
+        "kind": "var",
+        "line": 202,
+        "name": "results"
+      },
+      {
+        "kind": "val",
+        "line": 217,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 231,
+        "name": "layer"
+      },
+      {
+        "kind": "val",
+        "line": 241,
+        "name": "bar"
+      },
+      {
+        "kind": "val",
+        "line": 247,
+        "name": "url"
+      },
+      {
+        "kind": "val",
+        "line": 272,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 278,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 288,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 294,
+        "name": "bw"
+      },
+      {
+        "kind": "val",
+        "line": 306,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 307,
+        "name": "low"
+      },
+      {
+        "kind": "fun",
+        "line": 354,
+        "name": "showBrowser"
+      },
+      {
+        "kind": "fun",
+        "line": 361,
+        "name": "hideBrowser"
+      },
+      {
+        "kind": "val",
+        "line": 367,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 369,
+        "name": "target"
+      },
+      {
+        "kind": "val",
+        "line": 380,
+        "name": "bw"
+      },
+      {
+        "kind": "val",
+        "line": 387,
+        "name": "bl"
+      },
+      {
+        "kind": "val",
+        "line": 416,
+        "name": "bl"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 28,
+      "java": 3,
+      "org": 1
+    },
+    "file": "com/darkith/transliaison/HomekeeperActivity.kt",
+    "imports": [
+      "android.Manifest",
+      "android.app.Activity",
+      "android.app.ActivityManager",
+      "android.content.Context",
+      "android.content.Intent",
+      "android.graphics.Bitmap",
+      "android.graphics.Color",
+      "android.net.Uri",
+      "android.os.Build",
+      "android.os.Bundle",
+      "android.provider.Settings",
+      "android.text.InputType",
+      "android.view.Gravity",
+      "android.view.KeyEvent",
+      "android.view.View",
+      "android.view.ViewGroup",
+      "android.view.inputmethod.EditorInfo",
+      "android.webkit.ValueCallback",
+      "android.webkit.WebChromeClient",
+      "android.webkit.WebResourceRequest",
+      "android.webkit.WebResourceResponse",
+      "android.webkit.WebView",
+      "android.webkit.WebViewClient",
+      "android.widget.EditText",
+      "android.widget.FrameLayout",
+      "android.widget.LinearLayout",
+      "android.widget.ProgressBar",
+      "android.widget.TextView",
+      "org.json.JSONObject",
+      "java.io.File",
+      "java.io.FileInputStream",
+      "java.net.URLDecoder"
+    ],
+    "loc": 427,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 16,
+        "name": "HomekeeperBridge"
+      },
+      {
+        "kind": "var",
+        "line": 28,
+        "name": "s"
+      },
+      {
+        "kind": "val",
+        "line": 41,
+        "name": "pi"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "code"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "d"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 63,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 67,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 69,
+        "name": "b0"
+      },
+      {
+        "kind": "val",
+        "line": 78,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 89,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 97,
+        "name": "nativeDir"
+      },
+      {
+        "kind": "val",
+        "line": 98,
+        "name": "bash"
+      },
+      {
+        "kind": "val",
+        "line": 99,
+        "name": "execPath"
+      },
+      {
+        "kind": "val",
+        "line": 100,
+        "name": "cwd"
+      },
+      {
+        "kind": "val",
+        "line": 101,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "env"
+      },
+      {
+        "kind": "fun",
+        "line": 122,
+        "name": "shell"
+      },
+      {
+        "kind": "val",
+        "line": 124,
+        "name": "c"
+      },
+      {
+        "kind": "val",
+        "line": 126,
+        "name": "out"
+      },
+      {
+        "kind": "fun",
+        "line": 132,
+        "name": "shellExec"
+      },
+      {
+        "kind": "val",
+        "line": 134,
+        "name": "c"
+      },
+      {
+        "kind": "val",
+        "line": 136,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 137,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 138,
+        "name": "done"
+      },
+      {
+        "kind": "fun",
+        "line": 144,
+        "name": "shellSetCwd"
+      },
+      {
+        "kind": "val",
+        "line": 146,
+        "name": "d"
+      },
+      {
+        "kind": "fun",
+        "line": 153,
+        "name": "shellSetEnv"
+      },
+      {
+        "kind": "val",
+        "line": 155,
+        "name": "k"
+      },
+      {
+        "kind": "val",
+        "line": 158,
+        "name": "v"
+      },
+      {
+        "kind": "fun",
+        "line": 166,
+        "name": "shellEnv"
+      },
+      {
+        "kind": "val",
+        "line": 168,
+        "name": "e"
+      },
+      {
+        "kind": "fun",
+        "line": 179,
+        "name": "shellHistory"
+      },
+      {
+        "kind": "val",
+        "line": 181,
+        "name": "arr"
+      },
+      {
+        "kind": "fun",
+        "line": 190,
+        "name": "getInstalledApps"
+      },
+      {
+        "kind": "val",
+        "line": 192,
+        "name": "pm"
+      },
+      {
+        "kind": "val",
+        "line": 193,
+        "name": "q"
+      },
+      {
+        "kind": "val",
+        "line": 195,
+        "name": "seen"
+      },
+      {
+        "kind": "val",
+        "line": 196,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 198,
+        "name": "pkg"
+      },
+      {
+        "kind": "val",
+        "line": 200,
+        "name": "o"
+      },
+      {
+        "kind": "fun",
+        "line": 210,
+        "name": "getAppIcon"
+      },
+      {
+        "kind": "val",
+        "line": 212,
+        "name": "d"
+      },
+      {
+        "kind": "val",
+        "line": 213,
+        "name": "sz"
+      },
+      {
+        "kind": "val",
+        "line": 214,
+        "name": "bmp"
+      },
+      {
+        "kind": "val",
+        "line": 215,
+        "name": "c"
+      },
+      {
+        "kind": "val",
+        "line": 218,
+        "name": "bos"
+      },
+      {
+        "kind": "fun",
+        "line": 225,
+        "name": "launchApp"
+      },
+      {
+        "kind": "val",
+        "line": 227,
+        "name": "i"
+      },
+      {
+        "kind": "fun",
+        "line": 240,
+        "name": "memInfo"
+      },
+      {
+        "kind": "val",
+        "line": 242,
+        "name": "am"
+      },
+      {
+        "kind": "val",
+        "line": 243,
+        "name": "mi"
+      },
+      {
+        "kind": "val",
+        "line": 245,
+        "name": "pss"
+      },
+      {
+        "kind": "fun",
+        "line": 251,
+        "name": "zipPaths"
+      },
+      {
+        "kind": "val",
+        "line": 252,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 255,
+        "name": "arr"
+      },
+      {
+        "kind": "var",
+        "line": 256,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 257,
+        "name": "outC"
+      },
+      {
+        "kind": "fun",
+        "line": 259,
+        "name": "add"
+      },
+      {
+        "kind": "val",
+        "line": 262,
+        "name": "kids"
+      },
+      {
+        "kind": "fun",
+        "line": 279,
+        "name": "unzipTo"
+      },
+      {
+        "kind": "val",
+        "line": 281,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 282,
+        "name": "rootP"
+      },
+      {
+        "kind": "val",
+        "line": 283,
+        "name": "rootS"
+      },
+      {
+        "kind": "var",
+        "line": 284,
+        "name": "n"
+      },
+      {
+        "kind": "var",
+        "line": 286,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 288,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 289,
+        "name": "c"
+      },
+      {
+        "kind": "fun",
+        "line": 309,
+        "name": "openWith"
+      },
+      {
+        "kind": "val",
+        "line": 311,
+        "name": "uri"
+      },
+      {
+        "kind": "val",
+        "line": 312,
+        "name": "i"
+      },
+      {
+        "kind": "fun",
+        "line": 322,
+        "name": "shareFiles"
+      },
+      {
+        "kind": "val",
+        "line": 324,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 325,
+        "name": "uris"
+      },
+      {
+        "kind": "val",
+        "line": 328,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 332,
+        "name": "cd"
+      },
+      {
+        "kind": "val",
+        "line": 336,
+        "name": "ch"
+      },
+      {
+        "kind": "fun",
+        "line": 344,
+        "name": "openFolderIn"
+      },
+      {
+        "kind": "val",
+        "line": 346,
+        "name": "li"
+      },
+      {
+        "kind": "val",
+        "line": 350,
+        "name": "cm"
+      },
+      {
+        "kind": "val",
+        "line": 367,
+        "name": "d"
+      },
+      {
+        "kind": "val",
+        "line": 375,
+        "name": "o"
+      },
+      {
+        "kind": "val",
+        "line": 385,
+        "name": "kw"
+      },
+      {
+        "kind": "val",
+        "line": 386,
+        "name": "segs"
+      },
+      {
+        "kind": "var",
+        "line": 387,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 396,
+        "name": "core"
+      },
+      {
+        "kind": "val",
+        "line": 398,
+        "name": "head"
+      },
+      {
+        "kind": "fun",
+        "line": 403,
+        "name": "translateHtml"
+      },
+      {
+        "kind": "val",
+        "line": 406,
+        "name": "result"
+      },
+      {
+        "kind": "fun",
+        "line": 415,
+        "name": "healSource"
+      },
+      {
+        "kind": "val",
+        "line": 417,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 420,
+        "name": "log"
+      },
+      {
+        "kind": "val",
+        "line": 422,
+        "name": "origBytes"
+      },
+      {
+        "kind": "val",
+        "line": 423,
+        "name": "orig"
+      },
+      {
+        "kind": "var",
+        "line": 425,
+        "name": "dict"
+      },
+      {
+        "kind": "var",
+        "line": 426,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 428,
+        "name": "ing"
+      },
+      {
+        "kind": "val",
+        "line": 429,
+        "name": "recalled"
+      },
+      {
+        "kind": "val",
+        "line": 431,
+        "name": "sym"
+      },
+      {
+        "kind": "val",
+        "line": 433,
+        "name": "fqn"
+      },
+      {
+        "kind": "val",
+        "line": 438,
+        "name": "merged"
+      },
+      {
+        "kind": "var",
+        "line": 444,
+        "name": "applied"
+      },
+      {
+        "kind": "val",
+        "line": 446,
+        "name": "again"
+      },
+      {
+        "kind": "val",
+        "line": 448,
+        "name": "beforeSha"
+      },
+      {
+        "kind": "val",
+        "line": 449,
+        "name": "arch"
+      },
+      {
+        "kind": "val",
+        "line": 451,
+        "name": "archFile"
+      },
+      {
+        "kind": "val",
+        "line": 454,
+        "name": "newBytes"
+      },
+      {
+        "kind": "val",
+        "line": 455,
+        "name": "afterSha"
+      },
+      {
+        "kind": "val",
+        "line": 461,
+        "name": "rec"
+      },
+      {
+        "kind": "fun",
+        "line": 478,
+        "name": "ingestSubstrate"
+      },
+      {
+        "kind": "fun",
+        "line": 497,
+        "name": "forgeNative"
+      },
+      {
+        "kind": "val",
+        "line": 500,
+        "name": "name"
+      },
+      {
+        "kind": "val",
+        "line": 501,
+        "name": "pkg"
+      },
+      {
+        "kind": "fun",
+        "line": 513,
+        "name": "forgeRenderNative"
+      },
+      {
+        "kind": "fun",
+        "line": 523,
+        "name": "openOmegaScreen"
+      },
+      {
+        "kind": "val",
+        "line": 541,
+        "name": "sigs"
+      },
+      {
+        "kind": "val",
+        "line": 544,
+        "name": "md"
+      },
+      {
+        "kind": "val",
+        "line": 550,
+        "name": "id"
+      },
+      {
+        "kind": "val",
+        "line": 555,
+        "name": "mac"
+      },
+      {
+        "kind": "val",
+        "line": 556,
+        "name": "key"
+      },
+      {
+        "kind": "fun",
+        "line": 563,
+        "name": "signerSignature"
+      },
+      {
+        "kind": "val",
+        "line": 564,
+        "name": "nonce"
+      },
+      {
+        "kind": "val",
+        "line": 565,
+        "name": "digest"
+      },
+      {
+        "kind": "val",
+        "line": 566,
+        "name": "dev"
+      },
+      {
+        "kind": "val",
+        "line": 567,
+        "name": "sig"
+      },
+      {
+        "kind": "fun",
+        "line": 579,
+        "name": "verifySignerSignature"
+      },
+      {
+        "kind": "val",
+        "line": 580,
+        "name": "digest"
+      }
+    ],
+    "deps": {
+      "com.darkith.transliaison.core": 1
+    },
+    "ext": {
+      "android": 8,
+      "com": 1,
+      "java": 1,
+      "org": 2
+    },
+    "file": "com/darkith/transliaison/HomekeeperBridge.kt",
+    "imports": [
+      "android.content.ClipData",
+      "com.darkith.transliaison.core.NativeForgeBuilder",
+      "android.content.ClipboardManager",
+      "android.content.Context",
+      "android.content.Intent",
+      "android.net.Uri",
+      "android.os.Build",
+      "android.os.Environment",
+      "android.webkit.JavascriptInterface",
+      "org.json.JSONArray",
+      "org.json.JSONObject",
+      "java.io.File"
+    ],
+    "loc": 584,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 6,
+        "name": "KotlinUnzip"
+      },
+      {
+        "kind": "fun",
+        "line": 7,
+        "name": "list"
+      },
+      {
+        "kind": "val",
+        "line": 9,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 11,
+        "name": "sb"
+      },
+      {
+        "kind": "fun",
+        "line": 24,
+        "name": "extract"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "src"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "dst"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "dstCanon"
+      },
+      {
+        "kind": "var",
+        "line": 30,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 33,
+        "name": "target"
+      },
+      {
+        "kind": "fun",
+        "line": 49,
+        "name": "extractOne"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "src"
+      },
+      {
+        "kind": "val",
+        "line": 53,
+        "name": "dst"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "dstCanon"
+      },
+      {
+        "kind": "var",
+        "line": 55,
+        "name": "extracted"
+      },
+      {
+        "kind": "val",
+        "line": 57,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 59,
+        "name": "target"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 2
+    },
+    "file": "com/darkith/transliaison/KotlinUnzip.kt",
+    "imports": [
+      "java.io.File",
+      "java.util.zip.ZipFile"
+    ],
+    "loc": 73,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 7,
+        "name": "KotlinZip"
+      },
+      {
+        "kind": "fun",
+        "line": 8,
+        "name": "zip"
+      },
+      {
+        "kind": "val",
+        "line": 10,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 12,
+        "name": "baseDir"
+      },
+      {
+        "kind": "val",
+        "line": 13,
+        "name": "inputs"
+      },
+      {
+        "kind": "val",
+        "line": 17,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 32,
+        "name": "rel"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 3
+    },
+    "file": "com/darkith/transliaison/KotlinZip.kt",
+    "imports": [
+      "java.io.File",
+      "java.util.zip.ZipEntry",
+      "java.util.zip.ZipOutputStream"
+    ],
+    "loc": 40,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 11,
+        "name": "LaborClock"
+      },
+      {
+        "kind": "fun",
+        "line": 23,
+        "name": "start"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "j"
+      },
+      {
+        "kind": "fun",
+        "line": 33,
+        "name": "onEvent"
+      },
+      {
+        "kind": "fun",
+        "line": 34,
+        "name": "tick"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "now"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "delta"
+      },
+      {
+        "kind": "val",
+        "line": 40,
+        "name": "sec"
+      },
+      {
+        "kind": "val",
+        "line": 45,
+        "name": "nowStr"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "row"
+      },
+      {
+        "kind": "fun",
+        "line": 54,
+        "name": "todaySeconds"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "day"
+      },
+      {
+        "kind": "var",
+        "line": 57,
+        "name": "sum"
+      },
+      {
+        "kind": "val",
+        "line": 61,
+        "name": "j"
+      },
+      {
+        "kind": "fun",
+        "line": 68,
+        "name": "cumulativeHours"
+      },
+      {
+        "kind": "fun",
+        "line": 69,
+        "name": "sessionHours"
+      },
+      {
+        "kind": "fun",
+        "line": 71,
+        "name": "sessionStartIso"
+      },
+      {
+        "kind": "fun",
+        "line": 73,
+        "name": "persist"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 5,
+      "org": 1
+    },
+    "file": "com/darkith/transliaison/LaborClock.kt",
+    "imports": [
+      "android.os.SystemClock",
+      "org.json.JSONObject",
+      "java.io.File",
+      "java.text.SimpleDateFormat",
+      "java.util.Date",
+      "java.util.Locale",
+      "java.util.TimeZone"
+    ],
+    "loc": 84,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 18,
+        "name": "MainActivity"
+      },
+      {
+        "kind": "val",
+        "line": 30,
+        "name": "cb"
+      },
+      {
+        "kind": "val",
+        "line": 32,
+        "name": "uris"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "clip"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "bridge"
+      },
+      {
+        "kind": "val",
+        "line": 99,
+        "name": "intent"
+      },
+      {
+        "kind": "val",
+        "line": 116,
+        "name": "permissions"
+      },
+      {
+        "kind": "val",
+        "line": 137,
+        "name": "intent"
+      },
+      {
+        "kind": "val",
+        "line": 151,
+        "name": "allGranted"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 14
+    },
+    "file": "com/darkith/transliaison/MainActivity.kt",
+    "imports": [
+      "android.Manifest",
+      "android.app.Activity",
+      "android.content.Intent",
+      "android.content.pm.PackageManager",
+      "android.net.Uri",
+      "android.os.Build",
+      "android.os.Bundle",
+      "android.webkit.SslErrorHandler",
+      "android.webkit.ValueCallback",
+      "android.webkit.WebChromeClient",
+      "android.webkit.WebSettings",
+      "android.webkit.WebView",
+      "android.webkit.WebViewClient",
+      "android.widget.Toast"
+    ],
+    "loc": 162,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 19,
+        "name": "NativeTools"
+      },
+      {
+        "kind": "fun",
+        "line": 21,
+        "name": "nativeDir"
+      },
+      {
+        "kind": "fun",
+        "line": 24,
+        "name": "hasTool"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "f"
+      },
+      {
+        "kind": "fun",
+        "line": 34,
+        "name": "zipalign"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "tool"
+      },
+      {
+        "kind": "val",
+        "line": 38,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 53,
+        "name": "data"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "ne"
+      },
+      {
+        "kind": "val",
+        "line": 56,
+        "name": "crc"
+      },
+      {
+        "kind": "val",
+        "line": 59,
+        "name": "off"
+      },
+      {
+        "kind": "val",
+        "line": 60,
+        "name": "pad"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 6
+    },
+    "file": "com/darkith/transliaison/NativeTools.kt",
+    "imports": [
+      "android.content.Context",
+      "java.io.File",
+      "java.io.FileOutputStream",
+      "java.util.zip.CRC32",
+      "java.util.zip.ZipEntry",
+      "java.util.zip.ZipFile",
+      "java.util.zip.ZipOutputStream"
+    ],
+    "loc": 68,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 10,
+        "name": "ProgressDirectory"
+      },
+      {
+        "kind": "val",
+        "line": 14,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 15,
+        "name": "meta"
+      },
+      {
+        "kind": "val",
+        "line": 16,
+        "name": "progress"
+      },
+      {
+        "kind": "val",
+        "line": 17,
+        "name": "ledger"
+      },
+      {
+        "kind": "val",
+        "line": 18,
+        "name": "logs"
+      },
+      {
+        "kind": "val",
+        "line": 19,
+        "name": "docs"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "snapshots"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "donors"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "projects"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "corpusIn"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "bootstrap"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "engine"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "workspace"
+      },
+      {
+        "kind": "fun",
+        "line": 29,
+        "name": "ensure"
+      },
+      {
+        "kind": "fun",
+        "line": 34,
+        "name": "sha256"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "md"
+      },
+      {
+        "kind": "val",
+        "line": 39,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 41,
+        "name": "n"
+      },
+      {
+        "kind": "fun",
+        "line": 48,
+        "name": "writeMeta"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "now"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "sessionId"
+      },
+      {
+        "kind": "val",
+        "line": 60,
+        "name": "layout"
+      },
+      {
+        "kind": "val",
+        "line": 74,
+        "name": "project"
+      },
+      {
+        "kind": "val",
+        "line": 75,
+        "name": "merkle"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 6
+    },
+    "file": "com/darkith/transliaison/ProgressDirectory.kt",
+    "imports": [
+      "java.io.File",
+      "java.security.MessageDigest",
+      "java.text.SimpleDateFormat",
+      "java.util.Date",
+      "java.util.Locale",
+      "java.util.TimeZone"
+    ],
+    "loc": 102,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 12,
+        "name": "ProgressLedger"
+      },
+      {
+        "kind": "fun",
+        "line": 23,
+        "name": "start"
+      },
+      {
+        "kind": "fun",
+        "line": 34,
+        "name": "stop"
+      },
+      {
+        "kind": "fun",
+        "line": 43,
+        "name": "onEvent"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "safe"
+      },
+      {
+        "kind": "val",
+        "line": 48,
+        "name": "row"
+      },
+      {
+        "kind": "val",
+        "line": 58,
+        "name": "now"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 3,
+      "java": 5
+    },
+    "file": "com/darkith/transliaison/ProgressLedger.kt",
+    "imports": [
+      "android.content.Context",
+      "android.os.Handler",
+      "android.os.HandlerThread",
+      "java.io.File",
+      "java.text.SimpleDateFormat",
+      "java.util.Date",
+      "java.util.Locale",
+      "java.util.TimeZone"
+    ],
+    "loc": 68,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 9,
+        "name": "ShellBridge"
+      },
+      {
+        "kind": "fun",
+        "line": 11,
+        "name": "apkVerify"
+      },
+      {
+        "kind": "val",
+        "line": 12,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 14,
+        "name": "sb"
+      },
+      {
+        "kind": "var",
+        "line": 19,
+        "name": "count"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "buf"
+      },
+      {
+        "kind": "fun",
+        "line": 40,
+        "name": "apkSignature"
+      },
+      {
+        "kind": "val",
+        "line": 41,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "meta"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "en"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "raf"
+      },
+      {
+        "kind": "val",
+        "line": 53,
+        "name": "len"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "start"
+      },
+      {
+        "kind": "val",
+        "line": 56,
+        "name": "tail"
+      },
+      {
+        "kind": "val",
+        "line": 58,
+        "name": "magic"
+      },
+      {
+        "kind": "var",
+        "line": 59,
+        "name": "v2"
+      },
+      {
+        "kind": "var",
+        "line": 61,
+        "name": "j"
+      },
+      {
+        "kind": "fun",
+        "line": 71,
+        "name": "apkManifest"
+      },
+      {
+        "kind": "val",
+        "line": 72,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 76,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 77,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 78,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 80,
+        "name": "found"
+      },
+      {
+        "kind": "var",
+        "line": 81,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 82,
+        "name": "run"
+      },
+      {
+        "kind": "val",
+        "line": 84,
+        "name": "lo"
+      },
+      {
+        "kind": "val",
+        "line": 85,
+        "name": "hi"
+      },
+      {
+        "kind": "val",
+        "line": 86,
+        "name": "c"
+      },
+      {
+        "kind": "fun",
+        "line": 98,
+        "name": "apkInfo"
+      },
+      {
+        "kind": "val",
+        "line": 99,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 103,
+        "name": "sb"
+      },
+      {
+        "kind": "var",
+        "line": 106,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 107,
+        "name": "en"
+      },
+      {
+        "kind": "fun",
+        "line": 115,
+        "name": "shellExec"
+      },
+      {
+        "kind": "val",
+        "line": 116,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 119,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 120,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 121,
+        "name": "done"
+      },
+      {
+        "kind": "val",
+        "line": 126,
+        "name": "root"
+      },
+      {
+        "kind": "fun",
+        "line": 131,
+        "name": "pkgExtract"
+      },
+      {
+        "kind": "val",
+        "line": 132,
+        "name": "archive"
+      },
+      {
+        "kind": "val",
+        "line": 134,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 135,
+        "name": "dest"
+      },
+      {
+        "kind": "val",
+        "line": 138,
+        "name": "destCanon"
+      },
+      {
+        "kind": "var",
+        "line": 140,
+        "name": "count"
+      },
+      {
+        "kind": "var",
+        "line": 142,
+        "name": "entry"
+      },
+      {
+        "kind": "val",
+        "line": 144,
+        "name": "out"
+      },
+      {
+        "kind": "fun",
+        "line": 161,
+        "name": "pkgHash"
+      },
+      {
+        "kind": "val",
+        "line": 163,
+        "name": "md"
+      },
+      {
+        "kind": "fun",
+        "line": 168,
+        "name": "pkgInstallName"
+      },
+      {
+        "kind": "val",
+        "line": 169,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 170,
+        "name": "pkgDir"
+      },
+      {
+        "kind": "val",
+        "line": 171,
+        "name": "manifestFile"
+      },
+      {
+        "kind": "val",
+        "line": 174,
+        "name": "parsed"
+      },
+      {
+        "kind": "val",
+        "line": 175,
+        "name": "version"
+      },
+      {
+        "kind": "val",
+        "line": 176,
+        "name": "entry"
+      },
+      {
+        "kind": "val",
+        "line": 177,
+        "name": "surface"
+      },
+      {
+        "kind": "val",
+        "line": 178,
+        "name": "stateFile"
+      },
+      {
+        "kind": "val",
+        "line": 179,
+        "name": "existing"
+      },
+      {
+        "kind": "fun",
+        "line": 186,
+        "name": "pkgRemoveName"
+      },
+      {
+        "kind": "val",
+        "line": 187,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 188,
+        "name": "pkgDir"
+      },
+      {
+        "kind": "val",
+        "line": 192,
+        "name": "stateFile"
+      },
+      {
+        "kind": "val",
+        "line": 194,
+        "name": "kept"
+      },
+      {
+        "kind": "fun",
+        "line": 201,
+        "name": "pkgList"
+      },
+      {
+        "kind": "val",
+        "line": 202,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 203,
+        "name": "stateFile"
+      },
+      {
+        "kind": "val",
+        "line": 205,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 208,
+        "name": "p"
+      },
+      {
+        "kind": "fun",
+        "line": 216,
+        "name": "pkgRegistryDir"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 1,
+      "java": 4
+    },
+    "file": "com/darkith/transliaison/ShellBridge.kt",
+    "imports": [
+      "android.os.Environment",
+      "java.io.File",
+      "java.io.RandomAccessFile",
+      "java.util.zip.CRC32",
+      "java.util.zip.ZipFile"
+    ],
+    "loc": 218,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 5,
+        "name": "SynchronicityScheduler"
+      },
+      {
+        "kind": "fun",
+        "line": 10,
+        "name": "reset"
+      },
+      {
+        "kind": "fun",
+        "line": 11,
+        "name": "onBuildComplete"
+      },
+      {
+        "kind": "val",
+        "line": 14,
+        "name": "nonceArrived"
+      },
+      {
+        "kind": "fun",
+        "line": 17,
+        "name": "submitNonce"
+      },
+      {
+        "kind": "fun",
+        "line": 23,
+        "name": "calculateBurnRate"
+      },
+      {
+        "kind": "var",
+        "line": 24,
+        "name": "sum"
+      },
+      {
+        "kind": "fun",
+        "line": 28,
+        "name": "mintToken"
+      },
+      {
+        "kind": "val",
+        "line": 30,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 31,
+        "name": "vt"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 2,
+      "kotlin": 1
+    },
+    "file": "com/darkith/transliaison/SynchronicityScheduler.kt",
+    "imports": [
+      "java.util.concurrent.CountDownLatch",
+      "java.util.concurrent.TimeUnit",
+      "kotlin.math.sqrt"
+    ],
+    "loc": 34,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 8,
+        "name": "Timestamp"
+      },
+      {
+        "kind": "fun",
+        "line": 15,
+        "name": "now"
+      },
+      {
+        "kind": "fun",
+        "line": 17,
+        "name": "stamp"
+      },
+      {
+        "kind": "fun",
+        "line": 18,
+        "name": "err"
+      },
+      {
+        "kind": "fun",
+        "line": 19,
+        "name": "okk"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 4
+    },
+    "file": "com/darkith/transliaison/Timestamp.kt",
+    "imports": [
+      "java.text.SimpleDateFormat",
+      "java.util.Date",
+      "java.util.Locale",
+      "java.util.TimeZone"
+    ],
+    "loc": 20,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 8,
+        "name": "WifiDirectBroadcastReceiver"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 5
+    },
+    "file": "com/darkith/transliaison/WifiDirectBroadcastReceiver.kt",
+    "imports": [
+      "android.content.BroadcastReceiver",
+      "android.content.Context",
+      "android.content.Intent",
+      "android.net.wifi.p2p.WifiP2pManager",
+      "android.util.Log"
+    ],
+    "loc": 19,
+    "package": "com.darkith.transliaison",
+    "tier": "transliaison",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 4,
+        "name": "Allocation"
+      },
+      {
+        "kind": "val",
+        "line": 5,
+        "name": "vertexBudget"
+      },
+      {
+        "kind": "val",
+        "line": 6,
+        "name": "gpuConcurrency"
+      },
+      {
+        "kind": "val",
+        "line": 7,
+        "name": "resolutionScale"
+      },
+      {
+        "kind": "val",
+        "line": 8,
+        "name": "memoryResidual"
+      },
+      {
+        "kind": "val",
+        "line": 9,
+        "name": "budgetCeiling"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/Allocation.kt",
+    "imports": [],
+    "loc": 10,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 4,
+        "name": "Deficit"
+      },
+      {
+        "kind": "val",
+        "line": 5,
+        "name": "code"
+      },
+      {
+        "kind": "val",
+        "line": 6,
+        "name": "line"
+      },
+      {
+        "kind": "val",
+        "line": 7,
+        "name": "symbol"
+      },
+      {
+        "kind": "val",
+        "line": 8,
+        "name": "plain"
+      },
+      {
+        "kind": "class",
+        "line": 11,
+        "name": "HealOutcome"
+      },
+      {
+        "kind": "val",
+        "line": 12,
+        "name": "source"
+      },
+      {
+        "kind": "val",
+        "line": 14,
+        "name": "actions"
+      },
+      {
+        "kind": "val",
+        "line": 15,
+        "name": "deficits"
+      },
+      {
+        "kind": "object",
+        "line": 22,
+        "name": "HealerDictionary"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "imports"
+      },
+      {
+        "kind": "val",
+        "line": 68,
+        "name": "optIn"
+      },
+      {
+        "kind": "class",
+        "line": 78,
+        "name": "AutofillCorrector"
+      },
+      {
+        "kind": "fun",
+        "line": 80,
+        "name": "preAnalyze"
+      },
+      {
+        "kind": "val",
+        "line": 81,
+        "name": "missing"
+      },
+      {
+        "kind": "val",
+        "line": 82,
+        "name": "bodyOnly"
+      },
+      {
+        "kind": "val",
+        "line": 85,
+        "name": "used"
+      },
+      {
+        "kind": "fun",
+        "line": 91,
+        "name": "heal"
+      },
+      {
+        "kind": "val",
+        "line": 92,
+        "name": "missing"
+      },
+      {
+        "kind": "val",
+        "line": 93,
+        "name": "deficits"
+      },
+      {
+        "kind": "val",
+        "line": 94,
+        "name": "optIns"
+      },
+      {
+        "kind": "val",
+        "line": 96,
+        "name": "line"
+      },
+      {
+        "kind": "val",
+        "line": 98,
+        "name": "isError"
+      },
+      {
+        "kind": "val",
+        "line": 100,
+        "name": "lineNo"
+      },
+      {
+        "kind": "val",
+        "line": 101,
+        "name": "unresolved"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "opt"
+      },
+      {
+        "kind": "val",
+        "line": 104,
+        "name": "sym"
+      },
+      {
+        "kind": "val",
+        "line": 113,
+        "name": "marker"
+      },
+      {
+        "kind": "val",
+        "line": 127,
+        "name": "base"
+      },
+      {
+        "kind": "var",
+        "line": 128,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 129,
+        "name": "actions"
+      },
+      {
+        "kind": "val",
+        "line": 131,
+        "name": "ann"
+      },
+      {
+        "kind": "val",
+        "line": 143,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 144,
+        "name": "msg"
+      },
+      {
+        "kind": "val",
+        "line": 150,
+        "name": "pkg"
+      },
+      {
+        "kind": "val",
+        "line": 156,
+        "name": "lines"
+      },
+      {
+        "kind": "var",
+        "line": 157,
+        "name": "insertAt"
+      },
+      {
+        "kind": "val",
+        "line": 160,
+        "name": "pkgIdx"
+      },
+      {
+        "kind": "val",
+        "line": 163,
+        "name": "actions"
+      },
+      {
+        "kind": "val",
+        "line": 164,
+        "name": "newLines"
+      },
+      {
+        "kind": "val",
+        "line": 165,
+        "name": "optMarkers"
+      },
+      {
+        "kind": "val",
+        "line": 167,
+        "name": "fqn"
+      },
+      {
+        "kind": "val",
+        "line": 171,
+        "name": "marker"
+      },
+      {
+        "kind": "var",
+        "line": 175,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 177,
+        "name": "ann"
+      },
+      {
+        "kind": "val",
+        "line": 187,
+        "name": "UNRESOLVED"
+      },
+      {
+        "kind": "val",
+        "line": 188,
+        "name": "OPT_IN"
+      },
+      {
+        "kind": "val",
+        "line": 189,
+        "name": "LINE_NO"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/AutofillCorrector.kt",
+    "imports": [],
+    "loc": 191,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 14,
+        "name": "AutophagicAllocator"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "totalRamBytes"
+      },
+      {
+        "kind": "fun",
+        "line": 41,
+        "name": "tick"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "now"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "dt"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "safeFreeRam"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "safeGpuMem"
+      },
+      {
+        "kind": "val",
+        "line": 48,
+        "name": "safeCpuLoad"
+      },
+      {
+        "kind": "val",
+        "line": 49,
+        "name": "safeFrameMs"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "mBudget"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "error"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 56,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 57,
+        "name": "d"
+      },
+      {
+        "kind": "var",
+        "line": 58,
+        "name": "vNext"
+      },
+      {
+        "kind": "val",
+        "line": 64,
+        "name": "cGpu"
+      },
+      {
+        "kind": "val",
+        "line": 67,
+        "name": "memPressure"
+      },
+      {
+        "kind": "val",
+        "line": 68,
+        "name": "framePressure"
+      },
+      {
+        "kind": "var",
+        "line": 69,
+        "name": "sNext"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/core/AutophagicAllocator.kt",
+    "imports": [
+      "java.io.File"
+    ],
+    "loc": 81,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 9,
+        "name": "CssLite"
+      },
+      {
+        "kind": "val",
+        "line": 12,
+        "name": "specificity"
+      },
+      {
+        "kind": "val",
+        "line": 19,
+        "name": "vars"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "skipped"
+      },
+      {
+        "kind": "var",
+        "line": 23,
+        "name": "order"
+      },
+      {
+        "kind": "var",
+        "line": 28,
+        "name": "order"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "css"
+      },
+      {
+        "kind": "var",
+        "line": 30,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 31,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 33,
+        "name": "open"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "semi"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "pre"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "prelude"
+      },
+      {
+        "kind": "var",
+        "line": 43,
+        "name": "depth"
+      },
+      {
+        "kind": "var",
+        "line": 44,
+        "name": "j"
+      },
+      {
+        "kind": "val",
+        "line": 49,
+        "name": "bodyEnd"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 56,
+        "name": "decls"
+      },
+      {
+        "kind": "val",
+        "line": 58,
+        "name": "s"
+      },
+      {
+        "kind": "val",
+        "line": 64,
+        "name": "sel"
+      },
+      {
+        "kind": "val",
+        "line": 76,
+        "name": "m"
+      },
+      {
+        "kind": "val",
+        "line": 77,
+        "name": "tag"
+      },
+      {
+        "kind": "val",
+        "line": 78,
+        "name": "rest"
+      },
+      {
+        "kind": "var",
+        "line": 79,
+        "name": "id"
+      },
+      {
+        "kind": "val",
+        "line": 80,
+        "name": "cls"
+      },
+      {
+        "kind": "val",
+        "line": 84,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 89,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 90,
+        "name": "parts"
+      },
+      {
+        "kind": "var",
+        "line": 91,
+        "name": "depth"
+      },
+      {
+        "kind": "val",
+        "line": 92,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 104,
+        "name": "k"
+      },
+      {
+        "kind": "val",
+        "line": 106,
+        "name": "name"
+      },
+      {
+        "kind": "val",
+        "line": 107,
+        "name": "value"
+      },
+      {
+        "kind": "fun",
+        "line": 114,
+        "name": "resolve"
+      },
+      {
+        "kind": "val",
+        "line": 115,
+        "name": "matched"
+      },
+      {
+        "kind": "val",
+        "line": 117,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 120,
+        "name": "keys"
+      },
+      {
+        "kind": "val",
+        "line": 132,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 134,
+        "name": "id"
+      },
+      {
+        "kind": "var",
+        "line": 141,
+        "name": "cur"
+      },
+      {
+        "kind": "var",
+        "line": 142,
+        "name": "guard"
+      },
+      {
+        "kind": "val",
+        "line": 151,
+        "name": "COMMENT"
+      },
+      {
+        "kind": "val",
+        "line": 152,
+        "name": "SIMPLE"
+      },
+      {
+        "kind": "val",
+        "line": 153,
+        "name": "PART"
+      },
+      {
+        "kind": "val",
+        "line": 154,
+        "name": "VAR"
+      },
+      {
+        "kind": "object",
+        "line": 159,
+        "name": "CssMap"
+      },
+      {
+        "kind": "fun",
+        "line": 171,
+        "name": "inheritFrom"
+      },
+      {
+        "kind": "fun",
+        "line": 173,
+        "name": "px"
+      },
+      {
+        "kind": "val",
+        "line": 174,
+        "name": "m"
+      },
+      {
+        "kind": "val",
+        "line": 175,
+        "name": "num"
+      },
+      {
+        "kind": "val",
+        "line": 183,
+        "name": "part"
+      },
+      {
+        "kind": "fun",
+        "line": 187,
+        "name": "color"
+      },
+      {
+        "kind": "val",
+        "line": 188,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 189,
+        "name": "named"
+      },
+      {
+        "kind": "val",
+        "line": 192,
+        "name": "h"
+      },
+      {
+        "kind": "val",
+        "line": 202,
+        "name": "m"
+      },
+      {
+        "kind": "val",
+        "line": 203,
+        "name": "parts"
+      },
+      {
+        "kind": "fun",
+        "line": 205,
+        "name": "channel"
+      },
+      {
+        "kind": "val",
+        "line": 206,
+        "name": "x"
+      },
+      {
+        "kind": "val",
+        "line": 209,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 210,
+        "name": "g"
+      },
+      {
+        "kind": "val",
+        "line": 211,
+        "name": "b"
+      },
+      {
+        "kind": "var",
+        "line": 212,
+        "name": "a"
+      },
+      {
+        "kind": "val",
+        "line": 214,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 215,
+        "name": "av"
+      },
+      {
+        "kind": "fun",
+        "line": 223,
+        "name": "splitTop"
+      },
+      {
+        "kind": "val",
+        "line": 224,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 225,
+        "name": "sb"
+      },
+      {
+        "kind": "var",
+        "line": 226,
+        "name": "depth"
+      },
+      {
+        "kind": "fun",
+        "line": 243,
+        "name": "box"
+      },
+      {
+        "kind": "val",
+        "line": 244,
+        "name": "vals"
+      },
+      {
+        "kind": "val",
+        "line": 257,
+        "name": "c"
+      },
+      {
+        "kind": "fun",
+        "line": 263,
+        "name": "gridColumns"
+      },
+      {
+        "kind": "val",
+        "line": 264,
+        "name": "v"
+      },
+      {
+        "kind": "val",
+        "line": 265,
+        "name": "rep"
+      },
+      {
+        "kind": "fun",
+        "line": 288,
+        "name": "toStyle"
+      },
+      {
+        "kind": "var",
+        "line": 289,
+        "name": "pad"
+      },
+      {
+        "kind": "val",
+        "line": 290,
+        "name": "sides"
+      },
+      {
+        "kind": "val",
+        "line": 292,
+        "name": "base"
+      },
+      {
+        "kind": "val",
+        "line": 294,
+        "name": "side"
+      },
+      {
+        "kind": "val",
+        "line": 295,
+        "name": "sideVal"
+      },
+      {
+        "kind": "val",
+        "line": 300,
+        "name": "bg"
+      },
+      {
+        "kind": "var",
+        "line": 301,
+        "name": "borderW"
+      },
+      {
+        "kind": "var",
+        "line": 302,
+        "name": "borderC"
+      },
+      {
+        "kind": "val",
+        "line": 303,
+        "name": "border"
+      },
+      {
+        "kind": "val",
+        "line": 306,
+        "name": "w"
+      },
+      {
+        "kind": "val",
+        "line": 308,
+        "name": "c"
+      },
+      {
+        "kind": "var",
+        "line": 312,
+        "name": "radius"
+      },
+      {
+        "kind": "var",
+        "line": 313,
+        "name": "circle"
+      },
+      {
+        "kind": "val",
+        "line": 314,
+        "name": "br"
+      },
+      {
+        "kind": "val",
+        "line": 316,
+        "name": "first"
+      },
+      {
+        "kind": "val",
+        "line": 320,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 327,
+        "name": "width"
+      },
+      {
+        "kind": "val",
+        "line": 328,
+        "name": "height"
+      },
+      {
+        "kind": "val",
+        "line": 329,
+        "name": "weight"
+      },
+      {
+        "kind": "val",
+        "line": 330,
+        "name": "bold"
+      },
+      {
+        "kind": "val",
+        "line": 331,
+        "name": "gapV"
+      },
+      {
+        "kind": "val",
+        "line": 332,
+        "name": "flex"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/CssLite.kt",
+    "imports": [],
+    "loc": 355,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 16,
+        "name": "GpuScanner"
+      },
+      {
+        "kind": "fun",
+        "line": 27,
+        "name": "scan"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "size"
+      },
+      {
+        "kind": "fun",
+        "line": 34,
+        "name": "queryMaxTextureSize"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "a"
+      },
+      {
+        "kind": "fun",
+        "line": 43,
+        "name": "safetyCap"
+      },
+      {
+        "kind": "val",
+        "line": 45,
+        "name": "texBudget"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "ramBudget"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "cap"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 2
+    },
+    "file": "com/darkith/transliaison/core/GpuScanner.kt",
+    "imports": [
+      "android.opengl.GLES20",
+      "android.util.Log"
+    ],
+    "loc": 56,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 4,
+        "name": "DomNode"
+      },
+      {
+        "kind": "val",
+        "line": 5,
+        "name": "children"
+      },
+      {
+        "kind": "var",
+        "line": 6,
+        "name": "text"
+      },
+      {
+        "kind": "val",
+        "line": 7,
+        "name": "isText"
+      },
+      {
+        "kind": "fun",
+        "line": 9,
+        "name": "attr"
+      },
+      {
+        "kind": "fun",
+        "line": 11,
+        "name": "classes"
+      },
+      {
+        "kind": "fun",
+        "line": 13,
+        "name": "find"
+      },
+      {
+        "kind": "val",
+        "line": 16,
+        "name": "hit"
+      },
+      {
+        "kind": "fun",
+        "line": 22,
+        "name": "findAll"
+      },
+      {
+        "kind": "object",
+        "line": 30,
+        "name": "HtmlParser"
+      },
+      {
+        "kind": "fun",
+        "line": 35,
+        "name": "parse"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "root"
+      },
+      {
+        "kind": "var",
+        "line": 37,
+        "name": "cur"
+      },
+      {
+        "kind": "var",
+        "line": 38,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 39,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 41,
+        "name": "c"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "found"
+      },
+      {
+        "kind": "val",
+        "line": 44,
+        "name": "next"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 60,
+        "name": "e"
+      },
+      {
+        "kind": "val",
+        "line": 65,
+        "name": "name"
+      },
+      {
+        "kind": "var",
+        "line": 66,
+        "name": "up"
+      },
+      {
+        "kind": "val",
+        "line": 69,
+        "name": "p"
+      },
+      {
+        "kind": "var",
+        "line": 76,
+        "name": "j"
+      },
+      {
+        "kind": "val",
+        "line": 78,
+        "name": "name"
+      },
+      {
+        "kind": "val",
+        "line": 79,
+        "name": "attrs"
+      },
+      {
+        "kind": "var",
+        "line": 80,
+        "name": "selfClose"
+      },
+      {
+        "kind": "val",
+        "line": 93,
+        "name": "ns"
+      },
+      {
+        "kind": "val",
+        "line": 95,
+        "name": "an"
+      },
+      {
+        "kind": "var",
+        "line": 97,
+        "name": "av"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "q"
+      },
+      {
+        "kind": "val",
+        "line": 104,
+        "name": "qf"
+      },
+      {
+        "kind": "val",
+        "line": 105,
+        "name": "qe"
+      },
+      {
+        "kind": "val",
+        "line": 109,
+        "name": "vs"
+      },
+      {
+        "kind": "val",
+        "line": 116,
+        "name": "node"
+      },
+      {
+        "kind": "val",
+        "line": 123,
+        "name": "close"
+      },
+      {
+        "kind": "val",
+        "line": 124,
+        "name": "end"
+      },
+      {
+        "kind": "val",
+        "line": 125,
+        "name": "raw"
+      },
+      {
+        "kind": "val",
+        "line": 142,
+        "name": "t"
+      },
+      {
+        "kind": "fun",
+        "line": 154,
+        "name": "decodeEntities"
+      },
+      {
+        "kind": "val",
+        "line": 157,
+        "name": "g"
+      },
+      {
+        "kind": "val",
+        "line": 158,
+        "name": "decoded"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/HtmlDom.kt",
+    "imports": [],
+    "loc": 175,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 21,
+        "name": "IRAuditor"
+      },
+      {
+        "kind": "fun",
+        "line": 23,
+        "name": "healAndAudit"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "log"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "kept"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "healed"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "healed"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "cols"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/IRAuditor.kt",
+    "imports": [],
+    "loc": 84,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 15,
+        "name": "IRBuilder"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "quadCount"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "vertexCount"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "reason"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "textRunCount"
+      },
+      {
+        "kind": "fun",
+        "line": 28,
+        "name": "build"
+      },
+      {
+        "kind": "val",
+        "line": 32,
+        "name": "pad"
+      },
+      {
+        "kind": "var",
+        "line": 34,
+        "name": "y"
+      },
+      {
+        "kind": "val",
+        "line": 45,
+        "name": "st"
+      },
+      {
+        "kind": "val",
+        "line": 48,
+        "name": "pt"
+      },
+      {
+        "kind": "val",
+        "line": 49,
+        "name": "pr"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "pb"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "pl"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "gap"
+      },
+      {
+        "kind": "val",
+        "line": 53,
+        "name": "bx"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "bw"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "bh"
+      },
+      {
+        "kind": "var",
+        "line": 58,
+        "name": "cy"
+      },
+      {
+        "kind": "val",
+        "line": 65,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 66,
+        "name": "cw"
+      },
+      {
+        "kind": "var",
+        "line": 67,
+        "name": "maxY"
+      },
+      {
+        "kind": "val",
+        "line": 70,
+        "name": "ey"
+      },
+      {
+        "kind": "val",
+        "line": 77,
+        "name": "cols"
+      },
+      {
+        "kind": "val",
+        "line": 78,
+        "name": "gap"
+      },
+      {
+        "kind": "val",
+        "line": 79,
+        "name": "cw"
+      },
+      {
+        "kind": "var",
+        "line": 81,
+        "name": "cy"
+      },
+      {
+        "kind": "var",
+        "line": 82,
+        "name": "col"
+      },
+      {
+        "kind": "var",
+        "line": 83,
+        "name": "rowMax"
+      },
+      {
+        "kind": "val",
+        "line": 86,
+        "name": "ey"
+      },
+      {
+        "kind": "val",
+        "line": 87,
+        "name": "eh"
+      },
+      {
+        "kind": "val",
+        "line": 97,
+        "name": "h"
+      },
+      {
+        "kind": "val",
+        "line": 103,
+        "name": "h"
+      },
+      {
+        "kind": "val",
+        "line": 117,
+        "name": "gap"
+      },
+      {
+        "kind": "val",
+        "line": 118,
+        "name": "padV"
+      },
+      {
+        "kind": "val",
+        "line": 125,
+        "name": "cols"
+      },
+      {
+        "kind": "val",
+        "line": 126,
+        "name": "rows"
+      },
+      {
+        "kind": "val",
+        "line": 135,
+        "name": "lines"
+      },
+      {
+        "kind": "val",
+        "line": 148,
+        "name": "arr"
+      },
+      {
+        "kind": "var",
+        "line": 149,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 151,
+        "name": "x0"
+      },
+      {
+        "kind": "val",
+        "line": 152,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 153,
+        "name": "g"
+      },
+      {
+        "kind": "val",
+        "line": 154,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 155,
+        "name": "a"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "kotlin": 2
+    },
+    "file": "com/darkith/transliaison/core/IRBuilder.kt",
+    "imports": [
+      "kotlin.math.max",
+      "kotlin.math.min"
+    ],
+    "loc": 180,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 7,
+        "name": "StyleSpec"
+      },
+      {
+        "kind": "val",
+        "line": 8,
+        "name": "color"
+      },
+      {
+        "kind": "val",
+        "line": 9,
+        "name": "background"
+      },
+      {
+        "kind": "val",
+        "line": 10,
+        "name": "fontSize"
+      },
+      {
+        "kind": "val",
+        "line": 11,
+        "name": "bold"
+      },
+      {
+        "kind": "val",
+        "line": 12,
+        "name": "italic"
+      },
+      {
+        "kind": "val",
+        "line": 13,
+        "name": "centerText"
+      },
+      {
+        "kind": "val",
+        "line": 15,
+        "name": "padding"
+      },
+      {
+        "kind": "val",
+        "line": 16,
+        "name": "gap"
+      },
+      {
+        "kind": "val",
+        "line": 17,
+        "name": "width"
+      },
+      {
+        "kind": "val",
+        "line": 18,
+        "name": "height"
+      },
+      {
+        "kind": "val",
+        "line": 19,
+        "name": "fillWidth"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "fillHeight"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "radius"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "circle"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "borderWidth"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "borderColor"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "grow"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "alignItems"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "justify"
+      },
+      {
+        "kind": "class",
+        "line": 32,
+        "name": "LayoutNode"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "children"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "vertical"
+      },
+      {
+        "kind": "val",
+        "line": 42,
+        "name": "children"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "columns"
+      },
+      {
+        "kind": "val",
+        "line": 48,
+        "name": "text"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "label"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "actionId"
+      },
+      {
+        "kind": "val",
+        "line": 56,
+        "name": "isField"
+      },
+      {
+        "kind": "val",
+        "line": 61,
+        "name": "src"
+      },
+      {
+        "kind": "val",
+        "line": 62,
+        "name": "description"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/LayoutNode.kt",
+    "imports": [],
+    "loc": 65,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 13,
+        "name": "MemoryGovernor"
+      },
+      {
+        "kind": "fun",
+        "line": 33,
+        "name": "reciprocate"
+      },
+      {
+        "kind": "val",
+        "line": 34,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "m"
+      },
+      {
+        "kind": "val",
+        "line": 36,
+        "name": "totalAllocated"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "currentPressure"
+      },
+      {
+        "kind": "val",
+        "line": 38,
+        "name": "warnLine"
+      },
+      {
+        "kind": "val",
+        "line": 43,
+        "name": "overshoot"
+      },
+      {
+        "kind": "val",
+        "line": 44,
+        "name": "rendererShare"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "headroom"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "grow"
+      },
+      {
+        "kind": "class",
+        "line": 66,
+        "name": "CouplingAllocation"
+      },
+      {
+        "kind": "val",
+        "line": 67,
+        "name": "rendererMaxBytes"
+      },
+      {
+        "kind": "val",
+        "line": 68,
+        "name": "modelMaxBytes"
+      },
+      {
+        "kind": "val",
+        "line": 69,
+        "name": "systemPressure"
+      },
+      {
+        "kind": "val",
+        "line": 71,
+        "name": "selfOomSafe"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/core/MemoryGovernor.kt",
+    "imports": [
+      "java.util.concurrent.atomic.AtomicLong"
+    ],
+    "loc": 72,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 15,
+        "name": "NativeForgeBuilder"
+      },
+      {
+        "kind": "fun",
+        "line": 19,
+        "name": "execute"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "renderer"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "result"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "mutableNodes"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "healingLog"
+      },
+      {
+        "kind": "val",
+        "line": 31,
+        "name": "ledger"
+      },
+      {
+        "kind": "val",
+        "line": 40,
+        "name": "budget"
+      },
+      {
+        "kind": "val",
+        "line": 41,
+        "name": "healStatus"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 2,
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/core/NativeForgeBuilder.kt",
+    "imports": [
+      "android.content.Context",
+      "android.util.Log",
+      "java.io.File"
+    ],
+    "loc": 48,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 9,
+        "name": "NativeOmegaBuilder"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "freeRam"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "usedRam"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "cpuLoad"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "parts"
+      },
+      {
+        "kind": "val",
+        "line": 32,
+        "name": "idle"
+      },
+      {
+        "kind": "val",
+        "line": 33,
+        "name": "total"
+      },
+      {
+        "kind": "val",
+        "line": 34,
+        "name": "dT"
+      },
+      {
+        "kind": "val",
+        "line": 35,
+        "name": "dI"
+      },
+      {
+        "kind": "val",
+        "line": 41,
+        "name": "allocation"
+      },
+      {
+        "kind": "val",
+        "line": 44,
+        "name": "coupling"
+      },
+      {
+        "kind": "fun",
+        "line": 58,
+        "name": "start"
+      },
+      {
+        "kind": "fun",
+        "line": 64,
+        "name": "status"
+      },
+      {
+        "kind": "fun",
+        "line": 66,
+        "name": "stop"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 4,
+      "java": 1
+    },
+    "file": "com/darkith/transliaison/core/NativeOmegaBuilder.kt",
+    "imports": [
+      "android.content.Context",
+      "android.os.Debug",
+      "android.os.Handler",
+      "android.os.Looper",
+      "java.io.File"
+    ],
+    "loc": 70,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 25,
+        "name": "OmegaActivity"
+      },
+      {
+        "kind": "val",
+        "line": 60,
+        "name": "root"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 13
+    },
+    "file": "com/darkith/transliaison/core/OmegaActivity.kt",
+    "imports": [
+      "android.app.Activity",
+      "android.content.Context",
+      "android.graphics.Color",
+      "android.graphics.Typeface",
+      "android.opengl.GLSurfaceView",
+      "android.os.Bundle",
+      "android.os.Handler",
+      "android.os.Looper",
+      "android.util.TypedValue",
+      "android.view.Gravity",
+      "android.view.WindowManager",
+      "android.widget.FrameLayout",
+      "android.widget.TextView"
+    ],
+    "loc": 85,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 25,
+        "name": "OmegaRenderer"
+      },
+      {
+        "kind": "val",
+        "line": 77,
+        "name": "rt"
+      },
+      {
+        "kind": "fun",
+        "line": 91,
+        "name": "apply"
+      },
+      {
+        "kind": "var",
+        "line": 93,
+        "name": "res"
+      },
+      {
+        "kind": "val",
+        "line": 94,
+        "name": "w"
+      },
+      {
+        "kind": "val",
+        "line": 96,
+        "name": "room"
+      },
+      {
+        "kind": "val",
+        "line": 97,
+        "name": "capScale"
+      },
+      {
+        "kind": "fun",
+        "line": 110,
+        "name": "tickFrameBoundary"
+      },
+      {
+        "kind": "val",
+        "line": 111,
+        "name": "free"
+      },
+      {
+        "kind": "val",
+        "line": 112,
+        "name": "alloc"
+      },
+      {
+        "kind": "val",
+        "line": 113,
+        "name": "gov"
+      },
+      {
+        "kind": "val",
+        "line": 114,
+        "name": "cap"
+      },
+      {
+        "kind": "val",
+        "line": 115,
+        "name": "quadsFromCap"
+      },
+      {
+        "kind": "val",
+        "line": 116,
+        "name": "safeV"
+      },
+      {
+        "kind": "fun",
+        "line": 149,
+        "name": "applyLayoutNodes"
+      },
+      {
+        "kind": "val",
+        "line": 156,
+        "name": "nodes"
+      },
+      {
+        "kind": "val",
+        "line": 158,
+        "name": "budget"
+      },
+      {
+        "kind": "val",
+        "line": 160,
+        "name": "verts"
+      },
+      {
+        "kind": "val",
+        "line": 170,
+        "name": "now"
+      },
+      {
+        "kind": "val",
+        "line": 171,
+        "name": "dtMs"
+      },
+      {
+        "kind": "val",
+        "line": 177,
+        "name": "pr"
+      },
+      {
+        "kind": "val",
+        "line": 183,
+        "name": "ps"
+      },
+      {
+        "kind": "val",
+        "line": 208,
+        "name": "maxQuads"
+      },
+      {
+        "kind": "val",
+        "line": 214,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 223,
+        "name": "posLoc"
+      },
+      {
+        "kind": "val",
+        "line": 224,
+        "name": "colLoc"
+      },
+      {
+        "kind": "val",
+        "line": 225,
+        "name": "vpLoc"
+      },
+      {
+        "kind": "val",
+        "line": 251,
+        "name": "now"
+      },
+      {
+        "kind": "val",
+        "line": 252,
+        "name": "isTick"
+      },
+      {
+        "kind": "val",
+        "line": 256,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 263,
+        "name": "frameError"
+      },
+      {
+        "kind": "var",
+        "line": 264,
+        "name": "nextRes"
+      },
+      {
+        "kind": "var",
+        "line": 269,
+        "name": "nextSub"
+      },
+      {
+        "kind": "val",
+        "line": 277,
+        "name": "w"
+      },
+      {
+        "kind": "val",
+        "line": 278,
+        "name": "h"
+      },
+      {
+        "kind": "val",
+        "line": 285,
+        "name": "texIds"
+      },
+      {
+        "kind": "val",
+        "line": 294,
+        "name": "rbIds"
+      },
+      {
+        "kind": "val",
+        "line": 298,
+        "name": "fbIds"
+      },
+      {
+        "kind": "val",
+        "line": 302,
+        "name": "fbStatus"
+      },
+      {
+        "kind": "val",
+        "line": 312,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 313,
+        "name": "verts"
+      },
+      {
+        "kind": "var",
+        "line": 314,
+        "name": "vi"
+      },
+      {
+        "kind": "val",
+        "line": 320,
+        "name": "idx"
+      },
+      {
+        "kind": "val",
+        "line": 322,
+        "name": "a"
+      },
+      {
+        "kind": "val",
+        "line": 323,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 324,
+        "name": "c"
+      },
+      {
+        "kind": "val",
+        "line": 325,
+        "name": "d"
+      },
+      {
+        "kind": "val",
+        "line": 331,
+        "name": "vb"
+      },
+      {
+        "kind": "val",
+        "line": 333,
+        "name": "ib"
+      },
+      {
+        "kind": "val",
+        "line": 350,
+        "name": "model"
+      },
+      {
+        "kind": "val",
+        "line": 353,
+        "name": "vm"
+      },
+      {
+        "kind": "val",
+        "line": 358,
+        "name": "posLoc"
+      },
+      {
+        "kind": "val",
+        "line": 359,
+        "name": "mvpLoc"
+      },
+      {
+        "kind": "val",
+        "line": 360,
+        "name": "colorLoc"
+      },
+      {
+        "kind": "val",
+        "line": 373,
+        "name": "posLoc"
+      },
+      {
+        "kind": "val",
+        "line": 374,
+        "name": "uvLoc"
+      },
+      {
+        "kind": "val",
+        "line": 375,
+        "name": "texLoc"
+      },
+      {
+        "kind": "val",
+        "line": 390,
+        "name": "data"
+      },
+      {
+        "kind": "val",
+        "line": 391,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 393,
+        "name": "id"
+      },
+      {
+        "kind": "val",
+        "line": 400,
+        "name": "vs"
+      },
+      {
+        "kind": "val",
+        "line": 401,
+        "name": "fs"
+      },
+      {
+        "kind": "val",
+        "line": 402,
+        "name": "prog"
+      },
+      {
+        "kind": "val",
+        "line": 406,
+        "name": "st"
+      },
+      {
+        "kind": "val",
+        "line": 409,
+        "name": "log"
+      },
+      {
+        "kind": "val",
+        "line": 418,
+        "name": "id"
+      },
+      {
+        "kind": "val",
+        "line": 421,
+        "name": "st"
+      },
+      {
+        "kind": "val",
+        "line": 424,
+        "name": "log"
+      },
+      {
+        "kind": "fun",
+        "line": 449,
+        "name": "registerLive"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "android": 4,
+      "java": 2,
+      "javax": 2,
+      "kotlin": 3
+    },
+    "file": "com/darkith/transliaison/core/OmegaRenderer.kt",
+    "imports": [
+      "android.opengl.GLES20",
+      "android.opengl.GLSurfaceView",
+      "android.opengl.Matrix",
+      "android.util.Log",
+      "java.nio.ByteBuffer",
+      "java.nio.ByteOrder",
+      "javax.microedition.khronos.egl.EGLConfig",
+      "javax.microedition.khronos.opengles.GL10",
+      "kotlin.math.max",
+      "kotlin.math.min",
+      "kotlin.math.sqrt"
+    ],
+    "loc": 454,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "object",
+        "line": 7,
+        "name": "SelfTest"
+      },
+      {
+        "kind": "fun",
+        "line": 10,
+        "name": "run"
+      },
+      {
+        "kind": "val",
+        "line": 11,
+        "name": "out"
+      },
+      {
+        "kind": "fun",
+        "line": 12,
+        "name": "check"
+      },
+      {
+        "kind": "val",
+        "line": 14,
+        "name": "problem"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "engine"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "s"
+      },
+      {
+        "kind": "val",
+        "line": 30,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 31,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 37,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 38,
+        "name": "s"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "html"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "g"
+      },
+      {
+        "kind": "val",
+        "line": 54,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 59,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 64,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 68,
+        "name": "html"
+      },
+      {
+        "kind": "val",
+        "line": 71,
+        "name": "res"
+      },
+      {
+        "kind": "val",
+        "line": 79,
+        "name": "mutable"
+      },
+      {
+        "kind": "val",
+        "line": 84,
+        "name": "verts"
+      },
+      {
+        "kind": "val",
+        "line": 88,
+        "name": "healer"
+      },
+      {
+        "kind": "val",
+        "line": 90,
+        "name": "p"
+      },
+      {
+        "kind": "val",
+        "line": 94,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 98,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "r"
+      },
+      {
+        "kind": "fun",
+        "line": 109,
+        "name": "balanced"
+      },
+      {
+        "kind": "val",
+        "line": 110,
+        "name": "stack"
+      },
+      {
+        "kind": "var",
+        "line": 111,
+        "name": "inStr"
+      },
+      {
+        "kind": "var",
+        "line": 112,
+        "name": "i"
+      },
+      {
+        "kind": "val",
+        "line": 114,
+        "name": "c"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/SelfTest.kt",
+    "imports": [],
+    "loc": 130,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 19,
+        "name": "IngestBoundary"
+      },
+      {
+        "kind": "val",
+        "line": 20,
+        "name": "state"
+      },
+      {
+        "kind": "val",
+        "line": 21,
+        "name": "property"
+      },
+      {
+        "kind": "val",
+        "line": 22,
+        "name": "capacity"
+      },
+      {
+        "kind": "val",
+        "line": 23,
+        "name": "function"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "boundary"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "language"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "dialect"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "version"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "sourceSha256"
+      },
+      {
+        "kind": "fun",
+        "line": 30,
+        "name": "fields"
+      },
+      {
+        "kind": "fun",
+        "line": 36,
+        "name": "holds"
+      },
+      {
+        "kind": "fun",
+        "line": 38,
+        "name": "toJson"
+      },
+      {
+        "kind": "val",
+        "line": 39,
+        "name": "o"
+      },
+      {
+        "kind": "class",
+        "line": 45,
+        "name": "IngestArtifact"
+      },
+      {
+        "kind": "val",
+        "line": 46,
+        "name": "source"
+      },
+      {
+        "kind": "val",
+        "line": 47,
+        "name": "url"
+      },
+      {
+        "kind": "val",
+        "line": 48,
+        "name": "language"
+      },
+      {
+        "kind": "val",
+        "line": 49,
+        "name": "snippet"
+      },
+      {
+        "kind": "val",
+        "line": 50,
+        "name": "snippetSha256"
+      },
+      {
+        "kind": "val",
+        "line": 51,
+        "name": "fetchSha256"
+      },
+      {
+        "kind": "val",
+        "line": 52,
+        "name": "boundary"
+      },
+      {
+        "kind": "fun",
+        "line": 54,
+        "name": "toJson"
+      },
+      {
+        "kind": "val",
+        "line": 55,
+        "name": "o"
+      },
+      {
+        "kind": "class",
+        "line": 67,
+        "name": "IngestDeficit"
+      },
+      {
+        "kind": "class",
+        "line": 70,
+        "name": "IngestOutcome"
+      },
+      {
+        "kind": "fun",
+        "line": 71,
+        "name": "status"
+      },
+      {
+        "kind": "fun",
+        "line": 73,
+        "name": "toBridgeString"
+      },
+      {
+        "kind": "val",
+        "line": 75,
+        "name": "o"
+      },
+      {
+        "kind": "val",
+        "line": 77,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 80,
+        "name": "d"
+      },
+      {
+        "kind": "val",
+        "line": 82,
+        "name": "e"
+      },
+      {
+        "kind": "class",
+        "line": 98,
+        "name": "SubstrateIngestor"
+      },
+      {
+        "kind": "fun",
+        "line": 112,
+        "name": "formatDeficits"
+      },
+      {
+        "kind": "fun",
+        "line": 118,
+        "name": "sha256"
+      },
+      {
+        "kind": "val",
+        "line": 119,
+        "name": "d"
+      },
+      {
+        "kind": "val",
+        "line": 120,
+        "name": "sb"
+      },
+      {
+        "kind": "fun",
+        "line": 125,
+        "name": "sha256"
+      },
+      {
+        "kind": "val",
+        "line": 131,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 132,
+        "name": "buf"
+      },
+      {
+        "kind": "val",
+        "line": 134,
+        "name": "n"
+      },
+      {
+        "kind": "var",
+        "line": 145,
+        "name": "c"
+      },
+      {
+        "kind": "val",
+        "line": 155,
+        "name": "code"
+      },
+      {
+        "kind": "val",
+        "line": 159,
+        "name": "bytes"
+      },
+      {
+        "kind": "val",
+        "line": 173,
+        "name": "v"
+      },
+      {
+        "kind": "var",
+        "line": 182,
+        "name": "s"
+      },
+      {
+        "kind": "val",
+        "line": 192,
+        "name": "ext"
+      },
+      {
+        "kind": "val",
+        "line": 193,
+        "name": "dialect"
+      },
+      {
+        "kind": "val",
+        "line": 204,
+        "name": "lang"
+      },
+      {
+        "kind": "val",
+        "line": 205,
+        "name": "vm"
+      },
+      {
+        "kind": "val",
+        "line": 206,
+        "name": "version"
+      },
+      {
+        "kind": "val",
+        "line": 207,
+        "name": "terms"
+      },
+      {
+        "kind": "val",
+        "line": 208,
+        "name": "low"
+      },
+      {
+        "kind": "val",
+        "line": 209,
+        "name": "hit"
+      },
+      {
+        "kind": "val",
+        "line": 210,
+        "name": "rec"
+      },
+      {
+        "kind": "val",
+        "line": 225,
+        "name": "b"
+      },
+      {
+        "kind": "val",
+        "line": 232,
+        "name": "node"
+      },
+      {
+        "kind": "var",
+        "line": 233,
+        "name": "url"
+      },
+      {
+        "kind": "val",
+        "line": 235,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 236,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 238,
+        "name": "hits"
+      },
+      {
+        "kind": "val",
+        "line": 240,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 242,
+        "name": "h"
+      },
+      {
+        "kind": "val",
+        "line": 243,
+        "name": "repo"
+      },
+      {
+        "kind": "val",
+        "line": 244,
+        "name": "path"
+      },
+      {
+        "kind": "val",
+        "line": 245,
+        "name": "snip"
+      },
+      {
+        "kind": "val",
+        "line": 247,
+        "name": "a"
+      },
+      {
+        "kind": "val",
+        "line": 257,
+        "name": "node"
+      },
+      {
+        "kind": "val",
+        "line": 258,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 259,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 261,
+        "name": "results"
+      },
+      {
+        "kind": "val",
+        "line": 263,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 265,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 266,
+        "name": "lang"
+      },
+      {
+        "kind": "val",
+        "line": 268,
+        "name": "lines"
+      },
+      {
+        "kind": "val",
+        "line": 269,
+        "name": "rows"
+      },
+      {
+        "kind": "val",
+        "line": 270,
+        "name": "keys"
+      },
+      {
+        "kind": "val",
+        "line": 272,
+        "name": "k"
+      },
+      {
+        "kind": "val",
+        "line": 275,
+        "name": "snip"
+      },
+      {
+        "kind": "val",
+        "line": 276,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 278,
+        "name": "a"
+      },
+      {
+        "kind": "val",
+        "line": 288,
+        "name": "node"
+      },
+      {
+        "kind": "val",
+        "line": 292,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 293,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 295,
+        "name": "arr"
+      },
+      {
+        "kind": "val",
+        "line": 296,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 298,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 300,
+        "name": "a"
+      },
+      {
+        "kind": "val",
+        "line": 310,
+        "name": "node"
+      },
+      {
+        "kind": "val",
+        "line": 311,
+        "name": "q"
+      },
+      {
+        "kind": "val",
+        "line": 312,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 316,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 318,
+        "name": "items"
+      },
+      {
+        "kind": "val",
+        "line": 320,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 322,
+        "name": "it0"
+      },
+      {
+        "kind": "val",
+        "line": 323,
+        "name": "u"
+      },
+      {
+        "kind": "val",
+        "line": 324,
+        "name": "tm"
+      },
+      {
+        "kind": "val",
+        "line": 325,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 327,
+        "name": "snip"
+      },
+      {
+        "kind": "val",
+        "line": 329,
+        "name": "a"
+      },
+      {
+        "kind": "fun",
+        "line": 340,
+        "name": "ingest"
+      },
+      {
+        "kind": "val",
+        "line": 341,
+        "name": "query"
+      },
+      {
+        "kind": "val",
+        "line": 342,
+        "name": "language"
+      },
+      {
+        "kind": "val",
+        "line": 346,
+        "name": "deficits"
+      },
+      {
+        "kind": "val",
+        "line": 347,
+        "name": "found"
+      },
+      {
+        "kind": "val",
+        "line": 348,
+        "name": "pool"
+      },
+      {
+        "kind": "val",
+        "line": 350,
+        "name": "tasks"
+      },
+      {
+        "kind": "val",
+        "line": 354,
+        "name": "tok"
+      },
+      {
+        "kind": "val",
+        "line": 356,
+        "name": "futures"
+      },
+      {
+        "kind": "val",
+        "line": 359,
+        "name": "r"
+      },
+      {
+        "kind": "val",
+        "line": 369,
+        "name": "seen"
+      },
+      {
+        "kind": "val",
+        "line": 370,
+        "name": "unique"
+      },
+      {
+        "kind": "val",
+        "line": 372,
+        "name": "w"
+      },
+      {
+        "kind": "val",
+        "line": 376,
+        "name": "cached"
+      },
+      {
+        "kind": "val",
+        "line": 391,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 395,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 397,
+        "name": "o"
+      },
+      {
+        "kind": "val",
+        "line": 412,
+        "name": "f"
+      },
+      {
+        "kind": "val",
+        "line": 414,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 423,
+        "name": "terms"
+      },
+      {
+        "kind": "val",
+        "line": 424,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 426,
+        "name": "lang"
+      },
+      {
+        "kind": "val",
+        "line": 428,
+        "name": "snip"
+      },
+      {
+        "kind": "val",
+        "line": 430,
+        "name": "bo"
+      },
+      {
+        "kind": "val",
+        "line": 431,
+        "name": "b"
+      },
+      {
+        "kind": "fun",
+        "line": 444,
+        "name": "recallImport"
+      },
+      {
+        "kind": "val",
+        "line": 446,
+        "name": "rx"
+      },
+      {
+        "kind": "val",
+        "line": 447,
+        "name": "votes"
+      },
+      {
+        "kind": "val",
+        "line": 449,
+        "name": "lang"
+      },
+      {
+        "kind": "val",
+        "line": 452,
+        "name": "m"
+      },
+      {
+        "kind": "val",
+        "line": 453,
+        "name": "pkg"
+      },
+      {
+        "kind": "val",
+        "line": 455,
+        "name": "full"
+      },
+      {
+        "kind": "var",
+        "line": 460,
+        "name": "best"
+      },
+      {
+        "kind": "var",
+        "line": 461,
+        "name": "bestN"
+      }
+    ],
+    "deps": {},
+    "ext": {
+      "java": 12,
+      "org": 2
+    },
+    "file": "com/darkith/transliaison/core/SubstrateIngestor.kt",
+    "imports": [
+      "org.json.JSONArray",
+      "org.json.JSONObject",
+      "java.io.ByteArrayOutputStream",
+      "java.io.File",
+      "java.io.InputStream",
+      "java.net.HttpURLConnection",
+      "java.net.SocketTimeoutException",
+      "java.net.URL",
+      "java.net.URLEncoder",
+      "java.net.UnknownHostException",
+      "java.security.MessageDigest",
+      "java.util.concurrent.Callable",
+      "java.util.concurrent.Executors",
+      "java.util.concurrent.TimeUnit"
+    ],
+    "loc": 467,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  },
+  {
+    "decls": [
+      {
+        "kind": "class",
+        "line": 7,
+        "name": "TransliaisonEngine"
+      },
+      {
+        "kind": "val",
+        "line": 10,
+        "name": "nodes"
+      },
+      {
+        "kind": "val",
+        "line": 11,
+        "name": "rootStyle"
+      },
+      {
+        "kind": "val",
+        "line": 13,
+        "name": "report"
+      },
+      {
+        "kind": "var",
+        "line": 17,
+        "name": "buttonSeq"
+      },
+      {
+        "kind": "val",
+        "line": 18,
+        "name": "ignored"
+      },
+      {
+        "kind": "fun",
+        "line": 21,
+        "name": "translate"
+      },
+      {
+        "kind": "fun",
+        "line": 23,
+        "name": "translateWithReport"
+      },
+      {
+        "kind": "val",
+        "line": 24,
+        "name": "root"
+      },
+      {
+        "kind": "val",
+        "line": 25,
+        "name": "css"
+      },
+      {
+        "kind": "val",
+        "line": 26,
+        "name": "body"
+      },
+      {
+        "kind": "val",
+        "line": 27,
+        "name": "ctx"
+      },
+      {
+        "kind": "val",
+        "line": 28,
+        "name": "bodyProps"
+      },
+      {
+        "kind": "val",
+        "line": 29,
+        "name": "rootStyle"
+      },
+      {
+        "kind": "val",
+        "line": 30,
+        "name": "nodes"
+      },
+      {
+        "kind": "val",
+        "line": 31,
+        "name": "report"
+      },
+      {
+        "kind": "val",
+        "line": 68,
+        "name": "sb"
+      },
+      {
+        "kind": "val",
+        "line": 74,
+        "name": "out"
+      },
+      {
+        "kind": "val",
+        "line": 75,
+        "name": "group"
+      },
+      {
+        "kind": "val",
+        "line": 76,
+        "name": "run"
+      },
+      {
+        "kind": "fun",
+        "line": 78,
+        "name": "flushRun"
+      },
+      {
+        "kind": "val",
+        "line": 79,
+        "name": "t"
+      },
+      {
+        "kind": "fun",
+        "line": 84,
+        "name": "flushGroup"
+      },
+      {
+        "kind": "val",
+        "line": 102,
+        "name": "own"
+      },
+      {
+        "kind": "val",
+        "line": 103,
+        "name": "d"
+      },
+      {
+        "kind": "val",
+        "line": 106,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 110,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 116,
+        "name": "t"
+      },
+      {
+        "kind": "val",
+        "line": 118,
+        "name": "props"
+      },
+      {
+        "kind": "val",
+        "line": 127,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 142,
+        "name": "own"
+      },
+      {
+        "kind": "val",
+        "line": 145,
+        "name": "props"
+      },
+      {
+        "kind": "val",
+        "line": 148,
+        "name": "style"
+      },
+      {
+        "kind": "val",
+        "line": 149,
+        "name": "tag"
+      },
+      {
+        "kind": "val",
+        "line": 153,
+        "name": "label"
+      },
+      {
+        "kind": "val",
+        "line": 157,
+        "name": "href"
+      },
+      {
+        "kind": "val",
+        "line": 159,
+        "name": "label"
+      },
+      {
+        "kind": "val",
+        "line": 164,
+        "name": "type"
+      },
+      {
+        "kind": "val",
+        "line": 167,
+        "name": "label"
+      },
+      {
+        "kind": "val",
+        "line": 170,
+        "name": "hint"
+      },
+      {
+        "kind": "val",
+        "line": 174,
+        "name": "hint"
+      },
+      {
+        "kind": "val",
+        "line": 178,
+        "name": "first"
+      },
+      {
+        "kind": "val",
+        "line": 179,
+        "name": "label"
+      },
+      {
+        "kind": "val",
+        "line": 191,
+        "name": "display"
+      },
+      {
+        "kind": "val",
+        "line": 192,
+        "name": "flexLike"
+      },
+      {
+        "kind": "val",
+        "line": 193,
+        "name": "kids"
+      },
+      {
+        "kind": "val",
+        "line": 199,
+        "name": "only"
+      },
+      {
+        "kind": "val",
+        "line": 204,
+        "name": "vertical"
+      },
+      {
+        "kind": "val",
+        "line": 211,
+        "name": "act"
+      },
+      {
+        "kind": "val",
+        "line": 213,
+        "name": "id"
+      },
+      {
+        "kind": "val",
+        "line": 215,
+        "name": "n"
+      },
+      {
+        "kind": "val",
+        "line": 221,
+        "name": "SKIP"
+      },
+      {
+        "kind": "val",
+        "line": 222,
+        "name": "INLINE"
+      },
+      {
+        "kind": "val",
+        "line": 223,
+        "name": "IGNORED"
+      }
+    ],
+    "deps": {},
+    "ext": {},
+    "file": "com/darkith/transliaison/core/TransliaisonEngine.kt",
+    "imports": [],
+    "loc": 228,
+    "package": "com.darkith.transliaison.core",
+    "tier": "core",
+    "unterminated_block_comment": false
+  }
+]
