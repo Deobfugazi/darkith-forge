@@ -72,7 +72,7 @@ validation, contrast checks.
 
 | # | task | status | evidence |
 |---|---|---|---|
-| F1 | Every declared NEVER/MUST/SPI names a real gate — zero notes | done | `tools/law_gate.py` now FAILs on any `[NOTE: not yet gated]`; CI green at 24/24 laws |
+| F1 | Every declared NEVER/MUST/SPI names a real gate — zero notes | done | `tools/law_gate.py` now FAILs on any `[NOTE: not yet gated]`; CI green at 28/28 laws |
 | F2 | MUST #15 circadian anchor gated (UTC+8, wake-anchored) | done | `tools/omega_time.py` + `tools/circadian_gate.py` (wired into `tools/ci.sh`) |
 | F3 | MUST #16 forced download gated (hub link + server attachment) | done | `tools/download_gate.py` + `tools/serve_hub.py` (live header proof) |
 | F4 | NEVER #17 no-stalled-deficiency gated (ledger vs delivery counter) | done | `DEFICITS.json` + `tools/stall_gate.py` (fail-closed proven) |
