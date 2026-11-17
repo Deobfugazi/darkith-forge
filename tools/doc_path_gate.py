@@ -32,8 +32,8 @@ ALLOWLIST = {
     "dist/", "dist/index.html",
     "VERSION.md", "RECONCILIATION.md", "DEFICIT_LEDGER.md", "singularity_progressive_continuum.md",
     "delivery/", "delivery/dl/", "requirements-dev.txt", "dl/",
-    ".gradle/caches/", ".tools/", "TASKS.json", "darkith_omega_source.zip",
-    "dist/SHA256SUMS.txt", "dist/Darkith-1.1.0-omega.apk",
+    ".gradle/caches/", ".tools/", ".openhands/", "TASKS.json", "darkith_omega_source.zip",
+    "dist/SHA256SUMS.txt", "dist/Darkith-1.1.0-omega.apk", "dist/_meta.json", "dist/index.html",
 }
 
 # Extensions that mark a token as a file path (not prose).
