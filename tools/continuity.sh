@@ -35,5 +35,6 @@ if [ -z "${GITHUB_TOKEN:-}" ]; then
   exit 2
 fi
 
-git push -q "https://${GITHUB_TOKEN}@github.com/${REPO}.git" "HEAD:${BRANCH}"
-echo "continuity: pushed $(git rev-parse --short HEAD) -> ${REPO}@${BRANCH}"
+# Convergence lives in ONE place: tools/sync.sh integrates the other tab's
+# commits and publishes ours (never forced). Do not duplicate that logic here.
+exec "$(git rev-parse --show-toplevel)/tools/sync.sh"
