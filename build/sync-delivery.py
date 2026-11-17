@@ -14,6 +14,7 @@ Run:  python3 build/sync-delivery.py [--check]
 """
 import argparse
 import hashlib
+import html
 import pathlib
 import re
 import shutil
@@ -32,6 +33,14 @@ COPY = {
     ROOT / "savf.html": DELIVERY / "savf.html",
     ROOT / "darkith forge.html": DELIVERY / "darkith-forge.html",
     ROOT / "omega.html": DELIVERY / "omega.html",
+    # The one-shot builder lives once, at the repo root; delivery/ gets a copy so
+    # the bundle is self-contained. Regenerating here ends the drift where the two
+    # build.sh files quietly disagreed about jniLibs and the classpath.
+    ROOT / "build.sh": DELIVERY / "build.sh",
+    ROOT / "build&install.sh": DELIVERY / "build&install.sh",
+    # The freshly built, release-signed, upgrade-installable APK. Optional: it only
+    # exists after a build, and is regenerable, so a checkout without it is not drift.
+    ROOT / "app-signed.apk": DELIVERY / "darkith-forge-release.apk",
 }
 
 # Documents that quote a size and a sha256 for the webapp.  Kept in step with
@@ -82,7 +91,13 @@ def hub_from_template() -> str:
     The template carries the real hub markup (and the real numbers as of the last
     build). Refreshing it here keeps a freshly-generated hub in sync even when the
     numbers move; the size/hash pass below then re-stamps every block."""
-    return refresh_index(HUB_TPL.read_text(encoding="utf-8"))
+    text = HUB_TPL.read_text(encoding="utf-8")
+    # The APK card is shown only when the artifact it links actually exists, so a
+    # source-only checkout never ships a dead download link (which check_links
+    # would otherwise flag, correctly).
+    if not (DELIVERY / "darkith-forge-release.apk").exists():
+        text = re.sub(r"[ \t]*<!--APK-CARD-START-->.*?<!--APK-CARD-END-->\n?", "", text, flags=re.S)
+    return refresh_index(text)
 
 
 def refresh_index(text: str) -> str:
@@ -110,7 +125,9 @@ def check_links(text: str) -> list:
     for href in sorted(set(hrefs)):
         if href.startswith(("http:", "https:", "#", "mailto:")):
             continue
-        if not (DELIVERY / href).exists():
+        # hrefs are HTML-escaped (build&amp;install.sh); the file on disk is literal.
+        name = html.unescape(href)
+        if not (DELIVERY / name).exists():
             missing.append(href)
     return missing
 
@@ -208,7 +225,7 @@ def main() -> int:
                 print("index.html: printed sizes/hashes are stale", file=sys.stderr)
                 ok = False
         stale = [dst.name for src, dst in COPY.items()
-                 if not dst.exists() or dst.read_bytes() != src.read_bytes()]
+                 if src.exists() and (not dst.exists() or dst.read_bytes() != src.read_bytes())]
         if stale:
             print("stale copies: " + ", ".join(stale), file=sys.stderr)
             ok = False
@@ -230,11 +247,13 @@ def main() -> int:
         shutil.copyfile(src, dst)
         print(f"  copied   {src.name} -> delivery/{dst.name}  ({dst.stat().st_size:,} B)")
 
-    # Regenerate the hub from the template when it is absent or still the
-    # un-stamped template (the placeholder hash), then always re-stamp numbers.
-    if not INDEX.exists() or INDEX.read_bytes() == HUB_TPL.read_bytes():
-        INDEX.write_text(hub_from_template(), encoding="utf-8")
-        print("  index    generated from build/delivery-hub.template.html")
+    # Regenerate the hub from the tracked template every run, then re-stamp the
+    # numbers. Rendering is idempotent (sizes/hashes are recomputed below), and
+    # doing it unconditionally is what lets an edit to the template actually
+    # reach delivery/index.html — the previous "only when absent" condition meant
+    # template changes silently never shipped.
+    INDEX.write_text(hub_from_template(), encoding="utf-8")
+    print("  index    generated from build/delivery-hub.template.html")
 
     index = INDEX.read_text(encoding="utf-8")
     refreshed = refresh_index(index)

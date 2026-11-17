@@ -46,6 +46,23 @@
     <a class="btn" href="dl/darkith-webapp.zip" download>&#11015; Just the webapps (thin)</a>
   </div>
 
+  <!--APK-CARD-START-->
+  <div class="card">
+    <h2>Installable APK &mdash; no Termux needed <span class="tag g">release-signed</span></h2>
+    <div class="meta">
+      <b>darkith-forge-release.apk</b><br>
+      release-signed with the Darkith Release identity (installs over an existing
+      install) &middot; arm64-v8a &middot; v2+v3 signature &middot; 4-byte aligned.<br>
+      opens straight into the Forge terminal (HomekeeperActivity) with the in-app
+      browser wired &mdash; no Termux, no Gradle.
+    </div>
+    <a class="btn" href="darkith-forge-release.apk" download>&#11015; Download darkith-forge-release.apk</a>
+    <p class="hint">Verified by two gates before shipping: <code>install_gate.py</code>
+    (no known "App not installed" cause) and <code>runtime_gate.py</code> (the launcher
+    UI paints at 360&times;800 with zero JS errors).</p>
+  </div>
+  <!--APK-CARD-END-->
+
       <div class="card">
     <h2>Termux one-shot build <span class="tag">new</span></h2>
     <div class="meta">
@@ -219,6 +236,7 @@
       <b>forge_native_fix.sh</b> — installer · sha256 b0e9045325d49a26073588e5993e592ed7e4875d3fbaf396d2756f49cb62497b
     </div>
     <a class="btn" href="darkith-native-arm64.zip" download>&#11015; Download darkith-native-arm64.zip</a>
+    <a class="btn alt" href="darkith-jnilibs-arm64.zip" download>&#11015; Download darkith-jnilibs-arm64.zip</a>
     <a class="btn alt" href="forge_native_fix.sh" download>&#11015; Download forge_native_fix.sh</a>
     <p class="hint">Supplies the two binaries the app's builder shells out to:
     <code>libaapt2.so</code> and <code>libzipalign.so</code>, extracted from the APK's
@@ -267,11 +285,26 @@
   </div>
 
   <div class="card">
+    <h2>One-shot build &amp; install <span class="tag g">start here</span></h2>
+    <div class="meta">
+      <b>build&amp;install.sh</b><br>
+      stages the toolchain, builds the host APK, installs it — one command, Termux or desktop
+    </div>
+    <a class="btn" href="build&amp;install.sh" download>&#11015; Download build&amp;install.sh</a>
+    <p class="hint"><code>bash 'build&amp;install.sh'</code> — quote it, the <code>&amp;</code> is part of the name.<br>
+    It finds the project, installs missing Termux packages (<code>aapt2 apksigner kotlinc openjdk python</code>),
+    fetches <code>android.jar</code> if absent, builds the host APK with <code>build.sh</code>, then installs
+    (adb → package installer → copy to <code>/sdcard/Download</code>).<br>
+    <b>Then you can drop Termux:</b> the installed app carries its own aapt2 + zipalign and engine assets, so
+    <code>aegis://forgetest</code> in the Forge terminal builds and installs a child APK on-device.
+    <code>--no-install</code> builds only; <code>--dir</code> points at another tree.</p>
+  </div>
+
+  <div class="card">
     <h2>One-shot build.sh <span class="tag">no Gradle</span></h2>
     <div class="meta">
       <b>build.sh</b><br>
-      8,646 bytes · the NT IX §9.6 seven-step forced chain, with the inline anchor checks<br>
-      sha256 9dd16fdecbfb2f94dd1f7a17e4b609ef7e09a9644bf45476e4b4ce5429d1f4c0
+      the NT IX §9.6 seven-step forced chain, with the inline anchor checks
     </div>
     <a class="btn alt" href="build.sh" download>⬇ Download build.sh</a>
     <p class="hint"><code>aapt2 compile → aapt2 link → kotlinc → d8 → zip → zipalign → apksigner</code>.

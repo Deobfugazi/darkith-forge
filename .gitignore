@@ -28,3 +28,6 @@ build/omega/*.png
 *.keystore
 *.p8
 *.pem
+
+# ---- runtime gate screenshot (regenerable) -----------------------------
+build/runtime-*.png

@@ -201,9 +201,23 @@ with zipfile.ZipFile(base) as zin, zipfile.ZipFile(tmp,"w") as zo:
                 zi=zipfile.ZipInfo("assets/"+rel, date_time=(1980,1,1,0,0,0))
                 zi.compress_type=zipfile.ZIP_DEFLATED
                 zo.writestr(zi, open(os.path.join(b,f),"rb").read())
+    # Native toolchain: app/src/main/jniLibs/<abi>/*.so -> lib/<abi>/*.so, STORED.
+    # The on-device forge reads libaapt2.so / libzipalign.so from nativeLibraryDir,
+    # so a build that omits them produces an APK that installs but cannot forge.
+    jl=os.path.join(proj,"jniLibs")
+    if os.path.isdir(jl):
+        for abi in sorted(os.listdir(jl)):
+            abidir=os.path.join(jl,abi)
+            if not os.path.isdir(abidir): continue
+            for f in sorted(os.listdir(abidir)):
+                if not f.endswith(".so"): continue
+                zi=zipfile.ZipInfo("lib/%s/%s"%(abi,f), date_time=(1980,1,1,0,0,0))
+                zi.compress_type=zipfile.ZIP_STORED
+                zo.writestr(zi, open(os.path.join(abidir,f),"rb").read())
+                print("   [native] lib/%s/%s (stored)"%(abi,f))
 os.replace(tmp, base)
 PY
-say "5/7 package        ok -> base.apk (classes.dex + assets; arsc/so kept STORED)"
+say "5/7 package        ok -> base.apk (classes.dex + assets + jniLibs; arsc/so kept STORED)"
 
 zipalign_run "$WORK/base.apk" "$WORK/aligned.apk"
 say "6/7 zipalign       ok -> aligned.apk$([ -n "$ZIPALIGN" ] || echo ' (python fallback)')"
