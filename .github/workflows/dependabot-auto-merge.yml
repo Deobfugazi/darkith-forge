@@ -1,21 +1,21 @@
-# Dependabot auto-merge.
+# Dependabot auto-merge — a thin GitHub adapter.
 #
-# Plain terms:
-#   1. `tests` runs this repository's real tests on every pull request.
-#   2. `auto-merge` runs ONLY for Dependabot pull requests, and ONLY when `tests` succeeded
-#      (the `needs:` line). It then merges.
-# So a Dependabot PR is merged if — and only if — the tests pass.
+# The TESTS are not here. They live in tools/ci.sh, which is provider-neutral: the same
+# script runs on GitLab, Bitbucket, Jenkins, CircleCI, or a phone in Termux. This file
+# only decides *who* to merge and *when*, so moving hosts means rewriting this adapter,
+# never the tests.
 #
-# Notes:
-#   * The tests are the three suites that live in this repo and actually pass:
-#       build/savf-cli-test.py, build/omega/omega-test.mjs, build/omega/ui-test.py.
-#     `build/verify.py` is deliberately NOT used: its `sync` step requires delivery
-#     artifacts that are not present in a clean checkout, so it fails and would block
-#     every merge. Point this at verify.py only once it passes from a clean clone.
-#   * `gh pr merge --auto` asks GitHub to merge once required checks pass (respects branch
-#     protection / merge queue). If repo auto-merge is not enabled, that fails and we fall
-#     back to a direct squash merge — still safe, because `tests` already passed here.
-#   * Least privilege: read-only by default; only the merge job gets write.
+# How it works:
+#   1. `tests` runs tools/ci.sh on every pull request.
+#   2. `auto-merge` needs `tests` to have succeeded AND the author to be Dependabot.
+# A Dependabot PR is merged if — and only if — tools/ci.sh exits 0.
+#
+# Security:
+#   * Actions are pinned to full commit SHAs, not mutable tags. A tag like @v4 can be
+#     repointed at malicious code; a SHA cannot. (This is the supply-chain loophole.)
+#   * Least privilege: read-only by default; only the merge job is granted write.
+#   * The Dependabot author check uses the immutable login, not a branch name, so a
+#     fork cannot impersonate Dependabot by naming a branch.
 
 name: Dependabot auto-merge
 
@@ -32,39 +32,25 @@ jobs:
     name: tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.x"
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "20"
 
-      - name: SAVF CLI contract tests
-        run: python3 build/savf-cli-test.py
-
-      - name: Omega engine harness
-        run: node build/omega/omega-test.mjs
-
-      - name: Omega headless UI test
+      - name: Install test dependencies (versioned in requirements-dev.txt)
         run: |
-          python3 -m pip install --quiet playwright
+          python3 -m pip install --quiet -r requirements-dev.txt
           python3 -m playwright install --with-deps chromium
-          python3 build/omega/ui-test.py
 
-      - name: Refuse to pass if signing material is ever tracked
-        run: |
-          hits=$(git ls-files | grep -Ei '(^|/)(release_key|release_cert)$|\.(keystore|jks|p12|pfx|pem|key)$' || true)
-          if [ -n "$hits" ]; then
-            echo "::error::signing material is tracked in git:"
-            echo "$hits"
-            exit 1
-          fi
-          echo "no signing material tracked"
+      - name: Run the repository's tests (tools/ci.sh)
+        run: bash tools/ci.sh
 
   auto-merge:
     name: auto-merge Dependabot PR

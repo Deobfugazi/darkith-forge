@@ -30,6 +30,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BUILD = ROOT / "build"
+DELIVERY = ROOT / "delivery"
 CORE = BUILD / "savf-core.js"
 SAVF_PY = ROOT / "savf.py"
 
@@ -72,14 +73,22 @@ def run(cmd, **kw):
 
 def check_sync() -> bool:
     print("[1/6] sync")
+    # Each checker is (label, argv, needs_delivery). `delivery/` and the zips are
+    # regenerable output that .gitignore forbids committing (RESUME.md §4), so in a
+    # clean checkout they are absent. Absent is a skip, not a failure: the gate must
+    # still be able to pass from a clean clone, or it blocks everything. Drift in an
+    # artifact that IS present is a real defect and still fails.
     ok = True
     checkers = [
-        ("build-forge.py", ["build-forge.py", "--check"]),
-        ("sync-delivery.py", ["sync-delivery.py", "--check"]),
-        ("make-repo-zip.py", ["make-repo-zip.py", "--check"]),
-        ("make-bundle-zip.py", ["make-bundle-zip.py", "--check"]),
+        ("build-forge.py", ["build-forge.py", "--check"], False),
+        ("sync-delivery.py", ["sync-delivery.py", "--check"], True),
+        ("make-repo-zip.py", ["make-repo-zip.py", "--check"], True),
+        ("make-bundle-zip.py", ["make-bundle-zip.py", "--check"], True),
     ]
-    for _label, argv in checkers:
+    for label, argv, needs_delivery in checkers:
+        if needs_delivery and not DELIVERY.exists():
+            print(f"      {label:<20} skipped (no delivery/ bundle; regenerable, not committed)")
+            continue
         r = run([sys.executable, str(BUILD / argv[0])] + argv[1:])
         if r.returncode != 0:
             ok = False

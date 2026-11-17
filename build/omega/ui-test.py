@@ -18,8 +18,15 @@ def check(name, cond, detail=""):
     results.append((name, bool(cond), detail))
 
 with sync_playwright() as p:
-    browser = p.chromium.launch(executable_path="/usr/bin/chromium",
-                                args=["--no-sandbox", "--disable-dev-shm-usage"])
+    # Prefer playwright's own bundled chromium (present after
+    # `playwright install chromium`, as CI does); fall back to a system
+    # chromium for slim environments. The old hardcoded /usr/bin/chromium
+    # does not exist on a GitHub runner, which made this test unrunnable in CI.
+    try:
+        browser = p.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
+    except Exception:
+        browser = p.chromium.launch(executable_path="/usr/bin/chromium",
+                                    args=["--no-sandbox", "--disable-dev-shm-usage"])
     ctx = browser.new_context(viewport={"width": 360, "height": 800},
                               device_scale_factor=2, color_scheme="dark")
     page = ctx.new_page()

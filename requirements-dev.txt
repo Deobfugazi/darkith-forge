@@ -1,0 +1,6 @@
+# Test-only dependencies. Pinned so the CI environment matches the environment
+# the tests were proven in (AGENTS.md MUST #12: every input is versioned).
+#
+# Install:  python3 -m pip install -r requirements-dev.txt
+# Browsers: python3 -m playwright install --with-deps chromium
+playwright==1.65.2
