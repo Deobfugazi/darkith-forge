@@ -32,6 +32,13 @@ case "${1:-}" in
     exit 0
     ;;
   --check)
+    # The law applies to the branch a writer owns. A CI PR checkout is a detached HEAD
+    # (a merge ref), where there is no local branch to compare against — comparing the
+    # literal name "main" would compare the wrong thing and fail every PR. Skip, named.
+    if ! git symbolic-ref -q HEAD >/dev/null 2>&1; then
+      echo "board_pulse: SKIP — detached HEAD (CI PR checkout); the board law applies to the writer's branch"
+      exit 0
+    fi
     # "pushed" means the board's bytes are on the REMOTE, not merely committed locally —
     # a local commit a parallel worker cannot fetch is still a private view. Compare the
     # local board against the remote branch's copy.

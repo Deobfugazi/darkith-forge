@@ -28,12 +28,19 @@ AAPT2_VER="8.5.2-11315950"
 
 have_java() { command -v java >/dev/null 2>&1; }
 
-# 1. JDK (only if none on PATH and none already fetched)
-if have_java; then
-  say "jdk: using $(command -v java)"
-elif [ -x "$DEST/$JDK_DIR/bin/java" ]; then
+# 1. JDK. The Kotlin compiler launcher is sensitive to the runtime JDK: a mismatched
+#    version (or a JRE-only system java) makes kotlinc abort before it prints any 'error:'
+#    line — a crash the §19 gate would otherwise read as "0 errors". Pin to Temurin 17 for
+#    reproducibility; use a system JDK only when it is already 17.x.
+need_jdk=1
+if [ -x "$DEST/$JDK_DIR/bin/java" ]; then
   say "jdk: cached $DEST/$JDK_DIR"
-else
+  need_jdk=0
+elif command -v java >/dev/null 2>&1 && java -version 2>&1 | head -1 | grep -q '"17\.'; then
+  say "jdk: using system $(command -v java) ($(java -version 2>&1 | head -1))"
+  need_jdk=0
+fi
+if [ "$need_jdk" = 1 ]; then
   say "jdk: fetching Temurin $JDK_VER (~190 MB)"
   curl -fsSL -o "$DEST/jdk.tar.gz" \
     "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-${JDK_VER//+/%2B}/OpenJDK17U-jdk_x64_linux_hotspot_${JDK_VER//+/_}.tar.gz" \
@@ -42,6 +49,7 @@ else
 fi
 [ -x "$DEST/$JDK_DIR/bin/java" ] && export JAVA_HOME="$DEST/$JDK_DIR"
 export PATH="${JAVA_HOME:-}/bin:$PATH"
+say "jdk: java -> $(command -v java) ($(java -version 2>&1 | head -1))"
 
 # 2. kotlinc
 if [ -x "$DEST/kotlinc/bin/kotlinc" ]; then

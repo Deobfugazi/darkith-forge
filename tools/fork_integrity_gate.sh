@@ -98,11 +98,12 @@ if [ -n "$ANDROID_JAR" ] && command -v "$KOTLINC" >/dev/null 2>&1; then
     say "kotlinc clean: $(grep -c 'error:' "$LOG") errors, $(find "$TREE" -name '*.kt' | wc -l) files$([ -n "$RJ" ] && echo ' (+R.java)')"
   else
     # Print what kotlinc ACTUALLY said. The old code printed only lines matching 'error:',
-    # so a crash (daemon/OOM/classpath) reported "0 errors" — a misleading deficit.
+    # so a crash (daemon/OOM/classpath) reported "0 errors" — a misleading deficit. Print
+    # the HEAD first (the exception/message line lives there), then the tail.
     grep 'error:' "$LOG" | head -20 | sed 's/^/    /'
-    say "kotlinc tail:"
-    tail -15 "$LOG" | sed 's/^/    /'
-    die "MUST-11: kotlinc exited non-zero ($(grep -c 'error:' "$LOG") 'error:' line(s); see tail above). Not reconciled."
+    say "kotlinc output (first 20 lines):"
+    head -20 "$LOG" | sed 's/^/    /'
+    die "MUST-11: kotlinc exited non-zero ($(grep -c 'error:' "$LOG") 'error:' line(s); see output above). Not reconciled."
   fi
 else
     if [ "$NO_COMPILE" = 1 ]; then
