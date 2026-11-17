@@ -1,0 +1,84 @@
+# Dependabot auto-merge.
+#
+# Plain terms:
+#   1. `tests` runs this repository's real tests on every pull request.
+#   2. `auto-merge` runs ONLY for Dependabot pull requests, and ONLY when `tests` succeeded
+#      (the `needs:` line). It then merges.
+# So a Dependabot PR is merged if — and only if — the tests pass.
+#
+# Notes:
+#   * The tests are the three suites that live in this repo and actually pass:
+#       build/savf-cli-test.py, build/omega/omega-test.mjs, build/omega/ui-test.py.
+#     `build/verify.py` is deliberately NOT used: its `sync` step requires delivery
+#     artifacts that are not present in a clean checkout, so it fails and would block
+#     every merge. Point this at verify.py only once it passes from a clean clone.
+#   * `gh pr merge --auto` asks GitHub to merge once required checks pass (respects branch
+#     protection / merge queue). If repo auto-merge is not enabled, that fails and we fall
+#     back to a direct squash merge — still safe, because `tests` already passed here.
+#   * Least privilege: read-only by default; only the merge job gets write.
+
+name: Dependabot auto-merge
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: SAVF CLI contract tests
+        run: python3 build/savf-cli-test.py
+
+      - name: Omega engine harness
+        run: node build/omega/omega-test.mjs
+
+      - name: Omega headless UI test
+        run: |
+          python3 -m pip install --quiet playwright
+          python3 -m playwright install --with-deps chromium
+          python3 build/omega/ui-test.py
+
+      - name: Refuse to pass if signing material is ever tracked
+        run: |
+          hits=$(git ls-files | grep -Ei '(^|/)(release_key|release_cert)$|\.(keystore|jks|p12|pfx|pem|key)$' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::signing material is tracked in git:"
+            echo "$hits"
+            exit 1
+          fi
+          echo "no signing material tracked"
+
+  auto-merge:
+    name: auto-merge Dependabot PR
+    needs: tests
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Merge (prefer GitHub auto-merge, fall back to direct squash)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr merge --auto --squash --delete-branch "$PR_URL" \
+            || gh pr merge --squash --delete-branch "$PR_URL"
