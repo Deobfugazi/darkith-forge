@@ -47,6 +47,14 @@ if have python3; then
     if [ -f tools/api_level_gate.py ]; then
       run "API-level gate"                python3 tools/api_level_gate.py app/src/main/java
     fi
+    # Icon gate: a manifest with no android:icon ships a blank launcher tile.
+    if [ -f tools/icon_gate.py ]; then
+      run "icon gate"                     python3 tools/icon_gate.py
+    fi
+    # Board gate: the durable board must exist and every done item must carry evidence.
+    if [ -f tools/board_gate.py ]; then
+      run "board gate"                    python3 tools/board_gate.py
+    fi
   fi
 else
   echo "SKIP: python3 not found"; FAILED=1
@@ -177,6 +185,12 @@ import hashlib, subprocess, sys, collections
 files = subprocess.run(["git","ls-files","-z"], capture_output=True, text=True).stdout.split("\0")[:-1]
 by = collections.defaultdict(list)
 for f in files:
+    # EXEMPT Android resource-qualifier dirs: the SAME basename in different
+    # buckets (mipmap-mdpi vs mipmap-hdpi, values vs values-night) is REQUIRED
+    # to differ — that is what the qualifier means. A false positive here trains
+    # people to ignore the gate.
+    if "/res/" in f:
+        continue
     by[f.rsplit("/",1)[-1]].append(f)
 divergent, mirrors = {}, {}
 for name, paths in sorted(by.items()):

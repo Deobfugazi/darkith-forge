@@ -392,3 +392,14 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
     the resources resolve, and the exact shipped HTML renders with 0 console errors.
   - COSMETIC (not a crash): no launcher icon ships (manifest has no android:icon) -> blank
     icon, correct label "Darkith". Named, not hidden.
+
+## §29 THE BOARD IS A FILE (binding)
+
+`TASKS.md` is the durable board and the read-first artifact alongside this file and
+`DARKITH.md`. The in-session task tracker lives at `/workspace/conversations/<id>/TASKS.json`
+and is wiped with the VM — it is not a board. On 2026-11-17 the only surviving board held the
+`P1–P7` remediation pass and the omega vision (sensing core, one specialist app per developer
+domain) had zero hits anywhere durable. Rule: any task, gap, or objective the operator names
+is inscribed in `TASKS.md` in the same turn it is named, with a status and evidence.
+`tools/board_gate.py` enforces it in CI (a `done` row with no evidence, or a row citing a
+path that does not resolve, fails the gate). An item not in the board is a defect in the board.

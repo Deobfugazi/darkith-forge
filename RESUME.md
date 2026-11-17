@@ -4,6 +4,14 @@ The agent VM is **ephemeral**. Its filesystem is wiped between sessions. The onl
 bytes that survive are the ones pushed to the private repo. This file is the
 recovery protocol; follow it before doing anything else.
 
+## 0. The board is a file, not a memory
+
+**`TASKS.md` is the durable board.** The in-session task tracker is per-conversation and
+wiped with the VM, so a list that is not a tracked, gated file is not durable. Read
+`TASKS.md` first; `tools/board_gate.py` (wired into `tools/ci.sh`) fails CI if a `done`
+item carries no evidence or cites a path that does not resolve. An item not in the board
+is a defect in the board. Add it.
+
 ## 1. Where the project lives
 
 - **Canonical host (private):** `Deobfugazi/darkith-forge`, branch `main`.
