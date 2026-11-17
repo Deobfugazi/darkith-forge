@@ -207,9 +207,13 @@ def write(members: list[tuple[str, bytes]]) -> dict:
 
 
 def check() -> int:
+    # `delivery/` is regenerable output that .gitignore forbids committing, so a clean
+    # checkout has no one-shot. Absent is a skip, not a failure (the same rule
+    # verify.py check_sync applies): the generator IS tracked, so it is producible.
+    # Drift in a one-shot that IS present is a real defect and still fails.
     if not ONESHOT.exists():
-        print("one-shot: MISSING", file=sys.stderr)
-        return 1
+        print("one-shot: absent (regenerable, not committed) — skip")
+        return 0
     data = ONESHOT.read_bytes()
     i = data.find(MARKER)
     if i < 0:
