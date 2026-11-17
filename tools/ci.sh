@@ -196,7 +196,7 @@ if have python3 && command -v aapt2 >/dev/null 2>&1 && command -v apksigner >/de
     printf -- '--- install gate: skipped (no APK to check)\n'
   fi
 else
-  printf -- '--- install gate: SKIP (need aapt2 + apksigner + zipalign; stage with: bash tools/fetch_toolchain.sh)\n'
+  printf -- '--- install gate: SKIP (no APK, or aapt2/apksigner absent; build an APK and stage tools with: bash tools/fetch_toolchain.sh)\n'
 fi
 
 printf '\n=== runtime render gate (the UI the OS hands to Zygote) ===\n'
