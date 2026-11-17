@@ -10,20 +10,28 @@
 #   tools/sync.sh            converge (fetch + rebase-if-diverged + push)
 #   tools/sync.sh --check    report only; non-zero if not in sync (a gate)
 #
-# Exit: 0 in sync / 3 divergence needs a human (same lines edited) / 2 no token.
+# Provider-neutral: it uses the `origin` remote (or $DARKITH_REMOTE /
+# $DARKITH_REMOTE_URL). No hosting provider is named. Auth is whatever your git
+# credential helper provides (token, SSH key, or nothing for a local bare repo).
+#
+# Exit: 0 in sync / 3 divergence needs a human (same lines edited) / 2 no remote.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-REPO="${DARKITH_REPO:-Deobfugazi/darkith-forge}"
+REMOTE="${DARKITH_REMOTE:-origin}"
 BRANCH="${DARKITH_BRANCH:-main}"
 CHECK=0
 [ "${1:-}" = "--check" ] && CHECK=1
 
-if [ -z "${GITHUB_TOKEN:-}" ]; then
-  echo "sync: GITHUB_TOKEN not set (cannot reach the remote)" >&2
+# ---- resolve the remote URL, without naming a vendor ---------------------
+if [ -n "${DARKITH_REMOTE_URL:-}" ]; then
+  URL="$DARKITH_REMOTE_URL"
+elif git remote get-url "$REMOTE" >/dev/null 2>&1; then
+  URL="$(git remote get-url "$REMOTE")"
+else
+  echo "sync: no remote '$REMOTE' found (set DARKITH_REMOTE_URL to the clone URL)" >&2
   exit 2
 fi
-URL="https://${GITHUB_TOKEN}@github.com/${REPO}.git"
 
 # Refuse to sync a dirty tree: an uncommitted edit would be lost in a rebase.
 if [ "$CHECK" = 0 ] && [ -n "$(git status --porcelain)" ]; then
