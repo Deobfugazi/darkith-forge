@@ -37,6 +37,12 @@ if have python3; then
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
   run "savf cli contract"                 python3 build/savf-cli-test.py
   run "darkbot self-test"                 python3 tools/darkbot.py selftest
+  # Kotlin syntax gate: fail if any source tree has an unclosed block comment.
+  # A scanner, not kotlinc (W-023), but exact about the defect that silently
+  # swallows the rest of a file. Runs only when the app tree is present.
+  if [ -d app/src/main/java ]; then
+    run "kotlin syntax gate"              python3 tools/syntax_gate.py app/src/main/java
+  fi
 else
   echo "SKIP: python3 not found"; FAILED=1
 fi
