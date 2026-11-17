@@ -213,3 +213,28 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
 - MUST #20: proof lives in the ARTIFACT, not the source — the symbol is in the compiled dex, the
   gate is green, the hash changed. "It compiles" is not "it shipped".
 - SPI-19: a method family (shell*, file*, apk*) is whole or absent.
+
+## §24 TREE INTEGRITY + RECONCILIATION (binding)
+- ONE TREE (NEVER #18): exactly one authoritative source tree may exist. On this box three
+  existed at once (`tree`=50 .kt, `tree.orig`=50, `tree_omega`=55) with 11 common files
+  divergent. That is the fragmentation engine, measured — not asserted. The authoritative
+  tree is the NEWEST whose content matches the built APK; here that is `tree_omega`.
+- NO DISK-ONLY SOURCE (SPI-20): the app source may not live only on the ephemeral VM disk.
+  When this rule was first checked, the canonical repo tracked ZERO of the 55 app .kt files.
+  A recycled VM would have lost the app. Reconcile the tree into the repo, key-free, before
+  any other work.
+- COORDINATE INDEX (MUST #21): every tree gets an addressable index, generated from the bytes,
+  not from prose: `tools/tree_index.py <root> [--json f] [--tsv f]` emits file, tier, package,
+  every declaration + line, external namespaces, and in-tree deps. Deterministic, so two runs
+  diff clean and drift is visible. A tree you cannot enumerate is a tree you cannot account for.
+- REPACK LAW (SPI-21): any step that re-zips the APK MUST keep `resources.arsc` and `lib/*.so`
+  STORED. Re-adding them to a `ZIP_DEFLATED` archive silently compresses them; Android 11+
+  (API 30) mmaps them in place and the installer then fails with a bare "App not installed".
+  build.sh step 5 had this defect; proven by running the old logic (DEFLATED) vs new (STORED)
+  on the real base.apk. Verify per-entry compression after every repack.
+- SCANNER IS NOT A PARSER (W-023 restated): a comment scanner must track string/char literals
+  and nested block comments, or it misreads `val t = "*/*"` as an open comment. Only kotlinc is
+  authoritative for syntax.
+- CLASSIFY ERRORS (SPI-22): before fixing source, classify the compile log. 147 errors here were
+  almost all `unresolved reference android` — the classpath lacked `android.jar`, not a source
+  defect. Fixing source would have been motion, not progress.
