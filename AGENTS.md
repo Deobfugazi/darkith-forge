@@ -309,3 +309,37 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   Verified live at 360x800 and 1280x800: 0 overflow, 0 console errors, 0 external
   requests. The engine itself: 9/9 in-page self-tests, verdict total over all 3^11
   gate states, Python<->HTML parity over 571 files / 1,416,004 tokens / 0 divergences.
+
+## Install + runtime gates (the two failures a user actually feels)
+
+Two failure classes are now first-class, proven gates rather than assumptions:
+
+- **"App not installed"** — `tools/app/install_gate.py <apk> [root]` is the registry
+  (I-01..I-14: version, sdk range, v2 signature, 4-byte align, `resources.arsc` and
+  `lib/*.so` STORED, `extractNativeLibs`, duplicate zip entries, `testOnly`,
+  launcher present, **every manifest component present in the dex**, ABI, label).
+  It reads the **APK's own manifest** (`aapt2 dump xmltree`), not the repo's, so it
+  describes the artifact in hand. `apksigner`/`aapt2`/`zipalign` come from
+  `tools/get_toolchain.sh`; with them absent the gate is N/A, never a false OPEN.
+- **Blank screen** — `tools/app/runtime_gate.py [html] [--shot out.png]` loads the
+  real launcher asset `app/src/main/assets/homekeeper.html` at **360×800**, first
+  with **no** `window.darkith` bridge and then with a stub of the real 41-method
+  `HomekeeperBridge` surface, and fails on any console/page error, a blank body,
+  an empty DOM, or horizontal overflow. Self-skips (exit 0) when playwright is
+  absent so a slim environment is honest, not red.
+
+Both are wired into `tools/app/delivery_gate.sh` (**L-18 install-gate**,
+**L-19 runtime-render** — the registry is 18 checks) and into `tools/ci.sh`.
+
+**Post-install, what runs the UI:** the Android package manager's Package Installer
+writes the APK and records it; at launch the **Launcher** sends `MAIN`/`LAUNCHER` to
+**AMS**, which forks a **Zygote** app process and starts the declared
+`com.darkith.transliaison.HomekeeperActivity`; **WMS** gives it a window and the
+`Activity`'s `WebView` renders `assets/homekeeper.html`. The launcher is
+`HomekeeperActivity` (the Forge terminal), **not** the thin `MainActivity`.
+
+**Build traps:** `assets/engine/android.jar` is a required runtime asset
+(`BuildEngine.kt`/`ChimeraBuilder.kt` compile forged apps with it) and **is tracked**
+— a build that drops it produces an installable APK whose on-device forge cannot
+compile. The release identity (`assets/engine/release_{key,cert}`) is read from the
+**built** APK's own assets and is **never** a plain file in git.
