@@ -9,6 +9,23 @@ Repository-specific knowledge for future sessions. Read before acting.
 - **Save before session end:** `bash tools/continuity.sh "what changed"`
 - See `RESUME.md` for the full protocol. Secrets (the APK signing key) never enter git.
 
+## 0b. TWO TABS = TWO SANDBOXES (they share ONLY the git remote)
+Two OpenHands tabs run in **separate ephemeral sandboxes**. They do NOT share a
+filesystem; the remote branch `main` is the ONLY channel between them, and it is
+the single authoritative history. Consequences:
+- An **uncommitted** edit is invisible to the other tab and can be lost. Commit.
+- Convergence is not "fetch" — it is **sync, then re-run the gate on the merged
+  tree**, because two tabs can edit different lines of one file and merge cleanly
+  into something logically broken (git cannot see that; the gate can).
+- **Ritual, at the start AND end of any turn where both tabs may have written:**
+  ```bash
+  bash tools/converge.sh     # 1/2 tools/sync.sh  ·  2/2 tools/ci.sh
+  ```
+- `tools/sync.sh` never force-pushes and never auto-resolves a conflict: on a
+  same-line clash it stops and names the files, so no tab's work is destroyed.
+- The gate now carries **discrepancy detectors**: clean-tree, fork singularity
+  (NEVER #11), and version truth (manifest vs AGENTS.md).
+
 ## Project
 - Android app **Darkith** + an offline web studio. Built on a phone in Termux via the
   **NT IX 7-step raw chain** (`aapt2 -> kotlinc -> d8 -> zip -> zipalign -> apksigner`).

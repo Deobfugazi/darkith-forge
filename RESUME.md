@@ -28,6 +28,22 @@ bash tools/continuity.sh "what I just did"
 It commits everything and pushes to `main`. It **refuses to push** if signing key
 material ever becomes tracked.
 
+## 3b. Two tabs — converge, do not diverge
+
+Two OpenHands tabs = two **separate ephemeral sandboxes** sharing only the git
+remote. There is no shared filesystem. So, in any turn where both tabs may have
+written:
+
+```bash
+bash tools/converge.sh
+```
+
+That is `tools/sync.sh` (integrate the other tab's commits, then publish ours —
+never forced) followed by `tools/ci.sh` (re-run the gate on the **merged** tree).
+Both steps are required: git can merge two tabs' edits to different lines of one
+file into something logically broken without any conflict, and only the gate
+catches that. An uncommitted edit is invisible to the other tab, so commit often.
+
 ## 4. The rules that keep this survivable
 
 - **One canonical tree.** Never keep two divergent live copies of a file; the

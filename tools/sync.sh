@@ -32,9 +32,12 @@ if [ "$CHECK" = 0 ] && [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
-git fetch -q "$URL" "$BRANCH"
-REMOTE_SHA="$(git rev-parse FETCH_HEAD)"
+git fetch -q "$URL" "$BRANCH:refs/remotes/origin/$BRANCH"
+REMOTE_SHA="$(git rev-parse "refs/remotes/origin/$BRANCH")"
 LOCAL_SHA="$(git rev-parse HEAD)"
+# Keep the tracking ref honest: `git push <url>` moves the remote branch but not
+# our origin/* ref, so a stale ref would misreport the truth to the next reader.
+mark_synced() { git update-ref "refs/remotes/origin/$BRANCH" HEAD; }
 
 if [ "$LOCAL_SHA" = "$REMOTE_SHA" ]; then
   echo "sync: in sync at ${LOCAL_SHA:0:7}"
@@ -57,11 +60,11 @@ fi
 
 case "$STATE" in
   behind)
-    git merge --ff-only -q "$REMOTE_SHA"
+    git merge --ff-only -q "$REMOTE_SHA"; mark_synced
     echo "sync: fast-forwarded to ${REMOTE_SHA:0:7}"
     ;;
   ahead)
-    git push -q "$URL" "HEAD:${BRANCH}"
+    git push -q "$URL" "HEAD:${BRANCH}"; mark_synced
     echo "sync: pushed ${LOCAL_SHA:0:7} (was ahead)"
     ;;
   diverged)
@@ -74,7 +77,7 @@ case "$STATE" in
       echo "      Resolve by hand, then: git rebase --continue  (or git rebase --abort)" >&2
       exit 3
     fi
-    git push -q "$URL" "HEAD:${BRANCH}"
+    git push -q "$URL" "HEAD:${BRANCH}"; mark_synced
     echo "sync: rebased onto ${REMOTE_SHA:0:7} and pushed ${LOCAL_SHA:0:7}"
     ;;
 esac

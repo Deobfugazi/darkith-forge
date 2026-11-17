@@ -71,5 +71,54 @@ else
   echo "SKIP: not a git checkout"
 fi
 
+printf '\n=== discrepancy detectors (two tabs must agree) ===\n'
+if have git && git rev-parse --git-dir >/dev/null 2>&1; then
+
+  # D-1 uncommitted work: with two tabs, an uncommitted edit is invisible to the
+  # other tab and can be lost. Warn loudly (do not fail: CI is runnable pre-commit).
+  if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
+    printf -- '--- working tree clean: WARN (uncommitted edits are invisible to the other tab)\n'
+    git status --short | sed 's/^/      /'
+  else
+    printf -- '--- working tree clean: PASS\n'
+  fi
+
+  # D-2 fork singularity (AGENTS.md NEVER #11 / SPI-12, the missing W-040 gate):
+  # an authority file that exists at two tracked paths is two live copies. Fail.
+  forks="$(git ls-files | awk -F/ '{print $NF}' | sort | uniq -d \
+            | grep -E '^(AGENTS\.md|build\.sh|verify\.py)$|\.kt$' || true)"
+  if [ -n "$forks" ]; then
+    printf -- '--- fork singularity (NEVER #11): FAIL\n'
+    for f in $forks; do
+      printf '      %s tracked at:\n' "$f"
+      git ls-files | grep -E "(^|/)$f\$" | sed 's/^/        /'
+    done
+    FAILED=1
+  else
+    printf -- '--- fork singularity (NEVER #11): PASS\n'
+  fi
+
+  # D-3 version truth: if the AndroidManifest is versioned (MUST #12), the
+  # versionName it declares must be the one AGENTS.md states. A tab that bumps
+  # one but not the other is a discrepancy.
+  man="$(git ls-files | grep -E '(^|/)AndroidManifest\.xml$' | head -1 || true)"
+  if [ -n "$man" ] && [ -f AGENTS.md ]; then
+    vn="$(sed -n 's/.*versionName="\([^"]*\)".*/\1/p' "$man" | head -1)"
+    if [ -n "$vn" ] && ! grep -qF "$vn" AGENTS.md; then
+      printf -- '--- version truth: FAIL (manifest says %s, AGENTS.md does not)\n' "$vn"
+      FAILED=1
+    else
+      printf -- '--- version truth: PASS (%s)\n' "${vn:-n/a}"
+    fi
+  else
+    printf -- '--- version truth: skipped (no tracked AndroidManifest.xml)\n'
+  fi
+
+else
+  printf -- '--- discrepancy detectors: SKIP (not a git checkout)\n'
+fi
+
 printf '\nCI: %s\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)"
 exit "$FAILED"
+
+
