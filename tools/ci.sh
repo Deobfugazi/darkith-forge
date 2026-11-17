@@ -178,6 +178,35 @@ else
   printf -- '--- APK store rule: skipped (no delivery/*.apk)\n'
 fi
 
+printf '\n=== install gate (no "App not installed") ===\n'
+# The two failures a user actually feels are (1) the package installer refusing the APK
+# and (2) the UI not painting once the OS launches it. Both are gated explicitly. The
+# install gate needs the artifact tools; absent them it is a named SKIP, never a false pass.
+if have python3 && command -v aapt2 >/dev/null 2>&1 && command -v apksigner >/dev/null 2>&1 \
+   && command -v zipalign >/dev/null 2>&1; then
+  gate_apks="$apks"
+  [ -f app-signed.apk ] && gate_apks="$gate_apks app-signed.apk"
+  if [ -n "${gate_apks// /}" ]; then
+    for apk in $gate_apks; do
+      run "install gate ($apk)" python3 tools/install_gate.py "$apk" .
+    done
+  else
+    printf -- '--- install gate: skipped (no APK to check)\n'
+  fi
+else
+  printf -- '--- install gate: SKIP (need aapt2 + apksigner + zipalign; stage with: bash tools/fetch_toolchain.sh)\n'
+fi
+
+printf '\n=== runtime render gate (the UI the OS hands to Zygote) ===\n'
+# Loads the real launcher asset at 360x800 with and without the native bridge and fails on
+# any console/page error, blank body, empty DOM, or overflow. Self-skips (exit 0) when
+# playwright is absent, so a slim environment is honest, not red.
+if have python3; then
+  run "runtime render gate" python3 tools/runtime_gate.py
+else
+  printf -- '--- runtime render gate: SKIP (no python3)\n'
+fi
+
 printf '\n=== discrepancy detectors (two tabs must agree) ===\n'
 if have git && git rev-parse --git-dir >/dev/null 2>&1; then
 
