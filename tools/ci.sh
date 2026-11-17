@@ -42,6 +42,11 @@ if have python3; then
   # swallows the rest of a file. Runs only when the app tree is present.
   if [ -d app/src/main/java ]; then
     run "kotlin syntax gate"              python3 tools/syntax_gate.py app/src/main/java
+    # API-level gate: a high-API call with no SDK_INT guard crashes the launcher on
+    # older devices before the UI paints. Static, but exact about that defect.
+    if [ -f tools/api_level_gate.py ]; then
+      run "API-level gate"                python3 tools/api_level_gate.py app/src/main/java
+    fi
   fi
 else
   echo "SKIP: python3 not found"; FAILED=1
