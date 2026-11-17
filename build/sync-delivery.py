@@ -22,6 +22,10 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DELIVERY = ROOT / "delivery"
 INDEX = DELIVERY / "index.html"
+# The delivery hub UI is GENERATED, never hand-authored: its structure comes from
+# this tracked template and its numbers from the files in delivery/. Wipe delivery/
+# and re-running this script brings the UI back byte-identical (minus the hashes).
+HUB_TPL = ROOT / "build/delivery-hub.template.html"
 
 # repo file -> name inside delivery/
 COPY = {
@@ -70,6 +74,15 @@ def refresh_block(block: str) -> str:
         seg = HASH_RE.sub(lambda m: digest, seg, count=1)
         block = block[:start] + seg + block[end:]
     return block
+
+
+def hub_from_template() -> str:
+    """Render delivery/index.html from the tracked template, ready to be refreshed.
+
+    The template carries the real hub markup (and the real numbers as of the last
+    build). Refreshing it here keeps a freshly-generated hub in sync even when the
+    numbers move; the size/hash pass below then re-stamps every block."""
+    return refresh_index(HUB_TPL.read_text(encoding="utf-8"))
 
 
 def refresh_index(text: str) -> str:
@@ -185,10 +198,15 @@ def main() -> int:
 
     if args.check:
         ok = True
-        index = INDEX.read_text(encoding="utf-8")
-        if refresh_index(index) != index:
-            print("index.html: printed sizes/hashes are stale", file=sys.stderr)
+        if not INDEX.exists():
+            print("index.html: missing (regenerate with: python3 build/sync-delivery.py)",
+                  file=sys.stderr)
             ok = False
+        else:
+            index = INDEX.read_text(encoding="utf-8")
+            if refresh_index(index) != index:
+                print("index.html: printed sizes/hashes are stale", file=sys.stderr)
+                ok = False
         stale = [dst.name for src, dst in COPY.items()
                  if not dst.exists() or dst.read_bytes() != src.read_bytes()]
         if stale:
@@ -199,7 +217,7 @@ def main() -> int:
             if p.exists() and refresh_docs(p.read_text(encoding="utf-8")) != p.read_text(encoding="utf-8"):
                 print(f"{doc}: printed sizes/hashes are stale", file=sys.stderr)
                 ok = False
-        missing = check_links(index)
+        missing = check_links(index if INDEX.exists() else "")
         if missing:
             print("missing links: " + ", ".join(missing), file=sys.stderr)
             ok = False
@@ -211,6 +229,12 @@ def main() -> int:
     for src, dst in COPY.items():
         shutil.copyfile(src, dst)
         print(f"  copied   {src.name} -> delivery/{dst.name}  ({dst.stat().st_size:,} B)")
+
+    # Regenerate the hub from the template when it is absent or still the
+    # un-stamped template (the placeholder hash), then always re-stamp numbers.
+    if not INDEX.exists() or INDEX.read_bytes() == HUB_TPL.read_bytes():
+        INDEX.write_text(hub_from_template(), encoding="utf-8")
+        print("  index    generated from build/delivery-hub.template.html")
 
     index = INDEX.read_text(encoding="utf-8")
     refreshed = refresh_index(index)

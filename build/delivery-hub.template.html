@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DARKITH Forge — Delivery</title>
+<style>
+  :root{--bg:#0b0d12;--panel:#12151d;--line:#242a38;--ink:#e8ecf4;--dim:#8b95ab;--acc:#5eead4;--grn:#4ade80;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 20% -10%,#16202e,transparent),var(--bg);color:var(--ink);
+       font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;padding:32px 18px 64px}
+  .wrap{max-width:780px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 4px;letter-spacing:.3px}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 26px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin:0 0 16px}
+  .card h2{font-size:15px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+  .tag{font:11px/1 var(--mono);color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:3px 8px}
+  .tag.g{color:var(--grn);border-color:var(--grn)}
+  .meta{font:12px/1.6 var(--mono);color:var(--dim);word-break:break-all;overflow-wrap:anywhere;margin:8px 0 14px}
+  .meta b{color:var(--ink);font-weight:600}
+  a.btn{display:inline-flex;align-items:center;gap:8px;background:var(--acc);color:#04120f;text-decoration:none;
+        font-weight:700;padding:11px 18px;border-radius:11px;font-size:14px}
+  a.btn:hover{filter:brightness(1.08)}
+  a.btn.alt{background:transparent;color:var(--grn);border:1px solid var(--grn)}
+  .hint{color:var(--dim);font-size:12.5px;margin-top:12px;line-height:1.6}
+  .meta a{display:inline-flex;align-items:center;min-height:24px;color:var(--acc)}
+  code{font-family:var(--mono);background:#0a0c11;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;overflow-wrap:anywhere}
+  .new{color:var(--grn);font-weight:700}
+  footer{color:var(--dim);font-size:12px;text-align:center;margin-top:28px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>DARKITH Forge — Delivery</h1>
+  <p class="sub">Full-capacitor terminal · <span class="new">wired native APK runtime</span> · verified offline (aapt2 · d8 · apksig · kotlinc · chromium/firefox/webkit)</p>
+
+  <div class="card">
+    <h2>Download everything <span class="tag">zip</span></h2>
+    <div class="meta">
+      <b>darkith-forge-delivery.zip</b><br>
+      the whole project: both offline webapps, the SAVF engine (savf.html + savf.py),
+      build scripts, verification harness, APKs and docs.<br>
+      <a href="dl/">open the download page &rarr;</a>
+    </div>
+    <a class="btn" href="dl/darkith-forge-delivery.zip" download>&#11015; Download darkith-forge-delivery.zip</a>
+    <a class="btn" href="dl/darkith-webapp.zip" download>&#11015; Just the webapps (thin)</a>
+  </div>
+
+      <div class="card">
+    <h2>Termux one-shot build <span class="tag">new</span></h2>
+    <div class="meta">
+      <b>darkith-one-shot.sh</b><br>
+      8,443,711 bytes &middot; sha256 8248a5c6336d6019b48f51b2ef98630444df608b9374ecbc990a73c2f700adf6<br>
+      self-contained: the source zip is embedded inside the script. Nothing to place
+      alongside it. Run <code>bash darkith-one-shot.sh</code> in Termux.
+    </div>
+    <a class="btn" href="darkith-one-shot.sh" download>&#11015; Download darkith-one-shot.sh</a>
+  </div>
+  <div class="card">
+    <h2>Ready-to-push repo <span class="tag">new</span></h2>
+    <div class="meta">
+      <b>darkith-forge-repo.zip</b><br>
+      9,956,613 bytes · sha256 afa19e7dba557a517ee3156337bc5ead4a5d636aa3d9731e13eadb97303ef0fc<br>
+      the complete git-ready project: Gradle build, app/ module, webapp/, docs/, and the
+      GitHub Actions workflow. Unzip and <code>git push</code> to publish it.
+    </div>
+    <a class="btn" href="darkith-forge-repo.zip" download>&#11015; Download darkith-forge-repo.zip</a>
+  </div>
+  <div class="card">
+    <h2>Everything in one file <span class="tag">recommended</span></h2>
+    <div class="meta">
+      <b>darkith-forge-bundle.zip</b><br>
+      21,308,158 bytes · README + TERMUX-SETUP + build.sh + zipalign.py + the webapp + the full source tree + the proof APK + SAVF-1 + the C7 IR-render patch + the progress ledger + AGENTS.md<br>
+      sha256 4f15d8cae32b91f8b46014b318a13853087736b409d0b7a4fa3ee3cc86c994b4
+    </div>
+    <a class="btn" href="darkith-forge-bundle.zip" download>⬇ Download darkith-forge-bundle.zip</a>
+    <p class="hint">Unzips to a <code>darkith-forge/</code> folder. Inner files hash-match the downloads below.</p>
+  </div>
+
+  <div class="card">
+    <h2>Repository memory <span class="tag g">current</span></h2>
+    <div class="meta">
+      <b>AGENTS.md</b><br>
+      64,149 bytes · sha256 0ac3d9d04d80ac282e399db9c35e17808f118b093fda24ddc2bb7df46e2aaf01<br>
+      the living repo notes: hard rules, gotchas, the C7 wiring, what is real vs a seam.
+    </div>
+    <a class="btn" href="AGENTS.md" download>&#11015; Download AGENTS.md</a>
+    <a class="btn alt" href="AGENTS.md" target="_blank">&#128065; View</a>
+    <p class="hint">Updated this session with the C7 section: the IR path, the
+    <code>forgeNative</code>/<code>forgeChimera</code> reconciliation, how each claim was
+    verified, and the &ldquo;still not true&rdquo; list.</p>
+  </div>
+  <div class="card">
+    <h2>Progress ledger <span class="tag g">current</span></h2>
+    <div class="meta">
+      <b>PROGRESS-LEDGER.md</b><br>
+      24,772 bytes · sha256 67c86ecb80eef989d1a633eb694a9f9e1016fca2032b28b02eb216bdad2bc7d0<br>
+      task-by-task status, what is proven vs owed, the exact commands run, and how to apply + confirm the C7 patch.
+    </div>
+    <a class="btn" href="PROGRESS-LEDGER.md" download>&#11015; Download PROGRESS-LEDGER.md</a>
+    <a class="btn alt" href="PROGRESS-LEDGER.md" target="_blank">&#128065; View</a>
+    <p class="hint">Legend: <b>DONE</b> = finished and verified &middot; <b>PARTIAL</b> = code compile/run-verified, device confirmation owed &middot;
+    <b>NOT DONE</b> = unverified. The only open item is running the C7 patch on the physical device &mdash; everything that can be
+    verified without hardware already is.</p>
+  </div>
+  <div class="card">
+    <h2>The Webapp <span class="tag">ship this</span></h2>
+    <div class="meta">
+      <b>darkith-forge.html</b><br>
+      1,297,607 bytes · single file · zero dependencies · runs from <code>file://</code><br>
+      sha256 0a6c54dd8816d557d80278c0dbfe8c2a8e693d252f162c6d06c912b7e16f3228
+    </div>
+    <a class="btn" href="darkith-forge.html" download>⬇ Download darkith-forge.html</a>
+    <p class="hint">Open it in any browser (desktop or Android). No server, no build step.
+    Self-test 49/49, zero page errors on Chromium, Firefox and WebKit.<br>
+    <span class="new">Terminal:</span> <code>aegis://term</code>, the Terminal tile, or <code>&gt;cmd</code> — a stateful shell;
+    <code>cd</code> and <code>export</code> persist, so you can drop Termux.</p>
+  </div>
+
+  <div class="card">
+    <h2>Forged Proof APK <span class="tag g">evidence</span></h2>
+    <div class="meta">
+      <b>darkith-forged-proof.apk</b><br>
+      987,679 bytes · produced by this forge's exact chain · installable<br>
+      sha256 ec17b014063b5cc979e34eeb6635181ca6986a8b9ced770c8f08a2c32cb569ea
+    </div>
+    <a class="btn alt" href="darkith-forged-proof.apk" download>⬇ Download darkith-forged-proof.apk</a>
+    <p class="hint">Launcher <code>com.darkith.omega.OmegaHost</code>. Its dex carries the hand-rolled
+    <code>AutophagicAllocator</code> + <code>MemoryGovernor</code> + <code>OmegaRenderer</code> (GLES 2.0) +
+    <code>NativeOmegaBuilder</code>. <span class="new">Compose count: 0.</span>
+    Verified: <code>apksigner</code> v2+v3 true · <code>zipalign -c 4</code> clean.</p>
+  </div>
+
+  <div class="card">
+    <h2>Fixed Android Project <span class="tag g">builds: verified</span></h2>
+    <div class="meta">
+      <b>darkith_source_fixed.zip</b><br>
+      8,376,714 bytes · 79 entries · complete Gradle project (gradlew + wrapper jar + apksig jar + proguard rules)<br>
+      sha256 a77ccb278ad0eed5e24ed709d3ec3224307499ddf1146370bf7ac77371a04b69
+    </div>
+    <a class="btn alt" href="darkith_source_fixed.zip" download>&#11015; Download darkith_source_fixed.zip</a>
+    <p class="hint">Two defects fixed that blocked this build: the referenced-but-missing
+    <code>app/libs/apksig-8.5.2.jar</code>, and <code>BuildEngine.kt</code> calling
+    <code>nativeDir.absolutePath</code> on a String. It also ships
+    <code>termux-import.sh</code>, and its <code>gradle.properties</code> carries
+    Termux paths only &mdash; no build-machine paths.<br>
+    Build with Gradle (the app needs androidx):<br>
+    <code>./gradlew :app:assembleDebug --no-daemon --console=plain -x embedSourceSnapshot</code><br>
+    Verified here: <b>BUILD SUCCESSFUL</b>, APK 8,500,430 B, <code>apksigner</code> OK, launcher
+    <code>com.darkith.transliaison.HomekeeperActivity</code>, byte-identical across 3 builds.</p>
+  </div>
+
+  <div class="card">
+    <h2>Termux import + build <span class="tag g">one shot</span></h2>
+    <div class="meta">
+      <b>termux-import.sh</b><br>
+      9,618 bytes · sha256 05ee12f743b8a4fd9319fca6a4ce03783f3d69f653e52bdfe28ef7a94f1658d8
+    </div>
+    <a class="btn" href="termux-import.sh" download>&#11015; Download termux-import.sh</a>
+    <p class="hint">Imports the project into <code>~/darkith-project</code>, backs up any existing tree,
+    verifies the three previously-missing anchors, guards memory, runs the Gradle build, checks the
+    signature, and delivers the APK to <code>/sdcard/Download/DarkithHomekeeper_Omega.apk</code>.
+    <br><b>Self-healing:</b> it checks that <code>org.gradle.java.home</code> and
+    <code>android.aapt2FromMavenOverride</code> exist on <i>your</i> device before building and
+    repoints (or drops) them if not, so a tree assembled elsewhere cannot fail with
+    "Java home supplied is invalid". It also resolves the JDK and SDK itself.
+    <br><code>bash termux-import.sh</code></p>
+  </div>
+
+  <div class="card">
+    <h2>Host-app APK <span class="tag g">built + signed here</span></h2>
+    <div class="meta">
+      <b>darkith-homekeeper-debug.apk</b><br>
+      16,377,082 bytes · Gradle path + <b>libaapt2.so &amp; libzipalign.so embedded</b> · Build APK now works<br>
+      <span class="new">engine dex repaired:</span> the shipped <code>assets/engine/template.dex</code> was missing the Kotlin
+      stdlib — 29 referenced classes (<code>Lkotlin/…</code>) were unresolvable, so <em>every forged APK would crash at
+      class-load</em>. This build merges the stdlib in: <b>0 unresolved</b>, 1,079 classes, 12,715 methods, plus the current webapp.<br>
+      <span class="new">install fix:</span> <code>resources.arsc</code> and the embedded <code>lib/*.so</code> are now <b>STORED and page-aligned</b> (were DEFLATED), so API&nbsp;30+ accepts the install — this was the &ldquo;App not installed&rdquo; cause.<br>
+      sha256 2ea7e1dd395795bdb7a7e6e36426ff237dc566dff2383739ff1c39df57340e4d
+    </div>
+    <a class="btn alt" href="darkith-homekeeper-debug.apk" download>&#11015; Download darkith-homekeeper-debug.apk</a>
+    <p class="hint">Package <code>com.darkith.transliaison</code> v6.0 · minSdk 24 · targetSdk 34.
+    Launchable: <code>HomekeeperActivity</code> and <code>core.OmegaActivity</code>.
+    Its dex carries the hand-rolled <code>OmegaHost</code>, <code>AutophagicAllocator</code>,
+    <code>MemoryGovernor</code>, <code>OmegaRenderer</code> and <code>NativeOmegaBuilder</code>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Press release &amp; derivation protocol <span class="tag g">rewritten</span></h2>
+    <div class="meta">
+      <b>PRESS-RELEASE.md</b> — 10,524 bytes · sha256 0bd5786fdf37b570bfcb1ada88015a21f1a1e264980266fe754a572bebf38347…<br>
+      <b>AGENTS-SKILLS-PROTOCOL.md</b> (SDP/1) — 11,592 bytes · sha256 3bb07e434b8202a76a0154c7c79546069f0c9e16215c36c1a0ea1d78f4dae052…
+    </div>
+    <a class="btn" href="PRESS-RELEASE.md" download>&#11015; Download PRESS-RELEASE.md</a>
+    <a class="btn alt" href="AGENTS-SKILLS-PROTOCOL.md" download>&#11015; Download AGENTS-SKILLS-PROTOCOL.md</a>
+    <p class="hint">Written to the author's own <b>One Rule</b>, carried verbatim:
+    <i>show the path, log the instant, carry the citation verbatim</i> — source,
+    transformation, falsifier. Each claim carries the author's status flags
+    (<code>RESOLVED</code> / <code>EXPOSABLE</code> / <code>INFERRED</code>).<br>
+    The release covers the actual work: the <b>Bond Formation Number</b>
+    (ℬ ≥ 1, with the constant 1 shown to be forced rather than postulated), the
+    <b>Triadic Resolver</b> (identity held across 200,000 trials), the
+    <b>Autophagic Allocator</b> (Lyapunov function verified monotonically
+    decreasing against a 3.66 GB usable budget), and the
+    <b>Autophagic Sovereign Economy</b>.<br>
+    <b>SDP/1</b> is extracted from NT VII–XI with verbatim citation — not
+    invented. It states the derivation pattern, the residual principle, the
+    anchor-refusal principle, and the verifier's duty <i>not to upgrade a flag</i>:
+    verifying internal consistency is not verifying physical truth.<br>
+    The physical falsifier — that ℬ ≥ 1 predicts real joint survival — is named
+    and marked <b>unrun</b>. 15/15 quotations verified against source.</p>
+  </div>
+
+  <div class="card">
+    <h2>Native toolchain for Build APK <span class="tag g">verified static</span></h2>
+    <div class="meta">
+      <b>darkith-native-arm64.zip</b><br>
+      2,666,666 bytes · 2 files · sha256 49bf42af87baced576f96084dc24e95cee3f59b782b7accab9e42be7e5627079<br>
+      <b>forge_native_fix.sh</b> — installer · sha256 b0e9045325d49a26073588e5993e592ed7e4875d3fbaf396d2756f49cb62497b
+    </div>
+    <a class="btn" href="darkith-native-arm64.zip" download>&#11015; Download darkith-native-arm64.zip</a>
+    <a class="btn alt" href="forge_native_fix.sh" download>&#11015; Download forge_native_fix.sh</a>
+    <p class="hint">Supplies the two binaries the app's builder shells out to:
+    <code>libaapt2.so</code> and <code>libzipalign.so</code>, extracted from the APK's
+    <code>lib/arm64-v8a/</code> at install time.<br>
+    Both are <b>fully static</b> AArch64 ELF — <code>readelf -d</code> reports
+    <b>0 DT_NEEDED</b> and no interpreter, so they need no companion libraries.
+    The earlier 54-file dynamically-linked set is not needed and could not work:
+    Android only extracts <code>lib*.so</code>, so its <code>libz.so.1</code> /
+    <code>libexpat.so.1</code> deps would never reach disk, and Termux ships no
+    <code>zipalign</code> at all.<br>
+    Verified: <code>aapt2 compile</code> + <code>aapt2 link</code> produced a valid
+    <code>base.apk</code>, and <code>zipalign -f 4</code> then reported
+    <i>Verification successful</i>, using the app's exact argument lists.</p>
+  </div>
+
+  <div class="card">
+    <h2>DARKITH Ω Terminal + Local Assistant <span class="tag">new</span></h2>
+    <div class="meta">
+      <b>omega.html</b><br>
+      41,959 bytes · single file · zero dependencies · runs from <code>file://</code><br>
+      sha256 a11d595c79b96dbf94a7b14ef82de5d5d8831e64b287232632c2f91b6e557edf
+    </div>
+    <a class="btn" href="omega.html" download>⬇ Download omega.html</a>
+    <p class="hint">Four panes: <b>Terminal</b> (real exec through the host bridge, in-page builtins without one),
+    <b>Browser</b>, <b>Assistant</b>, <b>System</b>. Dark and light themes follow the OS; sized for a 360&times;800 phone.<br>
+    Honest by construction: with no host bridge it says <i>in-page builtins only</i> and the assistant says
+    <i>offline ruleset</i> &mdash; it never fakes a language model. Verified: 26/26 UI assertions on Chromium,
+    18/18 engine contract tests, and a real 0.5B GGUF answering at ~55 tok/s.</p>
+  </div>
+
+  <div class="card">
+    <h2>SAVF-1 Universal Audit Engine <span class="tag g">audited + hardened</span></h2>
+    <div class="meta">
+      <b>savf.html</b><br>
+      398,245 bytes · single file · zero dependencies · no network · runs from <code>file://</code><br>
+      sha256 5030bd163189924db9bd07346fff827a846fc16f7edd77c65fa61427f8902632<br>
+      <b>savf.py</b> (reference) — 41,662 bytes · sha256 c48c1022e15bb49a04964ef6bb52d974e086e6f23fea5196e3697ec7380e5fb9
+    </div>
+    <a class="btn alt" href="savf.html" download>&#11015; Download savf.html</a>
+    <p class="hint">Seven sections: <b>Audit</b> (claims in, verdicts out), <b>Gates</b>, <b>Axis</b> (live axis law, chart signs,
+    handedness, exp/log), <b>Ledger</b>, <b>Freeze</b>, <b>Self-test</b> (9/9 adequacy checks in-browser), <b>Help</b>.<br>
+    7 bugs fixed: circular derivation now BLOCKED, numeric facts compared numerically, scientific notation
+    (<code>1e3</code>) parsed, true line numbers, percentages, implicit-mult guard, non-greedy property match.<br>
+    Cross-validated against <code>savf.py</code>: 300 random axes bit-identical, 389 exp/log pairs identical,
+    chart signs + handedness identical. Verified on Chromium, Firefox and WebKit.</p>
+  </div>
+
+  <div class="card">
+    <h2>One-shot build.sh <span class="tag">no Gradle</span></h2>
+    <div class="meta">
+      <b>build.sh</b><br>
+      8,646 bytes · the NT IX §9.6 seven-step forced chain, with the inline anchor checks<br>
+      sha256 9dd16fdecbfb2f94dd1f7a17e4b609ef7e09a9644bf45476e4b4ce5429d1f4c0
+    </div>
+    <a class="btn alt" href="build.sh" download>⬇ Download build.sh</a>
+    <p class="hint"><code>aapt2 compile → aapt2 link → kotlinc → d8 → zip → zipalign → apksigner</code>.
+    Auto-detects the toolchain (Termux <code>$PREFIX</code>, build-tools, R8 jar) and refuses
+    (named anchor) when a forced leg is missing. Proven one-shot here:<br>
+    <code>bash build.sh /path/to/project "App Name" com.pkg.name</code> → installable APK.</p>
+  </div>
+  <div class="card">
+    <h2>Termux: zipalign.py + setup <span class="tag">RAM-lean</span></h2>
+    <div class="meta">
+      <b>zipalign.py</b> — 2,853 bytes · sha256 3d4033962cab05731e45bcec758252c4bce71ec0985a613072b144f221972643<br>
+      <b>TERMUX-SETUP.txt</b> — 3,334 bytes · sha256 a4a0f19e430893f09cc1e6796fa8a75641e5e0874d1d0ad5b468e4e70622bbac
+    </div>
+    <a class="btn alt" href="zipalign.py" download>⬇ zipalign.py</a>
+    <a class="btn alt" href="TERMUX-SETUP.txt" download>⬇ TERMUX-SETUP.txt</a>
+    <p class="hint">Termux ships <b>no</b> <code>zipalign</code> package — <code>build.sh</code> falls back to this
+    pure-Python aligner, proven byte-identical to the reference tool and passing
+    <code>zipalign -c</code>. The lean path (a prebuilt <code>classes.dex</code>, no <code>src/</code>)
+    skips kotlinc and d8 entirely: just aapt2, align, sign — the lightest build for limited RAM.</p>
+  </div>
+  <div class="card">
+    <h2>C7 IR-render patch <span class="tag g">wired + verified</span></h2>
+    <div class="meta">
+      <b>forge_c7_oneshot.sh</b><br>
+      91,951 bytes · sha256 e9435547169f5ccc27b79cef0763a94d3308aa75a508adc51a8b9708ec7e29b9<br>
+      <b>c7_patched_sources.zip</b> — 6 files · sha256 2cd17e7757ce1a0c4d762eae6a46f8502f5eaeb9ec655a6fec7c03cfbd00c399
+    </div>
+    <a class="btn" href="forge_c7_oneshot.sh" download>&#11015; Download forge_c7_oneshot.sh</a>
+    <a class="btn alt" href="c7_patched_sources.zip" download>&#11015; Download c7_patched_sources.zip</a>
+    <p class="hint">Closes the seam the README previously listed under &ldquo;not done&rdquo;. The IR path is now
+    <b>live</b>: <code>forgeRenderNative</code> &rarr; <code>TransliaisonEngine</code> IR &rarr;
+    <code>NativeForgeBuilder</code> &rarr; the <b>live</b> <code>OmegaRenderer</code> &rarr; real GLES geometry
+    (quads + text-run placeholders). The control law (<code>AutophagicAllocator</code> +
+    <code>MemoryGovernor</code>, both <b>unchanged</b>) now runs every frame inside
+    <code>tickFrameBoundary</code>. New files <code>GpuScanner.kt</code> and <code>IRBuilder.kt</code>;
+    <code>forgeNative</code>/<code>forgeChimera</code> are reconciled to a single path (chimera keeps the
+    donor-grafting duty; <code>forgeNative</code> renders IR and refuses with <b>DEFICIT: C7</b> when no
+    surface is attached).<br>
+    <b>Verified here, no device:</b> patched core package compiles against real
+    <code>android-34</code> jar with <b>0 errors</b>; <code>IRBuilder</code> run on a real IR tree &mdash;
+    <b>11/11</b> (17 quads / 102 verts, text placeholders emitted, budget respected); the patch script was
+    <b>executed</b> end-to-end against a simulated Termux layout &mdash; preflight, anchors, backup, apply,
+    brace check and marker assertions all pass, and its three abort paths fire correctly.<br>
+    Run: <code>PROJ=/path SDK=/path ONES=/path bash forge_c7_oneshot.sh</code> &mdash; then
+    <code>aegis://ir</code> in the webapp. On-disk evidence at
+    <code>/sdcard/Darkith/logs/omega_trace.txt</code>.</p>
+  </div>
+  <footer>Generated by OpenHands agent on behalf of the operator.</footer>
+</div>
+</body>
+</html>

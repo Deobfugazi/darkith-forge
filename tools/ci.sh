@@ -77,6 +77,28 @@ else
   echo "SKIP: not a git checkout"
 fi
 
+printf '\n=== app gates (W-040: gates that were only notes) ===\n'
+# These four gates existed but tools/ci.sh never invoked them, so a green CI proved
+# nothing about the app. The first two are pure static and always run; the last two
+# are the §19 compile proof (MUST-11) and need the toolchain.
+if [ -f tools/app/doc_path_gate.py ]; then
+  run "doc path gate (no dangling doc paths)" python3 tools/app/doc_path_gate.py
+fi
+UI_HTML="darkith home forge.html"
+BRIDGE_KT="app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt"
+if [ -f "$UI_HTML" ] && [ -f "$BRIDGE_KT" ] && [ -f tools/app/bridge_contract_audit.py ]; then
+  run "bridge contract (UI<->bridge)" python3 tools/app/bridge_contract_audit.py "$UI_HTML" "$BRIDGE_KT" --gate
+fi
+if [ -n "${ANDROID_JAR:-}" ] && [ -n "${KOTLINC:-}" ] && [ -d app/src/main/java/com/darkith/transliaison ]; then
+  run "fork integrity (§19 laws + MUST-11 compile)" \
+      bash tools/app/fork_integrity_gate.sh app/src/main/java/com/darkith/transliaison "$ANDROID_JAR" "${EXTRA_CP:-}"
+  run "delivery registry (loophole audit)" bash tools/app/delivery_gate.sh . --static
+else
+  echo "SKIP: android.jar/kotlinc absent -> §19 compile proof (MUST-11) not run."
+  echo "      stage it with: . tools/get_toolchain.sh   (the doc-path and"
+  echo "      bridge-contract gates above ran and need no toolchain)"
+fi
+
 printf '\n=== APK store rule (SPI-21 repack law) ===\n'
 apks="$(ls delivery/*.apk 2>/dev/null || true)"
 if have python3 && [ -n "$apks" ]; then

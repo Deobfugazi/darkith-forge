@@ -2,13 +2,28 @@
 # fork_integrity_gate.sh — the executable form of §19 (NEVER #11-13, MUST #10-13, SPI-12-15).
 # A ledger entry that is not a gate is a note. This is the gate.
 #
-# Usage:  tools/fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp]
+# Usage:  tools/fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp] [--no-compile]
 # Exit:   0 = all laws held.  non-zero = a law was broken (see the DEFICIT line).
+#
+# MUST-11 (compile is the proof) is ENFORCED: if android_jar + kotlinc are absent
+# the gate FAILS rather than printing a green it did not earn (the W-040 "vacuous
+# green" class). Pass --no-compile only for an explicit static-only run; the
+# delivery gate then reports L-07/L-10 OPEN, so a skip can never masquerade as a proof.
 set -u
 
-TREE="${1:?usage: fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp]}"
-ANDROID_JAR="${2:-}"
-EXTRA_CP="${3:-}"
+TREE=""
+NO_COMPILE=0
+for a in "$@"; do
+  case "$a" in
+    --no-compile) NO_COMPILE=1 ;;
+    *) if [ -z "$TREE" ]; then TREE="$a"
+       elif [ -z "${ANDROID_JAR:-}" ]; then ANDROID_JAR="$a"
+       elif [ -z "${EXTRA_CP:-}" ]; then EXTRA_CP="$a"; fi ;;
+  esac
+done
+[ -n "$TREE" ] || { echo "usage: fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp] [--no-compile]"; exit 2; }
+ANDROID_JAR="${ANDROID_JAR:-}"
+EXTRA_CP="${EXTRA_CP:-}"
 FAIL=0
 say()  { printf '  %s\n' "$*"; }
 die()  { printf 'DEFICIT: %s\n' "$*"; FAIL=1; }
@@ -61,15 +76,19 @@ done
 # ---- MUST #11 : the compile is the proof -------------------------------------
 echo "[MUST-11] compile is the proof"
 KOTLINC="${KOTLINC:-kotlinc}"
-if [ -n "$ANDROID_JAR" ] && command -v "$KOTLINC" >/dev/null 2>&1; then
+if [ "$NO_COMPILE" = 1 ]; then
+  say "SKIPPED (--no-compile: static checks only) — MUST-11 NOT proven"
+  die "MUST-11: compile not proven (--no-compile). This is a static-only run, not a proof."
+elif [ -n "$ANDROID_JAR" ] && command -v "$KOTLINC" >/dev/null 2>&1; then
   LOG="$(mktemp)"; OUTD="$(mktemp -d)"
   # R.java is a build product (aapt2 link --java, build.sh step 2). Generate it so
   # R.* resolves exactly as it does in the real chain — otherwise the gate cries wolf.
   MANIFEST_G="$TREE/../../../../AndroidManifest.xml"; RES_G="$TREE/../../../../res"; RJ=""
-  if [ -f "$MANIFEST_G" ] && [ -d "$RES_G" ] && command -v aapt2 >/dev/null 2>&1; then
+  AAPT2="${AAPT2:-aapt2}"
+  if [ -f "$MANIFEST_G" ] && [ -d "$RES_G" ] && command -v "$AAPT2" >/dev/null 2>&1; then
     RC="$(mktemp -d)"; GEN="$(mktemp -d)"
-    aapt2 compile --dir "$RES_G" -o "$RC/res.zip" >/dev/null 2>&1
-    aapt2 link -o "$RC/g.apk" -I "$ANDROID_JAR" --manifest "$MANIFEST_G" "$RC/res.zip" \
+    "$AAPT2" compile --dir "$RES_G" -o "$RC/res.zip" >/dev/null 2>&1
+    "$AAPT2" link -o "$RC/g.apk" -I "$ANDROID_JAR" --manifest "$MANIFEST_G" "$RC/res.zip" \
       --java "$GEN" --min-sdk-version 24 --target-sdk-version 34 --auto-add-overlay >/dev/null 2>&1
     RJ=$(find "$GEN" -name R.java | head -1)
   fi
@@ -81,7 +100,7 @@ if [ -n "$ANDROID_JAR" ] && command -v "$KOTLINC" >/dev/null 2>&1; then
     die "MUST-11: kotlinc reported $(grep -c 'error:' "$LOG") errors. Not reconciled."
   fi
 else
-  say "SKIPPED (no android_jar/$KOTLINC supplied) — supply both to enforce MUST-11"
+  die "MUST-11: compile NOT proven — supply android_jar + kotlinc, or pass --no-compile (which is not a proof)."
 fi
 
 echo "== result =="

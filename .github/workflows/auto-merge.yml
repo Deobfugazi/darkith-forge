@@ -61,6 +61,23 @@ jobs:
           python3 -m pip install --quiet -r requirements-dev.txt
           python3 -m playwright install --with-deps chromium
 
+      - name: Stage the compile toolchain (makes MUST-11 a real proof)
+        run: |
+          # Fetch android.jar + apksig + aapt2 + kotlinc. kotlinc needs a JDK; the
+          # runner image provides one. If it is somehow absent we skip staging, and
+          # tools/ci.sh reports the §19 compile gate as SKIP (never a false green).
+          if command -v java >/dev/null 2>&1; then
+            . tools/get_toolchain.sh
+            {
+              echo "ANDROID_JAR=$ANDROID_JAR"
+              echo "EXTRA_CP=$EXTRA_CP"
+              echo "AAPT2=$AAPT2"
+              echo "KOTLINC=$KOTLINC"
+            } >> "$GITHUB_ENV"
+          else
+            echo "no JDK on runner; §19 compile proof will be SKIPped"
+          fi
+
       - name: Run the repository's tests (tools/ci.sh)
         run: bash tools/ci.sh
 

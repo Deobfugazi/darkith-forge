@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # consolidate_docs.sh — collapse the overlapping docs into the ONE source of truth.
 # Idempotent: running it twice is a no-op. Never deletes DARKITH.md or AGENTS.md.
+#
+#   consolidate_docs.sh [root]           consolidate (delete the overlapping docs)
+#   consolidate_docs.sh [root] --check   report only; exit 1 if consolidation is
+#                                        incomplete (an OLD doc still present). CI-safe.
 set -u
 ROOT="${1:-/workspace/project}"
+CHECK=0
+for a in "$@"; do [ "$a" = "--check" ] && CHECK=1; done
+[ "$CHECK" = 1 ] && [ "$ROOT" = "--check" ] && ROOT="/workspace/project"
 cd "$ROOT" || exit 1
 
 # The four overlapping docs that DARKITH.md replaces. AGENTS.md is NOT here (it is
@@ -16,6 +23,21 @@ echo "== consolidating docs =="
 for L in "NEVER #11" "NEVER #15" "SPI-17" "W-042" "one surface"; do
   grep -q "$L" "$CANON" || { echo "DEFICIT: $CANON lacks '$L' — refusing to delete"; exit 1; }
 done
+
+if [ "$CHECK" = 1 ]; then
+  LEFT=""
+  for f in $OLD; do
+    for p in "$ROOT/$f" "$ROOT/tree_omega/$f" "$ROOT/dist/$f" "$ROOT/proof/$f"; do
+      [ -f "$p" ] && LEFT="$LEFT $p"
+    done
+  done
+  if [ -n "$LEFT" ]; then
+    echo "INCOMPLETE — overlapping doc(s) still present:$LEFT"
+    exit 1
+  fi
+  echo "OK — one canonical doc ($CANON); no overlapping copies"
+  exit 0
+fi
 
 # remove every copy in root, tree_omega/, and dist/ (dist copies are regenerated)
 for f in $OLD; do

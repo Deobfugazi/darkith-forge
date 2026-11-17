@@ -42,10 +42,11 @@ the single authoritative history. Consequences:
 
 ## Comment defects (resolved)
 The original defect was **not** a stripped `/*` opener. It was a mangled **closer**
-(a line of just `//` where `*/` belonged), in **2** files: `core/CssLite.kt:3`,
-`core/SubstrateIngestor.kt:92`. `tools/kt_comment_scan.py` is a nesting/string-aware
-Kotlin lexer; `tools/fix_unclosed_comments.py` repairs only proven-unclosed lines.
-The working `tree/` scans **0 defects**. Verify with `python3 tools/comment_audit.py`.
+(a line of just `//` where `*/` belonged). `tools/syntax_gate.py` is a
+nesting/string-aware Kotlin lexer: it tracks `"..."`, `'...'`, `"""` raw strings,
+`//` line comments and NESTED `/* */` block comments, and fails on an unclosed one.
+`tools/ci.sh` runs it over `app/src/main/java`. It is a scanner, not a parser (W-023):
+it cannot prove a file compiles — the real compile proof is MUST-11 (see the gate).
 
 ## Web studio (offline, no build step)
 - `savf.html` — SAVF universal audit engine (`window.SAVF`).
@@ -88,17 +89,22 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
 ## Verification
 - `bash tools/ci.sh` — the one command that runs every suite, provider-neutral. Any CI
   (or a phone) calls this; vendor YAML is only a thin adapter around it. Exit 0 == green.
-- `node tools/test_darktools.js` — 46/46 (tasks, explicit+passive learning, ledger, omega,
-  tk host, persistence). `NODE_PATH=/tmp/node_modules node tools/test_inscriber.js` — 14/14
-  (jsdom drives real Enter keydowns). `node /tmp/difftest3.js` — shell parity vs bash
-  (known gaps: `sed -n p`, `{a..e}`, `awk length()`, `xargs -I{}`, awk ternary).
-- jsdom functional test needs `url:` set (localStorage rejects opaque origins).
+- App gates run inside `ci.sh` when their inputs exist: `tools/app/fork_integrity_gate.sh`
+  (§19 laws; MUST-11 needs android.jar + kotlinc, staged by `tools/get_toolchain.sh`),
+  `tools/app/bridge_contract_audit.py --gate`, `tools/app/doc_path_gate.py`,
+  `tools/app/delivery_gate.sh . --static` (loophole registry; artifact checks are N/A).
+- `python3 build/verify.py` — 7 checks (sync, parity, browser battery, omega, omega-ui,
+  savf-cli, s19-compile). `--fast` skips the two browser checks. A missing tool is SKIP
+  (not FAIL), so `--fast` and the full run never disagree about the repo.
 - Serve: `python3 -m http.server 12000` in the repo root.
 
 ## Proof logs on disk
-`proof_comment_audit.log`, `proof_darkterm.log`, `proof_toolkits.log`.
+The gate outputs (fork integrity, delivery registry, compile) are printed to the CI log;
+`delivery/` is regenerable output and not committed.
 
-## OMEGA reconciliation + compile proof (this session)
+## OMEGA reconciliation + compile proof (historical record)
+> Historical. The canonical tree is now `app/src/main/java/com/darkith/transliaison`
+> (see §24); `tree_omega/` was the pre-reconciliation layout and no longer exists.
 - **Canonical source tree**: `tree_omega/` (build.sh layout) and its archive `darkith_omega_source.zip`.
   Reconciled from all 6 forks; delivery is the superset. See `RECONCILIATION.md`.
 - **Compile proof (real, not grep)**: kotlinc 1.9.24, `-cp android-all-14.jar:apksig-8.1.1.jar:R-classes`
@@ -145,29 +151,29 @@ MUST #13 Ledger Entries Are Gates: every failure class becomes a check, or it is
 SPI-12 one authoritative tree · SPI-13 every symbol resolves in-tree · SPI-14 every input
   versioned · SPI-15 a ledger entry that is not an executable gate is a note, not a law.
 W-040: the ledger recurred because it was not a gate — W-021/W-023/W-024/W-034/W-035 all
-  returned. The fix is `tools/fork_integrity_gate.sh` (the executable form of §19).
+  returned. The fix is `tools/app/fork_integrity_gate.sh` (the executable form of §19).
 
 ## The gate (run before declaring any tree current)
 ```
-KOTLINC=/path/to/kotlinc tools/fork_integrity_gate.sh \
+KOTLINC=/path/to/kotlinc tools/app/fork_integrity_gate.sh \
   tree_omega/app/src/main/java/com/darkith/transliaison \
   /path/to/android-all.jar  /path/to/apksig.jar:/path/to/rclasses
 # PASS: all §19 laws held.  (SPI-12/13/14 + MUST-11 compile)
 ```
 
 ## §20 DELIVERY GATE — the loophole registry (binding)
-NEVER #14: never say "delivered" without running tools/delivery_gate.sh and listing every
+NEVER #14: never say "delivered" without running tools/app/delivery_gate.sh and listing every
   loophole's status. "Delivered" is a gate RESULT, not an assertion.
 MUST #14: the gate IS the delivery; non-zero exit forbids the word "delivered".
 SPI-16: a delivery that did not run the gate is not a delivery.
 W-041: the recurring defect was the ABSENCE of a delivery gate — shipping with unenumerated
-  loopholes. The registry (tools/delivery_gate.sh) names all 11: L-01 manifest-version,
+  loopholes. The registry (tools/app/delivery_gate.sh) names all 11: L-01 manifest-version,
   L-02 apk-version, L-03 self-report, L-04 artifact-built, L-05 artifact-signed,
   L-06 artifact-aligned, L-07 fork-singularity (§19), L-08 bridge-contract, L-09 asset-parity,
   L-10 currency, L-11 registry-nonempty.
 
 ## Version truth (never guess again)
-- Truth is AndroidManifest.xml: versionCode=2, versionName=1.1.0-omega. Bridge VERSION=hk-bridge-50.
+- Truth is AndroidManifest.xml: versionCode=2, versionName=1.1.0-omega. Bridge VERSION=hk-bridge-52.
 - The app self-reports: `darkith.apkVersion()` -> "bridge=... pkg=... (code)".
 - On device: `pm dump com.darkith.transliaison | grep -E 'versionName|versionCode'`.
 - From the APK: `aapt dump badging <apk> | grep ^package`.
@@ -179,7 +185,7 @@ W-041: the recurring defect was the ABSENCE of a delivery gate — shipping with
 cd tree_omega && ANDROID_JAR=/tmp/android-all.jar R8_JAR=/tmp/r8.jar \
   KOTLINC=/tmp/ktc/kotlinc/bin/kotlinc KOTLINC_XMX=4g bash build.sh . Darkith com.darkith.transliaison
 # gate (must print DELIVERED)
-KOTLINC=/tmp/ktc/kotlinc/bin/kotlinc tools/delivery_gate.sh . tree_omega/app-signed.apk \
+KOTLINC=/tmp/ktc/kotlinc/bin/kotlinc tools/app/delivery_gate.sh . tree_omega/app-signed.apk \
   /tmp/android-all.jar /tmp/apksig.jar
 ```
 Toolchain got: aapt2/zipalign/apksigner via `apt install aapt android-sdk-build-tools`;
@@ -217,10 +223,10 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
 
 ## §22 DEDUPLICATION + IDEMPOTENCY (binding)
 - ONE DOCUMENT (NEVER #16): DARKITH.md is the single canonical record (version + reconciliation +
-  deficits + laws). Never fork it. Served/zipped copies are GENERATED by tools/pack_delivery.py.
+  deficits + laws). Never fork it. Served/zipped copies are GENERATED by tools/app/pack_delivery.py.
 - IDEMPOTENT (MUST #18): pack_delivery.py has no wall-clock, no self-hash, deterministic zip
   timestamps. Re-run -> byte-identical. Prove idempotency by running twice and diffing.
-- Consolidation (SPI-18): tools/consolidate_docs.sh merges overlapping docs; refuses to delete
+- Consolidation (SPI-18): tools/app/consolidate_docs.sh merges overlapping docs; refuses to delete
   unless the canonical doc already holds every law. Idempotent (2nd run is a no-op).
 
 ## §23 NO STALLED DEFICIENCY (binding)
@@ -269,3 +275,37 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   its frame. `savf.py selftest` -> ok; in-page SAVF self-test -> 9/9, 0 errors.
 - TWO-TAB CONVERGENCE (§0b): `tools/sync.sh` + `tools/converge.sh` proven by a
   real divergence (two tabs, both commits survived, linear history).
+
+## §26 DELIVERY RECORD — forensic remediation of the third-tab audit (F1–F8)
+- **F1 (vacuous green) — CLOSED.** `tools/app/fork_integrity_gate.sh` no longer
+  prints PASS when MUST-11 (the compile) was skipped. Without a toolchain it FAILS;
+  with kotlinc + `android.jar` it runs the real compile (55 files, 0 errors) and
+  passes. `--no-compile` fails honestly.
+- **F2 (contradiction) — CLOSED.** `build/verify.py` full and `--fast` agreed on
+  nothing before (full FAILed, `--fast` PASSed). A missing browser now SKIPs in both,
+  so the two never disagree about the repo. `check_s19_compile` added.
+- **F3 (gates were notes) — CLOSED.** `tools/ci.sh` now runs the four app gates that
+  previously existed but were never invoked: doc-path, bridge-contract, fork-integrity
+  (§19 + MUST-11), delivery registry (`--static`). CI is green end-to-end.
+- **F4 (doc drift) — CLOSED.** `tools/app/doc_path_gate.py` fails on any cited path
+  that does not exist, a bare filename that exists nowhere, a repo-relative path with
+  no matching suffix, and any `hk-bridge-N` that disagrees with the source. 19 drifts
+  fixed (the `tools/` -> `tools/app/` reorg and a stale bridge version).
+- **F5 (dead duplicate) — CLOSED.** `app/src/main/assets/savf.html` was loaded by no
+  literal name; removed. `build-forge.py --check` (non-vacuous: proven to catch drift)
+  keeps the `darkith forge.html` == `darkith home forge.html` twins byte-identical.
+- **F6 (source-of-truth contradiction) — CLOSED.** `build/refresh-host-artifacts.py`
+  called the generated `darkith forge.html` the "source of truth"; it now names
+  `darkith home forge.html` as the canonical input.
+- **F7 (stale memory) — CLOSED.** `.openhands/memory/MEMORY.md` claimed a PASS it had
+  never run; rewritten to the true current state.
+- **F8 (hygiene) — CLOSED.** Removed the accidental terminal dump `!!!!.txt`; the
+  dangling `reconcile/tree-omega` branch is a proven ancestor of HEAD (safe to delete).
+- **UI — hardened.** The delivery hub (`delivery/index.html`) was gitignored AND
+  hand-authored, so a wiped `delivery/` lost the UI. It is now GENERATED from the
+  tracked `build/delivery-hub.template.html` by `build/sync-delivery.py`; every size
+  and sha256 is re-stamped from the files, and `--check` fails on drift or a missing
+  hub. WCAG 2.2 AA tap targets fixed (the 14px meta link was the one violation).
+  Verified live at 360x800 and 1280x800: 0 overflow, 0 console errors, 0 external
+  requests. The engine itself: 9/9 in-page self-tests, verdict total over all 3^11
+  gate states, Python<->HTML parity over 571 files / 1,416,004 tokens / 0 divergences.

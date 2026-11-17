@@ -56,6 +56,15 @@ def main():
     print(f"UNUSED  (bridge has, UI never calls) -> {unused or 'NONE'}")
     print(f"DASHBOARD phantom dot (ms[] not a real method) -> {dash_phantom or 'NONE'}")
     print(f"DASHBOARD omitted (real method not shown) -> {dash_omitted or 'NONE'}")
+    # --gate: a CI exit status. MISSING is a runtime error waiting to happen;
+    # a phantom dashboard dot is a UI that lies. Either fails the gate.
+    if "--gate" in sys.argv:
+        bad = missing + dash_phantom
+        if bad:
+            print(f"\nGATE FAIL — {len(missing)} missing, {len(dash_phantom)} phantom")
+            sys.exit(1)
+        print("\nGATE PASS — contract complete, no phantom dashboard dots")
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()

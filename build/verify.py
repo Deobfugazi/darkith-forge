@@ -22,6 +22,7 @@ Run:  python3 build/verify.py            (all six)
 Exit status is 0 only when every check passes.
 """
 import argparse
+import os
 import pathlib
 import re
 import shutil
@@ -162,8 +163,14 @@ def check_battery() -> bool:
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("      playwright not installed; skipping battery")
-        return False
+        # A missing browser harness is a SKIP, not a product defect. Report it as
+        # such and do not fail the run (the full proof is the CI run, which installs
+        # playwright). This is what makes `--fast` and the full run agree: neither
+        # pretends a skipped browser check is a passed one, and neither fails on an
+        # absent tool. (Before this, battery FAILed on ImportError while omega-ui
+        # PASSed on the same condition -- two verdicts for one repo, F2.)
+        print("      SKIP: playwright not installed (browser battery not run)")
+        return None
 
     # Prefer playwright's bundled browsers; fall back to a system install so the
     # battery still runs in a slim environment. An engine that is simply absent
@@ -262,8 +269,8 @@ def check_omega_ui() -> bool:
     try:
         from playwright.sync_api import sync_playwright  # noqa: F401
     except ImportError:
-        print("      playwright not installed; skipping omega ui")
-        return True
+        print("      SKIP: playwright not installed (omega ui not run)")
+        return None
     r = run([sys.executable, str(BUILD / "omega" / "ui-test.py")])
     last = (r.stdout.strip().splitlines() or [""])[-1]
     print("      " + last)
@@ -283,6 +290,34 @@ def check_savf_cli() -> bool:
     return r.returncode == 0
 
 
+def check_s19_compile():
+    """§19 MUST-11: the app tree compiles clean (the compile is the proof).
+
+    Runs the real chain (aapt2 link --java for R.java, then kotlinc over the tree
+    against android.jar + the build deps). Returns True on a clean compile, False
+    on compile errors, and None (SKIP, not FAIL) when the toolchain is absent --
+    a missing toolchain is not a product defect. CI installs the toolchain
+    (tools/get_toolchain.sh) so this is a real proof there, never a vacuous green.
+    """
+    print("[7/7] s19 compile (MUST-11: the compile is the proof)")
+    tree = ROOT / "app/src/main/java/com/darkith/transliaison"
+    android_jar = pathlib.Path(os.environ.get("ANDROID_JAR", "/tmp/android.jar"))
+    extra_cp = os.environ.get("EXTRA_CP", "")
+    kotlinc = os.environ.get("KOTLINC", shutil.which("kotlinc") or "")
+    if not tree.is_dir():
+        print("      SKIP: no app source tree")
+        return None
+    if not (android_jar.exists() and kotlinc):
+        print("      SKIP: android.jar/kotlinc absent (toolchain not staged)")
+        return None
+    r = run([sys.executable, str(ROOT / "build/s19_compile.py")])
+    last = (r.stdout.strip().splitlines() or [""])[-1]
+    print("      " + last)
+    if r.returncode != 0:
+        print(r.stdout.strip()[-1500:])
+    return r.returncode == 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fast", action="store_true", help="skip the browser battery")
@@ -295,13 +330,17 @@ def main() -> int:
     if not args.fast:
         results.append(("omega-ui", check_omega_ui()))
     results.append(("savf-cli", check_savf_cli()))
+    results.append(("s19-compile", check_s19_compile()))
 
     print()
+    ok_all = True
     for name, ok in results:
-        print(f"  {name:<8} {'PASS' if ok else 'FAIL'}")
-    good = all(ok for _, ok in results)
-    print("\nVERIFY:", "PASS" if good else "FAIL")
-    return 0 if good else 1
+        label = "PASS" if ok else ("SKIP" if ok is None else "FAIL")
+        if ok is False:
+            ok_all = False
+        print(f"  {name:<12} {label}")
+    print("\nVERIFY:", "PASS" if ok_all else "FAIL")
+    return 0 if ok_all else 1
 
 
 if __name__ == "__main__":

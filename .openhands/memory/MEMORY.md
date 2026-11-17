@@ -5,44 +5,45 @@ This directory is agent scaffolding and is excluded from the delivery zip.
 
 ## State
 
-`Σ = 0`. The engine is real and verified; nothing is outstanding.
+The engine is real and verified end-to-end. No open loophole is known.
 
-- `python3 build/verify.py` → **VERIFY: PASS** (sync · parity · battery).
-- `python3 build/sync-delivery.py --check` → **delivery: in sync**.
-- Delivery zips are current: `delivery/dl/darkith-forge-delivery.zip`
-  (whole project) and `darkith-webapp.zip` (apps only). Both hashes on
-  `delivery/dl/index.html` match the served bytes.
-- Hub `delivery/index.html` leads with the download card.
-- UI: WCAG AA in both themes, 44px tap targets, no overflow 320–1280px.
+- `python3 build/verify.py` — 7 checks (sync, parity, browser battery, omega,
+  omega-ui, savf-cli, s19-compile). The verdict is honest either way: with the
+  browser harness and the compile toolchain staged it is PASS 7/7; without them the
+  two browser checks and s19-compile report SKIP (never FAIL, never a false green).
+- `bash tools/ci.sh` — PASS. It now also runs the four app gates that used to be
+  notes only (doc-path, bridge-contract, fork-integrity §19+MUST-11, delivery registry).
+- MUST-11 compile proof is real: `build/s19_compile.py` compiles the app tree with
+  kotlinc over `android.jar` + `apksig.jar` + aapt2-generated `R.java`
+  (55 files, 0 errors). Stage the toolchain with `. tools/get_toolchain.sh`.
+- Delivery zips are regenerable output (gitignored); rebuild with the order below.
 
 ## last_completed_step
 
-Packaged the project for download: added `build/make-delivery-zip.py`,
-generated both archives, added `delivery/dl/index.html`, linked them from the
-hub, verified the served sha256 matches the printed one, and re-ran
-`build/verify.py` (PASS) and `site_test.py` (ALL PASS).
+Forensic remediation of the third-tab diagnostic (findings F1-F8):
+
+- F1 `fork_integrity_gate` was vacuous green (MUST-11 skipped silently) -> MUST-11
+  now fails unless a real compile is proven; a real compile passes.
+- F2 `verify.py` full FAILed while `--fast` PASSed on the same repo -> both now
+  treat a missing playwright as SKIP; the two never disagree.
+- F3 `tools/ci.sh` never invoked the four app gates -> all four now run.
+- F4 AGENTS.md/DARKITH.md drift (19 dangling paths, bridge VERSION) -> fixed, and
+  `tools/app/doc_path_gate.py` now fails on any future drift.
+- F5 duplicate `app/src/main/assets/savf.html` (loaded by no name) -> removed.
+- F6 `refresh-host-artifacts.py` called the generated twin the "source of truth"
+  -> corrected to name `darkith home forge.html` as canonical.
+- F7 this file falsely claimed PASS -> rewritten to the truth above.
+- F8 removed the accidental terminal dump `!!!!.txt`.
 
 ## exact_next_step
 
-None required. If the apps change: `python3 build/sync-delivery.py` then
+None required. If the apps change: `python3 build/sync-delivery.py`, then
 `python3 build/make-delivery-zip.py`, then `python3 build/verify.py`.
-
-## savf_residuals
-
-Σ = 0.
 
 ## Rebuild order (if starting cold)
 
-1. `python3 build/build-forge.py` — regenerate the three HTML artifacts.
-2. `python3 build/sync-delivery.py` — copy to `delivery/`, refresh hashes.
-3. `python3 build/make-delivery-zip.py` — repackage the downloads.
-4. `python3 build/verify.py` — the proof.
-
-## Final archives (this session)
-
-- delivery/dl/darkith-forge-delivery.zip — 29,616,935 B
-  sha256 e9dbeec2f95979a3ef583e2d0874b4916d3492d8e18c02c26cd4e1bdaf1747bb
-- delivery/dl/darkith-webapp.zip — 494,521 B
-  sha256 fd3fb3916df63d4404486a5ed404ab6b6b049897a4eea82f07b4446fb9795862
-
-Both match the hashes printed on delivery/dl/index.html and on the served page.
+1. `. tools/get_toolchain.sh` — stage android.jar + apksig + aapt2 + kotlinc (once).
+2. `python3 build/build-forge.py` — regenerate the three HTML artifacts.
+3. `python3 build/sync-delivery.py` — copy to `delivery/`, refresh hashes.
+4. `python3 build/make-delivery-zip.py` — repackage the downloads.
+5. `python3 build/verify.py` — the proof.
