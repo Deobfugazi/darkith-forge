@@ -403,3 +403,24 @@ domain) had zero hits anywhere durable. Rule: any task, gap, or objective the op
 is inscribed in `TASKS.md` in the same turn it is named, with a status and evidence.
 `tools/board_gate.py` enforces it in CI (a `done` row with no evidence, or a row citing a
 path that does not resolve, fails the gate). An item not in the board is a defect in the board.
+
+## §30 THE SYNCHRONY BYLAW (binding, 2026-11-18)
+
+Synchrony IS time tracking, and it is hardcoded into every app and every bot as GENERATED
+code — never hand-written per surface. `build/gen_synchrony.py` emits the clock
+(`build/gen/omega_time.js` for the browser, `build/gen/omega_time_runtime.py` for bots);
+`build/inject_synchrony.py` injects it into every surface under
+`app/src/main/assets/*.html` and stamps a live clock readout into each. The studio editor's
+`saveDoc` stamps every save with a diachronic ISO key (`YYYY-MM-DDTHH:MM:SS+08:00`) so
+documents sort by time; re-saving replaces the header, never accumulates. Bots route output
+through the generated clock (`tlog`) so their logs carry the time. Zone is Asia/Manila
+(UTC+8) everywhere. `tools/synchrony_gate.py` enforces all of it in CI (a surface with no
+clock, or a hand-edited runtime, fails). Law: DARKITH.md §31 (MUST #23/#24/#25, SPI-25).
+
+## §31 NO LAW IS A NOTE (binding, 2026-11-18)
+
+`tools/law_gate.py` FAILS on any `[NOTE: not yet gated]` marker. Every declared
+NEVER/MUST/SPI must name an executable gate that exists on disk. If a law cannot yet be
+gated, the answer is to build the gate, not to annotate the law. The three laws that were
+notes (MUST #15 circadian, MUST #16 forced download, NEVER #17 no-stalled-deficiency) now
+have gates: `tools/circadian_gate.py`, `tools/download_gate.py`, `tools/stall_gate.py`.

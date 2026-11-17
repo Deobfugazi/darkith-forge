@@ -18,7 +18,9 @@ out = []
 def w(s=""): out.append(s)
 
 w("=== DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) ===")
-w(datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"))
+sys.path.insert(0, "tools")
+from omega_time import stamp as _stamp
+w(_stamp())
 w()
 
 NAMES = ["AxmlWriter.kt","EntryPointRewriter.kt","DarkithChainReader.kt","DarkithContentStore.kt",

@@ -67,3 +67,15 @@ validation, contrast checks.
 |---|---|---|---|
 | E1 | Durable board (this file), read-first from `RESUME.md` + `AGENTS.md` | done | this file; referenced in RESUME §0 and AGENTS §29 |
 | E2 | `tools/board_gate.py` fails CI when a `done` item has no evidence | done | wired into `tools/ci.sh` |
+
+## F. GATE-EVERY-LAW + SYNCHRONY BYLAW (2026-11-18)
+
+| # | task | status | evidence |
+|---|---|---|---|
+| F1 | Every declared NEVER/MUST/SPI names a real gate — zero notes | done | `tools/law_gate.py` now FAILs on any `[NOTE: not yet gated]`; CI green at 24/24 laws |
+| F2 | MUST #15 circadian anchor gated (UTC+8, wake-anchored) | done | `tools/omega_time.py` + `tools/circadian_gate.py` (wired into `tools/ci.sh`) |
+| F3 | MUST #16 forced download gated (hub link + server attachment) | done | `tools/download_gate.py` + `tools/serve_hub.py` (live header proof) |
+| F4 | NEVER #17 no-stalled-deficiency gated (ledger vs delivery counter) | done | `DEFICITS.json` + `tools/stall_gate.py` (fail-closed proven) |
+| F5 | Synchrony bylaw §31: every app + bot carries a generated clock | done | `build/gen_synchrony.py`, `build/inject_synchrony.py`, `tools/synchrony_gate.py` |
+| F6 | Editor stamps saves with a diachronic ISO key | done | `saveDoc`/`stampedBody` in `app/src/main/assets/darkith_ui.html`; proven by `tools/synchrony_gate.py` |
+| F7 | Bots log with timestamps via the generated clock | done | `tools/darkbot.py` routes through `build/gen/omega_time_runtime.py` (`tlog`) |

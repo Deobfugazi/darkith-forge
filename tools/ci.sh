@@ -55,6 +55,18 @@ if have python3; then
     if [ -f tools/board_gate.py ]; then
       run "board gate"                    python3 tools/board_gate.py
     fi
+    # Law gate: SPI-15 — a law that is not an executable gate is a note. Enforces the
+    # prime directive (DARKITH.md §30) and that every declared NEVER/MUST/SPI names a
+    # gate that exists, or is explicitly marked as not-yet-gated.
+    if [ -f tools/law_gate.py ]; then
+      run "law gate (SPI-15/prime)"       python3 tools/law_gate.py
+    fi
+    # MUST #15 / #16 / NEVER #17 / §31 synchrony — the laws that were only notes until now.
+    for g in circadian_gate download_gate stall_gate synchrony_gate; do
+      if [ -f "tools/$g.py" ]; then
+        run "$g"                          python3 "tools/$g.py"
+      fi
+    done
   fi
 else
   echo "SKIP: python3 not found"; FAILED=1

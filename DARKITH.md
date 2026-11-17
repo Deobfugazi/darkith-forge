@@ -553,6 +553,7 @@ L-10 currency               the tree compiles clean vs a real android.jar (W-024
 L-11 registry-nonempty      the gate itself has checks (a gate with none gates nothing)
 
 ─── NEVER #14 (ENUMERATE BEFORE DELIVERING) ───
+GATE: tools/delivery_gate.sh
 NEVER present work as delivered without running the delivery gate and listing
 every loophole's status. "Delivered" is a gate result, not an assertion.
 
@@ -562,6 +563,7 @@ Every delivery runs `tools/delivery_gate.sh`; a non-zero exit forbids the word
 delivery — a loophole with no check is a reopened loophole (SPI-15).
 
 ─── SPI-16 (NO UNGATED DELIVERY) ───
+GATE: tools/delivery_gate.sh
 A delivery that did not run the gate is not a delivery. The gate is the delivery.
 
 ─── THE META-LESSON ───
@@ -593,19 +595,23 @@ Insight: A delivery is ONE surface. One URL that lists everything, each item a
 forced download. Fragmentation is friction, and friction is a defect.
 
 ─── NEVER #15 (ONE SURFACE) ───
+GATE: tools/delivery_gate.sh
 NEVER hand a delivery over as scattered links. There is exactly one entry point —
 the delivery hub — and it lists every artifact.
 
 ─── MUST #15 (CIRCADIAN ANCHOR) ───
+GATE: tools/circadian_gate.py
 Report time in the Operator's local zone (Asia/Manila, UTC+8). Resolve "N hours
 back" from the wake marker (first event of the active block), never from the
 machine clock. State the anchor explicitly so the Operator can falsify it.
 
 ─── MUST #16 (FORCED DOWNLOAD) ───
+GATE: tools/download_gate.py
 Every artifact link carries `download` and is served as an attachment so a tap
 downloads the file, not opens a viewer.
 
 ─── SPI-17 (THE HUB IS THE DELIVERY) ───
+GATE: tools/delivery_gate.sh
 The delivery hub (one page, one URL) IS the delivery. A message that lists links
 is not the delivery; the hub is. The hub shows version, gate status, sizes, and
 hashes so the Operator can verify before installing.
@@ -632,6 +638,7 @@ different outputs. A build that is not idempotent cannot be verified by re-runni
 Insight: idempotent = same inputs, byte-identical outputs. Re-run to prove.
 
 ─── NEVER #16 (ONE DOCUMENT) ───
+GATE: tools/consolidate_docs.sh
 NEVER keep two documents that state the same truth. There is one canonical record:
 DARKITH.md (version + reconciliation + deficits + laws). It is not forked.
 
@@ -666,20 +673,125 @@ exposes a shell without cwd/env/history is not a shell; it is a one-shot exec
 wearing a shell's name. The family must be whole or the gap named.
 
 ─── NEVER #17 (NO STALLED DEFICIENCY) ───
+GATE: tools/stall_gate.py
 NEVER leave a named deficiency open across two or more deliveries. Every open
 entry is either CLOSED (implemented, compiled, verified in the artifact) or
 DESCoped (formally, with the reason written down). Silence is not a third option.
 
 ─── MUST #19 (IMPLEMENT OR DESCope, WITHIN ONE CYCLE) ───
+GATE: tools/board_gate.py
 Every deficiency named in the ledger must be resolved in the next delivery:
 implemented to the full contract (not a partial surface) or formally descoped.
 "Partial" is only acceptable when the remaining part is itself named as a new entry.
 
 ─── MUST #20 (PROVE IT IN THE ARTIFACT) ───
+GATE: tools/delivery_gate.sh
 Closing a deficiency requires evidence in the delivered artifact, not the source:
 the symbol is present in the compiled dex, the gate is green, the hash changed.
 Source that compiles is not proof the feature shipped; the dex is.
 
 ─── SPI-19 (THE FAMILY IS WHOLE) ───
+GATE: tools/bridge_contract_audit.py
 A method family (shell*, file*, apk*) is implemented whole or not at all. Shipping
 one member of a family and calling it done is a partial-list surface (W-047).
+
+════════════════════════════════════════════════════════════════════════════
+§30 — THE PRIME OMEGA DIRECTIVE (2026-11-17)
+════════════════════════════════════════════════════════════════════════════
+Source: Operator — "I'm not just resolving local, personal, user, client problems. I'm
+building universal resolutions to current global CI/CD unresolved bottlenecks and
+disparate disconnecting gaps, as a preventive, permanent, running, prophylactic cure.
+Why was this never declared as prime NEVERs and MUSTs?"
+
+This is the highest law in the continuum and it outranks every §18–§29 law. Every prior
+NEVER/MUST/SPI is an instance of it. It was omitted because §22 consolidated the docs
+(the continuum file into this one) and the prime intent was carried in the operator's
+head, never inscribed. A directive that lives only in the operator's intent is a note,
+and by SPI-15 a note is not a law. This section fixes that omission.
+
+─── THE DIRECTIVE ───
+The work is not a local fix. The work is a UNIVERSAL PROPHYLAXIS: every defect resolved
+here is resolved AS ITS CLASS, and the resolution is promoted to a portable law + an
+executable gate that holds on any repository, any device, any CI/CD, any team — not just
+this one. The local instance is the specimen; the generalized cure is the deliverable.
+
+─── NEVER #18 (NO LOCAL-ONLY RESOLUTION) ───
+GATE: tools/law_gate.py
+NEVER resolve a problem as a one-off when the class it belongs to is recurring and
+generalizable. A patch that fixes this repo and dies here is a local-only resolution and
+is a violation. Every fix is promoted to its class: a named law and an executable gate.
+
+─── MUST #21 (PROMOTE THE CLASS) ───
+GATE: tools/law_gate.py
+Every resolved defect is promoted, in the same cycle, to (a) a named NEVER/MUST and
+(b) an executable gate in `tools/`. A fix with no gate is a note, not a cure (SPI-15).
+The gate is the artifact that makes the cure permanent and running.
+
+─── MUST #22 (STATE THE GENERALIZATION) ───
+GATE: tools/law_gate.py
+Every law records the GENERAL principle it instantiates, not only the local instance.
+"NEVER #11 one tree" is stated as "divergent copies of any truth are a corruption mode,"
+and this repo is one case of it. A law written only for this repo is a local-only law.
+
+─── SPI-23 (PROPHYLAXIS IS THE PRODUCT) ───
+GATE: tools/law_gate.py
+The deliverable is the generalized cure — a law plus a gate that transfers to any
+project — not the local patch. Success is measured by how many classes are cured and
+how portable the cure is, not by how many local symptoms were silenced.
+
+─── SPI-24 (PRIME OUTRANKS LOCAL) ───
+GATE: tools/law_gate.py
+When a local convenience conflicts with the universal principle, the universal principle
+wins. The prime directive outranks every §18–§29 law; a later law that contradicts it is
+the defective one.
+
+─── THE PRIME GATE ───
+A law that is not executable is a note (SPI-15). The prime directive is therefore gated
+by `tools/law_gate.py`: every NEVER/MUST/SPI in this file must name an executable gate or
+carry the explicit marker `[NOTE: not yet gated]`. An ungated law claiming to be binding
+fails CI. The prime directive itself is enforced by the same gate, so it cannot become
+the note it was written to prevent.
+
+
+---
+
+§31 — THE SYNCHRONY BYLAW (2026-11-18)
+
+Synchrony IS time tracking. An app or a bot that cannot say WHEN it acted is not in sync
+with the Operator's day; it is a surface that floats free of time and cannot be ordered
+against anything else. This bylaw makes the clock a generated, universal, non-optional part
+of every surface, so documents, logs and artifacts sort diachronically.
+
+The Operator's zone is Asia/Manila (UTC+8), everywhere: apps, bots, CLI. One clock, one
+zone, one sort key — `tools/omega_time.py` for Python, `build/gen/omega_time.js` for the
+browser. Both are generated by `build/gen_synchrony.py` and injected by
+`build/inject_synchrony.py`, so the timestamp code is AUTO-GENERATED, never hand-written
+per app (MUST #17: generate, don't duplicate).
+
+─── MUST #23 (TIMESTAMP AWARENESS ON EVERY SURFACE) ───
+GATE: tools/synchrony_gate.py
+Every app and every bot carries timestamp awareness. Every app HTML surface shows a live
+clock (time and date, Operator-local) so the Operator always sees WHEN; every bot routes
+its output through the generated clock so its log lines carry the time they were written.
+A surface with no clock is not shippable.
+
+─── MUST #24 (DIACHRONIC SORT — SAVES ARE STAMPED) ───
+GATE: tools/synchrony_gate.py
+When a document is saved in an editor, it must be stamped with the time and date, and the
+stamp must be a sortable key (`YYYY-MM-DDTHH:MM:SS+08:00`, ISO with the Operator's offset),
+so documents can be ordered diachronically. The stamp is idempotent: re-saving replaces the
+header, it never accumulates. The studio editor's `saveDoc` does this; the gate proves it.
+
+─── MUST #25 (THE CLOCK IS GENERATED, NOT WRITTEN) ───
+GATE: tools/synchrony_gate.py
+The timestamp runtime is GENERATED by `build/gen_synchrony.py`; hand-editing its output
+fails the gate (regenerating must reproduce it byte-for-byte). This is what makes the bylaw
+universal and preventive: a new app surface is injected by `build/inject_synchrony.py`, and
+a new bot imports the generated runtime — neither re-implements the clock.
+
+─── SPI-25 (SYNCHRONY IS UNIVERSAL, LIKE THE PRIME DIRECTIVE) ───
+GATE: tools/synchrony_gate.py
+Synchrony outranks local convenience: an app that "does not need" a clock does not get to
+skip it, exactly as a local fix does not get to skip generalization (SPI-24). The gate runs
+over every surface under `app/src/main/assets/*.html` and over the bot, so a new surface
+without a clock fails CI until it is injected. This is the prophylactic cure, not a patch.
