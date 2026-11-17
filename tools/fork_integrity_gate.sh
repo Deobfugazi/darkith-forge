@@ -2,13 +2,28 @@
 # fork_integrity_gate.sh — the executable form of §19 (NEVER #11-13, MUST #10-13, SPI-12-15).
 # A ledger entry that is not a gate is a note. This is the gate.
 #
-# Usage:  tools/fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp]
+# Usage:  tools/fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp] [--no-compile]
 # Exit:   0 = all laws held.  non-zero = a law was broken (see the DEFICIT line).
+#
+# MUST-11 ("the compile is the proof") is ENFORCED. Without a kotlinc + android_jar the gate
+# FAILS, because a green that skips the proof is exactly the W-040 defect this gate exists to
+# kill. Pass --no-compile to declare the skip explicitly; the gate then prints
+# "MUST-11: SKIPPED" and exits 0, and every caller MUST treat currency as UNPROVEN
+# (delivery_gate.sh forces L-07/L-10 OPEN on that marker).
 set -u
 
-TREE="${1:?usage: fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp]}"
-ANDROID_JAR="${2:-}"
-EXTRA_CP="${3:-}"
+NO_COMPILE=0
+POS=()
+for a in "$@"; do
+  case "$a" in
+    --no-compile) NO_COMPILE=1 ;;
+    *) POS+=("$a") ;;
+  esac
+done
+
+TREE="${POS[0]:?usage: fork_integrity_gate.sh <authoritative_tree_dir> [android_jar] [extra_cp] [--no-compile]}"
+ANDROID_JAR="${POS[1]:-}"
+EXTRA_CP="${POS[2]:-}"
 FAIL=0
 say()  { printf '  %s\n' "$*"; }
 die()  { printf 'DEFICIT: %s\n' "$*"; FAIL=1; }
@@ -81,7 +96,11 @@ if [ -n "$ANDROID_JAR" ] && command -v "$KOTLINC" >/dev/null 2>&1; then
     die "MUST-11: kotlinc reported $(grep -c 'error:' "$LOG") errors. Not reconciled."
   fi
 else
-  say "SKIPPED (no android_jar/$KOTLINC supplied) — supply both to enforce MUST-11"
+    if [ "$NO_COMPILE" = 1 ]; then
+      say "MUST-11: SKIPPED (--no-compile) - currency is UNPROVEN; delivery_gate.sh forces L-07/L-10 OPEN"
+    else
+      die "MUST-11: no kotlinc/android_jar - the compile proof did NOT run. Supply both, or pass --no-compile to record the skip explicitly (never report green on a skipped proof)."
+    fi
 fi
 
 echo "== result =="

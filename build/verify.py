@@ -37,7 +37,9 @@ SAVF_PY = ROOT / "savf.py"
 ARTIFACTS = {
     "savf.html": "savf.html",
     "studio.html": "darkith code studio.html",
-    "forge.html": "darkith forge.html",
+    # The canonical shell. `darkith forge.html` is the same page fused (generated, gitignored);
+    # the battery runs the tracked source so it does not need the generated output on disk.
+    "forge.html": "darkith home forge.html",
     "omega.html": "omega.html",
 }
 
@@ -157,13 +159,19 @@ process.stdout.write(JSON.stringify(out));
     return ok
 
 
-def check_battery() -> bool:
+def check_battery():
+    """Returns True (ran clean), False (ran, real failure), or None (SKIPPED).
+
+    A missing playwright install is a SKIP, not a product defect: the battery cannot run,
+    so it must not report FAIL (which made the full run contradict --fast). A browser that
+    IS installed but throws, or a page that errors, is a real FAIL.
+    """
     print("[3/6] battery (chromium/firefox/webkit, file://, no network)")
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("      playwright not installed; skipping battery")
-        return False
+        print("      SKIP: playwright not installed (python3 -m pip install -r requirements-dev.txt)")
+        return None
 
     # Prefer playwright's bundled browsers; fall back to a system install so the
     # battery still runs in a slim environment. An engine that is simply absent
@@ -237,7 +245,10 @@ def check_battery() -> bool:
                 for e in errs[:3]:
                     print("         err:", e[:100])
             browser.close()
-    return ok and ran_any
+    if not ran_any:
+        print("      SKIP: no playwright browser available (run: python3 -m playwright install chromium)")
+        return None
+    return ok
 
 
 def check_omega() -> bool:
@@ -297,11 +308,18 @@ def main() -> int:
     results.append(("savf-cli", check_savf_cli()))
 
     print()
+    # A check returns True (pass), False (fail), or None (SKIPPED — the runtime is absent,
+    # which is not a product defect). A skip is printed as SKIP and does not fail the run,
+    # so --fast and the full run agree on what "PASS" means. Every other failure still fails.
+    failed = [name for name, ok in results if ok is False]
     for name, ok in results:
-        print(f"  {name:<8} {'PASS' if ok else 'FAIL'}")
-    good = all(ok for _, ok in results)
-    print("\nVERIFY:", "PASS" if good else "FAIL")
-    return 0 if good else 1
+        label = "PASS" if ok else ("SKIP" if ok is None else "FAIL")
+        print(f"  {name:<8} {label}")
+    if failed:
+        print("\nVERIFY: FAIL (" + ", ".join(failed) + ")")
+        return 1
+    print("\nVERIFY: PASS")
+    return 0
 
 
 if __name__ == "__main__":

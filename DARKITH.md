@@ -4,7 +4,7 @@
 > `singularity_progressive_continuum.md`, which were four overlapping copies of the same truth.
 > NT X §1.3: *duplication is a corruption mode.* A second copy can drift from the first.
 > This file lives at the repo root only. The served copy and the zipped copy are GENERATED
-> (see `tools/pack_delivery.sh`), never hand-edited. Do not fork this file.
+> (see `tools/pack_delivery.py`), never hand-edited. Do not fork this file.
 
 ---
 
@@ -44,7 +44,7 @@ Any one of these returns the real installed version — no guessing:
 
 ## What changed vs. what you have installed
 
-Your installed APK was built from the **stale, forked tree** (`tree/`, pre-C7) and — because no
+Your installed APK was built from the **stale, forked tree** (the old tree/, pre-C7) and — because no
 fork carried an `AndroidManifest.xml` — it had **no declared versionName**, so it would report
 the platform default (`1.0`) or the on-device forge's `1.0.<unix-seconds>`. That is why it was
 unknowable. This build declares its version and can report it.
@@ -180,7 +180,7 @@ bash build.sh . Darkith com.darkith.transliaison
 This reconciliation is the executable form of the anti-divergence laws:
 
 - **NEVER #11 / SPI-12 — one authoritative tree.** Six forks existed; `delivery` was the superset
-  and became the base. The stale forks (`tree/`, `tree.orig/`) are frozen, not live — this note
+  and became the base. The stale forks (tree/, tree.orig/) are frozen, not live — this note
   is their dated supersession record.
 - **NEVER #12 / SPI-13 — no foreign symbol.** `ComposeEmitter` (defined nowhere) is gone;
   `IRAuditor` (referenced, never written) is authored in-tree.

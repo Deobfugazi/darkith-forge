@@ -11,18 +11,38 @@
 # This file IS the loophole registry. Adding a new failure without adding a check here is a defect.
 set -u
 
-ROOT="${1:-.}"
-APK="${2:-}"
-ANDROID_JAR="${3:-${ANDROID_JAR:-}}"
-EXTRA_CP="${4:-}"
+# --source-only: run on a box with no APK and no Android toolchain (CI). Checks that
+# genuinely require a built APK are recorded as SKIP (named, never silently passed) and
+# do not fail the run; every source-level law is still enforced. Without the flag the
+# gate is strict: an absent APK leaves those loopholes OPEN.
+SOURCE_ONLY=0
+POS=()
+for a in "$@"; do case "$a" in --source-only) SOURCE_ONLY=1 ;; *) POS+=("$a") ;; esac; done
+
+ROOT="${POS[0]:-.}"
+APK="${POS[1]:-}"
+ANDROID_JAR="${POS[2]:-${ANDROID_JAR:-}}"
+EXTRA_CP="${POS[3]:-${EXTRA_CP:-}}"
 KOTLINC="${KOTLINC:-kotlinc}"
 SELF_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-OPEN=0
+# loopholes that cannot be evaluated without a built APK: deferred (SKIP) in --source-only.
+ARTIFACT_CHECKS=" L-02-apk-version L-04-artifact-built L-05-artifact-signed L-06-artifact-aligned L-09-asset-parity L-12-one-surface L-14-family-whole L-15-signer-identity L-16-arsc-stored L-17-native-tools "
+
+OPEN=0; SKIP=0
 # absolute APK path: several checks cd into other dirs, so a relative path would break
 if [ -n "$APK" ] && [ -e "$APK" ]; then APK="$(cd "$(dirname "$APK")" && pwd)/$(basename "$APK")"; fi
 declare -a NAME STATUS NOTE
-rec() { NAME+=("$1"); STATUS+=("$2"); NOTE+=("$3"); [ "$2" = "OPEN" ] && OPEN=$((OPEN+1)); return 0; }
+rec() {
+  local n="$1" st="$2" note="$3"
+  if [ "$SOURCE_ONLY" = 1 ] && [ "$st" = OPEN ] && [ -z "$APK" ]; then
+    case "$ARTIFACT_CHECKS" in *" $n "*) st=SKIP; note="deferred: needs a built APK (--source-only)";; esac
+  fi
+  NAME+=("$n"); STATUS+=("$st"); NOTE+=("$note")
+  [ "$st" = OPEN ] && OPEN=$((OPEN+1))
+  [ "$st" = SKIP ] && SKIP=$((SKIP+1))
+  return 0
+}
 
 MANIFEST=$(find "$ROOT" -maxdepth 5 -name AndroidManifest.xml -not -path '*/build/*' 2>/dev/null | head -1)
 # the authoritative tree is the superset: the transliaison dir with the most .kt files
@@ -72,12 +92,26 @@ else rec L-06-artifact-aligned OPEN "no apk or no zipalign"; fi
 
 # L-07 one authoritative tree + no androidx/foreign symbols (the §19 gate).
 # The §19 gate is run ONCE here; L-10 reuses the same result (one compiler, one truth).
-L19LOG=/tmp/l19.$$; L19_PASS=0
-if [ -n "$SRC" ] && [ -f "$SELF_DIR/fork_integrity_gate.sh" ] \
-   && bash "$SELF_DIR/fork_integrity_gate.sh" "$SRC" "$ANDROID_JAR" "$EXTRA_CP" >"$L19LOG" 2>&1 \
-   && grep -q 'PASS: all' "$L19LOG"; then
-  L19_PASS=1; rec L-07-fork-singularity CLOSED "§19 gate PASS"
-else rec L-07-fork-singularity OPEN "$(grep -m1 DEFICIT "$L19LOG" 2>/dev/null | sed 's/^ *//' || echo 'no source tree or no §19 gate')"; fi
+# A SKIPPED compile proof is not a pass: when kotlinc/android_jar are absent the §19 gate is
+# run with --no-compile and both L-07 and L-10 are forced OPEN, so a skipped proof can never
+# masquerade as a closed loophole (W-040).
+L19LOG=/tmp/l19.$$; L19_PASS=0; L19_SKIP=0
+if [ -n "$SRC" ] && [ -f "$SELF_DIR/fork_integrity_gate.sh" ]; then
+  if [ -z "$ANDROID_JAR" ] || ! command -v "$KOTLINC" >/dev/null 2>&1; then
+    bash "$SELF_DIR/fork_integrity_gate.sh" "$SRC" "$ANDROID_JAR" "$EXTRA_CP" --no-compile >"$L19LOG" 2>&1 || true
+  else
+    bash "$SELF_DIR/fork_integrity_gate.sh" "$SRC" "$ANDROID_JAR" "$EXTRA_CP" >"$L19LOG" 2>&1 || true
+  fi
+  grep -q 'MUST-11: SKIPPED' "$L19LOG" && L19_SKIP=1
+  grep -q 'PASS: all' "$L19LOG" && L19_PASS=1
+fi
+if [ "$L19_PASS" = 1 ] && [ "$L19_SKIP" = 0 ]; then
+  rec L-07-fork-singularity CLOSED "§19 gate PASS (compile proof ran)"
+elif [ "$L19_SKIP" = 1 ]; then
+  rec L-07-fork-singularity OPEN "compile proof SKIPPED (no kotlinc/android_jar) — §19 result untrusted"
+else
+  rec L-07-fork-singularity OPEN "$(grep -m1 DEFICIT "$L19LOG" 2>/dev/null | sed 's/^ *//' || echo 'no source tree or no §19 gate')"
+fi
 
 # L-08 the UI<->bridge contract is complete (no phantom calls)
 UI=$(find "$ROOT" -maxdepth 4 -name '*.html' 2>/dev/null | grep -iE 'home forge|homekeeper' | head -1)
@@ -96,11 +130,11 @@ if [ -n "$APK" ] && [ -f "$APK" ] && [ -d "$(dirname "$MANIFEST")/assets" ] && c
 else rec L-09-asset-parity OPEN "no apk/manifest/assets/aapt"; fi
 
 # L-10 the tree compiles clean (currency is proven, not asserted) — same §19 result.
-if [ "$L19_PASS" = 1 ]; then
+if [ "$L19_PASS" = 1 ] && grep -q 'kotlinc clean' "$L19LOG"; then
   rec L-10-currency CLOSED "$(grep -m1 'kotlinc clean' "$L19LOG" | sed 's/^ *//')"
-elif [ -n "$ANDROID_JAR" ]; then
-  rec L-10-currency OPEN "$(grep -m1 -E 'DEFICIT' "$L19LOG" 2>/dev/null | sed 's/^ *//' || echo 'compile not clean')"
-else rec L-10-currency OPEN "no android_jar/kotlinc (cannot prove currency)"; fi
+elif [ "$L19_SKIP" = 1 ]; then
+  rec L-10-currency OPEN "compile proof SKIPPED (no kotlinc/android_jar) — currency UNPROVEN"
+else rec L-10-currency OPEN "$(grep -m1 -E 'DEFICIT' "$L19LOG" 2>/dev/null | sed 's/^ *//' || echo 'compile not clean')"; fi
 rm -f "$L19LOG"
 
 # L-17 native-tools: handcoded binaries ship in lib/<abi>/ AND the OS is told to extract them
@@ -167,5 +201,12 @@ else rec L-12-one-surface OPEN "no dist/index.html hub (delivery is fragmented)"
 echo "  #  loophole                      status  note"
 for i in "${!NAME[@]}"; do printf '  %-2s %-28s %-7s %s\n' "$((i+1))" "${NAME[$i]}" "${STATUS[$i]}" "${NOTE[$i]}"; done
 echo
-if [ "$OPEN" -eq 0 ]; then echo "DELIVERED — every known loophole is closed or gated."; exit 0; fi
+if [ "$OPEN" -eq 0 ]; then
+  if [ "$SKIP" -gt 0 ]; then
+    echo "SOURCE-OK — 0 loophole(s) OPEN; $SKIP deferred (no APK here). Artifact laws are NOT yet proven."
+  else
+    echo "DELIVERED — every known loophole is closed or gated."
+  fi
+  exit 0
+fi
 echo "REFUSED — $OPEN loophole(s) OPEN. Do not call this delivered."; exit 1

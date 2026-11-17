@@ -32,7 +32,9 @@ import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DELIVERY = ROOT / "delivery"
-WEBAPP = ROOT / "darkith forge.html"          # the fused webapp (source of truth)
+WEBAPP = ROOT / "darkith home forge.html"     # the canonical shell (source of truth)
+# The fused `darkith forge.html` is GENERATED from WEBAPP by build/build-forge.py; never
+# treat it as source (that inversion is what made the two build scripts disagree).
 APK = DELIVERY / "darkith-homekeeper-debug.apk"
 ONESHOT = DELIVERY / "darkith-one-shot.sh"
 

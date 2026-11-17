@@ -2,13 +2,38 @@
 # consolidate_docs.sh — collapse the overlapping docs into the ONE source of truth.
 # Idempotent: running it twice is a no-op. Never deletes DARKITH.md or AGENTS.md.
 set -u
-ROOT="${1:-/workspace/project}"
+
+# --check: report whether any overlapping doc still exists, change nothing, exit non-zero
+# if one does. This is the gate form (SPI-15): a consolidation tool that only ever deletes
+# is a note, not a check.
+CHECK=0
+POS=()
+for a in "$@"; do case "$a" in --check) CHECK=1 ;; *) POS+=("$a") ;; esac; done
+ROOT="${POS[0]:-/workspace/project}"
 cd "$ROOT" || exit 1
 
 # The four overlapping docs that DARKITH.md replaces. AGENTS.md is NOT here (it is
 # the live session memory; DARKITH.md is the canonical record).
 OLD="singularity_progressive_continuum.md RECONCILIATION.md DEFICIT_LEDGER.md VERSION.md"
 CANON="DARKITH.md"
+
+if [ "$CHECK" = 1 ]; then
+  echo "== doc consolidation check =="
+  [ -f "$CANON" ] || { echo "DEFICIT: $CANON missing"; exit 1; }
+  DUP=""
+  for f in $OLD; do
+    for p in "$ROOT/$f" "$ROOT/tree_omega/$f" "$ROOT/dist/$f" "$ROOT/proof/$f"; do
+      [ -f "$p" ] && DUP="$DUP $p"
+    done
+  done
+  if [ -n "$DUP" ]; then
+    echo "DEFICIT: overlapping docs still present:$DUP"
+    echo "  run: tools/consolidate_docs.sh   (without --check) to collapse them"
+    exit 1
+  fi
+  echo "PASS: one canonical doc ($CANON); no overlapping copies."
+  exit 0
+fi
 
 echo "== consolidating docs =="
 [ -f "$CANON" ] || { echo "DEFICIT: $CANON missing — refusing to delete anything"; exit 1; }

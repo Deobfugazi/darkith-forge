@@ -47,6 +47,54 @@ else
   echo "SKIP: python3 not found"; FAILED=1
 fi
 
+# The NT IX raw-chain gates. These are the laws that were "notes, not gates" (SPI-15):
+# they existed but nothing invoked them. A gate that is never run is a note, so CI runs them.
+# The §19 gate (fork_integrity_gate.sh) ENFORCES the compile proof (MUST-11); to keep CI
+# honest it is given a real toolchain from .tools/ when one is present, and it FAILS (not
+# skips) when there is none. The APK-dependent loopholes are deferred explicitly via
+# --source-only, which is a named SKIP, never a silent pass.
+if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
+  TOOLCHAIN="$ROOT/.tools"
+  if [ -x "$TOOLCHAIN/kotlinc/bin/kotlinc" ]; then
+    export KOTLINC="$TOOLCHAIN/kotlinc/bin/kotlinc"
+    export ANDROID_JAR="$TOOLCHAIN/android-all-14-robolectric-10818077.jar"
+    export EXTRA_CP="$TOOLCHAIN/apksig.jar"
+    [ -x "$TOOLCHAIN/jdk-17.0.12+7/bin/java" ] && export JAVA_HOME="$TOOLCHAIN/jdk-17.0.12+7"
+    export PATH="${JAVA_HOME:+$JAVA_HOME/bin:}$TOOLCHAIN/aapt2d:$PATH"
+    run "§19 fork integrity gate (compile proof)" \
+      bash tools/fork_integrity_gate.sh app/src/main/java/com/darkith/transliaison "$ANDROID_JAR" "$EXTRA_CP"
+  else
+    echo "SKIP: no toolchain in .tools/ (run: bash tools/fetch_toolchain.sh) — §19 compile proof NOT run"
+    echo "      (the §19 gate itself fails closed without it; this line only records the local skip)"
+    FAILED=1
+  fi
+
+  run "delivery gate (source laws)" \
+    bash tools/delivery_gate.sh . --source-only
+  run "bridge contract audit" \
+    python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
+  run "doc consolidation check" \
+    bash tools/consolidate_docs.sh --check
+fi
+
+if have python3 && [ -f tools/doc_path_gate.py ]; then
+  run "doc path gate" python3 tools/doc_path_gate.py
+fi
+
+if have node && [ -f tools/test_darktools.js ]; then
+  run "darktools unit tests" node tools/test_darktools.js
+fi
+
+# The inscriber studio: boots in jsdom, engines present, terminal + toolkits live. Needs
+# jsdom (an npm dev dep, not always installed), so it is skipped honestly when absent.
+if have node && [ -f tools/test_inscriber.js ]; then
+  if node -e 'require("jsdom")' >/dev/null 2>&1; then
+    run "inscriber studio tests" node tools/test_inscriber.js
+  else
+    echo "SKIP: jsdom not installed (npm install jsdom) — inscriber studio test NOT run"
+  fi
+fi
+
 if have node; then
   run "omega engine harness" node build/omega/omega-test.mjs
 else
@@ -113,20 +161,57 @@ if have git && git rev-parse --git-dir >/dev/null 2>&1; then
     printf -- '--- working tree clean: PASS\n'
   fi
 
-  # D-2 fork singularity (AGENTS.md NEVER #11 / SPI-12, the missing W-040 gate):
-  # an authority file that exists at two tracked paths is two live copies. Fail.
-  forks="$(git ls-files | awk -F/ '{print $NF}' | sort | uniq -d \
-            | grep -E '^(AGENTS\.md|build\.sh|verify\.py)$|\.kt$' || true)"
-  if [ -n "$forks" ]; then
-    printf -- '--- fork singularity (NEVER #11): FAIL\n'
-    for f in $forks; do
-      printf '      %s tracked at:\n' "$f"
-      git ls-files | grep -E "(^|/)$f\$" | sed 's/^/        /'
-    done
-    FAILED=1
-  else
-    printf -- '--- fork singularity (NEVER #11): PASS\n'
-  fi
+  # D-2 fork singularity (AGENTS.md NEVER #11 / SPI-12, the missing W-040 gate).
+  # NEVER #11 forbids two *divergent* live copies. A basename at more than one tracked path
+  # is only a violation when the copies DIFFER; byte-identical copies are mirrors, and this
+  # gate keeps them honest by failing the moment one drifts. (The old gate used a hardcoded
+  # name list, so it never saw `darkith forge.html` vs `darkith home forge.html`, nor
+  # `darkith_ui.html` vs `darkith-inscriber.html`.)
+  if ! python3 - <<'PYGATE'
+import hashlib, subprocess, sys, collections
+files = subprocess.run(["git","ls-files","-z"], capture_output=True, text=True).stdout.split("\0")[:-1]
+by = collections.defaultdict(list)
+for f in files:
+    by[f.rsplit("/",1)[-1]].append(f)
+divergent, mirrors = {}, {}
+for name, paths in sorted(by.items()):
+    if len(paths) < 2:
+        continue
+    hashes = {}
+    for pth in paths:
+        try:
+            hashes[pth] = hashlib.sha256(open(pth,"rb").read()).hexdigest()
+        except OSError:
+            hashes[pth] = "?"
+    (divergent if len(set(hashes.values())) > 1 else mirrors)[name] = hashes if len(set(hashes.values()))>1 else paths
+for name, paths in mirrors.items():
+    print(f"      mirror (identical): {name} at {', '.join(paths)}")
+if divergent:
+    print("--- fork singularity (NEVER #11): FAIL (divergent copies)")
+    for name, hashes in divergent.items():
+        print(f"      {name} tracked at {len(hashes)} paths with DIFFERENT bytes:")
+        for pth, h in hashes.items():
+            print(f"        {h[:12]}  {pth}")
+    sys.exit(1)
+print("--- fork singularity (NEVER #11): PASS (no divergent copies)")
+PYGATE
+  then FAILED=1; fi
+
+  # D-2b explicit mirror pairs: one surface under two names by design. They must stay
+  # byte-identical — drift is a fork (NEVER #11) even though the basenames differ, which the
+  # basename-based D-2 above cannot see. The app ships assets/darkith_ui.html; the repo-root
+  # studio is the same page for browser use, and tools/test_inscriber.js drives the studio.
+  for pair in "app/src/main/assets/darkith_ui.html:darkith-inscriber.html"; do
+    a="${pair%%:*}"; b="${pair##*:}"
+    if [ -f "$a" ] && [ -f "$b" ]; then
+      if cmp -s "$a" "$b"; then
+        printf -- '--- mirror pair identical: %s == %s\n' "$a" "$b"
+      else
+        printf -- '--- mirror pair DRIFT (NEVER #11): %s != %s\n' "$a" "$b"
+        FAILED=1
+      fi
+    fi
+  done
 
   # D-3 version truth: if the AndroidManifest is versioned (MUST #12), the
   # versionName it declares must be the one AGENTS.md states. A tab that bumps

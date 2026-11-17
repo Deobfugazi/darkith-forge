@@ -30,8 +30,10 @@ the single authoritative history. Consequences:
 - Android app **Darkith** + an offline web studio. Built on a phone in Termux via the
   **NT IX 7-step raw chain** (`aapt2 -> kotlinc -> d8 -> zip -> zipalign -> apksigner`).
 - **Gradle is physically forbidden** (SPI-1: deadlocks the phone's RAM). Never run or suggest it.
-- Kotlin sources: `tree/app/src/main/java/com/darkith/transliaison/`.
-  `tree.orig/` is the pristine pre-fix snapshot (kept for diffing; not built).
+- Kotlin sources: `app/src/main/java/com/darkith/transliaison/` (the ONE authoritative tree,
+  reconciled into the repo key-free; 55 .kt files). `build.sh` and `res/`/`assets/` sit beside it
+  under `app/src/main/`. There is no tree/ or tree_omega/ directory on disk any more — those were the
+  forks, and they are gone.
 
 ## SPI invariants
 - **SPI-2** read exact bytes before writing — do not guess.
@@ -45,20 +47,24 @@ The original defect was **not** a stripped `/*` opener. It was a mangled **close
 (a line of just `//` where `*/` belonged), in **2** files: `core/CssLite.kt:3`,
 `core/SubstrateIngestor.kt:92`. `tools/kt_comment_scan.py` is a nesting/string-aware
 Kotlin lexer; `tools/fix_unclosed_comments.py` repairs only proven-unclosed lines.
-The working `tree/` scans **0 defects**. Verify with `python3 tools/comment_audit.py`.
+The working tree scans **0 defects**. Verify with `python3 tools/comment_audit.py`.
 
 ## Web studio (offline, no build step)
 - `savf.html` — SAVF universal audit engine (`window.SAVF`).
-- `darkterm.js` — **DarkTerm**, a real POSIX-style shell in one file. Exposes
+- `app/src/main/assets/vendor/darkterm.js` — **DarkTerm**, a real POSIX-style shell in one
+  file (the canonical copy; the studio embeds it byte-identically). Exposes
   `window.DarkTerm` (browser) / `module.exports` (node). `registerCommand(name, fn)`
   adds a builtin. `createSession()` returns a facade with `.exec(line)`.
-- `darktools.js` — handcoded dev toolkits layered on DarkTerm: `task` (task manager),
+- `app/src/main/assets/vendor/darktools.js` — handcoded dev toolkits layered on DarkTerm: `task` (task manager),
   `sync` (learnable synchronicity engine + deficit ledger + omega ladder), `tk`
   (toolkit host), `store` (persistence). Installed via `DarkTools.install(session, opts)`.
   `opts.fresh: true` reseeds tasks AND resets the sync engine.
+- `app/src/main/assets/darkith_ui.html` is the SAME page as `darkith-inscriber.html` — a
+  byte-identical mirror (the app ships the asset; the repo-root copy is for the browser).
+  `tools/ci.sh` check D-2b fails the moment the two drift (NEVER #11).
 - `darkith-inscriber.html` — the studio app. 4 inline `<script>` blocks:
   0 SAVF, 1 DarkTerm engine, 2 DarkTools, 3 studio layer. **The engine block must stay
-  byte-identical to `darkterm.js` on disk**; re-embed after editing either.
+  byte-identical to `app/src/main/assets/vendor/darkterm.js`**; re-embed after editing either.
 
 ## Multi-session gotcha
 DarkTerm has one global command table, so app commands resolve their context **per
@@ -88,19 +94,20 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
 ## Verification
 - `bash tools/ci.sh` — the one command that runs every suite, provider-neutral. Any CI
   (or a phone) calls this; vendor YAML is only a thin adapter around it. Exit 0 == green.
-- `node tools/test_darktools.js` — 46/46 (tasks, explicit+passive learning, ledger, omega,
+- `node tools/test_darktools.js` — 49/49 (tasks, explicit+passive learning, ledger, omega,
   tk host, persistence). `NODE_PATH=/tmp/node_modules node tools/test_inscriber.js` — 14/14
-  (jsdom drives real Enter keydowns). `node /tmp/difftest3.js` — shell parity vs bash
-  (known gaps: `sed -n p`, `{a..e}`, `awk length()`, `xargs -I{}`, awk ternary).
+  (jsdom drives real Enter keydowns). Both are wired into `tools/ci.sh`.
 - jsdom functional test needs `url:` set (localStorage rejects opaque origins).
 - Serve: `python3 -m http.server 12000` in the repo root.
 
 ## Proof logs on disk
-`proof_comment_audit.log`, `proof_darkterm.log`, `proof_toolkits.log`.
+`proof_comment_audit.log`, `proof_darkterm.log`, `proof_toolkits.log`,
+`proof/comment_premise_check.txt` (the 19-file comment briefing check, SPI-4).
 
 ## OMEGA reconciliation + compile proof (this session)
-- **Canonical source tree**: `tree_omega/` (build.sh layout) and its archive `darkith_omega_source.zip`.
-  Reconciled from all 6 forks; delivery is the superset. See `RECONCILIATION.md`.
+- **Canonical source tree**: `app/src/main/java/com/darkith/transliaison/` (build.sh layout),
+  reconciled from all forks into the repo key-free. The old forks (tree/, tree.orig/,
+  tree_omega/) are gone; DARKITH.md Part 2 records the reconciliation.
 - **Compile proof (real, not grep)**: kotlinc 1.9.24, `-cp android-all-14.jar:apksig-8.1.1.jar:R-classes`
   -> EXIT=0, 0 errors, 0 warnings, 166 classes. android.jar stand-in: Robolectric
   `android-all-14-robolectric-10818077.jar` (137 MB). apksig: Google maven 8.1.1.
@@ -131,9 +138,9 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
   and committed directly, because a PR opened with GITHUB_TOKEN never triggers a second
   workflow run (approval-required state) — the recursion trap. No PAT, no pull_request_target.
 
-## §19 ANTI-DIVERGENCE LAWS (binding — see singularity_progressive_continuum.md §19)
+## §19 ANTI-DIVERGENCE LAWS (binding — see DARKITH.md Part 2)
 NEVER #11 One Tree: never keep two divergent live copies of a file. Reconcile into one; the
-  loser is deleted or frozen read-only with a dated supersession note (RECONCILIATION.md).
+  loser is deleted or frozen read-only with a dated supersession note (DARKITH.md Part 2).
 NEVER #12 No Foreign Symbol: never reference a symbol defined in another tree (ComposeEmitter
   was referenced everywhere and defined nowhere). Author it in-tree or remove the reference.
 NEVER #13 No Unproven Currency: a tree is current only after a clean compile of THAT tree.
@@ -150,9 +157,12 @@ W-040: the ledger recurred because it was not a gate — W-021/W-023/W-024/W-034
 ## The gate (run before declaring any tree current)
 ```
 KOTLINC=/path/to/kotlinc tools/fork_integrity_gate.sh \
-  tree_omega/app/src/main/java/com/darkith/transliaison \
-  /path/to/android-all.jar  /path/to/apksig.jar:/path/to/rclasses
+  app/src/main/java/com/darkith/transliaison \
+  /path/to/android-all.jar  /path/to/apksig.jar
 # PASS: all §19 laws held.  (SPI-12/13/14 + MUST-11 compile)
+# Without kotlinc/android.jar it now FAILS (never a vacuous PASS); pass --no-compile
+# to record the skip explicitly, and delivery_gate.sh then forces L-07/L-10 OPEN.
+# CI provisions the toolchain with: bash tools/fetch_toolchain.sh
 ```
 
 ## §20 DELIVERY GATE — the loophole registry (binding)
@@ -161,30 +171,33 @@ NEVER #14: never say "delivered" without running tools/delivery_gate.sh and list
 MUST #14: the gate IS the delivery; non-zero exit forbids the word "delivered".
 SPI-16: a delivery that did not run the gate is not a delivery.
 W-041: the recurring defect was the ABSENCE of a delivery gate — shipping with unenumerated
-  loopholes. The registry (tools/delivery_gate.sh) names all 11: L-01 manifest-version,
+  loopholes. The registry (tools/delivery_gate.sh) names all 16: L-01 manifest-version,
   L-02 apk-version, L-03 self-report, L-04 artifact-built, L-05 artifact-signed,
   L-06 artifact-aligned, L-07 fork-singularity (§19), L-08 bridge-contract, L-09 asset-parity,
-  L-10 currency, L-11 registry-nonempty.
+  L-10 currency, L-11 registry-nonempty, L-12 one-surface, L-13 no-doc-dup, L-14 family-whole,
+  L-15 signer-identity, L-16 arsc-stored, L-17 native-tools. `--source-only` records the
+  APK-dependent checks as named SKIPs on a box with no APK, never a silent pass.
 
 ## Version truth (never guess again)
-- Truth is AndroidManifest.xml: versionCode=2, versionName=1.1.0-omega. Bridge VERSION=hk-bridge-50.
+- Truth is AndroidManifest.xml: versionCode=2, versionName=1.1.0-omega. Bridge VERSION=hk-bridge-52.
 - The app self-reports: `darkith.apkVersion()` -> "bridge=... pkg=... (code)".
 - On device: `pm dump com.darkith.transliaison | grep -E 'versionName|versionCode'`.
 - From the APK: `aapt dump badging <apk> | grep ^package`.
-- VERSION.md records the current build + the delta vs what is installed.
+- DARKITH.md records the current build + the delta vs what is installed.
 
 ## Build + deliver (this environment)
 ```
 # build (real APK; android-all.jar works as the aapt2 -I jar too)
-cd tree_omega && ANDROID_JAR=/tmp/android-all.jar R8_JAR=/tmp/r8.jar \
+ANDROID_JAR=/tmp/android-all.jar R8_JAR=/tmp/r8.jar \
   KOTLINC=/tmp/ktc/kotlinc/bin/kotlinc KOTLINC_XMX=4g bash build.sh . Darkith com.darkith.transliaison
 # gate (must print DELIVERED)
-KOTLINC=/tmp/ktc/kotlinc/bin/kotlinc tools/delivery_gate.sh . tree_omega/app-signed.apk \
+KOTLINC=/tmp/ktc/kotlinc/bin/kotlinc tools/delivery_gate.sh . app-signed.apk \
   /tmp/android-all.jar /tmp/apksig.jar
 ```
 Toolchain got: aapt2/zipalign/apksigner via `apt install aapt android-sdk-build-tools`;
 d8 via R8 jar (`dl.google.com/dl/android/maven2/com/android/tools/r8/8.2.42/r8-8.2.42.jar`);
-kotlinc 1.9.24 (JetBrains zip); apksig in tree_omega/libs/apksig.jar.
+kotlinc 1.9.24 (JetBrains zip); apksig 8.1.1 (Google maven). `tools/fetch_toolchain.sh`
+provisions all of it into `.tools/` (gitignored) so CI can run the real compile proof.
 
 ## WHERE THE SCROLLBACK LIVES (recover any prompt the app won't scroll to)
 The GUI cannot always scroll back. The full event history is on disk:
@@ -212,7 +225,7 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   Wake marker 2026-11-17 = 16:56 MN. Anchor must be stated so it can be falsified (MUST #15).
 - ONE SURFACE (NEVER #15): never scatter delivery across many links. The delivery is ONE hub URL
   that lists every artifact with `download` + attachment serving (MUST #16, SPI-17).
-  Hub = `dist/index.html`; regenerate with the snippet in DEFICIT_LEDGER/tools when artifacts change.
+  Hub = `dist/index.html`; regenerate with `tools/pack_delivery.py` when artifacts change.
 - The hub shows version + gate status + sizes + hashes so the Operator verifies before installing.
 
 ## §22 DEDUPLICATION + IDEMPOTENCY (binding)
@@ -232,10 +245,10 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
 - SPI-19: a method family (shell*, file*, apk*) is whole or absent.
 
 ## §24 TREE INTEGRITY + RECONCILIATION (binding)
-- ONE TREE (NEVER #18): exactly one authoritative source tree may exist. On this box three
-  existed at once (`tree`=50 .kt, `tree.orig`=50, `tree_omega`=55) with 11 common files
-  divergent. That is the fragmentation engine, measured — not asserted. The authoritative
-  tree is the NEWEST whose content matches the built APK; here that is `tree_omega`.
+- ONE TREE (NEVER #18): exactly one authoritative source tree may exist. Once three existed
+  at once (`tree`=50 .kt, `tree.orig`=50, `tree_omega`=55) with 11 common files divergent.
+  They are reconciled now: the ONE tree is `app/src/main/java/com/darkith/transliaison/`
+  (55 .kt), and the forks are deleted. §19/SPI-12 enforces that no second tree reappears.
 - NO DISK-ONLY SOURCE (SPI-20): the app source may not live only on the ephemeral VM disk.
   When this rule was first checked, the canonical repo tracked ZERO of the 55 app .kt files.
   A recycled VM would have lost the app. Reconcile the tree into the repo, key-free, before

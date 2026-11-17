@@ -189,12 +189,18 @@ def main() -> int:
 
     if args.check:
         ok = True
-        for name, have, want in (
-            ("darkith forge.html", FORGE_OUT.read_text(encoding="utf-8"), shell2),
-            ("darkith code studio.html", STUDIO.read_text(encoding="utf-8"), studio1),
-            ("savf.html", SAVF_HTML.read_text(encoding="utf-8"), page1),
+        # `darkith forge.html` is a GENERATED output (.gitignore). In a clean checkout it is
+        # absent; an absent generated file is a skip, not drift. The canonical inputs
+        # (darkith home forge.html, darkith code studio.html, savf.html) are always checked.
+        for name, path, want in (
+            ("darkith forge.html", FORGE_OUT, shell2),
+            ("darkith code studio.html", STUDIO, studio1),
+            ("savf.html", SAVF_HTML, page1),
         ):
-            if have != want:
+            if not path.exists():
+                print(f"skip: {name} absent (generated output)")
+                continue
+            if path.read_text(encoding="utf-8") != want:
                 print(f"OUT OF SYNC: {name}", file=sys.stderr)
                 ok = False
         print("check: " + ("in sync" if ok else "drift detected"))
