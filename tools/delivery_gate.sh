@@ -195,8 +195,39 @@ if [ -f "$HUB" ]; then
   else rec L-12-one-surface OPEN "hub missing:$MISS"; fi
 else rec L-12-one-surface OPEN "no dist/index.html hub (delivery is fragmented)"; fi
 
+# L-18 install gate: the package installer accepts the APK (no "App not installed").
+# The exhaustive registry of install blockers (version, sdk range, v2 signature, align,
+# arsc/so STORED, extractNativeLibs, dup entries, testOnly, launcher, components-in-dex,
+# ABI, label), read from the APK's OWN manifest. N/A when the artifact tools are absent,
+# so a box without aapt2/apksigner still evaluates every other law honestly.
+IG="$SELF_DIR/install_gate.py"
+if [ -n "$APK" ] && [ -s "$APK" ] && [ -f "$IG" ] \
+   && command -v aapt2 >/dev/null 2>&1 && command -v apksigner >/dev/null 2>&1; then
+  if python3 "$IG" "$APK" "$ROOT" >/tmp/ig.$$ 2>&1; then
+    rec L-18-install-gate CLOSED "install_gate: INSTALLABLE (no known blocker)"
+  else
+    rec L-18-install-gate OPEN "$(grep -m1 OPEN /tmp/ig.$$ | sed 's/^ *//')"
+  fi
+  rm -f /tmp/ig.$$
+else rec L-18-install-gate N/A "no APK or no aapt2/apksigner (install not proven here)"; fi
+
+# L-19 runtime render: the launcher surface actually PAINTS — the UI the OS hands to
+# Zygote/AMS/WMS. Loads assets/homekeeper.html at 360x800 with and without the native
+# bridge; fails on any console/page error, blank body, empty DOM, or overflow. N/A when
+# playwright or the asset is absent — never a false OPEN.
+RG="$SELF_DIR/runtime_gate.py"
+UI_ASSET="$(find "$ROOT/app/src/main/assets" -maxdepth 1 -name homekeeper.html 2>/dev/null | head -1)"
+if [ -n "$UI_ASSET" ] && [ -f "$RG" ] && python3 -c 'import playwright' >/dev/null 2>&1; then
+  if python3 "$RG" >/tmp/rg.$$ 2>&1; then
+    rec L-19-runtime-render CLOSED "launcher UI renders at 360x800, 0 JS errors"
+  else
+    rec L-19-runtime-render OPEN "render defect: $(grep -m1 FAIL /tmp/rg.$$ | sed 's/^ *//')"
+  fi
+  rm -f /tmp/rg.$$
+else rec L-19-runtime-render N/A "no launcher asset or playwright (render not proven here)"; fi
+
 # L-11 self-check: the registry is non-empty (a gate with no checks gates nothing)
-[ "${#NAME[@]}" -ge 16 ] && rec L-11-registry-nonempty CLOSED "${#NAME[@]} loophole checks" || rec L-11-registry-nonempty OPEN "registry empty"
+[ "${#NAME[@]}" -ge 18 ] && rec L-11-registry-nonempty CLOSED "${#NAME[@]} loophole checks" || rec L-11-registry-nonempty OPEN "registry empty"
 
 echo "  #  loophole                      status  note"
 for i in "${!NAME[@]}"; do printf '  %-2s %-28s %-7s %s\n' "$((i+1))" "${NAME[$i]}" "${STATUS[$i]}" "${NOTE[$i]}"; done

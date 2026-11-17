@@ -21,6 +21,10 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 BOARD = ROOT / "TASKS.md"
 STATUSES = {"done", "in_progress", "todo", "blocked"}
 REPO_ROOTS = {"app", "tools", "build", "libs", "docs", "proof", "delivery", ".github", ".tools"}
+# Generated output trees: regenerable, gitignored (see .gitignore). Evidence may cite a
+# path here (e.g. a built APK) because it IS checkable after a build, but it is never in a
+# fresh checkout, so a `done` row must not fail merely because the artifact is unbuilt.
+GENERATED_ROOTS = {"delivery", "dl"}
 
 
 def cells(line: str):
@@ -49,6 +53,11 @@ def main() -> int:
             # Only repo-relative paths are checkable here. Skip absolute paths, URLs,
             # and device/OS paths (`/proc/...`, `/sdcard/...`, `file:///...`).
             if tok.startswith(("/", "http", "file:")) or tok.split("/", 1)[0] not in REPO_ROOTS:
+                continue
+            # Generated output trees (delivery/, dl/) are gitignored, so a fresh checkout
+            # has none. Validate the path when the tree IS present (a stale board row must
+            # still fail); skip only when the whole tree is absent (not built here yet).
+            if tok.split("/", 1)[0] in GENERATED_ROOTS and not (ROOT / tok.split("/", 1)[0]).exists():
                 continue
             if not (ROOT / tok).exists():
                 fails.append(f"TASKS.md:{i}: evidence path does not resolve: {tok}")

@@ -9,7 +9,7 @@ set -u
 CHECK=0
 POS=()
 for a in "$@"; do case "$a" in --check) CHECK=1 ;; *) POS+=("$a") ;; esac; done
-ROOT="${POS[0]:-/workspace/project}"
+ROOT="${POS[0]:-$(cd "$(dirname "$0")/.." && pwd)}"
 cd "$ROOT" || exit 1
 
 # The four overlapping docs that DARKITH.md replaces. AGENTS.md is NOT here (it is
