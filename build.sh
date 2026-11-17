@@ -103,7 +103,7 @@ zipalign_run(){
   else "$PY3" "$PYZIP" "$1" "$2" 4; fi
 }
 zipalign_check(){
-  if [ -n "$ZIPALIGN" ]; then "$ZIPALIGN" -c 4 "$1"
+  if [ -n "$ZIPALIGN" ]; then "$ZIPALIGN" -c -p 4 "$1"
   else "$PY3" "$PYZIP" -c 4 "$1"; fi
 }
 
@@ -168,21 +168,29 @@ import sys, os, zipfile
 work, proj, skip = sys.argv[1], sys.argv[2], set(sys.argv[3].split())
 base=os.path.join(work,"base.apk"); dex=os.path.join(work,"classes.dex")
 tmp=base+".tmp"
-with zipfile.ZipFile(base) as zin, zipfile.ZipFile(tmp,"w",zipfile.ZIP_DEFLATED) as zo:
+
+# API 30+ (targetSdk>=30) refuses to install an APK whose resources.arsc or
+# lib/*.so are DEFLATED: both must be STORED and 4-byte aligned (zipalign -p).
+# aapt2 already writes them STORED; re-zipping with ZIP_DEFLATED destroys that,
+# which is exactly the "App not installed" defect. Preserve the store decision.
+def must_store(name):
+    # resources.arsc and EVERY lib/ entry (not only .so) must stay STORED.
+    return name == "resources.arsc" or name.startswith("lib/")
+
+with zipfile.ZipFile(base) as zin, zipfile.ZipFile(tmp,"w") as zo:
     for e in zin.infolist():
         if e.filename=="classes.dex": continue
-        # Android 11+ (API 30) requires resources.arsc and lib/*.so to be STORED, not
-        # DEFLATED: the loader mmaps them in place. Re-adding them to a ZIP_DEFLATED
-        # archive silently compresses them and the installer then refuses with a bare
-        # "App not installed". Preserve STORED for exactly those entries.
-        if e.filename=="resources.arsc" or e.filename.startswith("lib/"):
-            zi=zipfile.ZipInfo(e.filename)
-            zi.compress_type=zipfile.ZIP_STORED
-            zi.external_attr=e.external_attr
-            zo.writestr(zi, zin.read(e.filename))
-        else:
-            zo.writestr(e.filename, zin.read(e.filename))
-    zo.writestr("classes.dex", open(dex,"rb").read())
+        # Android 11+ (API 30) requires resources.arsc and lib/*.so to be STORED,
+        # not DEFLATED: the loader mmaps them in place. Re-adding them to a
+        # ZIP_DEFLATED archive silently compresses them and the installer refuses
+        # with a bare "App not installed". Preserve STORED for exactly those entries.
+        zi=zipfile.ZipInfo(e.filename, date_time=e.date_time)
+        zi.compress_type = zipfile.ZIP_STORED if must_store(e.filename) else e.compress_type
+        zi.external_attr=e.external_attr
+        zo.writestr(zi, zin.read(e.filename))
+    zi=zipfile.ZipInfo("classes.dex", date_time=(1980,1,1,0,0,0))
+    zi.compress_type=zipfile.ZIP_DEFLATED
+    zo.writestr(zi, open(dex,"rb").read())
     ad=os.path.join(proj,"assets")
     if os.path.isdir(ad):
         for b,_,fs in os.walk(ad):
@@ -190,10 +198,12 @@ with zipfile.ZipFile(base) as zin, zipfile.ZipFile(tmp,"w",zipfile.ZIP_DEFLATED)
                 rel=os.path.relpath(os.path.join(b,f), ad).replace(os.sep,"/")
                 if rel in skip or os.path.basename(rel) in skip:
                     print("   [skip asset] "+rel); continue
-                zo.writestr("assets/"+rel, open(os.path.join(b,f),"rb").read())
+                zi=zipfile.ZipInfo("assets/"+rel, date_time=(1980,1,1,0,0,0))
+                zi.compress_type=zipfile.ZIP_DEFLATED
+                zo.writestr(zi, open(os.path.join(b,f),"rb").read())
 os.replace(tmp, base)
 PY
-say "5/7 package        ok -> base.apk (classes.dex + assets)"
+say "5/7 package        ok -> base.apk (classes.dex + assets; arsc/so kept STORED)"
 
 zipalign_run "$WORK/base.apk" "$WORK/aligned.apk"
 say "6/7 zipalign       ok -> aligned.apk$([ -n "$ZIPALIGN" ] || echo ' (python fallback)')"
@@ -209,5 +219,17 @@ KS="$ROOT/debug.keystore"
 say "7/7 apksigner      ok -> $OUT"
 
 "$APKSIGNER" verify --verbose "$OUT" | grep -E "Verifies|scheme" || true
-zipalign_check "$OUT" >/dev/null && say "zipalign verify    ok"
+zipalign_check "$OUT" >/dev/null && say "zipalign verify    ok" || die "zipalign -c -p 4 failed"
+
+# API 30+ hard gate: resources.arsc and lib/*.so MUST be STORED (not DEFLATED).
+"$PY3" - "$OUT" <<'PY2'
+import sys, zipfile
+z=zipfile.ZipFile(sys.argv[1])
+bad=[n for n in z.namelist()
+     if (n=="resources.arsc" or n.endswith(".so")) and z.getinfo(n).compress_type!=0]
+if bad:
+    print("ANCHOR: API30 install gate FAILED - DEFLATED: "+", ".join(bad)); sys.exit(1)
+print("api30 gate         ok (arsc + lib/*.so STORED)")
+PY2
+[ $? -eq 0 ] || die "API 30 store gate failed (see above)"
 say "DONE: $OUT"

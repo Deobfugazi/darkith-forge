@@ -77,6 +77,30 @@ else
   echo "SKIP: not a git checkout"
 fi
 
+printf '\n=== APK store rule (SPI-21 repack law) ===\n'
+apks="$(ls delivery/*.apk 2>/dev/null || true)"
+if have python3 && [ -n "$apks" ]; then
+  # resources.arsc and lib/*.so MUST be STORED; DEFLATED means API 30+ install
+  # fails with a bare "App not installed". delivery/ is regenerable output and
+  # not committed, so an absent APK is a skip, never a failure. Check EVERY APK:
+  # the defect is systemic (both shipped APKs had it), not a one-file accident.
+  for apk in $apks; do
+    if python3 - "$apk" <<'PY'
+import sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+bad = [n for n in z.namelist()
+       if (n == "resources.arsc" or n.endswith(".so")) and z.getinfo(n).compress_type != 0]
+if bad:
+    print("      " + sys.argv[1] + " DEFLATED (must be STORED): " + ", ".join(bad)); sys.exit(1)
+print("      ok: " + sys.argv[1] + " (arsc + lib/*.so STORED)")
+PY
+    then printf -- '--- APK store rule: PASS (%s)\n' "$apk"
+    else printf -- '--- APK store rule: FAIL (%s)\n' "$apk"; FAILED=1; fi
+  done
+else
+  printf -- '--- APK store rule: skipped (no delivery/*.apk)\n'
+fi
+
 printf '\n=== discrepancy detectors (two tabs must agree) ===\n'
 if have git && git rev-parse --git-dir >/dev/null 2>&1; then
 
