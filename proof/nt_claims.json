@@ -1,0 +1,359 @@
+[
+  {
+    "id": "ENGINE-RULE",
+    "kind": "A",
+    "note": "NT Engine Part 2/Part 1: show the path, log the instant, carry the citation verbatim; three questions Source/Transformation/Falsifier. The meta-rule every NT claim is judged by."
+  },
+  {
+    "id": "ENGINE-LABELS",
+    "kind": "A",
+    "note": "Three labels RESOLVED/EXPOSABLE/INFERRED map onto SAVF states: RESOLVED->pass, EXPOSABLE->marginal (external referent needed), INFERRED->marginal."
+  },
+  {
+    "id": "NT1-RSA-EVIDENCE",
+    "kind": "W",
+    "referent": "NT I contestation note (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'correlate of autonomic state' in s and 'three-state interpretation of them is the contested layer' in s; print('RSA-CONTESTED-FLAGGED')\"",
+      "expect": "RSA-CONTESTED-FLAGGED",
+      "external": true
+    },
+    "note": "NT I repaired RSA from 'direct readout' to 'correlate' and flagged the contested layer."
+  },
+  {
+    "id": "NT1-RSA-DOWNGRADE",
+    "kind": "R",
+    "derived_from": [
+      "NT1-RSA-EVIDENCE"
+    ],
+    "note": "NT I: RSA/HRV is a correlate of autonomic state, not a direct readout of ventral vagal tone."
+  },
+  {
+    "id": "NT2-RULE-W",
+    "kind": "W",
+    "referent": "NT Engine Part 2 (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'Carry the citation verbatim' in s and 'Source, transformation, falsifier' in s; print('REENTER-RULE-PRESENT')\"",
+      "expect": "REENTER-RULE-PRESENT",
+      "external": true
+    },
+    "note": "The re-enterability rule is carried in the corpus."
+  },
+  {
+    "id": "NT2-REENTERABILITY",
+    "kind": "R",
+    "derived_from": [
+      "NT2-RULE-W"
+    ],
+    "note": "NT II: the offload inversion; the corrective criterion is re-enterability (source/transformation/falsifier). The philosophy this repo's gates enforce."
+  },
+  {
+    "id": "NT2-CI-EXIT0",
+    "kind": "W",
+    "referent": "tools/ci.sh",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('tools/ci.sh').read(); assert 'delivery gate' in s; print('CI-SH-WIRED')\"",
+      "expect": "CI-SH-WIRED",
+      "external": true
+    },
+    "note": "The re-enterability gates exist and are wired into one provider-neutral CI."
+  },
+  {
+    "id": "NT3-CHR-W",
+    "kind": "W",
+    "referent": "NT III structure (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'PART I: THE 22 AUTOSOMES' in s and 'Count check' in s; print('NT3-STRUCTURE-CARRIED')\"",
+      "expect": "NT3-STRUCTURE-CARRIED",
+      "external": true
+    },
+    "note": "NT III carries the 23-pair structure and its own count check."
+  },
+  {
+    "id": "NT3-TAXONOMY",
+    "kind": "R",
+    "derived_from": [
+      "NT3-CHR-W"
+    ],
+    "note": "NT III: DOSAGE/GEOMETRY/ENERGETICS assigned by the rescue assay, not by the earliest event. Coherent, standard genetics."
+  },
+  {
+    "id": "NT4-STATUS-W",
+    "kind": "W",
+    "referent": "NT Engine Part 3 labels (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'The path is inside the report' in s and 'The path leaves the report for one specific place' in s; print('NT4-LABELS-CARRIED')\"",
+      "expect": "NT4-LABELS-CARRIED",
+      "external": true
+    },
+    "note": "NT IV's status discipline (RESOLVED/EXPOSABLE/INFERRED) is carried."
+  },
+  {
+    "id": "NT4-GATE",
+    "kind": "R",
+    "derived_from": [
+      "NT4-STATUS-W"
+    ],
+    "note": "NT IV: pre-registration gate (temporal priority, specificity, publicity, outcome independence) + reflexive Stage 0."
+  },
+  {
+    "id": "NT4-RABTSEVICH",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IV's live demonstration (Rabtsevich TESS pre-registration; VAAR; FAIA) is an EXTERNAL referent not carried in the repo and not verifiable here. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT5-CUT-W",
+    "kind": "W",
+    "referent": "NT V invariant statement (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-V.txt').read(); assert 'produces an output controls the narrative' in s and 'consumes the output bears the cost' in s; print('CUT-INVARIANT-CARRIED')\"",
+      "expect": "CUT-INVARIANT-CARRIED",
+      "external": true
+    },
+    "note": "NT V carries the cut's invariant statement."
+  },
+  {
+    "id": "NT5-CUT",
+    "kind": "R",
+    "derived_from": [
+      "NT5-CUT-W"
+    ],
+    "note": "NT V: the cut (producer keeps benefit, consumer absorbs cost); P1-P13; the two-clock payroll gap; the autophagic recycle bin."
+  },
+  {
+    "id": "NT6-SYNCHRONICITY",
+    "kind": "C",
+    "note": "NT VI - The Synchronicity Engine. CITED by NT VIII and NT XI as a load-bearing peer (payload-to-donor bond, C = D n P = empty, graft hold), but NO BODY EXISTS. CONTRADICTION: a load-bearing node with no derivation."
+  },
+  {
+    "id": "NT7-STACK-W",
+    "kind": "W",
+    "referent": "NT VII serial order (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VII.txt').read(); assert 'Bedrock (chassis)' in s and 'Cover Glass (ceiling)' in s; print('STACK-ANCHORS-CARRIED')\"",
+      "expect": "STACK-ANCHORS-CARRIED",
+      "external": true
+    },
+    "note": "NT VII carries the bedrock-to-ceiling anchor order."
+  },
+  {
+    "id": "NT7-STACK-ORDER",
+    "kind": "R",
+    "derived_from": [
+      "NT7-STACK-W"
+    ],
+    "note": "NT VII: the serial layer order is fixed by adjacency necessity (light-control between source and eye; field-sensing above light-control; addressing grid against the LC)."
+  },
+  {
+    "id": "NT7-PROCESS-ZERO",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT VII Part 13 material-stream figures (indium/iodine/gallium/rare-earth supply) carried without verbatim source. Resolution target: EXPOSABLE (figures), RESOLVED (mechanisms)."
+  },
+  {
+    "id": "NT7-FIELD-FRAMING",
+    "kind": "A",
+    "note": "NT VII: the 'never-still continuum' field framing is the author's, self-marked INFERRED, not claimed as settled physics. No contradiction: flagged by the author."
+  },
+  {
+    "id": "NT8-BOND-W",
+    "kind": "W",
+    "referent": "NT VIII bond criterion (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VIII.txt').read(); assert 'W_A / W_coh' in s and 'The universal bonding condition is' in s; print('BOND-CRITERION-CARRIED')\"",
+      "expect": "BOND-CRITERION-CARRIED",
+      "external": true
+    },
+    "note": "NT VIII carries B and its universal condition."
+  },
+  {
+    "id": "NT8-BOND",
+    "kind": "R",
+    "derived_from": [
+      "NT8-BOND-W"
+    ],
+    "note": "NT VIII: B = (W_A/W_coh)(a_inf/a_gel)eta >= 1; B_c = 1; alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2]. The bond criterion."
+  },
+  {
+    "id": "NT8-CROSS-TREATISE",
+    "kind": "A",
+    "note": "NT VIII: the identification of each prior NT's bond with B is the author's compression, self-marked INFERRED. Coherent as a mapping."
+  },
+  {
+    "id": "NT9-MATH-W",
+    "kind": "W",
+    "referent": "the real number system (IEEE doubles)",
+    "evidence": {
+      "cmd": "python3 -c \"import math; b,n=2.0,3.0; x=b**n; r=math.log(x)-n*math.log(b); assert abs(r)<1e-12; assert abs(x**(1.0/n)-b)<1e-12; assert abs(math.log(x)/math.log(b)-n)<1e-12; print('TRIAD-EXACT')\"",
+      "expect": "TRIAD-EXACT",
+      "external": true
+    },
+    "note": "NT IX closed-triple algebra executed against reality: b^n=x, r=ln x - n ln b=0, both unfold legs exact."
+  },
+  {
+    "id": "NT9-TRIAD",
+    "kind": "R",
+    "derived_from": [
+      "NT9-MATH-W"
+    ],
+    "note": "NT IX: b^n = x is a closed triple with one redundancy (3-for-2); residual r = ln x - n ln b."
+  },
+  {
+    "id": "NT9-ANCHOR",
+    "kind": "R",
+    "derived_from": [
+      "NT9-MATH-W"
+    ],
+    "note": "NT IX: anchor pair {0,1}; b^0=1, log_b(1)=0; collapse signals a stationary frame - change the frame, do not force the leg."
+  },
+  {
+    "id": "NT9-BUILD-W",
+    "kind": "W",
+    "referent": "build.sh in the repo",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('build.sh').read(); assert '6/7 zipalign' in s and '7/7 apksigner' in s and 'aapt2 link' in s; print('BUILD-SH-7STEP')\"",
+      "expect": "BUILD-SH-7STEP",
+      "external": true
+    },
+    "note": "The repo build.sh realizes the NT IX 7-step chain in order."
+  },
+  {
+    "id": "NT9-BUILD-CHAIN",
+    "kind": "R",
+    "derived_from": [
+      "NT9-BUILD-W"
+    ],
+    "note": "NT IX Part 9: aapt2 compile->link->kotlinc->d8->zip->zipalign->apksigner; API-34 ceiling; zipalign mandatory before signing; signer input is aligned.apk."
+  },
+  {
+    "id": "NT9-NOGRADLE-W",
+    "kind": "W",
+    "referent": "build.sh contains no Gradle",
+    "evidence": {
+      "cmd": "python3 -c \"import re; s=open('build.sh').read(); assert not re.search(r'^[ \\t]*gradle|gradlew', s, re.M); print('NO-GRADLE-IN-BUILD')\"",
+      "expect": "NO-GRADLE-IN-BUILD",
+      "external": true
+    },
+    "note": "Gradle is physically forbidden; witnessed in build.sh."
+  },
+  {
+    "id": "NT9-CROSS-SCALE",
+    "kind": "A",
+    "note": "NT IX: the claim that every prior NT tested the same triad is the author's compression, self-marked INFERRED. Boundary stated (multiplicative, not additive)."
+  },
+  {
+    "id": "NT9-DEMO-ECON",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IX Part 4 economic demonstrations (Harvard 718 firms, Atlassian 2026, Anthropic junior hires, METR horizon, CO2 Mauna Loa) are external source data not carried verbatim. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT9-COMPILER-SAMPLES",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IX Part 8 live compiler bug reports (LLVM/GCC/rustc/CompCert/MLIR issue numbers) are external referents not carried in the repo. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT9-AAPT2-API35",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IX aapt2 API-35 fracture (Termux issue #22667) is an external referent not carried in the repo. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT10-PRIME-W",
+    "kind": "W",
+    "referent": "NT X Prime Directive (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-X.txt').read(); assert 'NEVER WRITE A STUB' in s and 'The Honest Boundary' in s; print('PRIME-CARRIED')\"",
+      "expect": "PRIME-CARRIED",
+      "external": true
+    },
+    "note": "NT X carries the Prime Directive and the honest-boundary distinction."
+  },
+  {
+    "id": "NT10-PRIME",
+    "kind": "R",
+    "derived_from": [
+      "NT10-PRIME-W"
+    ],
+    "note": "NT X: never write a stub; the honest boundary (declare an unwritten artifact EXPOSABLE) is distinct from a stub."
+  },
+  {
+    "id": "NT10-SIGMA-W",
+    "kind": "W",
+    "referent": "NT X closure criterion (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-X.txt').read(); assert '\u03a3 = \u03a3_S + \u03a3_B = 0' in s; print('SIGMA0-CARRIED')\"",
+      "expect": "SIGMA0-CARRIED",
+      "external": true
+    },
+    "note": "NT X carries the Sigma=0 closure criterion."
+  },
+  {
+    "id": "NT10-SIGMA0",
+    "kind": "R",
+    "derived_from": [
+      "NT10-SIGMA-W"
+    ],
+    "note": "NT X closure: Sigma = Sigma_S + Sigma_B = 0; Sigma_B>0 impossible by construction; Sigma_S>0 is substrate-layer semantic drift."
+  },
+  {
+    "id": "NT10-ALLOCATOR",
+    "kind": "A",
+    "note": "NT X Part 3: the autophagic memory allocator (PID with anti-windup, Lyapunov candidate) is a design; the math is standard control theory."
+  },
+  {
+    "id": "NT10-HARDWARE",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT X Part 2 TECNO KM4k / MT6768 hardware ground truth is external to the repo. Resolution target: EXPOSABLE (declared device fact)."
+  },
+  {
+    "id": "NT10-HEALER-ANDROIDX",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved, MAJOR): NT X 4.4/5.4 Healer demonstrates repair to androidx.compose.material3.Button as verified truth, contradicting the repo law (fork_integrity_gate: zero import androidx; SPI-13/NEVER #12). Unresolved in the corpus."
+  },
+  {
+    "id": "NT11-RETENTION-W",
+    "kind": "W",
+    "referent": "NT XI retention equation (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XI.txt').read(); assert 'W_{in} - E = S' in s; print('RETENTION-CARRIED')\"",
+      "expect": "RETENTION-CARRIED",
+      "external": true
+    },
+    "note": "NT XI carries the retention equation W_in - E = S != 0."
+  },
+  {
+    "id": "NT11-RETENTION",
+    "kind": "R",
+    "derived_from": [
+      "NT11-RETENTION-W"
+    ],
+    "note": "NT XI: lim(E/W_in)=0 subject to d(wellbeing)/dt>0 and d(resource use)/dt<=0."
+  },
+  {
+    "id": "NT11-AQP-W",
+    "kind": "W",
+    "referent": "NT XI forced derivation (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XI.txt').read(); assert 'exactly six BUILD modules' in s and 'seven ADOPT substrates' in s; print('AQP-FORCED-CARRIED')\"",
+      "expect": "AQP-FORCED-CARRIED",
+      "external": true
+    },
+    "note": "NT XI carries the forced derivation result."
+  },
+  {
+    "id": "NT11-AQP-FORCED",
+    "kind": "R",
+    "derived_from": [
+      "NT11-AQP-W"
+    ],
+    "note": "NT XI synthesis: 6 BUILD modules (M1 AQP, M2 RLCR, M3 Detect, M4 Retention, M5 PID, M6 SE), 7 ADAPTER targets (S1-S7), 1 COMPOSE predicate (integrates), 1 partial build order, 2 frozen resolutions."
+  },
+  {
+    "id": "NT11-AQP-FALSIFIER",
+    "kind": "A",
+    "note": "NT XI: the F1-F8 falsifier set; the six-module set is the unique invariant iff none of F1-F8 fires. Self-contained logical derivation."
+  },
+  {
+    "id": "NT11-PRAXIS-ACTUALS",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT XI Part 2 praxis actuals (Champlain Housing Trust, Mondragon, PODER Emma, BRED, Paris PB, UNCTAD 2026) are external referents not carried verbatim. Resolution target: EXPOSABLE."
+  }
+]

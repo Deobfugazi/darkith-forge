@@ -1,0 +1,83 @@
+[
+  {
+    "id": "NT6-SYNCHRONICITY",
+    "resolved_as": "INFERRED",
+    "resolution": "NT VI (The Synchronicity Engine) is cited by NT VIII and NT XI as a peer but has no body. Truthful absolution: the node's interface is carried (payload-to-donor graft; DEX collision avoidance C = D n P = empty) but the derivation is not. Status INFERRED: the node is named and its invariant stated; the body is an open upload. NOT a stub - the absence is declared, not hidden.",
+    "evidence": {
+      "cmd": "python3 -c \"a=open('docs/nt/NT-VIII.txt').read(); b=open('docs/nt/NT-V.txt').read(); assert 'NT VI' in a and 'Synchronicity Engine' in a; assert 'NOVELTREATISE VI' in b; print('NT6-CITED-NOT-BODIED')\"",
+      "expect": "NT6-CITED-NOT-BODIED"
+    }
+  },
+  {
+    "id": "NT4-RABTSEVICH",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "NT IV's live demonstration (Rabtsevich TESS pre-registration; VAAR; FAIA) is an external referent. Truthful absolution: the corpus carries the demonstration and its status; the verbatim external sources are EXPOSABLE (not carried in the repo). The mechanism (four gate properties) is RESOLVED in-document; only the primary citations are external.",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'Rabtsevich' in s; print('RABTSEVICH-CARRIED-EXTERNAL')\"",
+      "expect": "RABTSEVICH-CARRIED-EXTERNAL"
+    }
+  },
+  {
+    "id": "NT7-PROCESS-ZERO",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "NT VII Part 13 material-stream figures are carried without verbatim source, and NT VII itself flags this. Truthful absolution: the mechanisms (indium is a zinc byproduct; iodine from caliche/brine; gallium an alumina shadow; rare-earth separation bottleneck) are EXPOSABLE (established in literature); the specific figures are EXPOSABLE as carried facts. The author's own status flag is the resolution.",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VII.txt').read(); assert 'Status flag on Part Thirteen' in s; print('PROCESS-ZERO-SELF-FLAGGED')\"",
+      "expect": "PROCESS-ZERO-SELF-FLAGGED"
+    }
+  },
+  {
+    "id": "NT9-DEMO-ECON",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "NT IX Part 4 economic demonstrations carry live source data (Harvard 718 firms, Atlassian 2026, METR, Mauna Loa) not reproduced verbatim in the repo. Truthful absolution: the arithmetic of each demonstration is RESOLVED (re-walkable); the source data are EXPOSABLE. NT IX's own section header carries the flag.",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-IX.txt').read(); assert 'EXPOSABLE (source data)' in s; print('DEMO-ECON-FLAGGED-EXPOSABLE')\"",
+      "expect": "DEMO-ECON-FLAGGED-EXPOSABLE"
+    }
+  },
+  {
+    "id": "NT9-COMPILER-SAMPLES",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "NT IX Part 8 live compiler bug reports (LLVM/GCC/rustc/CompCert/MLIR) are external referents. Truthful absolution: the fault-localization STRUCTURE is RESOLVED (trusted pair -> forced third -> residual -> localize); the individual issue numbers are EXPOSABLE. NT IX's own section header carries the flag.",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-IX.txt').read(); assert 'EXPOSABLE (live samples)' in s; print('COMPILER-SAMPLES-FLAGGED-EXPOSABLE')\"",
+      "expect": "COMPILER-SAMPLES-FLAGGED-EXPOSABLE"
+    }
+  },
+  {
+    "id": "NT9-AAPT2-API35",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "NT IX's aapt2 API-35 fracture (Termux issue #22667) is an external referent. Truthful absolution: the RULE is RESOLVED and enforced - the ceiling is empirically locked to 34 and the build.sh anchor refuses anything else; the external issue citation is EXPOSABLE. The repo's api_level_gate enforces the locked ceiling.",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-IX.txt').read(); assert 'android-35/android.jar' in s and 'locked to 34' in s; print('API35-FRACTURE-LOCKED-34')\"",
+      "expect": "API35-FRACTURE-LOCKED-34"
+    }
+  },
+  {
+    "id": "NT10-HARDWARE",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "NT X Part 2 declares the TECNO KM4k / MT6768 hardware ground truth, which is external to the repo. Truthful absolution: the hardware facts are EXPOSABLE as a declared device ground truth (the operator's own device); the allocator math derived from them is RESOLVED (standard control theory). Not a stub: the facts are declared, not invented.",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-X.txt').read(); assert 'TECNO' in s and 'MT6768' in s; print('HARDWARE-DECLARED-EXTERNAL')\"",
+      "expect": "HARDWARE-DECLARED-EXTERNAL"
+    }
+  },
+  {
+    "id": "NT10-HEALER-ANDROIDX",
+    "resolved_as": "RESOLVED",
+    "resolution": "SCOPED RESOLUTION. NT X 4.4/5.4 demonstrates the Healer repairing an unresolved import to 'import androidx.compose.material3.Button'. The repo law (fork_integrity_gate SPI-13 / NEVER #12) forbids any 'import androidx' in the delivered Kotlin tree. These are compatible once scoped: the androidx symbol is an ILLUSTRATIVE worked example of the Healer MECHANISM (detect unresolved symbol -> ingest verified import -> patch); it is NOT a claim about the delivered tree, which obeys the no-androidx law (ComposeEmitter is purged). RESOLVED as scoped. RECOMMENDED FOLLOW-UP: re-point the corpus example to a raw android.* import to remove the apparent conflict at the source.",
+    "evidence": {
+      "cmd": "python3 -c \"a=open('tools/fork_integrity_gate.sh').read(); b=open('docs/nt/NT-X.txt').read(); assert 'import androidx' in a and 'androidx.compose.material3.Button' in b; print('ANDROIDX-LAW-VS-EXAMPLE-SCOPED')\"",
+      "expect": "ANDROIDX-LAW-VS-EXAMPLE-SCOPED"
+    }
+  },
+  {
+    "id": "NT11-PRAXIS-ACTUALS",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "NT XI Part 2 real-world praxis actuals (Champlain Housing Trust, Mondragon, PODER Emma, BRED, Paris PB, UNCTAD 2026) are external referents not carried verbatim. Truthful absolution: the mechanisms (CLT resale formula, cooperative surplus split, participatory allocation) are RESOLVED as arithmetic; the specific institutions' figures are EXPOSABLE.",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XI.txt').read(); assert 'Champlain' in s and 'Mondragon' in s; print('PRAXIS-ACTUALS-EXTERNAL')\"",
+      "expect": "PRAXIS-ACTUALS-EXTERNAL"
+    }
+  }
+]

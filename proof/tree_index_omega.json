@@ -3,50 +3,56 @@
     "decls": [
       {
         "kind": "object",
-        "line": 7,
+        "line": 8,
         "name": "AegisCircuitBreaker"
       },
       {
         "kind": "fun",
-        "line": 8,
+        "line": 9,
         "name": "checkAndRollback"
       },
       {
         "kind": "val",
-        "line": 9,
+        "line": 14,
         "name": "am"
       },
       {
         "kind": "val",
-        "line": 10,
+        "line": 15,
+        "name": "crashed"
+      },
+      {
+        "kind": "val",
+        "line": 16,
         "name": "exitInfo"
       },
       {
         "kind": "val",
-        "line": 12,
+        "line": 22,
         "name": "marker"
       },
       {
         "kind": "fun",
-        "line": 21,
+        "line": 31,
         "name": "arm"
       }
     ],
     "deps": {},
     "ext": {
-      "android": 3,
+      "android": 4,
       "java": 1
     },
-    "file": "com/darkith/transliaison/AegisCircuitBreaker.kt",
+    "file": "AegisCircuitBreaker.kt",
     "imports": [
       "android.app.ActivityManager",
       "android.app.ApplicationExitInfo",
       "android.content.Context",
+      "android.os.Build",
       "java.io.File"
     ],
-    "loc": 24,
+    "loc": 34,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -76,13 +82,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/AegisDatalog.kt",
+    "file": "AegisDatalog.kt",
     "imports": [
       "java.io.File"
     ],
     "loc": 16,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -112,13 +118,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/AegisEnvelope.kt",
+    "file": "AegisEnvelope.kt",
     "imports": [
       "java.security.MessageDigest"
     ],
     "loc": 14,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -156,11 +162,11 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/AegisOracle.kt",
+    "file": "AegisOracle.kt",
     "imports": [],
     "loc": 27,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -190,7 +196,7 @@
     "ext": {
       "android": 7
     },
-    "file": "com/darkith/transliaison/AegisReaper.kt",
+    "file": "AegisReaper.kt",
     "imports": [
       "android.app.Notification",
       "android.app.NotificationChannel",
@@ -202,7 +208,7 @@
     ],
     "loc": 38,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -232,13 +238,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/AegisShadowWorktree.kt",
+    "file": "AegisShadowWorktree.kt",
     "imports": [
       "java.io.File"
     ],
     "loc": 20,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -324,14 +330,14 @@
       "android": 1,
       "java": 1
     },
-    "file": "com/darkith/transliaison/AegisVM.kt",
+    "file": "AegisVM.kt",
     "imports": [
       "android.content.Context",
       "java.io.File"
     ],
     "loc": 69,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -361,14 +367,14 @@
     "ext": {
       "java": 2
     },
-    "file": "com/darkith/transliaison/AegisWAEL.kt",
+    "file": "AegisWAEL.kt",
     "imports": [
       "java.io.File",
       "java.security.MessageDigest"
     ],
     "loc": 20,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -459,7 +465,7 @@
       "android": 10,
       "java": 1
     },
-    "file": "com/darkith/transliaison/ApkInstaller.kt",
+    "file": "ApkInstaller.kt",
     "imports": [
       "android.app.PendingIntent",
       "android.content.BroadcastReceiver",
@@ -475,7 +481,7 @@
     ],
     "loc": 83,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -512,7 +518,7 @@
       "com": 1,
       "java": 6
     },
-    "file": "com/darkith/transliaison/ApkSignerRunner.kt",
+    "file": "ApkSignerRunner.kt",
     "imports": [
       "android.content.Context",
       "com.android.apksig.ApkSigner",
@@ -525,7 +531,7 @@
     ],
     "loc": 42,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -650,7 +656,7 @@
     "ext": {
       "java": 5
     },
-    "file": "com/darkith/transliaison/AuditWriter.kt",
+    "file": "AuditWriter.kt",
     "imports": [
       "java.io.File",
       "java.text.SimpleDateFormat",
@@ -660,7 +666,7 @@
     ],
     "loc": 158,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -1215,7 +1221,7 @@
     "ext": {
       "java": 3
     },
-    "file": "com/darkith/transliaison/Axml.kt",
+    "file": "Axml.kt",
     "imports": [
       "java.io.ByteArrayOutputStream",
       "java.nio.ByteBuffer",
@@ -1223,7 +1229,7 @@
     ],
     "loc": 405,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -1333,7 +1339,7 @@
     "ext": {
       "java": 3
     },
-    "file": "com/darkith/transliaison/AxmlWriter.kt",
+    "file": "AxmlWriter.kt",
     "imports": [
       "java.io.ByteArrayOutputStream",
       "java.nio.ByteBuffer",
@@ -1341,7 +1347,7 @@
     ],
     "loc": 78,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -1497,7 +1503,7 @@
       "android": 1,
       "java": 5
     },
-    "file": "com/darkith/transliaison/BuildEngine.kt",
+    "file": "BuildEngine.kt",
     "imports": [
       "android.content.Context",
       "java.io.File",
@@ -1508,7 +1514,7 @@
     ],
     "loc": 105,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -1764,7 +1770,7 @@
       "android": 1,
       "java": 6
     },
-    "file": "com/darkith/transliaison/ChimeraBuilder.kt",
+    "file": "ChimeraBuilder.kt",
     "imports": [
       "android.content.Context",
       "java.io.File",
@@ -1776,7 +1782,7 @@
     ],
     "loc": 211,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -1806,13 +1812,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/DarkithAlpineGuest.kt",
+    "file": "DarkithAlpineGuest.kt",
     "imports": [
       "java.io.File"
     ],
     "loc": 31,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -2655,7 +2661,7 @@
       "javax": 4,
       "org": 2
     },
-    "file": "com/darkith/transliaison/DarkithBridge.kt",
+    "file": "DarkithBridge.kt",
     "imports": [
       "android.content.Context",
       "android.os.Environment",
@@ -2674,7 +2680,7 @@
     ],
     "loc": 646,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -2714,13 +2720,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/DarkithChainReader.kt",
+    "file": "DarkithChainReader.kt",
     "imports": [
       "java.io.File"
     ],
     "loc": 33,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -2760,13 +2766,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/DarkithContentStore.kt",
+    "file": "DarkithContentStore.kt",
     "imports": [
       "java.io.File"
     ],
     "loc": 27,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -2794,11 +2800,11 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/DarkithEVMKit.kt",
+    "file": "DarkithEVMKit.kt",
     "imports": [],
     "loc": 21,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -2838,13 +2844,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/DarkithRuntimeHost.kt",
+    "file": "DarkithRuntimeHost.kt",
     "imports": [
       "java.io.File"
     ],
     "loc": 37,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -2884,13 +2890,13 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/DarkithSolidityCompiler.kt",
+    "file": "DarkithSolidityCompiler.kt",
     "imports": [
       "java.io.File"
     ],
     "loc": 33,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -3252,7 +3258,7 @@
       "java": 5,
       "org": 2
     },
-    "file": "com/darkith/transliaison/DonorBuilder.kt",
+    "file": "DonorBuilder.kt",
     "imports": [
       "android.content.Context",
       "org.json.JSONArray",
@@ -3265,7 +3271,7 @@
     ],
     "loc": 268,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -3395,7 +3401,7 @@
     "ext": {
       "java": 3
     },
-    "file": "com/darkith/transliaison/DonorUiConcat.kt",
+    "file": "DonorUiConcat.kt",
     "imports": [
       "java.io.ByteArrayOutputStream",
       "java.io.File",
@@ -3403,7 +3409,7 @@
     ],
     "loc": 98,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -3509,7 +3515,7 @@
       "android": 1,
       "java": 5
     },
-    "file": "com/darkith/transliaison/EntryPointRewriter.kt",
+    "file": "EntryPointRewriter.kt",
     "imports": [
       "android.content.Context",
       "java.io.File",
@@ -3520,7 +3526,7 @@
     ],
     "loc": 95,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -3697,7 +3703,7 @@
       "java": 3,
       "org": 1
     },
-    "file": "com/darkith/transliaison/HomekeeperActivity.kt",
+    "file": "HomekeeperActivity.kt",
     "imports": [
       "android.Manifest",
       "android.app.Activity",
@@ -3734,7 +3740,7 @@
     ],
     "loc": 427,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -4384,7 +4390,7 @@
       "java": 1,
       "org": 2
     },
-    "file": "com/darkith/transliaison/HomekeeperBridge.kt",
+    "file": "HomekeeperBridge.kt",
     "imports": [
       "android.content.ClipData",
       "com.darkith.transliaison.core.NativeForgeBuilder",
@@ -4401,7 +4407,7 @@
     ],
     "loc": 584,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -4496,14 +4502,14 @@
     "ext": {
       "java": 2
     },
-    "file": "com/darkith/transliaison/KotlinUnzip.kt",
+    "file": "KotlinUnzip.kt",
     "imports": [
       "java.io.File",
       "java.util.zip.ZipFile"
     ],
     "loc": 73,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -4548,7 +4554,7 @@
     "ext": {
       "java": 3
     },
-    "file": "com/darkith/transliaison/KotlinZip.kt",
+    "file": "KotlinZip.kt",
     "imports": [
       "java.io.File",
       "java.util.zip.ZipEntry",
@@ -4556,7 +4562,7 @@
     ],
     "loc": 40,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -4658,7 +4664,7 @@
       "java": 5,
       "org": 1
     },
-    "file": "com/darkith/transliaison/LaborClock.kt",
+    "file": "LaborClock.kt",
     "imports": [
       "android.os.SystemClock",
       "org.json.JSONObject",
@@ -4670,7 +4676,7 @@
     ],
     "loc": 84,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -4725,7 +4731,7 @@
     "ext": {
       "android": 14
     },
-    "file": "com/darkith/transliaison/MainActivity.kt",
+    "file": "MainActivity.kt",
     "imports": [
       "android.Manifest",
       "android.app.Activity",
@@ -4744,7 +4750,7 @@
     ],
     "loc": 162,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -4825,7 +4831,7 @@
       "android": 1,
       "java": 6
     },
-    "file": "com/darkith/transliaison/NativeTools.kt",
+    "file": "NativeTools.kt",
     "imports": [
       "android.content.Context",
       "java.io.File",
@@ -4837,7 +4843,7 @@
     ],
     "loc": 68,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -4977,7 +4983,7 @@
     "ext": {
       "java": 6
     },
-    "file": "com/darkith/transliaison/ProgressDirectory.kt",
+    "file": "ProgressDirectory.kt",
     "imports": [
       "java.io.File",
       "java.security.MessageDigest",
@@ -4988,7 +4994,7 @@
     ],
     "loc": 102,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -5034,7 +5040,7 @@
       "android": 3,
       "java": 5
     },
-    "file": "com/darkith/transliaison/ProgressLedger.kt",
+    "file": "ProgressLedger.kt",
     "imports": [
       "android.content.Context",
       "android.os.Handler",
@@ -5047,7 +5053,7 @@
     ],
     "loc": 68,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -5423,7 +5429,7 @@
       "android": 1,
       "java": 4
     },
-    "file": "com/darkith/transliaison/ShellBridge.kt",
+    "file": "ShellBridge.kt",
     "imports": [
       "android.os.Environment",
       "java.io.File",
@@ -5433,7 +5439,7 @@
     ],
     "loc": 218,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -5494,7 +5500,7 @@
       "java": 2,
       "kotlin": 1
     },
-    "file": "com/darkith/transliaison/SynchronicityScheduler.kt",
+    "file": "SynchronicityScheduler.kt",
     "imports": [
       "java.util.concurrent.CountDownLatch",
       "java.util.concurrent.TimeUnit",
@@ -5502,7 +5508,7 @@
     ],
     "loc": 34,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -5537,7 +5543,7 @@
     "ext": {
       "java": 4
     },
-    "file": "com/darkith/transliaison/Timestamp.kt",
+    "file": "Timestamp.kt",
     "imports": [
       "java.text.SimpleDateFormat",
       "java.util.Date",
@@ -5546,7 +5552,7 @@
     ],
     "loc": 20,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -5561,7 +5567,7 @@
     "ext": {
       "android": 5
     },
-    "file": "com/darkith/transliaison/WifiDirectBroadcastReceiver.kt",
+    "file": "WifiDirectBroadcastReceiver.kt",
     "imports": [
       "android.content.BroadcastReceiver",
       "android.content.Context",
@@ -5571,7 +5577,7 @@
     ],
     "loc": 19,
     "package": "com.darkith.transliaison",
-    "tier": "transliaison",
+    "tier": "(root)",
     "unterminated_block_comment": false
   },
   {
@@ -5609,7 +5615,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/Allocation.kt",
+    "file": "core/Allocation.kt",
     "imports": [],
     "loc": 10,
     "package": "com.darkith.transliaison.core",
@@ -5861,7 +5867,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/AutofillCorrector.kt",
+    "file": "core/AutofillCorrector.kt",
     "imports": [],
     "loc": 191,
     "package": "com.darkith.transliaison.core",
@@ -5970,7 +5976,7 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/core/AutophagicAllocator.kt",
+    "file": "core/AutophagicAllocator.kt",
     "imports": [
       "java.io.File"
     ],
@@ -6474,7 +6480,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/CssLite.kt",
+    "file": "core/CssLite.kt",
     "imports": [],
     "loc": 355,
     "package": "com.darkith.transliaison.core",
@@ -6533,7 +6539,7 @@
     "ext": {
       "android": 2
     },
-    "file": "com/darkith/transliaison/core/GpuScanner.kt",
+    "file": "core/GpuScanner.kt",
     "imports": [
       "android.opengl.GLES20",
       "android.util.Log"
@@ -6763,7 +6769,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/HtmlDom.kt",
+    "file": "core/HtmlDom.kt",
     "imports": [],
     "loc": 175,
     "package": "com.darkith.transliaison.core",
@@ -6810,7 +6816,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/IRAuditor.kt",
+    "file": "core/IRAuditor.kt",
     "imports": [],
     "loc": 84,
     "package": "com.darkith.transliaison.core",
@@ -7044,7 +7050,7 @@
     "ext": {
       "kotlin": 2
     },
-    "file": "com/darkith/transliaison/core/IRBuilder.kt",
+    "file": "core/IRBuilder.kt",
     "imports": [
       "kotlin.math.max",
       "kotlin.math.min"
@@ -7214,7 +7220,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/LayoutNode.kt",
+    "file": "core/LayoutNode.kt",
     "imports": [],
     "loc": 65,
     "package": "com.darkith.transliaison.core",
@@ -7308,7 +7314,7 @@
     "ext": {
       "java": 1
     },
-    "file": "com/darkith/transliaison/core/MemoryGovernor.kt",
+    "file": "core/MemoryGovernor.kt",
     "imports": [
       "java.util.concurrent.atomic.AtomicLong"
     ],
@@ -7370,7 +7376,7 @@
       "android": 2,
       "java": 1
     },
-    "file": "com/darkith/transliaison/core/NativeForgeBuilder.kt",
+    "file": "core/NativeForgeBuilder.kt",
     "imports": [
       "android.content.Context",
       "android.util.Log",
@@ -7459,7 +7465,7 @@
       "android": 4,
       "java": 1
     },
-    "file": "com/darkith/transliaison/core/NativeOmegaBuilder.kt",
+    "file": "core/NativeOmegaBuilder.kt",
     "imports": [
       "android.content.Context",
       "android.os.Debug",
@@ -7489,7 +7495,7 @@
     "ext": {
       "android": 13
     },
-    "file": "com/darkith/transliaison/core/OmegaActivity.kt",
+    "file": "core/OmegaActivity.kt",
     "imports": [
       "android.app.Activity",
       "android.content.Context",
@@ -7865,7 +7871,7 @@
       "javax": 2,
       "kotlin": 3
     },
-    "file": "com/darkith/transliaison/core/OmegaRenderer.kt",
+    "file": "core/OmegaRenderer.kt",
     "imports": [
       "android.opengl.GLES20",
       "android.opengl.GLSurfaceView",
@@ -8044,7 +8050,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/SelfTest.kt",
+    "file": "core/SelfTest.kt",
     "imports": [],
     "loc": 130,
     "package": "com.darkith.transliaison.core",
@@ -8729,7 +8735,7 @@
       "java": 12,
       "org": 2
     },
-    "file": "com/darkith/transliaison/core/SubstrateIngestor.kt",
+    "file": "core/SubstrateIngestor.kt",
     "imports": [
       "org.json.JSONArray",
       "org.json.JSONObject",
@@ -9026,7 +9032,7 @@
     ],
     "deps": {},
     "ext": {},
-    "file": "com/darkith/transliaison/core/TransliaisonEngine.kt",
+    "file": "core/TransliaisonEngine.kt",
     "imports": [],
     "loc": 228,
     "package": "com.darkith.transliaison.core",

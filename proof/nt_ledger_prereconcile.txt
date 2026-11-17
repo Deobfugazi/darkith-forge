@@ -1,0 +1,46 @@
+ENGINE-RULE A->A  analysis    
+ENGINE-LABELS A->A  analysis    
+NT1-RSA-EVIDENCE W->W  verified    output sha256:dbd72c27ed95
+NT1-RSA-DOWNGRADE R->R  verified    
+NT2-RULE-W W->W  verified    output sha256:4437c9e20b70
+NT2-REENTERABILITY R->R  verified    
+NT2-CI-EXIT0 W->W  verified    output sha256:c0d05ec7ba44
+NT3-CHR-W W->W  verified    output sha256:50f46fa76108
+NT3-TAXONOMY R->R  verified    
+NT4-STATUS-W W->W  verified    output sha256:d2446bfeb55f
+NT4-GATE R->R  verified    
+NT4-RABTSEVICH C->C  unverified  
+NT5-CUT-W W->W  verified    output sha256:d4b412325255
+NT5-CUT  R->R  verified    
+NT6-SYNCHRONICITY D->D  declared    
+NT7-STACK-W W->W  verified    output sha256:c7b8fdb1ac3b
+NT7-STACK-ORDER R->R  verified    
+NT7-PROCESS-ZERO C->C  unverified  
+NT7-FIELD-FRAMING A->A  analysis    
+NT8-BOND-W W->W  verified    output sha256:d662b69fd678
+NT8-BOND R->R  verified    
+NT8-CROSS-TREATISE A->A  analysis    
+NT9-MATH-W W->W  verified    output sha256:93e791aedce8
+NT9-TRIAD R->R  verified    
+NT9-ANCHOR R->R  verified    
+NT9-BUILD-W W->W  verified    output sha256:5074f6ba5a2f
+NT9-BUILD-CHAIN R->R  verified    
+NT9-NOGRADLE-W W->W  verified    output sha256:0201926861a1
+NT9-CROSS-SCALE A->A  analysis    
+NT9-DEMO-ECON C->C  unverified  
+NT9-COMPILER-SAMPLES C->C  unverified  
+NT9-AAPT2-API35 C->C  unverified  
+NT10-PRIME-W W->W  verified    output sha256:4251e89fbab1
+NT10-PRIME R->R  verified    
+NT10-SIGMA-W W->W  verified    output sha256:e36fc11e189f
+NT10-SIGMA0 R->R  verified    
+NT10-ALLOCATOR A->A  analysis    
+NT10-HARDWARE C->C  unverified  
+NT10-HEALER-ANDROIDX C->C  unverified  
+NT11-RETENTION-W W->W  verified    output sha256:d9c31ff92ed0
+NT11-RETENTION R->R  verified    
+NT11-AQP-W W->W  verified    output sha256:3078d2128437
+NT11-AQP-FORCED R->R  verified    
+NT11-AQP-FALSIFIER A->A  analysis    
+NT11-PRAXIS-ACTUALS C->C  unverified  
+45 claims, 0 problem(s)

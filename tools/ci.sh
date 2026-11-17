@@ -67,6 +67,12 @@ if have python3; then
         run "$g"                          python3 "tools/$g.py"
       fi
     done
+      # NT gate: run the noveltreatise corpus through SAVF and fail unless every
+      # contradiction (claim kind C) is resolved to absolution by a re-run command.
+      # A law cited but not carried, or a contradiction left unresolved, stops CI.
+      if [ -f tools/nt_gate.py ]; then
+        run "nt corpus reconciliation (SAVF)" python3 tools/nt_gate.py
+      fi
     # the board must be pushed in REAL TIME so a parallel worker sees it (MUST #26)
     if [ -f tools/board_pulse.sh ]; then
       run "board pulse (real-time push)"    bash tools/board_pulse.sh --check
