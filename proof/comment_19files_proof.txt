@@ -1,0 +1,22 @@
+file                       brief  open close  line-N bytes (SPI-2)
+AxmlWriter.kt                  7     1     1  '/**'
+EntryPointRewriter.kt         10     1     1  '/**'
+DarkithChainReader.kt          5     1     1  '/**'
+DarkithContentStore.kt         5     1     1  '/**'
+DarkithEVMKit.kt               3     1     1  '/**'
+DarkithRuntimeHost.kt          5     1     1  '/**'
+DarkithAlpineGuest.kt          5     1     1  '/**'
+DarkithSolidityCompiler.kt     5     1     1  '/**'
+HomekeeperBridge.kt          282     9     9  'val rootP = root.canonicalPath'
+LayoutNode.kt                  3     5     5  '/**'
+TransliaisonEngine.kt          3     2     2  '/**'
+AutofillCorrector.kt           3     5     5  '/** One thing the Healer could not'
+SubstrateIngestor.kt          92     1     1  '/*'
+CssLite.kt                     3     1     1  '/*'
+HtmlDom.kt                     3     2     2  '/** Minimal DOM node. Text nodes h'
+SelfTest.kt                    3     2     2  '/**'
+Allocation.kt                  3     1     1  '/** Plain data carrier between a r'
+AutophagicAllocator.kt         5     1     1  '/**'
+MemoryGovernor.kt              5     2     2  '/**'
+
+files with unbalanced /* vs */ : 0 / 19

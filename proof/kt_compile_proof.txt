@@ -1,0 +1,25 @@
+=== §19 FORK-INTEGRITY GATE — COMPILE PROOF (SPI-2/4/6) ===
+2026-11-17 21:02:58 UTC
+kotlinc: info: kotlinc-jvm 1.9.24 (JRE 17.0.12+7)
+android.jar: android-all.jar
+
+== fork integrity gate ==
+tree: app/src/main/java/com/darkith/transliaison
+[SPI-12] one authoritative tree
+  exactly one source tree: /tmp/livecheck/app/src/main/java/com/darkith/transliaison
+[SPI-13] no foreign or purged symbols
+  zero 'import androidx'
+  no live references to purged symbols
+[SPI-14] build inputs are versioned
+  manifest: /tmp/livecheck/app/src/main/AndroidManifest.xml
+  res/: present
+  assets/: present
+[MUST-11] compile is the proof
+  kotlinc clean: 0 errors, 55 files (+R.java)
+== result ==
+PASS: all §19 laws held.
+
+--- delivery gate (source laws) ---
+  7  L-07-fork-singularity        CLOSED  §19 gate PASS (compile proof ran)
+  10 L-10-currency                CLOSED  kotlinc clean: 0 errors, 55 files (+R.java)
+SOURCE-OK — 0 loophole(s) OPEN; 10 deferred (no APK here). Artifact laws are NOT yet proven.
