@@ -62,11 +62,15 @@ if have python3; then
       run "law gate (SPI-15/prime)"       python3 tools/law_gate.py
     fi
     # MUST #15 / #16 / NEVER #17 / §31 synchrony — the laws that were only notes until now.
-    for g in circadian_gate download_gate stall_gate synchrony_gate; do
+    for g in circadian_gate download_gate stall_gate synchrony_gate synchrony_pulse convergence_gate; do
       if [ -f "tools/$g.py" ]; then
         run "$g"                          python3 "tools/$g.py"
       fi
     done
+    # the board must be pushed in REAL TIME so a parallel worker sees it (MUST #26)
+    if [ -f tools/board_pulse.sh ]; then
+      run "board pulse (real-time push)"    bash tools/board_pulse.sh --check
+    fi
   fi
 else
   echo "SKIP: python3 not found"; FAILED=1

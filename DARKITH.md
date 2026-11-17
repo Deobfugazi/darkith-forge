@@ -795,3 +795,49 @@ Synchrony outranks local convenience: an app that "does not need" a clock does n
 skip it, exactly as a local fix does not get to skip generalization (SPI-24). The gate runs
 over every surface under `app/src/main/assets/*.html` and over the bot, so a new surface
 without a clock fails CI until it is injected. This is the prophylactic cure, not a patch.
+
+---
+
+§32 — THE CONVERGENCE & COUPLING BYLAW (2026-11-18)
+
+The Operator runs at least TWO agents in parallel and tests their outputs for convergence in
+the repo. Two claims that "agree" without a comparison are notes (SPI-15). The board is the
+shared channel: if an agent updates it and does not push, the parallel worker is blind and
+the Operator must repeat himself. And the clock must AUTOCCOUPLE the edge device's own
+hardware system time to the global clock, because the session that serves the sovereign user
+must boot real-time-stamp aware and track the user's last activity against the Operator's
+circadian cycle — as the DEFAULT, not as an option.
+
+─── MUST #26 (REAL-TIME BOARD PUSH) ───
+GATE: tools/board_pulse.sh
+When an agent updates the durable board (TASKS.md), it must push the board to the remote in
+the same action — not at the end of the turn. `tools/board_pulse.sh` commits and pushes the
+board the moment it changes and writes `proof/board_pulse.json` (commit SHA + time) as the
+ping a parallel worker reads. `--check` fails CI if the board has unpushed changes, so the
+board is never a private local view.
+
+─── MUST #27 (PARALLEL CONVERGENCE IS PROVEN, NOT ASSERTED) ───
+GATE: tools/convergence_gate.py
+Two independent derivations of the same fact must AGREE byte-for-byte, or the divergence is
+a defect. The gate derives the Operator's clock through BOTH the Python and the JS runtime,
+derives the circadian phase through both, and derives the working tree through two
+independent implementations of git's blob hash. A disagreement fails CI; the result is
+recorded to `proof/convergence.json` so a second agent can trust the first without redoing
+the work. (The two-tab ritual `tools/converge.sh` remains the human-facing form.)
+
+─── MUST #28 (EDGE-DEVICE TIME COUPLING + BOOT-AWARE SESSION) ───
+GATE: tools/synchrony_pulse.py
+The generated clock AUTOCCOUPLES the edge device's own system local time to the global clock
+and reports whether the device's zone agrees with the Operator's (a device set to the wrong
+zone must be visible, never silently normalized). Every session must BOOT timestamp-aware:
+`tools/synchrony_pulse.py` records the boot instant, the last conversation activity, the gap
+between them, and the circadian phase of each — wake/activity vs rest/digest/restore
+(deactivity) — to `proof/synchrony_pulse.json`. `--check` fails if the pulse is missing or
+stale (> 24h), so a session that has stopped tracking the Operator cannot pass CI.
+
+─── SPI-26 (SYNCHRONY IS HARDCODED, IN ALL SOFTWARE) ───
+GATE: tools/synchrony_gate.py
+The synchrony bylaw (§31) applies to ALL apps, bots, and machine-software/source-code
+automations — not only the user-facing ones. The clock is GENERATED and injected, so adding
+a surface adds the clock; a surface or automation that re-implements or omits the clock is a
+defect. This is the prophylactic cure: the next app cannot be born without time.

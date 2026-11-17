@@ -81,3 +81,7 @@ validation, contrast checks.
 | F7 | Bots log with timestamps via the generated clock | done | `tools/darkbot.py` routes through `build/gen/omega_time_runtime.py` (`tlog`) |
 
 <!-- real-time pulse test -->
+
+| F8 | Real-time board push + parallel-worker ping (§32 MUST #26) | done | `tools/board_pulse.sh` (`--check` gated in CI; ping `proof/board_pulse.json`) |
+| F9 | Parallel convergence proven, not asserted (§32 MUST #27) | done | `tools/convergence_gate.py` (clock py==js, phase py==js, tree git==independent blob hash) |
+| F10 | Edge-device time coupling + boot-aware session (§32 MUST #28) | done | `tools/synchrony_pulse.py` (`proof/synchrony_pulse.json`: boot, last activity, cycle phase, device zone) |

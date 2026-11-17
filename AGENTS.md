@@ -424,3 +424,17 @@ NEVER/MUST/SPI must name an executable gate that exists on disk. If a law cannot
 gated, the answer is to build the gate, not to annotate the law. The three laws that were
 notes (MUST #15 circadian, MUST #16 forced download, NEVER #17 no-stalled-deficiency) now
 have gates: `tools/circadian_gate.py`, `tools/download_gate.py`, `tools/stall_gate.py`.
+
+## §32 CONVERGENCE, COUPLING & REAL-TIME BOARD (binding, 2026-11-18)
+
+Two agents run in parallel; their outputs must CONVERGE in the repo, and the comparison must
+be executable, not asserted. `tools/convergence_gate.py` derives the clock, the circadian
+phase and the working tree through two independent implementations each and fails on any
+divergence (proof -> `proof/convergence.json`). When the board changes, push it in the SAME
+action with `tools/board_pulse.sh` (writes `proof/board_pulse.json` as the parallel-worker
+ping; `--check` is gated in CI) — never leave the board as a private local view. The clock
+AUTOCCOUPLES the edge device's own hardware system time to the global clock and reports
+whether the device's zone agrees with the Operator's; every session BOOTS timestamp-aware and
+records its boot instant, the user's last activity, and the circadian phase of each
+(`tools/synchrony_pulse.py` -> `proof/synchrony_pulse.json`). Law: DARKITH.md §32 (MUST
+#26/#27/#28, SPI-26).

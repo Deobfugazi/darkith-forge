@@ -101,11 +101,14 @@ def main() -> int:
     if js_iso and py_iso != js_iso:
         fails.append(f"ISO key diverged: py='{py_iso}' != js='{js_iso}'")
 
-    # C. the circadian phase, two implementations — same fixed instant, both sides of the
-    # active window (06:30 is active; 02:00 is rest) so the phase logic is really compared.
-    rest_ms = probe_ms - 4 * 3600 * 1000
-    for label, ms in (("active", probe_ms), ("rest", rest_ms)):
-        pyp, jsp = phase(datetime.fromtimestamp(ms / 1000, probe.tzinfo)), js_eval(f"t.phase(new Date({ms}))")
+    # C. the circadian phase, two implementations — same fixed instants, both sides of the
+    # active window (06:30 active; 02:30 rest) so the phase logic is really compared.
+    # Each side is handed the same epoch ms; the Python side coerces it via the runtime.
+    for label, ms in (("active", probe_ms), ("rest", probe_ms - 4 * 3600 * 1000)):
+        from datetime import datetime as _dt
+        from datetime import timezone as _tz
+        py_instant = _dt.fromtimestamp(ms / 1000.0, _tz.utc)
+        pyp, jsp = phase(py_instant), js_eval(f"t.phase(new Date({ms}))")
         facts[f"phase.{label}.py"] = pyp
         facts[f"phase.{label}.js"] = jsp
         if jsp and pyp != jsp:
