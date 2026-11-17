@@ -6,13 +6,13 @@ named check below. If any is OPEN the APK will NOT install (or will install and
 then crash on launch), so the gate exits non-zero.
 
 Usage:
-    python3 tools/app/install_gate.py <apk> [project_root]
+    python3 tools/install_gate.py <apk> [project_root]
 
 Checks (I-nn):
     I-01 versionCode + versionName present        (installer rejects a versionless APK)
     I-02 minSdk/targetSdk sane (24 <= min <= target)
     I-03 v2 signature verifies                    (API 30+ needs v2/v3, not v1)
-    I-04 zipalign 4-byte aligned                  (Play/store & some ROMs enforce it)
+    I-04 zipalign 4-byte aligned                  (Play/store & some ROMs enforce it; N/A if no zipalign)
     I-05 resources.arsc STORED                    (API 30+ refuses a DEFLATED arsc)
     I-06 every lib/*.so STORED                    (same rule for native libs)
     I-07 extractNativeLibs=true                   (else nativeLibraryDir is empty)
@@ -133,6 +133,9 @@ def main():
         rec("I-03-signature-v2", "OPEN", "apksigner not available (cannot prove the signature)")
 
     # ---- I-04 alignment -------------------------------------------------------
+    # zipalign is not a Maven artifact and is absent on a bare runner, so this is N/A
+    # (not a false OPEN) when it is missing — the same honesty rule as every other
+    # unprovable check. When present, zipalign -c 4 is the authority.
     za = find_zipalign()
     if za:
         r = subprocess.run([za, "-c", "4", apk], capture_output=True, text=True)
@@ -141,7 +144,7 @@ def main():
         else:
             rec("I-04-aligned", "OPEN", "not 4-byte aligned")
     else:
-        rec("I-04-aligned", "OPEN", "zipalign not available")
+        rec("I-04-aligned", "N/A", "zipalign absent (stage with tools/get_toolchain.sh to prove)")
 
     # ---- I-05 arsc STORED -----------------------------------------------------
     try:

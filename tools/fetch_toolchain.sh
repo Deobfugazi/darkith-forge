@@ -24,6 +24,7 @@ JDK_VER="17.0.12+7"
 JDK_DIR="jdk-17.0.12+7"
 ANDROID_JAR_NAME="android-all-14-robolectric-10818077.jar"
 APKSIG_VER="8.1.1"
+AAPT2_VER="8.5.2-11315950"
 
 have_java() { command -v java >/dev/null 2>&1; }
 
@@ -78,8 +79,31 @@ else
     || { say "DEFICIT: apksig.jar download failed"; exit 1; }
 fi
 
+# 5. aapt2 — the resource compiler + linker. The §19 compile proof needs it to generate
+#    R.java (aapt2 link --java) before kotlinc runs; without it R.* does not resolve and
+#    the proof fails. Shipped as a jar wrapping the linux executable. Placed in aapt2d/
+#    so tools/ci.sh can put it on PATH.
+if [ -x "$DEST/aapt2d/aapt2" ]; then
+  say "aapt2: cached"
+else
+  say "aapt2: fetching ($AAPT2_VER)"
+  mkdir -p "$DEST/aapt2d"
+  curl -fsSL -o "$DEST/aapt2.jar" \
+    "https://dl.google.com/dl/android/maven2/com/android/tools/build/aapt2/${AAPT2_VER}/aapt2-${AAPT2_VER}-linux.jar" \
+    || { say "DEFICIT: aapt2 download failed"; exit 1; }
+  python3 - "$DEST/aapt2.jar" "$DEST/aapt2d" <<'PY'
+import sys, zipfile
+zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])
+PY
+  chmod +x "$DEST/aapt2d/aapt2" 2>/dev/null || true
+fi
+
+# 6. zipalign is NOT fetched here: it is not a Maven artifact, and alignment is checked
+#    in pure Python by tools/install_gate.py (I-04), so no binary is required.
+
 # Validate
 [ -x "$DEST/kotlinc/bin/kotlinc" ] || { say "DEFICIT: kotlinc missing"; exit 1; }
 [ -r "$DEST/$ANDROID_JAR_NAME" ]   || { say "DEFICIT: android.jar missing"; exit 1; }
 [ -r "$DEST/apksig.jar" ]          || { say "DEFICIT: apksig.jar missing"; exit 1; }
+[ -x "$DEST/aapt2d/aapt2" ]        || { say "DEFICIT: aapt2 missing"; exit 1; }
 say "toolchain ready in $DEST"

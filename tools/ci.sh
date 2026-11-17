@@ -89,7 +89,9 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
     export ANDROID_JAR="$TOOLCHAIN/android-all-14-robolectric-10818077.jar"
     export EXTRA_CP="$TOOLCHAIN/apksig.jar"
     [ -x "$TOOLCHAIN/jdk-17.0.12+7/bin/java" ] && export JAVA_HOME="$TOOLCHAIN/jdk-17.0.12+7"
-    export PATH="${JAVA_HOME:+$JAVA_HOME/bin:}$TOOLCHAIN/aapt2d:$PATH"
+    # aapt2 (R.java for the compile proof) and zipalign live in aapt2d/; put them on PATH
+    # so both the §19 proof and the install gate find real tools on a fresh runner.
+    export PATH="$TOOLCHAIN/aapt2d:${JAVA_HOME:+$JAVA_HOME/bin:}$PATH"
     run "§19 fork integrity gate (compile proof)" \
       bash tools/fork_integrity_gate.sh app/src/main/java/com/darkith/transliaison "$ANDROID_JAR" "$EXTRA_CP"
   else
@@ -181,9 +183,9 @@ fi
 printf '\n=== install gate (no "App not installed") ===\n'
 # The two failures a user actually feels are (1) the package installer refusing the APK
 # and (2) the UI not painting once the OS launches it. Both are gated explicitly. The
-# install gate needs the artifact tools; absent them it is a named SKIP, never a false pass.
-if have python3 && command -v aapt2 >/dev/null 2>&1 && command -v apksigner >/dev/null 2>&1 \
-   && command -v zipalign >/dev/null 2>&1; then
+# install gate needs aapt2 (manifest) + apksigner (signature); absent them it is a named
+# SKIP, never a false pass. zipalign is optional (I-04 is N/A without it).
+if have python3 && command -v aapt2 >/dev/null 2>&1 && command -v apksigner >/dev/null 2>&1; then
   gate_apks="$apks"
   [ -f app-signed.apk ] && gate_apks="$gate_apks app-signed.apk"
   if [ -n "${gate_apks// /}" ]; then

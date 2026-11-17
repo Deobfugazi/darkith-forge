@@ -89,11 +89,20 @@ if [ -n "$ANDROID_JAR" ] && command -v "$KOTLINC" >/dev/null 2>&1; then
     RJ=$(find "$GEN" -name R.java | head -1)
   fi
   FILES=$(find "$TREE" -name '*.kt')
-  if "$KOTLINC" -J-Xmx6g -cp "$ANDROID_JAR${EXTRA_CP:+:$EXTRA_CP}" -jvm-target 1.8 -nowarn -d "$OUTD" $FILES $RJ 2>"$LOG"; then
+  # -Dkotlin.compiler.execution.strategy=in-process: compile in this JVM instead of a
+  # spawned Kotlin daemon. The daemon can fail to start in a sandboxed CI runner, which
+  # makes kotlinc exit non-zero with a stack trace and NO 'error:' lines — a green-looking
+  # log that is really a crash. In-process removes that failure mode entirely.
+  if "$KOTLINC" -J-Xmx2g -Dkotlin.compiler.execution.strategy=in-process \
+       -cp "$ANDROID_JAR${EXTRA_CP:+:$EXTRA_CP}" -jvm-target 1.8 -nowarn -d "$OUTD" $FILES $RJ 2>"$LOG"; then
     say "kotlinc clean: $(grep -c 'error:' "$LOG") errors, $(find "$TREE" -name '*.kt' | wc -l) files$([ -n "$RJ" ] && echo ' (+R.java)')"
   else
+    # Print what kotlinc ACTUALLY said. The old code printed only lines matching 'error:',
+    # so a crash (daemon/OOM/classpath) reported "0 errors" — a misleading deficit.
     grep 'error:' "$LOG" | head -20 | sed 's/^/    /'
-    die "MUST-11: kotlinc reported $(grep -c 'error:' "$LOG") errors. Not reconciled."
+    say "kotlinc tail:"
+    tail -15 "$LOG" | sed 's/^/    /'
+    die "MUST-11: kotlinc exited non-zero ($(grep -c 'error:' "$LOG") 'error:' line(s); see tail above). Not reconciled."
   fi
 else
     if [ "$NO_COMPILE" = 1 ]; then
