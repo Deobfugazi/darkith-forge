@@ -1,13 +1,30 @@
+# ---- build / test noise -------------------------------------------------
 __pycache__/
 *.pyc
-dl/
 .forge_work/
 .tools/
 *.log
 
-# Generated delivery output: rebuild with the build/*.py packagers rather than
-# committing the archives. Only the webapps are versioned, never the zips.
+# ---- scratch harnesses (regenerable) ------------------------------------
+.shell-harness/
+
+# ---- regenerated delivery output (rebuild with build/*.py) --------------
 delivery/
+dl/
 darkith-forge-bundle.zip
 darkith_source_fixed.zip
+darkith_source_*.zip
 savf1-bundle.zip
+darkith-inscriber.zip
+
+# ---- screenshots (regenerable by build/omega/ui-test.py) ----------------
+build/omega/*.png
+
+# ---- SECRETS: never commit signing key material -------------------------
+# The APK signing identity lives ONLY in the built APK's assets/engine/ and
+# in your offline backup. It must never be a plain file in git.
+**/release_key
+**/release_cert
+*.keystore
+*.p8
+*.pem

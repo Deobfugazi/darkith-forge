@@ -888,8 +888,11 @@ def main(argv=None):
 
     A = ap.parse_args(argv)
     if A.cmd == "axis":
-        ax = Axis(_parse_pt(A.p0), _parse_pt(A.p1))
-        print(json.dumps({"point": ax.at(A.s, A.tau), "start": ax.start(A.tau), "end": ax.end(A.tau)}))
+        try:
+            ax = Axis(_parse_pt(A.p0), _parse_pt(A.p1))
+            print(json.dumps({"point": ax.at(A.s, A.tau), "start": ax.start(A.tau), "end": ax.end(A.tau)}))
+        except ValueError as e:
+            raise SystemExit(f"axis: {e}")
     elif A.cmd == "sign":
         print(chart_sign(A.chart, A.axis, A.move))
     elif A.cmd == "selftest":
@@ -900,6 +903,8 @@ def main(argv=None):
         print("selftest: ok" if good else "selftest: FAILED")
         return 0 if good else 1
     elif A.cmd == "scan":
+        if not os.path.exists(A.path):
+            raise SystemExit(f"scan: no such file or directory: {A.path}")
         inst = None
         if A.installed is not None:
             inst = {x.strip() for x in A.installed.split(",") if x.strip()}

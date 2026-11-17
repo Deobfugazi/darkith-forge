@@ -27,6 +27,7 @@ INDEX = DELIVERY / "index.html"
 COPY = {
     ROOT / "savf.html": DELIVERY / "savf.html",
     ROOT / "darkith forge.html": DELIVERY / "darkith-forge.html",
+    ROOT / "omega.html": DELIVERY / "omega.html",
 }
 
 # Documents that quote a size and a sha256 for the webapp.  Kept in step with
@@ -35,6 +36,7 @@ DOC_FILES = {
     "savf.html": ROOT / "savf.html",
     "savf.py": ROOT / "savf.py",
     "darkith-forge.html": ROOT / "darkith forge.html",
+    "omega.html": ROOT / "omega.html",
 }
 DOCS = ["README.txt", "PROGRESS-LEDGER.md"]
 

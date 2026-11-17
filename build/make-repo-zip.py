@@ -37,6 +37,9 @@ WEBAPP = {
     "webapp/savf.html": ROOT / "savf.html",
     "webapp/savf.py": ROOT / "savf.py",
     "webapp/zipalign.py": ROOT / "zipalign.py",
+    "webapp/omega.html": ROOT / "omega.html",
+    "webapp/omega/exec-protocol.js": ROOT / "build" / "omega" / "exec-protocol.js",
+    "webapp/omega/assistant.js": ROOT / "build" / "omega" / "assistant.js",
 }
 PROOF = "docs/darkith-forged-proof.apk"
 
@@ -116,12 +119,20 @@ def check() -> int:
     got_hk = z.read(PREFIX + "app/src/main/assets/homekeeper.html")
     same3 = got_hk == cur
     print(f"  {'OK  ' if same3 else 'STALE'} repo app/.../homekeeper.html  {sha256(got_hk)[:16]}")
+    cur_omega = (ROOT / "omega.html").read_bytes()
+    got_omega = z.read(PREFIX + "webapp/omega.html")
+    same4 = got_omega == cur_omega
+    print(f"  {'OK  ' if same4 else 'STALE'} repo webapp/omega.html  {sha256(got_omega)[:16]}")
+    cur_proto = (ROOT / "build" / "omega" / "exec-protocol.js").read_bytes()
+    got_proto = z.read(PREFIX + "webapp/omega/exec-protocol.js")
+    same5 = got_proto == cur_proto
+    print(f"  {'OK  ' if same5 else 'STALE'} repo webapp/omega/exec-protocol.js  {sha256(got_proto)[:16]}")
     libs = sorted(n.split("/")[-1] for n in z.namelist() if "/jniLibs/" in n)
     libs_ok = libs == ["libaapt2.so", "libzipalign.so"]
     print(f"  {'OK  ' if libs_ok else 'STALE'} repo jniLibs {libs}")
     key_ok = PREFIX + "app/src/main/assets/engine/release_key" in z.namelist()
     print(f"  {'OK  ' if key_ok else 'STALE'} repo carries release_key")
-    ok = same and same2 and same3 and libs_ok and key_ok
+    ok = same and same2 and same3 and same4 and same5 and libs_ok and key_ok
     print("REPO ZIP: " + ("in sync" if ok else "STALE -- run without --check"))
     return 0 if ok else 1
 

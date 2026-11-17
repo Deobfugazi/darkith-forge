@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>DARKITH Ω — terminal + local assistant</title>
+<style>
+:root{
+  --bg:#050505; --panel:#0b0c0e; --line:#1e2126; --line2:#2a2e35;
+  --ink:#e8edf3; --dim:#8b949e; --accent:#ff8a3d; --accent-dim:rgba(255,138,61,.14);
+  --cyan:#56d4dd; --green:#7ee787; --red:#ff6b6b; --yellow:#e8c268;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+  --r:14px;
+}
+@media (prefers-color-scheme:light){
+  :root{--bg:#f6f7f9;--panel:#fff;--line:#e3e6ea;--line2:#d3d8de;--ink:#14181d;--dim:#5b6470;--accent:#c25a00;}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
+  overscroll-behavior:none;
+  background-image:radial-gradient(1200px 600px at 50% -10%,rgba(255,138,61,.06),transparent 60%);
+}
+#app{height:100dvh;display:flex;flex-direction:column;padding-top:var(--sat);padding-bottom:var(--sab)}
+
+/* header */
+header{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--line);
+  background:rgba(11,12,14,.72);backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  position:sticky;top:0;z-index:20;
+}
+@media (prefers-color-scheme:light){header{background:rgba(255,255,255,.78)}}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.logo{
+  width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--accent),#ff4d6d);color:#0b0b0b;font-weight:800;
+  font-family:var(--mono);font-size:16px;box-shadow:0 6px 18px rgba(255,138,61,.28)
+}
+.brand h1{margin:0;font-size:15px;font-weight:650;letter-spacing:-.02em;white-space:nowrap}
+.brand small{display:block;color:var(--dim);font-size:10.5px;font-weight:450;letter-spacing:.02em}
+.chips{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;font:11px/1 var(--mono);
+  padding:5px 9px;border:1px solid var(--line2);border-radius:999px;color:var(--dim);
+  background:rgba(255,255,255,.03);white-space:nowrap
+}
+.chip b{color:var(--ink);font-weight:600}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--dim);flex:0 0 auto}
+.dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.dot.off{background:var(--red)}
+
+/* tabs */
+nav{flex:0 0 auto;display:flex;gap:4px;padding:8px 12px 0;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.tab{
+  flex:0 0 auto;border:1px solid transparent;background:transparent;color:var(--dim);
+  font:13px/1 var(--ui);font-weight:550;padding:9px 14px;border-radius:10px 10px 0 0;cursor:pointer;
+  transition:color .15s var(--ease),background .15s var(--ease)
+}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--panel);border-color:var(--line);border-bottom-color:var(--panel)}
+
+/* panes */
+main{flex:1 1 auto;min-height:0;position:relative}
+.pane{
+  position:absolute;inset:0;display:none;flex-direction:column;min-height:0;
+  background:var(--panel);border-top:1px solid var(--line)
+}
+.pane.on{display:flex}
+
+/* terminal */
+#term-out{flex:1 1 auto;min-height:0;overflow-y:auto;padding:12px 14px 4px;
+  font:12.5px/1.6 var(--mono);white-space:pre-wrap;word-break:break-word;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.t-cmd{margin-top:8px;color:var(--accent)}
+.t-cmd .ps1{color:var(--cyan)}
+.t-err{color:var(--red)}
+.t-sys{color:var(--dim)}
+.t-ok{color:var(--green)}
+#term-quick{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;padding:6px 12px;
+  border-top:1px solid var(--line);scrollbar-width:none;
+  mask-image:linear-gradient(90deg,#000 92%,transparent)}
+#term-quick::-webkit-scrollbar{display:none}
+.key{flex:0 0 auto;font:12px/1 var(--mono);color:var(--ink);background:rgba(255,255,255,.06);
+  border:1px solid var(--line2);border-radius:9px;padding:0 11px;min-height:34px;
+  display:inline-flex;align-items:center;cursor:pointer;transition:transform .1s var(--ease),background .1s var(--ease)}
+.key:active{transform:scale(.94);background:var(--accent-dim)}
+#term-form{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px 12px 12px;border-top:1px solid var(--line)}
+#term-prompt{font:12.5px/1 var(--mono);color:var(--cyan);white-space:nowrap}
+#term-input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--ink);
+  font:13px/1.4 var(--mono);padding:8px 0;caret-color:var(--accent)}
+#term-input::placeholder{color:var(--dim);opacity:.75}
+#term-send{flex:0 0 auto;border:1px solid var(--line2);background:var(--accent-dim);color:var(--ink);
+  border-radius:10px;padding:9px 14px;font:12.5px/1 var(--ui);font-weight:600;cursor:pointer}
+#term-send:active{transform:scale(.96)}
+
+/* browser */
+#browser-bar{flex:0 0 auto;display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+#browser-url{flex:1;min-width:0;background:rgba(255,255,255,.05);border:1px solid var(--line2);
+  border-radius:10px;color:var(--ink);font:13px/1.4 var(--mono);padding:10px 12px;outline:none}
+@media (prefers-color-scheme:light){#browser-url{background:#fff}}
+#browser-url:focus{border-color:var(--accent)}
+#browser-go{flex:0 0 auto;border:0;border-radius:10px;padding:0 16px;font:13px/1 var(--ui);font-weight:600;
+  background:var(--accent-dim);color:var(--ink);border:1px solid rgba(255,138,61,.3);cursor:pointer}
+#browser-stage{flex:1 1 auto;min-height:0;background:#fff;position:relative}
+#browser-frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+#browser-note{flex:0 0 auto;padding:7px 12px;font:11.5px/1.5 var(--mono);color:var(--dim);
+  border-top:1px solid var(--line);background:rgba(255,255,255,.02)}
+
+/* assistant */
+#chat{flex:1 1 auto;min-height:0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:10px 13px;border-radius:14px;font:13.5px/1.55 var(--ui);white-space:pre-wrap;word-break:break-word}
+.msg.user{align-self:flex-end;background:var(--accent-dim);border:1px solid rgba(255,138,61,.28)}
+.msg.bot{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line)}
+@media (prefers-color-scheme:light){.msg.bot{background:#f1f3f6}}
+.msg.meta{align-self:stretch;max-width:100%;background:transparent;border:0;color:var(--dim);font:11.5px/1.5 var(--mono);padding:2px 4px}
+.msg code,.msg pre{font-family:var(--mono);font-size:12px}
+.msg pre{background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:9px;padding:9px;overflow:auto;margin:6px 0 0}
+.cursor{display:inline-block;width:7px;height:14px;background:var(--accent);vertical-align:-2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+#composer{flex:0 0 auto;border-top:1px solid var(--line);padding:10px 12px 12px;display:flex;gap:8px;align-items:flex-end}
+#prompt{flex:1;min-height:44px;max-height:120px;resize:none;background:rgba(255,255,255,.04);
+  border:1px solid var(--line2);border-radius:12px;color:var(--ink);font:13.5px/1.5 var(--ui);
+  padding:11px 12px;outline:none}
+@media (prefers-color-scheme:light){#prompt{background:#fff}}
+#prompt:focus{border-color:var(--accent)}
+#send{flex:0 0 auto;border:0;border-radius:12px;padding:12px 16px;font:13.5px/1 var(--ui);font-weight:650;
+  background:linear-gradient(140deg,var(--accent),#ff5f6d);color:#0b0b0b;cursor:pointer;min-height:44px}
+#send:active{transform:scale(.96)}
+#send[disabled]{opacity:.5;cursor:default}
+#model-bar{flex:0 0 auto;display:flex;gap:6px;align-items:center;padding:8px 12px 0;flex-wrap:wrap}
+select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.05);
+  border:1px solid var(--line2);border-radius:9px;padding:7px 9px;outline:none;max-width:100%}
+@media (prefers-color-scheme:light){select{background:#fff}}
+
+/* system */
+#sys{padding:14px;overflow-y:auto;font:13px/1.6 var(--ui)}
+#sys h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:18px 0 8px}
+#sys h2:first-child{margin-top:0}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:rgba(255,255,255,.02);margin-bottom:10px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font:12px var(--mono)}
+.kv span:nth-child(odd){color:var(--dim)}
+.pill{display:inline-block;font:11px var(--mono);padding:3px 8px;border-radius:999px;border:1px solid var(--line2);margin:2px 4px 2px 0;color:var(--dim)}
+.pill.yes{color:var(--green);border-color:rgba(126,231,135,.4)}
+.pill.no{color:var(--red);border-color:rgba(255,107,107,.35)}
+.hint{color:var(--dim);font-size:12px;margin-top:8px}
+.bar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--accent))}
+.toast{position:fixed;left:50%;bottom:calc(20px + var(--sab));transform:translateX(-50%);
+  background:#111;color:#fff;border:1px solid var(--line2);border-radius:11px;padding:10px 14px;
+  font:12.5px var(--ui);opacity:0;transition:opacity .2s var(--ease);pointer-events:none;z-index:50;max-width:90vw}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="logo">Ω</div>
+      <div>
+        <h1>DARKITH Ω</h1>
+        <small id="subtitle">terminal + local assistant</small>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip" id="chip-exec"><span class="dot" id="dot-exec"></span><b>exec</b> <span id="exec-state">probe…</span></span>
+      <span class="chip" id="chip-ai"><span class="dot" id="dot-ai"></span><b>ai</b> <span id="ai-state">probe…</span></span>
+    </div>
+  </header>
+
+  <nav role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-pane="terminal">Terminal</button>
+    <button class="tab" role="tab" aria-selected="false" data-pane="browser">Browser</button>
+    <button class="tab" role="tab" aria-selected="false" data-pane="assistant">Assistant</button>
+    <button class="tab" role="tab" aria-selected="false" data-pane="system">System</button>
+  </nav>
+
+  <main>
+    <section class="pane on" id="pane-terminal" role="tabpanel">
+      <div id="term-out" aria-live="polite"></div>
+      <div id="term-quick"></div>
+      <form id="term-form" autocomplete="off">
+        <span id="term-prompt">$</span>
+        <input id="term-input" placeholder="type a command — help for the list" spellcheck="false" autocapitalize="off" autocorrect="off">
+        <button id="term-send" type="submit">Run</button>
+      </form>
+    </section>
+
+    <section class="pane" id="pane-browser" role="tabpanel">
+      <form id="browser-bar" autocomplete="off">
+        <input id="browser-url" placeholder="enter a URL or search" spellcheck="false" autocapitalize="off" autocorrect="off">
+        <button id="browser-go" type="submit">Go</button>
+      </form>
+      <div id="browser-stage">
+        <iframe id="browser-frame" title="in-app browser"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
+          referrerpolicy="no-referrer"></iframe>
+      </div>
+      <div id="browser-note"></div>
+    </section>
+
+    <section class="pane" id="pane-assistant" role="tabpanel">
+      <div id="model-bar">
+        <select id="model-sel" title="local model"></select>
+        <button class="key" id="model-load" type="button">Load</button>
+        <span class="chip" id="tier-chip">tier —</span>
+        <span class="chip" id="mem-chip">ram —</span>
+      </div>
+      <div id="chat"></div>
+      <form id="composer" autocomplete="off">
+        <textarea id="prompt" rows="1" placeholder="ask anything — runs on this device when a model is loaded"></textarea>
+        <button id="send" type="submit">Send</button>
+      </form>
+    </section>
+
+    <section class="pane" id="pane-system" role="tabpanel"><div id="sys"></div></section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   DARKITH Ω — single file, zero dependency, works from file://.
+   Two engines, one surface:
+     terminal  → native exec when the host bridge is present, else builtins
+     assistant → local GGUF over the bridge, else an honest offline ruleset
+   Nothing here claims a capability the device does not have.
+   ===================================================================== */
+(function () {
+  "use strict";
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+
+  /* ---------- tiny helpers ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  var toastT;
+  function toast(msg) {
+    var t = $("#toast"); t.textContent = msg; t.classList.add("on");
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove("on"); }, 2200);
+  }
+  function bridge() { return (typeof window !== "undefined" && window.darkith) ? window.darkith : null; }
+  function hasFn(n) { var b = bridge(); return !!(b && typeof b[n] === "function"); }
+  function safeJson(s, d) { try { return JSON.parse(s); } catch (e) { return d; } }
+
+  /* ---------- ANSI renderer (SGR + CR overwrite) ---------- */
+  var SGR = {
+    0: { r: 1 }, 1: { bold: 1 }, 2: { dim: 1 }, 3: { it: 1 }, 4: { ul: 1 }, 7: { rev: 1 }, 9: { st: 1 },
+    22: { nobold: 1 }, 23: { noit: 1 }, 24: { noul: 1 }, 27: { norev: 1 }, 29: { nost: 1 },
+    30: { fg: "#3b4048" }, 31: { fg: "#ff5f56" }, 32: { fg: "#7ee787" }, 33: { fg: "#e8c268" },
+    34: { fg: "#5cc8ff" }, 35: { fg: "#c792ea" }, 36: { fg: "#56d4dd" }, 37: { fg: "#e6edf3" },
+    90: { fg: "#6e7681" }, 91: { fg: "#ff7b72" }, 92: { fg: "#7ee787" }, 93: { fg: "#f0d38a" },
+    94: { fg: "#79c0ff" }, 95: { fg: "#d2a8ff" }, 96: { fg: "#56d4dd" }, 97: { fg: "#fff" }
+  };
+  function renderANSI(text) {
+    var out = "", st = {}, i = 0, n = text.length;
+    function style() {
+      var c = [];
+      if (st.fg) c.push("color:" + st.fg);
+      if (st.bold) c.push("font-weight:700");
+      if (st.dim) c.push("opacity:.72");
+      if (st.it) c.push("font-style:italic");
+      if (st.ul) c.push("text-decoration:underline");
+      if (st.st) c.push("text-decoration:line-through");
+      if (st.rev) c.push("background:var(--ink);color:var(--bg)");
+      return c.length ? ' style="' + c.join(";") + '"' : "";
+    }
+    while (i < n) {
+      var ch = text[i];
+      if (ch === "\u001b" && text[i + 1] === "[") {
+        var m = /^\u001b\[([0-9;]*)([A-Za-z])/.exec(text.slice(i));
+        if (m) {
+          var codes = m[1] ? m[1].split(";").map(Number) : [0];
+          if (m[2] === "m") {
+            for (var k = 0; k < codes.length; k++) {
+              var c = codes[k], s = SGR[c];
+              if (!s) continue;
+              if (s.r) st = {};
+              if (s.fg) st.fg = s.fg;
+              if (s.bold) st.bold = 1;
+              if (s.dim) st.dim = 1;
+              if (s.it) st.it = 1;
+              if (s.ul) st.ul = 1;
+              if (s.st) st.st = 1;
+              if (s.rev) st.rev = 1;
+              if (s.nobold) delete st.bold;
+              if (s.noit) delete st.it;
+              if (s.noul) delete st.ul;
+              if (s.nost) delete st.st;
+              if (s.norev) delete st.rev;
+            }
+          } else if (m[2] === "K") {
+            out += "";
+          } else if (m[2] === "J") {
+            out = "";
+          }
+          i += m[0].length; continue;
+        }
+      }
+      if (ch === "\r") { i++; continue; }
+      var j = text.indexOf("\u001b", i); if (j < 0) j = n;
+      var seg = text.slice(i, j);
+      if (seg) out += '<span' + style() + '>' + esc(seg) + "</span>";
+      i = j;
+    }
+    return out;
+  }
+
+  /* ---------- safe arithmetic (no eval) ---------- */
+  function calc(expr) {
+    var s = String(expr).replace(/\s+/g, "");
+    if (!/^[-+*/%^().0-9eE]+$/.test(s)) throw new Error("only numbers and + - * / % ^ ( ) allowed");
+    var pos = 0;
+    function peek() { return s[pos]; }
+    function expr_() {
+      var v = term();
+      while (peek() === "+" || peek() === "-") { var op = s[pos++]; var r = term(); v = op === "+" ? v + r : v - r; }
+      return v;
+    }
+    function term() {
+      var v = power();
+      while (peek() === "*" || peek() === "/" || peek() === "%") {
+        var op = s[pos++]; var r = power();
+        if (op === "*") v = v * r; else if (op === "/") v = v / r; else v = v % r;
+      }
+      return v;
+    }
+    function power() {
+      var v = unary();
+      if (peek() === "^") { pos++; return Math.pow(v, power()); }
+      return v;
+    }
+    function unary() {
+      if (peek() === "-") { pos++; return -unary(); }
+      if (peek() === "+") { pos++; return unary(); }
+      return atom();
+    }
+    function atom() {
+      if (peek() === "(") { pos++; var v = expr_(); if (peek() !== ")") throw new Error("unbalanced ("); pos++; return v; }
+      var m = /^[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?/.exec(s.slice(pos));
+      if (!m) throw new Error("unexpected '" + (peek() || "end") + "'");
+      pos += m[0].length; return parseFloat(m[0]);
+    }
+    var v = expr_();
+    if (pos !== s.length) throw new Error("trailing '" + s.slice(pos) + "'");
+    if (!isFinite(v)) throw new Error("result is not finite");
+    return v;
+  }
+
+  /* ---------- sha256 (sync, compact) ---------- */
+  var sha256 = (function () {
+    var K = [], H0 = [], n = 2, c = 0;
+    function frac(x) { return x - Math.floor(x); }
+    function isP(x) { for (var i = 2; i * i <= x; i++) if (x % i === 0) return false; return true; }
+    while (c < 64) { if (isP(n)) { if (c < 8) H0[c] = (frac(Math.sqrt(n)) * 4294967296) | 0; K[c] = (frac(Math.cbrt(n)) * 4294967296) | 0; c++; } n++; }
+    function ror(x, k) { return (x >>> k) | (x << (32 - k)); }
+    return function (str) {
+      var bytes = new TextEncoder().encode(str);
+      var l = bytes.length, withOne = l + 1, pad = (56 - withOne % 64 + 64) % 64, total = withOne + pad + 8;
+      var buf = new Uint8Array(total); buf.set(bytes); buf[l] = 0x80;
+      var bits = l * 8; var dv = new DataView(buf.buffer);
+      dv.setUint32(total - 4, bits >>> 0); dv.setUint32(total - 8, Math.floor(bits / 4294967296));
+      var h = H0.slice();
+      var w = new Array(64);
+      for (var off = 0; off < total; off += 64) {
+        for (var i = 0; i < 16; i++) w[i] = dv.getUint32(off + i * 4);
+        for (i = 16; i < 64; i++) {
+          var s0 = ror(w[i - 15], 7) ^ ror(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+          var s1 = ror(w[i - 2], 17) ^ ror(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+          w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+        }
+        var a = h[0], b = h[1], cc = h[2], d = h[3], e = h[4], f = h[5], g = h[6], hh = h[7];
+        for (i = 0; i < 64; i++) {
+          var S1 = ror(e, 6) ^ ror(e, 11) ^ ror(e, 25);
+          var ch = (e & f) ^ (~e & g);
+          var t1 = (hh + S1 + ch + K[i] + w[i]) | 0;
+          var S0 = ror(a, 2) ^ ror(a, 13) ^ ror(a, 22);
+          var maj = (a & b) ^ (a & cc) ^ (b & cc);
+          var t2 = (S0 + maj) | 0;
+          hh = g; g = f; f = e; e = (d + t1) | 0; d = cc; cc = b; b = a; a = (t1 + t2) | 0;
+        }
+        h[0] = (h[0] + a) | 0; h[1] = (h[1] + b) | 0; h[2] = (h[2] + cc) | 0; h[3] = (h[3] + d) | 0;
+        h[4] = (h[4] + e) | 0; h[5] = (h[5] + f) | 0; h[6] = (h[6] + g) | 0; h[7] = (h[7] + hh) | 0;
+      }
+      return h.map(function (x) { return (x >>> 0).toString(16).padStart(8, "0"); }).join("");
+    };
+  })();
+
+  /* =====================================================================
+     TERMINAL — builtins run in-page; anything else goes to the host.
+     ===================================================================== */
+  var Term = {
+    el: null, hist: [], hi: -1,
+    print: function (html, cls) {
+      var d = document.createElement("div");
+      d.className = cls || "";
+      d.innerHTML = html;
+      this.el.appendChild(d); this.el.scrollTop = this.el.scrollHeight;
+    },
+    line: function (cmd) {
+      this.print('<span class="ps1">$</span> ' + esc(cmd), "t-cmd");
+    },
+    out: function (s) { this.print(renderANSI(String(s))); },
+    err: function (s) { this.print(esc(String(s)), "t-err"); },
+    sys: function (s) { this.print(esc(String(s)), "t-sys"); },
+    ok: function (s) { this.print(esc(String(s)), "t-ok"); }
+  };
+
+  var BUILTINS = {
+    help: function () {
+      return [
+        "in-page builtins (work offline, no native code):",
+        "  help            this list            caps        capability report",
+        "  echo <text>     print text           calc <expr> safe arithmetic (no eval)",
+        "  sha256 <text>   hash                 b64 [-d] <text>  base64 encode/decode",
+        "  date            local time           json <text>  pretty-print JSON",
+        "  ls [path]       list files           cat <path>   read a file",
+        "  pwd             working directory    clear        clear the screen",
+        "  ai <question>   ask the local assistant",
+        "when the host bridge is present, anything else runs as a real command."
+      ].join("\n");
+    },
+    caps: function () {
+      var c = probe();
+      var L = [];
+      L.push("exec backend : " + (c.execNative ? "native (host bridge)" : "in-page builtins only"));
+      L.push("native bins  : " + (c.native.length ? c.native.join(", ") : "none reported"));
+      L.push("wasm modules : " + (c.wasm.length ? c.wasm.join(", ") : "none reported"));
+      L.push("proot guest  : " + (c.proot ? "ready" : "not installed"));
+      L.push("assistant    : " + (c.aiNative ? "local GGUF via bridge" : "offline ruleset (no model)"));
+      L.push("models       : " + (c.models.length ? c.models.join(", ") : "none installed"));
+      return L.join("\n");
+    },
+    echo: function (a) { return a.join(" "); },
+    calc: function (a) {
+      if (!a.length) throw new Error("usage: calc <expression>");
+      var v = calc(a.join(" "));
+      return String(v);
+    },
+    sha256: function (a) {
+      if (!a.length) throw new Error("usage: sha256 <text>");
+      return sha256(a.join(" "));
+    },
+    b64: function (a) {
+      if (!a.length) throw new Error("usage: b64 [-d] <text>");
+      if (a[0] === "-d") {
+        var bin = atob(a.slice(1).join(" "));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder().decode(bytes);
+      }
+      var b = new TextEncoder().encode(a.join(" ")); var s = "";
+      for (i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
+      return btoa(s);
+    },
+    date: function () { return new Date().toString(); },
+    json: function (a) {
+      if (!a.length) throw new Error("usage: json <text>");
+      return JSON.stringify(safeJson(a.join(" "), null), null, 2) || "(invalid json)";
+    },
+    pwd: function () { return "/"; },
+    ls: function () {
+      if (!hasFn("fileList")) return "(no filesystem bridge; try: cat <path> after installing the host)";
+      var r = safeJson(bridge().fileList("/"), null);
+      if (!r) return "(no entries)";
+      var arr = Array.isArray(r) ? r : (r.files || r.entries || []);
+      return arr.map(function (f) { return typeof f === "string" ? f : (f.name || JSON.stringify(f)); }).join("\n") || "(empty)";
+    },
+    cat: function (a) {
+      if (!a.length) throw new Error("usage: cat <path>");
+      if (!hasFn("fileRead")) throw new Error("no filesystem bridge available");
+      var r = bridge().fileRead(a[0]);
+      if (typeof r === "string" && r.startsWith("ERROR:")) throw new Error(r);
+      return typeof r === "string" ? r : JSON.stringify(r, null, 2);
+    },
+    clear: function () { Term.el.innerHTML = ""; return ""; },
+    ai: function (a) { return Assistant.askInline(a.join(" ")); }
+  };
+
+  /* ---------- capability probe ---------- */
+  function probe() {
+    var c = { execNative: false, aiNative: false, native: [], wasm: [], proot: false, models: [], freeMB: 0 };
+    if (hasFn("execCaps")) {
+      var j = safeJson(bridge().execCaps(), {}) || {};
+      c.execNative = true;
+      c.native = j.native || []; c.wasm = j.wasm || []; c.proot = !!j.proot;
+    }
+    if (hasFn("assistantCaps")) {
+      var a = safeJson(bridge().assistantCaps(), {}) || {};
+      c.aiNative = !!a.available;
+      c.models = a.models || [];
+      c.freeMB = a.freeMB || 0;
+    } else if (navigator.deviceMemory) {
+      c.freeMB = Math.round(navigator.deviceMemory * 1024 * 0.35);
+    }
+    return c;
+  }
+
+  /* ---------- exec client (streaming; native or none) ---------- */
+  function runNative(cmd) {
+    return new Promise(function (resolve, reject) {
+      var id;
+      try { id = safeJson(bridge().execBegin(JSON.stringify({ cmd: cmd, cwd: "/" })), {}); }
+      catch (e) { return reject(e); }
+      if (!id || id.error) return reject(new Error(id && id.error || "execBegin failed"));
+      var jid = id.id, acc = { out: "", err: "" }, t0 = Date.now();
+      (function pump() {
+        var r;
+        try { r = safeJson(bridge().execRead(jid), {}); } catch (e) { return reject(e); }
+        if (r.out) { acc.out += r.out; Term.out(r.out); }
+        if (r.err) { acc.err += r.err; Term.err(r.err); }
+        if (r.done) return resolve(acc);
+        if (Date.now() - t0 > 60000) {
+          try { bridge().execSignal(jid, "TERM"); } catch (e) {}
+          return resolve({ out: acc.out, err: acc.err + "\n[omega] timeout\n", timeout: true });
+        }
+        setTimeout(pump, 25);
+      })();
+    });
+  }
+
+  function dispatch(raw) {
+    var line = raw.trim();
+    if (!line) return;
+    Term.line(line);
+    Term.hist.push(line); Term.hi = Term.hist.length;
+    var m = /^(\S+)\s*([\s\S]*)$/.exec(line);
+    var name = m ? m[1] : line;
+    var rest = m ? m[2] : "";
+    var args = rest.length ? rest.split(/\s+/) : [];
+
+    if (BUILTINS[name]) {
+      try {
+        var res = BUILTINS[name](args);
+        if (res === undefined) return;
+        if (res === "") return;
+        Term.out(res);
+      } catch (e) { Term.err(name + ": " + (e.message || e)); }
+      return;
+    }
+    if (hasFn("execBegin")) {
+      Term.sys("→ host exec: " + name);
+      runNative(line).catch(function (e) { Term.err(String(e.message || e)); });
+      return;
+    }
+    Term.err(name + ": command not found (no host bridge; try 'help')");
+  }
+
+  /* =====================================================================
+     ASSISTANT — local GGUF over the bridge, else an honest offline ruleset.
+     ===================================================================== */
+  var Assistant = {
+    loaded: null,
+    modelList: [],
+    busy: false,
+    askInline: function (q) {
+      if (!q) return "usage: ai <question>";
+      this.ask(q);
+      return "(see the Assistant tab)";
+    },
+    render: function (who, text, cls) {
+      var chat = $("#chat");
+      var d = document.createElement("div");
+      d.className = "msg " + (cls || who);
+      d.textContent = text;
+      chat.appendChild(d); chat.scrollTop = chat.scrollHeight;
+      return d;
+    },
+    ask: function (q) {
+      if (this.busy) { toast("still thinking…"); return; }
+      if (!q.trim()) return;
+      this.render("user", q);
+      $("#prompt").value = "";
+      var self = this;
+      this.busy = true; $("#send").disabled = true;
+
+      if (this.loaded && hasFn("assistantPrompt")) {
+        var bubble = this.render("bot", "");
+        bubble.innerHTML = '<span class="cursor"></span>';
+        var jid;
+        try { jid = safeJson(bridge().assistantPrompt(JSON.stringify({ message: q })), {}); }
+        catch (e) { bubble.textContent = "assistant error: " + e.message; self.busy = false; $("#send").disabled = false; return; }
+        if (jid.error) { bubble.textContent = "assistant error: " + jid.error; self.busy = false; $("#send").disabled = false; return; }
+        var text = "", t0 = Date.now();
+        (function pump() {
+          var r;
+          try { r = safeJson(bridge().assistantRead(jid.id), {}); } catch (e) { r = { done: true, error: e.message }; }
+          if (r.token) { text += r.token; bubble.innerHTML = esc(text) + '<span class="cursor"></span>'; $("#chat").scrollTop = $("#chat").scrollHeight; }
+          if (r.error) { bubble.textContent = "assistant error: " + r.error; }
+          if (r.done || r.error) {
+            bubble.innerHTML = renderMarkdownish(text || "(no output)");
+            self.busy = false; $("#send").disabled = false; return;
+          }
+          if (Date.now() - t0 > 120000) { bubble.textContent = text + "\n[timeout]"; self.busy = false; $("#send").disabled = false; return; }
+          setTimeout(pump, 30);
+        })();
+        return;
+      }
+
+      // offline ruleset — clearly not a language model, and it says so.
+      setTimeout(function () {
+        var ans = self.offline(q);
+        self.render("meta", "offline ruleset · no model loaded · load a GGUF for real answers");
+        self.render("bot", ans);
+        self.busy = false; $("#send").disabled = false;
+      }, 120);
+    },
+    /* A small, honest helper: it computes, it does not pretend to reason. */
+    offline: function (q) {
+      var s = q.trim();
+      var low = s.toLowerCase();
+      var m;
+      if ((m = /^(?:what\s+is\s+|calc(?:ulate)?\s+|=\s*)?([-+*/%^().0-9eE\s]+)\??$/.exec(s)) && /[0-9]/.test(m[1])) {
+        try { return s + " = " + calc(m[1]); } catch (e) {}
+      }
+      if ((m = /^(?:sha256|hash)\s+(.+)$/i.exec(s))) return sha256(m[1]);
+      if ((m = /^(?:b64|base64)\s+(.+)$/i.exec(s))) return BUILTINS.b64([m[1]]);
+      if (/^(?:time|date|what time)/.test(low)) return new Date().toString();
+      if (/^(?:who|what) are you/.test(low)) return "DARKITH Ω — an offline terminal and assistant that runs on your own device. With a GGUF model loaded I answer locally; without one I can only compute (math, hashing, encoding, time).";
+      if (/^(?:help|what can you do)/.test(low)) return BUILTINS.help();
+      if (/^caps?$/.test(low)) return BUILTINS.caps();
+      var cmds = Object.keys(BUILTINS);
+      if (cmds.indexOf(low.split(/\s+/)[0]) >= 0) {
+        try { return String(BUILTINS[low.split(/\s+/)[0]](s.split(/\s+/).slice(1))); } catch (e) { return e.message; }
+      }
+      return "I can compute offline: try “12*9+3”, “sha256 hello”, “b64 hi”, or “help”.\n" +
+             "For real conversation, install a GGUF model (0.5B–1.7B fits 4 GB) and press Load.";
+    },
+    refreshModels: function () {
+      var sel = $("#model-sel"); sel.innerHTML = "";
+      var c = probe();
+      this.modelList = c.models.length ? c.models : [];
+      if (this.modelList.length) {
+        this.modelList.forEach(function (id) {
+          var o = document.createElement("option"); o.value = id; o.textContent = id; sel.appendChild(o);
+        });
+      } else {
+        var o = document.createElement("option");
+        o.value = ""; o.textContent = c.aiNative ? "(no model installed)" : "(bridge not present)";
+        sel.appendChild(o);
+      }
+    },
+    load: function () {
+      var id = $("#model-sel").value;
+      if (!id) { toast("no model to load"); return; }
+      if (!hasFn("assistantLoad")) { toast("local model bridge not present"); return; }
+      var r = safeJson(bridge().assistantLoad(id, ""), {});
+      if (r.error) { toast("load failed: " + r.error); return; }
+      this.loaded = id;
+      toast("loaded " + id);
+      this.render("meta", "model loaded: " + id);
+      updateChips();
+    }
+  };
+
+  function renderMarkdownish(text) {
+    // Minimal, safe: escape everything, then allow fenced code blocks only.
+    var parts = String(text).split(/```/);
+    var out = "";
+    for (var i = 0; i < parts.length; i++) {
+      if (i % 2 === 1) out += "<pre>" + esc(parts[i].replace(/^[a-z]*\n/, "")) + "</pre>";
+      else out += esc(parts[i]).replace(/\n/g, "<br>");
+    }
+    return out;
+  }
+
+  /* =====================================================================
+     BROWSER — an in-app frame for http(s) and local pages.
+     Under file:// the page origin is opaque, so most remote sites refuse to
+     be framed; the note says so plainly instead of showing a blank pane.
+     ===================================================================== */
+  var Browser = {
+    el: null, note: null,
+    init: function () {
+      var self = this;
+      this.el = $("#browser-frame"); this.note = $("#browser-note");
+      var saved = null;
+      try { saved = localStorage.getItem("omega.browser.url"); } catch (e) {}
+      if (saved) $("#browser-url").value = saved;
+      $("#browser-bar").addEventListener("submit", function (e) {
+        e.preventDefault(); self.go($("#browser-url").value);
+      });
+      this.note.textContent = location.protocol === "file:"
+        ? "file:// origin — most remote sites refuse to be framed; local pages load fine."
+        : "framing limited by the target site's own X-Frame-Options / CSP.";
+    },
+    normalize: function (raw) {
+      var s = (raw || "").trim();
+      if (!s) return "";
+      // localhost must be checked before the scheme test: "localhost:8080"
+      // looks like "scheme:rest" but is a host and port.
+      if (/^localhost(:\d+)?(\/|$)/i.test(s)) return "http://" + s;
+      if (/^(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/|$)/.test(s)) return "http://" + s;
+      if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return s;               // has a scheme
+      if (/^[\w.-]+\.\w{2,}(\/|$|\?|:)/.test(s)) return "https://" + s;
+      return "https://duckduckgo.com/?q=" + encodeURIComponent(s); // else search
+    },
+    go: function (raw) {
+      var url = this.normalize(raw);
+      if (!url) { toast("enter a URL"); return; }
+      $("#browser-url").value = url;
+      try { localStorage.setItem("omega.browser.url", url); } catch (e) {}
+      this.el.src = url;
+      this.note.textContent = "loading " + url + " …";
+      var self = this;
+      clearTimeout(this._t);
+      this._t = setTimeout(function () {
+        self.note.textContent = "if the pane stays blank, the site blocks framing (X-Frame-Options/CSP). Open it outside the app instead: " + url;
+      }, 4000);
+    }
+  };
+
+  /* ---------- chips ---------- */
+  function setChip(dotId, stateId, on, text) {
+    var d = $(dotId); d.className = "dot " + (on ? "on" : "off");
+    $(stateId).textContent = text;
+  }
+  function updateChips() {
+    var c = probe();
+    setChip("#dot-exec", "#exec-state", c.execNative, c.execNative ? "native" : "builtins");
+    setChip("#dot-ai", "#ai-state", !!Assistant.loaded, Assistant.loaded ? "loaded" : (c.aiNative ? "idle" : "none"));
+    $("#tier-chip").textContent = Assistant.loaded ? "tier " + (Assistant.loaded.indexOf("0.5b") >= 0 ? "T0" : Assistant.loaded.indexOf("1b") >= 0 ? "T1" : "T2") : "tier —";
+    $("#mem-chip").textContent = "ram " + (c.freeMB ? c.freeMB + " MB" : "—");
+    renderSystem(c);
+  }
+
+  /* ---------- system tab ---------- */
+  function renderSystem(c) {
+    var sel = OmegaAssistantCatalog();
+    var freeBytes = c.freeMB ? c.freeMB * 1048576 : 0;
+    var reserve = 320 * 1048576;
+    var rows = sel.map(function (m) {
+      var fits = freeBytes ? (m.bytes + reserve <= freeBytes) : null;
+      return '<tr><td>' + esc(m.label) + '</td><td>' + m.quant + '</td><td>' +
+        (m.bytes / 1e6).toFixed(0) + ' MB</td><td>' +
+        (fits === null ? '—' : (fits ? '<span class="pill yes">fits</span>' : '<span class="pill no">too big</span>')) +
+        '</td></tr>';
+    }).join("");
+    $("#sys").innerHTML =
+      '<h2>Capabilities</h2><div class="card"><div class="kv">' +
+      '<span>exec backend</span><span>' + (c.execNative ? "native host bridge" : "in-page builtins") + '</span>' +
+      '<span>native binaries</span><span>' + (c.native.length ? c.native.join(", ") : "none") + '</span>' +
+      '<span>wasm modules</span><span>' + (c.wasm.length ? c.wasm.join(", ") : "none") + '</span>' +
+      '<span>proot guest</span><span>' + (c.proot ? "ready" : "not installed") + '</span>' +
+      '<span>assistant</span><span>' + (c.aiNative ? "local GGUF (JNI)" : "offline ruleset") + '</span>' +
+      '<span>free memory</span><span>' + (c.freeMB || "unknown") + ' MB</span>' +
+      '</div><p class="hint">Android 10+ forbids running programs from app-writable storage, so shipped runtimes live in the APK as lib*.so and run from nativeLibraryDir. Models are data and can live anywhere.</p></div>' +
+      '<h2>Model tiers for a 4 GB device</h2><div class="card"><table style="width:100%;border-collapse:collapse;font:12px var(--mono)">' +
+      '<tr style="color:var(--dim);text-align:left"><th>model</th><th>quant</th><th>weights</th><th>fits</th></tr>' +
+      rows + '</table><p class="hint">Largest model that fits is chosen automatically from a live free-memory probe. The KV cache is capped (2k context, q8) so the app is never OOM-killed.</p></div>' +
+      '<h2>Languages</h2><div class="card">' +
+      ['Python','JavaScript','Lua','SQL','C','C++','Rust','Go','Zig','Bash'].map(function (l) { return '<span class="pill">' + l + '</span>'; }).join("") +
+      '<p class="hint">Interpreters ship as lib*.so (tier 1); anything with a wasm32-wasi target runs in-process (tier 2); toolchains and the long tail run in an optional PRoot guest (tier 3).</p></div>';
+  }
+  function OmegaAssistantCatalog() {
+    return [
+      { label: "Qwen2.5 0.5B Instruct", quant: "Q4_K_M", bytes: 491400032 },
+      { label: "Llama 3.2 1B Instruct", quant: "Q4_K_M", bytes: 807694368 },
+      { label: "Qwen3 1.7B", quant: "IQ3_XS", bytes: 888100000 }
+    ];
+  }
+
+  /* ---------- wiring ---------- */
+  function boot() {
+    Term.el = $("#term-out");
+
+    // tabs
+    var browserReady = false;
+    Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
+      t.addEventListener("click", function () {
+        Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (x) {
+          x.setAttribute("aria-selected", x === t ? "true" : "false");
+        });
+        Array.prototype.forEach.call(document.querySelectorAll(".pane"), function (p) {
+          p.classList.toggle("on", p.id === "pane-" + t.dataset.pane);
+        });
+        try { localStorage.setItem("omega.tab", t.dataset.pane); } catch (e) {}
+        if (t.dataset.pane === "assistant") { Assistant.refreshModels(); setTimeout(function () { $("#prompt").focus(); }, 60); }
+        if (t.dataset.pane === "browser") {
+          if (!browserReady) { Browser.init(); browserReady = true; }
+          else setTimeout(function () { $("#browser-url").focus(); }, 60);
+        }
+      });
+    });
+    function openTab(name) {
+      var t = document.querySelector('.tab[data-pane="' + name + '"]');
+      if (t) t.click();
+    }
+
+    // quick keys
+    var qk = $("#term-quick");
+    [["help", "help"], ["caps", "caps"], ["ls", "ls"], ["date", "date"], ["clear", "clear"]].forEach(function (kv) {
+      var b = document.createElement("button");
+      b.className = "key"; b.type = "button"; b.textContent = kv[0];
+      b.addEventListener("click", function () { submit(kv[1]); });
+      qk.appendChild(b);
+    });
+
+    function submit(line) {
+      if (line === undefined) line = $("#term-input").value;
+      $("#term-input").value = "";
+      dispatch(line);
+    }
+    $("#term-form").addEventListener("submit", function (e) { e.preventDefault(); submit(); });
+    $("#term-input").addEventListener("keydown", function (e) {
+      if (e.key === "ArrowUp") {
+        if (Term.hist.length) { Term.hi = Math.max(0, (Term.hi || Term.hist.length) - 1); this.value = Term.hist[Term.hi] || ""; }
+        e.preventDefault();
+      } else if (e.key === "ArrowDown") {
+        if (Term.hist.length) { Term.hi = Math.min(Term.hist.length, (Term.hi || 0) + 1); this.value = Term.hist[Term.hi] || ""; }
+        e.preventDefault();
+      }
+    });
+
+    // assistant
+    $("#composer").addEventListener("submit", function (e) {
+      e.preventDefault(); Assistant.ask($("#prompt").value);
+    });
+    $("#prompt").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); Assistant.ask(this.value); }
+    });
+    $("#model-load").addEventListener("click", function () { Assistant.load(); });
+
+    // banner
+    var c = probe();
+    Term.ok("DARKITH Ω — offline terminal + local assistant");
+    Term.sys("exec: " + (c.execNative ? "native host bridge detected" : "in-page builtins (no host bridge)"));
+    Term.sys("assistant: " + (c.aiNative ? "local model bridge detected" : "offline ruleset"));
+    Term.sys("type 'help' for commands, 'caps' for capabilities.");
+    Term.print("");
+
+    Assistant.refreshModels();
+    updateChips();
+
+    // restore the last tab (settings persistence; degrades silently if blocked)
+    var lastTab = null;
+    try { lastTab = localStorage.getItem("omega.tab"); } catch (e) {}
+    if (lastTab && lastTab !== "terminal" && document.querySelector('.tab[data-pane="' + lastTab + '"]')) {
+      openTab(lastTab);
+    }
+    window.addEventListener("resize", function () { updateChips(); });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+
+  // expose for the host shell and for testing
+  window.Omega = { Term: Term, Assistant: Assistant, Browser: Browser, dispatch: dispatch, calc: calc, sha256: sha256, probe: probe, BUILTINS: BUILTINS, openTab: function (n) { var t = document.querySelector('.tab[data-pane="' + n + '"]'); if (t) t.click(); } };
+})();
+</script>
+</body>
+</html>

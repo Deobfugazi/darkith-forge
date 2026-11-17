@@ -1,0 +1,2124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Darkith Inscriber — SAVF Lite Studio</title>
+<style>
+  :root{
+    --bg:#0a0a0c; --bg-soft:#0f0f12; --panel:#141418; --panel-2:#1b1b21;
+    --border:#26262e; --border-strong:#33333d;
+    --text:#f4f4f5; --muted:#9a9aa6; --faint:#6b6b78;
+    --accent:#5b8cff; --accent-2:#8b5cf6; --accent-hover:#4a7bf0;
+    --pass:#34d399; --pass-bg:rgba(52,211,153,.10);
+    --fail:#f87171; --fail-bg:rgba(248,113,113,.10);
+    --warn:#fbbf24; --warn-bg:rgba(251,191,36,.10);
+    --info:#a78bfa; --info-bg:rgba(167,139,250,.10);
+    --radius:12px; --radius-sm:8px;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+    --code-size:13px; --code-lh:1.55;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f6f7f9; --bg-soft:#eef0f4; --panel:#ffffff; --panel-2:#f2f3f7;
+      --border:#e2e4ea; --border-strong:#cfd3dc;
+      --text:#16181d; --muted:#5b616e; --faint:#8b909c;
+      --accent:#3b6ef5; --accent-hover:#2f5fe0;
+      --pass-bg:rgba(16,185,129,.12); --fail-bg:rgba(239,68,68,.10);
+      --warn-bg:rgba(245,158,11,.14); --info-bg:rgba(139,92,246,.12);
+      --pass:#0f9d63; --fail:#dc2626; --warn:#b45309; --info:#7c3aed;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:radial-gradient(1200px 700px at 100% -10%, rgba(91,140,255,.10), transparent 60%),
+               radial-gradient(900px 600px at -10% 110%, rgba(139,92,246,.10), transparent 55%), var(--bg);
+    color:var(--text); font-family:var(--sans); line-height:1.5; font-size:15px;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow:hidden;
+  }
+  .app{height:100dvh; display:flex; flex-direction:column; gap:0}
+  header.top{display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:space-between;
+    padding:10px 14px; border-bottom:1px solid var(--border); background:linear-gradient(var(--panel),var(--bg-soft))}
+  .brand{display:flex; align-items:center; gap:11px; min-width:0}
+  .logo{width:34px;height:34px;border-radius:10px;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:grid;place-items:center;
+    color:#fff;font-weight:800;font-size:15px;box-shadow:0 8px 24px -10px rgba(91,140,255,.7)}
+  h1{font-size:1rem; margin:0; font-weight:700; letter-spacing:-.02em; white-space:nowrap}
+  .sub{margin:1px 0 0; color:var(--muted); font-size:.74rem}
+  .pill{font-family:var(--mono); font-size:.7rem; color:var(--muted); border:1px solid var(--border);
+    background:var(--panel); padding:5px 9px; border-radius:999px; white-space:nowrap}
+  .tabs{display:flex; gap:4px; flex-wrap:wrap}
+  .tab{font:inherit; font-size:.8rem; color:var(--muted); background:transparent; border:1px solid transparent;
+    padding:6px 11px; border-radius:999px; cursor:pointer}
+  .tab:hover{color:var(--text); background:var(--panel-2)}
+  .tab[aria-selected="true"]{color:var(--text); background:var(--panel-2); border-color:var(--border-strong)}
+
+  main{flex:1; min-height:0; display:grid; grid-template-columns:1fr; grid-template-rows:1fr 1fr}
+  @media(min-width:1000px){ main{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); grid-template-rows:1fr} }
+  .pane{min-width:0; min-height:0; display:flex; flex-direction:column; border-right:1px solid var(--border)}
+  .pane:last-child{border-right:0; border-top:1px solid var(--border)}
+  @media(min-width:1000px){ .pane:last-child{border-top:0} }
+
+  .bar{display:flex; align-items:center; gap:8px; padding:7px 10px; border-bottom:1px solid var(--border);
+    background:linear-gradient(var(--panel-2),var(--panel)); flex-wrap:wrap; min-height:40px}
+  .bar .title{font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); font-weight:700}
+  .spacer{flex:1}
+  .btn{font:inherit; font-size:.78rem; color:var(--text); background:var(--panel-2); border:1px solid var(--border);
+    padding:5px 10px; border-radius:var(--radius-sm); cursor:pointer}
+  .btn:hover{border-color:var(--border-strong); background:var(--panel)}
+  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-color:transparent; color:#fff; font-weight:600}
+  .btn.primary:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent}
+  .status{font-family:var(--mono); font-size:.72rem; color:var(--muted)}
+  .chip{font-family:var(--mono); font-size:.68rem; padding:3px 7px; border-radius:6px; border:1px solid var(--border)}
+  .chip.pass{color:var(--pass); background:var(--pass-bg); border-color:transparent}
+  .chip.fail{color:var(--fail); background:var(--fail-bg); border-color:transparent}
+  .chip.warn{color:var(--warn); background:var(--warn-bg); border-color:transparent}
+  .chip.info{color:var(--info); background:var(--info-bg); border-color:transparent}
+
+  /* ---------- editor ---------- */
+  .edit-wrap{flex:1; min-height:0; position:relative; display:flex; background:var(--bg-soft); overflow:hidden}
+  .gutter{flex:0 0 auto; width:52px; overflow:hidden; padding:10px 0; background:var(--panel);
+    border-right:1px solid var(--border); font-family:var(--mono); font-size:var(--code-size); line-height:var(--code-lh);
+    color:var(--faint); text-align:right; user-select:none; position:relative; z-index:3}
+  .gutter .ln{height:calc(var(--code-size) * var(--code-lh)); padding-right:8px; position:relative; white-space:nowrap}
+  .gutter .ln.cur{color:var(--text)}
+  .gutter .ln[data-mark="fail"]::before,
+  .gutter .ln[data-mark="warn"]::before{content:""; position:absolute; left:5px; top:50%; transform:translateY(-50%);
+    width:5px;height:5px;border-radius:50%}
+  .gutter .ln[data-mark="fail"]::before{background:var(--fail)}
+  .gutter .ln[data-mark="warn"]::before{background:var(--warn)}
+  .code-area{position:relative; flex:1; min-width:0; overflow:hidden}
+  .code{position:absolute; inset:0; margin:0; padding:10px 12px; border:0; outline:0; resize:none;
+    font-family:var(--mono); font-size:var(--code-size); line-height:var(--code-lh); letter-spacing:0;
+    white-space:pre; overflow:auto; tab-size:2; -moz-tab-size:2}
+  #overlay{pointer-events:none; color:var(--text); z-index:1; overflow:hidden}
+  #input{color:transparent; background:transparent; caret-color:var(--accent); z-index:2}
+  #input::selection{background:rgba(91,140,255,.30)}
+  .hl-com{color:var(--faint); font-style:italic}
+  .hl-str{color:var(--pass)}
+  .hl-num{color:var(--warn)}
+  .hl-kw{color:var(--info); font-weight:600}
+  .hl-key{color:var(--accent)}
+  .hl-punc{color:var(--muted)}
+  .find{display:none; gap:6px; align-items:center; padding:6px 10px; border-bottom:1px solid var(--border); background:var(--panel)}
+  .find.open{display:flex}
+  .find input{font-family:var(--mono); font-size:.78rem; color:var(--text); background:var(--bg); border:1px solid var(--border);
+    border-radius:6px; padding:4px 8px; min-width:0; flex:1}
+  .find label{font-size:.72rem; color:var(--muted); display:flex; align-items:center; gap:4px; white-space:nowrap}
+
+  /* ---------- right panel ---------- */
+  .views{flex:1; min-height:0; position:relative}
+  .view{position:absolute; inset:0; overflow:auto; padding:12px 14px; display:none}
+  .view.on{display:block}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:12px}
+  .card-head{display:flex; align-items:center; gap:8px; padding:9px 11px; border-bottom:1px solid var(--border);
+    background:linear-gradient(var(--panel-2),var(--panel))}
+  .card-title{font-size:.76rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted)}
+  .verdict{display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.06em; font-size:.9rem;
+    padding:7px 12px; border-radius:999px; border:1px solid transparent}
+  .verdict .dot{width:9px;height:9px;border-radius:50%;background:currentColor}
+  .verdict.PASS{color:var(--pass); background:var(--pass-bg)}
+  .verdict.FAIL{color:var(--fail); background:var(--fail-bg)}
+  .verdict.REVIEW{color:var(--warn); background:var(--warn-bg)}
+  .verdict.STALE,.verdict.NO-CLAIMS{color:var(--muted); background:var(--panel-2)}
+  .gates{display:flex; flex-wrap:wrap; gap:6px}
+  .gate{font-family:var(--mono); font-size:.68rem; padding:4px 8px; border-radius:6px; border:1px solid var(--border); color:var(--muted)}
+  .gate.pass{color:var(--pass); border-color:transparent; background:var(--pass-bg)}
+  .gate.fail{color:var(--fail); border-color:transparent; background:var(--fail-bg)}
+  .gate.marginal{color:var(--warn); border-color:transparent; background:var(--warn-bg)}
+  .gate.na{opacity:.5}
+  .row{display:flex; gap:9px; padding:8px 10px; border-bottom:1px solid var(--border); cursor:pointer; align-items:flex-start}
+  .row:last-child{border-bottom:0}
+  .row:hover{background:var(--panel-2)}
+  .row .n{font-family:var(--mono); font-size:.7rem; color:var(--faint); flex:0 0 34px; text-align:right; padding-top:2px}
+  .row .body{min-width:0; flex:1}
+  .row .src{font-family:var(--mono); font-size:.74rem; color:var(--text); white-space:pre-wrap; word-break:break-word}
+  .row .note{font-size:.75rem; color:var(--muted); margin-top:3px}
+  .b{font-family:var(--mono); font-size:.64rem; padding:2px 6px; border-radius:5px; font-weight:700; flex:0 0 auto}
+  .b.PASS{color:var(--pass); background:var(--pass-bg)}
+  .b.FAIL{color:var(--fail); background:var(--fail-bg)}
+  .b.INVALID,.b.UNPARSEABLE{color:var(--warn); background:var(--warn-bg)}
+  .empty{color:var(--faint); font-size:.82rem; padding:14px; text-align:center}
+
+  /* ---------- terminal ---------- */
+  .term-wrap{flex:1; min-height:0; display:flex; flex-direction:column; background:#07070a}
+  .term{flex:1; overflow:auto; padding:10px 12px; font-family:var(--mono); font-size:12.5px; line-height:1.5; color:#d7d7e0}
+  .term .tline{white-space:pre-wrap; word-break:break-word}
+  .term .t-cmd{color:#eaeaf2}
+  .term .t-err{color:var(--fail)}
+  .term .t-ok{color:var(--pass)}
+  .term .t-dim{color:#7b7b8a}
+  .term .t-acc{color:var(--accent)}
+  .term .t-warn{color:var(--warn)}
+  .term .t-ps1{color:var(--accent-2); font-weight:700}
+  .term-input{display:flex; align-items:center; gap:8px; border-top:1px solid var(--border); padding:7px 12px; background:var(--panel)}
+  .term-input .ps1{font-family:var(--mono); font-size:12.5px; color:var(--accent-2); font-weight:700; white-space:nowrap}
+  .term-input input{flex:1; min-width:0; font-family:var(--mono); font-size:12.5px; color:var(--text);
+    background:transparent; border:0; outline:0}
+  .sr{position:absolute; width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .hint{font-size:.74rem; color:var(--faint); padding:6px 2px}
+  code{font-family:var(--mono); font-size:.9em; background:var(--panel-2); padding:1px 4px; border-radius:4px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">DI</div>
+      <div>
+        <h1>Darkith Inscriber</h1>
+        <p class="sub">SAVF Lite Studio — editor · terminal · audit engine. Offline, no dependencies.</p>
+      </div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Studio panels">
+      <button class="tab" id="tab-audit" role="tab" aria-selected="true" aria-controls="view-audit">Audit</button>
+      <button class="tab" id="tab-term" role="tab" aria-selected="false" aria-controls="view-term">Terminal</button>
+      <button class="tab" id="tab-payload" role="tab" aria-selected="false" aria-controls="view-payload">Payload</button>
+      <button class="tab" id="tab-selftest" role="tab" aria-selected="false" aria-controls="view-selftest">Self-test</button>
+      <button class="tab" id="tab-axis" role="tab" aria-selected="false" aria-controls="view-axis">Axis lab</button>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center">
+      <span class="pill" id="bridge-pill">bridge: local</span>
+      <span class="pill" id="env-pill">SAVF v—</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ LEFT: editor ============ -->
+    <section class="pane" aria-label="Editor">
+      <div class="bar">
+        <span class="title">Editor</span>
+        <span class="status" id="doc-name">untitled.txt</span>
+        <span class="spacer"></span>
+        <button class="btn primary" id="run-btn" title="Run audit (Ctrl/Cmd+Enter)">&#9654; Audit</button>
+        <button class="btn" id="demo-btn" title="Load demo formulary">Demo</button>
+        <button class="btn ghost" id="open-btn" title="Open a file">Open</button>
+        <button class="btn ghost" id="save-btn" title="Save (Ctrl/Cmd+S)">Save</button>
+        <button class="btn ghost" id="find-btn" title="Find &amp; replace (Ctrl/Cmd+F)">Find</button>
+      </div>
+      <div class="find" id="find-bar">
+        <input id="find-q" placeholder="find" spellcheck="false" aria-label="Find">
+        <input id="find-r" placeholder="replace" spellcheck="false" aria-label="Replace">
+        <label><input type="checkbox" id="find-re"> regex</label>
+        <button class="btn" id="find-next">Next</button>
+        <button class="btn" id="find-repl">Replace</button>
+        <button class="btn" id="find-all">All</button>
+        <button class="btn ghost" id="find-close">&#10005;</button>
+      </div>
+      <div class="edit-wrap">
+        <div class="gutter" id="gutter" aria-hidden="true"></div>
+        <div class="code-area">
+          <pre class="code" id="overlay" aria-hidden="true"></pre>
+          <textarea class="code" id="input" spellcheck="false" autocorrect="off" autocapitalize="off"
+                    autocomplete="off" wrap="off" aria-label="Code editor"></textarea>
+        </div>
+      </div>
+      <div class="bar" style="border-top:1px solid var(--border); border-bottom:0">
+        <span class="status" id="st-pos">1:1</span>
+        <span class="status" id="st-lines">0 lines</span>
+        <span class="status" id="st-kind">kind: —</span>
+        <span class="spacer"></span>
+        <span class="chip" id="st-counts">—</span>
+      </div>
+      <input type="file" id="file-input" class="sr" accept=".txt,.text,.json,.md,.py,.js,.kt,.html,text/*,application/json">
+    </section>
+
+    <!-- ============ RIGHT: panels ============ -->
+    <section class="pane" aria-label="Panels">
+      <div class="views">
+        <!-- Audit -->
+        <div class="view on" id="view-audit" role="tabpanel" aria-labelledby="tab-audit">
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">Verdict</span><span class="spacer"></span>
+              <span class="status" id="audit-when">not run</span>
+            </div>
+            <div style="padding:12px 12px 6px; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+              <div class="verdict STALE" id="verdict-display"><span class="dot"></span>STALE</div>
+              <span class="status" id="verdict-sub">Awaiting first run.</span>
+            </div>
+            <div style="padding:4px 12px 12px">
+              <div class="gates" id="gates-display"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">Findings</span><span class="spacer"></span>
+              <span class="status" id="res-count">0</span></div>
+            <div id="results"><div class="empty">Run the audit to see per-line findings.</div></div>
+          </div>
+        </div>
+
+        <!-- Terminal -->
+        <div class="view" id="view-term" role="tabpanel" aria-labelledby="tab-term" style="padding:0">
+          <div class="term-wrap">
+            <div class="term" id="term" tabindex="0" aria-label="Terminal output"></div>
+            <div class="term-input">
+              <span class="ps1" id="term-ps1">inscriber:~$</span>
+              <input id="term-cmd" spellcheck="false" autocapitalize="off" autocomplete="off"
+                     aria-label="Terminal command" placeholder="type help">
+            </div>
+          </div>
+        </div>
+
+        <!-- Payload -->
+        <div class="view" id="view-payload" role="tabpanel" aria-labelledby="tab-payload">
+          <div class="card">
+            <div class="card-head"><span class="card-title">SAVF payload</span><span class="spacer"></span>
+              <span class="status" id="payload-status">default</span></div>
+            <div style="padding:12px; display:flex; gap:8px; flex-wrap:wrap">
+              <button class="btn" id="pl-summary">Summary</button>
+              <button class="btn" id="pl-reset">Reset</button>
+              <button class="btn ghost" id="pl-load">Load JSON&hellip;</button>
+              <button class="btn ghost" id="pl-export">Export payload</button>
+            </div>
+            <div style="padding:0 12px 12px"><div class="empty" id="payload-out">Built-in defaults active.</div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">Payload JSON</span></div>
+            <textarea id="payload-editor" spellcheck="false" wrap="off"
+              style="width:100%; min-height:190px; font-family:var(--mono); font-size:12.5px; color:var(--text);
+                     background:var(--bg); border:0; border-top:1px solid var(--border); padding:10px; resize:vertical"
+              aria-label="Payload JSON editor"></textarea>
+            <div style="padding:8px 12px"><button class="btn primary" id="pl-apply">Ingest JSON</button></div>
+          </div>
+        </div>
+
+        <!-- Self-test -->
+        <div class="view" id="view-selftest" role="tabpanel" aria-labelledby="tab-selftest">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Engine self-test</span><span class="spacer"></span>
+              <span class="status" id="st-status">not run</span></div>
+            <div style="padding:12px; display:flex; gap:8px; flex-wrap:wrap">
+              <button class="btn primary" id="st-run">&#9654; Run self-test</button>
+              <span class="hint">Proves the engine on this machine, no toolchain.</span>
+            </div>
+            <div style="padding:0 12px 12px"><div id="st-summary"></div><div id="st-out"></div></div>
+          </div>
+        </div>
+
+        <!-- Axis lab -->
+        <div class="view" id="view-axis" role="tabpanel" aria-labelledby="tab-axis">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Axis law</span></div>
+            <div style="padding:12px; display:grid; gap:8px">
+              <label class="status">P0 (comma-sep) <input id="ax-p0" value="0, 0" spellcheck="false"
+                style="width:100%; font-family:var(--mono); font-size:12.5px; background:var(--bg); color:var(--text);
+                       border:1px solid var(--border); border-radius:6px; padding:5px 8px; margin-top:3px"></label>
+              <label class="status">P1 (comma-sep) <input id="ax-p1" value="100, 0" spellcheck="false"
+                style="width:100%; font-family:var(--mono); font-size:12.5px; background:var(--bg); color:var(--text);
+                       border:1px solid var(--border); border-radius:6px; padding:5px 8px; margin-top:3px"></label>
+              <div style="display:flex; gap:8px">
+                <label class="status" style="flex:1">s <input id="ax-s" value="0.3" spellcheck="false"
+                  style="width:100%; font-family:var(--mono); font-size:12.5px; background:var(--bg); color:var(--text);
+                         border:1px solid var(--border); border-radius:6px; padding:5px 8px; margin-top:3px"></label>
+                <label class="status" style="flex:1">tau <select id="ax-tau"
+                  style="width:100%; font-family:var(--mono); font-size:12.5px; background:var(--bg); color:var(--text);
+                         border:1px solid var(--border); border-radius:6px; padding:5px 8px; margin-top:3px">
+                  <option value="1">+1</option><option value="-1">-1</option></select></label>
+              </div>
+              <button class="btn primary" id="ax-run">Evaluate</button>
+              <pre id="ax-out" class="status" style="white-space:pre-wrap; margin:6px 0 0; color:var(--text)"></pre>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">Chart sign</span></div>
+            <div style="padding:12px; display:grid; gap:8px">
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <label class="status">chart <select id="hs-chart"
+                  style="font-family:var(--mono); background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:5px 8px">
+                  <option>math</option><option>raster</option><option selected>sbaf0</option></select></label>
+                <label class="status">axis <select id="hs-axis"
+                  style="font-family:var(--mono); background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:5px 8px">
+                  <option selected>x</option><option>y</option><option>z</option></select></label>
+                <label class="status">move <select id="hs-move"
+                  style="font-family:var(--mono); background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:5px 8px">
+                  <option value="L2R">L2R</option><option value="R2L">R2L</option><option value="B2T">B2T</option>
+                  <option value="T2B">T2B</option><option value="TOWARD">TOWARD</option><option value="AWAY">AWAY</option></select></label>
+                <button class="btn primary" id="hs-run">Compute</button>
+              </div>
+              <pre id="hs-out" class="status" style="white-space:pre-wrap; margin:0; color:var(--text)"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===================== SAVF-1 engine (verbatim) ===================== -->
+<script>
+"use strict";
+/* =====================================================================
+   SAVF-1 engine (browser build).  Pure, deterministic, offline.
+   Exposed as window.SAVF for scripted / headless testing.
+   ===================================================================== */
+(function () {
+  "use strict";
+
+  var VERSION = "2.1.0";
+
+  /* ---------- 1. Payload state ---------- */
+  function defaultPayload() {
+    return {
+      facts: {
+        "iron:atomic weight": 55.845,
+        "france:capital": "Paris",
+        "germany:capital": "Berlin"
+      },
+      constants: { c: 299792458 },
+      rules: [
+        { pattern: "d/dx(sin(x))", result: "cos(x)" },
+        { pattern: "d/dx(cos(x))", result: "-sin(x)" }
+      ],
+      units: {
+        meters:    { dimension: "L", scale: 1 },
+        seconds:   { dimension: "T", scale: 1 },
+        kilograms: { dimension: "M", scale: 1 }
+      }
+    };
+  }
+
+  var PAYLOAD = defaultPayload();
+
+  function isPlainObject(v) { return !!v && typeof v === "object" && !Array.isArray(v); }
+
+  function ingestPayload(json) {
+    if (!isPlainObject(json)) return { added: 0, rejected: ["payload is not a JSON object"] };
+    var rejected = [], added = 0;
+    if (isPlainObject(json.facts)) {
+      Object.keys(json.facts).forEach(function (k) {
+        var v = json.facts[k];
+        if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
+          PAYLOAD.facts[k.toLowerCase()] = v; added++;
+        } else rejected.push("fact " + k);
+      });
+    }
+    if (isPlainObject(json.constants)) {
+      Object.keys(json.constants).forEach(function (k) {
+        var v = json.constants[k];
+        var num = isPlainObject(v) ? v.value : v;
+        if (typeof num === "number" && isFinite(num)) { PAYLOAD.constants[k.toLowerCase()] = num; added++; }
+        else rejected.push("constant " + k);
+      });
+    }
+    if (Array.isArray(json.rules)) {
+      json.rules.forEach(function (r) {
+        if (isPlainObject(r) && typeof r.pattern === "string" && typeof r.result === "string") {
+          PAYLOAD.rules.push({ pattern: r.pattern, result: r.result }); added++;
+        } else rejected.push("rule");
+      });
+    }
+    if (isPlainObject(json.units)) {
+      Object.keys(json.units).forEach(function (k) {
+        var u = json.units[k];
+        if (isPlainObject(u) && typeof u.dimension === "string") {
+          var scale = (typeof u.scale === "number" && isFinite(u.scale) && u.scale !== 0) ? u.scale : 1;
+          PAYLOAD.units[k.toLowerCase()] = { dimension: u.dimension, scale: scale }; added++;
+        } else rejected.push("unit " + k);
+      });
+    }
+    return { added: added, rejected: rejected };
+  }
+
+  function resetPayload() { PAYLOAD = defaultPayload(); }
+
+  function payloadSummary() {
+    return {
+      facts: Object.keys(PAYLOAD.facts).length,
+      constants: Object.keys(PAYLOAD.constants).length,
+      rules: PAYLOAD.rules.length,
+      units: Object.keys(PAYLOAD.units).length
+    };
+  }
+
+  /* ---------- 2. Tokenizer & expression parser ---------- */
+  var FUNCS = { sin: Math.sin, cos: Math.cos, tan: Math.tan, exp: Math.exp,
+                log: Math.log, sqrt: Math.sqrt, abs: Math.abs };
+  var CONSTS = { pi: Math.PI, e: Math.E };
+
+  function tokenize(src) {
+    var out = [], i = 0;
+    while (i < src.length) {
+      var c = src[i];
+      if (/\s/.test(c)) { i++; continue; }
+      if ((c >= "0" && c <= "9") || c === ".") {
+        var j = i, dots = 0;
+        while (j < src.length && ((src[j] >= "0" && src[j] <= "9") || src[j] === ".")) {
+          if (src[j] === ".") dots++;
+          j++;
+        }
+        if (j < src.length && (src[j] === "e" || src[j] === "E")) {
+          var e2 = j + 1;
+          if (e2 < src.length && (src[e2] === "+" || src[e2] === "-")) e2++;
+          var d2 = e2;
+          while (d2 < src.length && src[d2] >= "0" && src[d2] <= "9") d2++;
+          if (d2 > e2) { j = d2; dots = 0; }
+        }
+        var raw = src.slice(i, j);
+        if (dots > 1) throw new Error("malformed number \"" + raw + "\"");
+        var v = parseFloat(raw);
+        if (!isFinite(v)) throw new Error("malformed number \"" + raw + "\"");
+        out.push({ t: "num", v: v }); i = j; continue;
+      }
+      if (/[a-zA-Z_]/.test(c)) {
+        var k = i;
+        while (k < src.length && /[a-zA-Z_0-9]/.test(src[k])) k++;
+        out.push({ t: "id", v: src.slice(i, k).toLowerCase() }); i = k; continue;
+      }
+      if ("+-*/^(),".indexOf(c) >= 0) { out.push({ t: "op", v: c }); i++; continue; }
+      throw new Error("disallowed character \"" + c + "\"");
+    }
+    return out;
+  }
+
+  function parseExpr(tokens) {
+    var i = 0;
+    function peek() { return tokens[i]; }
+    function take(v) {
+      var tk = tokens[i];
+      if (!tk || tk.v !== v) throw new Error("expected \"" + v + "\"");
+      i++; return tk;
+    }
+    function primary() {
+      var tk = peek();
+      if (!tk) throw new Error("unexpected end of expression");
+      if (tk.t === "num") { i++; return { k: "num", v: tk.v }; }
+      if (tk.t === "op" && tk.v === "(") { i++; var n = addsub(); take(")"); return n; }
+      if (tk.t === "id") {
+        i++;
+        if (Object.prototype.hasOwnProperty.call(CONSTS, tk.v)) return { k: "num", v: CONSTS[tk.v] };
+        if (Object.prototype.hasOwnProperty.call(PAYLOAD.constants, tk.v)) return { k: "num", v: PAYLOAD.constants[tk.v] };
+        if (tk.v === "x") return { k: "x" };
+        if (!(tk.v in FUNCS)) throw new Error("unknown identifier \"" + tk.v + "\"");
+        take("(");
+        var arg = addsub();
+        take(")");
+        return { k: "call", fn: tk.v, a: arg };
+      }
+      throw new Error("unexpected token \"" + tk.v + "\"");
+    }
+    function unary() {
+      var tk = peek();
+      if (tk && tk.t === "op" && tk.v === "-") { i++; return { k: "neg", a: unary() }; }
+      if (tk && tk.t === "op" && tk.v === "+") { i++; return unary(); }
+      return power();
+    }
+    function power() {
+      var base = primary();
+      if (peek() && peek().v === "^") { i++; return { k: "pow", a: base, b: unary() }; }
+      return base;
+    }
+    function muldiv() {
+      var a = unary();
+      while (peek() && (peek().v === "*" || peek().v === "/")) {
+        var op = tokens[i++].v;
+        a = { k: op, a: a, b: unary() };
+      }
+      return a;
+    }
+    function addsub() {
+      var a = muldiv();
+      while (peek() && (peek().v === "+" || peek().v === "-")) {
+        var op = tokens[i++].v;
+        a = { k: op, a: a, b: muldiv() };
+      }
+      return a;
+    }
+    var ast = addsub();
+    if (i !== tokens.length) throw new Error("trailing tokens at \"" + tokens[i].v + "\"");
+    return ast;
+  }
+
+  function evalAst(n, x) {
+    switch (n.k) {
+      case "num": return n.v;
+      case "x": return x;
+      case "neg": return -evalAst(n.a, x);
+      case "+": return evalAst(n.a, x) + evalAst(n.b, x);
+      case "-": return evalAst(n.a, x) - evalAst(n.b, x);
+      case "*": return evalAst(n.a, x) * evalAst(n.b, x);
+      case "/": return evalAst(n.a, x) / evalAst(n.b, x);
+      case "pow": return Math.pow(evalAst(n.a, x), evalAst(n.b, x));
+      case "call": return FUNCS[n.fn](evalAst(n.a, x));
+      default: throw new Error("bad AST node");
+    }
+  }
+
+  function usesX(n) {
+    if (!n) return false;
+    if (n.k === "x") return true;
+    if (n.k === "num") return false;
+    if (n.k === "neg" || n.k === "call") return usesX(n.a);
+    return usesX(n.a) || usesX(n.b);
+  }
+
+  /* ---------- 3. Symbolic differentiation ---------- */
+  function num(v) { return { k: "num", v: v }; }
+  function neg(a) { return { k: "neg", a: a }; }
+  function add(a, b) { return { k: "+", a: a, b: b }; }
+  function sub(a, b) { return { k: "-", a: a, b: b }; }
+  function mul(a, b) { return { k: "*", a: a, b: b }; }
+  function div(a, b) { return { k: "/", a: a, b: b }; }
+  function pow(a, b) { return { k: "pow", a: a, b: b }; }
+  function call(fn, a) { return { k: "call", fn: fn, a: a }; }
+  function containsX(n) { return usesX(n); }
+
+  function substituteIdent(node, name, repl) {
+    if (!node) return node;
+    if (node.k === "num") return node;
+    if (node.k === "x") return name === "x" ? repl : node;
+    if (node.k === "neg") return neg(substituteIdent(node.a, name, repl));
+    if (node.k === "call") return call(node.fn, substituteIdent(node.a, name, repl));
+    return { k: node.k, a: substituteIdent(node.a, name, repl), b: substituteIdent(node.b, name, repl) };
+  }
+
+  function differentiate(ast) {
+    switch (ast.k) {
+      case "num": return num(0);
+      case "x": return num(1);
+      case "neg": return neg(differentiate(ast.a));
+      case "+": return add(differentiate(ast.a), differentiate(ast.b));
+      case "-": return sub(differentiate(ast.a), differentiate(ast.b));
+      case "*": return add(mul(differentiate(ast.a), ast.b), mul(ast.a, differentiate(ast.b)));
+      case "/": return div(sub(mul(differentiate(ast.a), ast.b), mul(ast.a, differentiate(ast.b))), pow(ast.b, num(2)));
+      case "pow": return dPow(ast);
+      case "call": return dCall(ast);
+    }
+    throw new Error("symbolic differentiation not supported for this expression");
+  }
+
+  // General power rule: d/dx u^v = u^v * (v' ln u + v u'/u).
+  // Special-cases a constant exponent to avoid log noise.
+  function dPow(ast) {
+    var u = ast.a, v = ast.b;
+    if (!containsX(v)) {
+      return mul(mul(v, pow(u, sub(v, num(1)))), differentiate(u));
+    }
+    var du = differentiate(u), dv = differentiate(v);
+    var bracket = add(mul(dv, call("log", u)), div(mul(v, du), u));
+    return mul(pow(u, v), bracket);
+  }
+
+  function dCall(ast) {
+    var inner = ast.a, dInner = differentiate(inner);
+    var wanted = "d/dx(" + ast.fn + "(x))";
+    for (var r = 0; r < PAYLOAD.rules.length; r++) {
+      var rule = PAYLOAD.rules[r];
+      if (rule.pattern.trim().toLowerCase() === wanted) {
+        try {
+          var ruleAst = parseExpr(tokenize(rule.result));
+          return mul(substituteIdent(ruleAst, "x", inner), dInner);
+        } catch (e) { /* fall through to built-ins */ }
+      }
+    }
+    switch (ast.fn) {
+      case "sin":  return mul(call("cos", inner), dInner);
+      case "cos":  return mul(neg(call("sin", inner)), dInner);
+      case "exp":  return mul(call("exp", inner), dInner);
+      case "log":  return mul(div(num(1), inner), dInner);
+      case "sqrt": return mul(div(num(1), mul(num(2), call("sqrt", inner))), dInner);
+      case "tan":  return mul(add(num(1), pow(call("tan", inner), num(2))), dInner);
+      case "abs":  throw new Error("d/dx |x| is not differentiable at 0 and is not supported");
+    }
+    throw new Error("symbolic differentiation not supported for this expression");
+  }
+
+  function fmtNum(v) {
+    if (!isFinite(v)) return String(v);
+    if (Number.isInteger(v)) return String(v);
+    return String(v);
+  }
+
+  function astToString(n) {
+    switch (n.k) {
+      case "num": return fmtNum(n.v);
+      case "x": return "x";
+      case "neg": return "-" + astToString(n.a);
+      case "+": return "(" + astToString(n.a) + " + " + astToString(n.b) + ")";
+      case "-": return "(" + astToString(n.a) + " - " + astToString(n.b) + ")";
+      case "*": return "(" + astToString(n.a) + " * " + astToString(n.b) + ")";
+      case "/": return "(" + astToString(n.a) + " / " + astToString(n.b) + ")";
+      case "pow": return "(" + astToString(n.a) + " ^ " + astToString(n.b) + ")";
+      case "call": return n.fn + "(" + astToString(n.a) + ")";
+    }
+    return "?";
+  }
+
+  /* ---------- 4. Normalisation ---------- */
+  var WORD_NUMBERS = { zero:"0", one:"1", two:"2", three:"3", four:"4", five:"5",
+    six:"6", seven:"7", eight:"8", nine:"9", ten:"10", eleven:"11", twelve:"12" };
+
+  function uniq(a) { var seen = {}, out = []; a.forEach(function (x) { if (!seen[x]) { seen[x] = 1; out.push(x); } }); return out; }
+
+  function normalizeExpr(text) {
+    var notes = [];
+    var s = String(text).toLowerCase();
+    s = s.replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b/g,
+         function (w) { notes.push("\"" + w + "\" \u2192 " + WORD_NUMBERS[w]); return WORD_NUMBERS[w]; });
+    s = s.replace(/\bmultiplied by\b/g, function () { notes.push("\"multiplied by\" \u2192 *"); return "*"; });
+    s = s.replace(/\bdivided by\b/g,   function () { notes.push("\"divided by\" \u2192 /"); return "/"; });
+    s = s.replace(/\btimes\b/g,        function () { notes.push("\"times\" \u2192 *"); return "*"; });
+    s = s.replace(/\bplus\b/g,         function () { notes.push("\"plus\" \u2192 +"); return "+"; });
+    s = s.replace(/\bminus\b/g,        function () { notes.push("\"minus\" \u2192 -"); return "-"; });
+    s = s.replace(/\bsquared\b/g,      function () { notes.push("\"squared\" \u2192 ^2"); return "^2"; });
+    s = s.replace(/\bcubed\b/g,        function () { notes.push("\"cubed\" \u2192 ^3"); return "^3"; });
+    s = s.replace(/\bto the (\d+)\b/g, function (_m, n) { notes.push("\"to the " + n + "\" \u2192 ^" + n); return "^" + n; });
+    // implicit multiplication: 2x, 2(..., )x, )(, )2, x(...
+    // A digit followed by "e" and an exponent is scientific notation, not 2*e.
+    s = s.replace(/(\d)\s*([a-z(])/g, function (m, d, c, off, str) {
+      if (c === "e" && /^[+-]?\d/.test(str.slice(off + m.length))) return m;
+      return d + "*" + c;
+    });
+    s = s.replace(/\)\s*([a-z0-9(])/g, ")*$1");
+    s = s.replace(/\bx\s*\(/g, "x*(");
+    return { normalized: s, notes: uniq(notes) };
+  }
+
+  function compileExpr(text) {
+    var n = normalizeExpr(text);
+    var ast = parseExpr(tokenize(n.normalized));
+    return { ast: ast, usesX: usesX(ast), normalized: n.normalized, interpNotes: n.notes };
+  }
+
+  /* ---------- 5. Numerics ---------- */
+  function integrate(ast, a, b, steps) {
+    steps = steps || 4000;
+    if (steps % 2) steps++;
+    var h = (b - a) / steps;
+    var s = evalAst(ast, a) + evalAst(ast, b);
+    for (var i = 1; i < steps; i++) s += (i % 2 ? 4 : 2) * evalAst(ast, a + i * h);
+    return (s * h) / 3;
+  }
+
+  function closeEnough(a, b, tol) {
+    if (typeof a !== "number" || typeof b !== "number") return false;
+    if (!isFinite(a) || !isFinite(b)) return false;
+    var scale = Math.max(1, Math.abs(a), Math.abs(b));
+    return Math.abs(a - b) <= tol * scale;
+  }
+
+  var TAN_DOMAIN_EPS = 1e-12, TAN_MAGNITUDE_CEILING = 1e12;
+  function tangentDomainBad(x) { return Math.abs(Math.cos(x)) < TAN_DOMAIN_EPS; }
+
+  /* ---------- 6. Chart / axis reference (matches savf.py) ---------- */
+  // viewer frame: (right, up, toward-viewer)
+  var CHARTS = {
+    math:   { x: 1,  y: 1,  z: 1 },
+    raster: { x: 1,  y: -1, z: -1 },
+    sbaf0:  { x: -1, y: 1,  z: -1 }
+  };
+  var AXES = { row: "x", column: "y", depth: "z" };
+  // direction -> component sign in the viewer frame
+  var MOVES = {
+    "left to right": { x: 1 }, "right to left": { x: -1 },
+    "bottom to top": { y: 1 }, "top to bottom": { y: -1 },
+    "far to near":   { z: 1 }, "near to far":   { z: -1 }
+  };
+  var AXIS_OF_MOVE = {
+    "left to right": "x", "right to left": "x",
+    "bottom to top": "y", "top to bottom": "y",
+    "far to near": "z", "near to far": "z"
+  };
+  var RESERVED_PARENT_ID = "and";
+
+  // Direction words are accepted in the canonical phrase form ("left to right")
+  // and in the short form a reader is more likely to type ("right", "up", "near").
+  var DIR_ALIASES = {
+    "left to right": "left to right", "rightward": "left to right", "rightwards": "left to right", "right": "left to right",
+    "right to left": "right to left", "leftward": "right to left", "leftwards": "right to left", "left": "right to left",
+    "bottom to top": "bottom to top", "upward": "bottom to top", "upwards": "bottom to top", "up": "bottom to top",
+    "top to bottom": "top to bottom", "downward": "top to bottom", "downwards": "top to bottom", "down": "top to bottom",
+    "far to near": "far to near", "nearward": "far to near", "nearwards": "far to near", "near": "far to near",
+    "near to far": "near to far", "away": "near to far", "far": "near to far"
+  };
+
+  /* ---------- 6b. Axis core (faithful port of savf.py) ---------- */
+  // An axis has two poles; start(+1)=P0, start(-1)=P1.  at(s,tau) walks from
+  // start(tau) toward end(tau), so at(0,tau)=start and at(1,tau)=end.
+  var TAU = { POS: 1, NEG: -1 };
+  function tauOf(t) {
+    if (t !== 1 && t !== -1) throw new Error("tau must be +1 or -1, got " + JSON.stringify(t));
+    return t;
+  }
+  function Axis(P0, P1) {
+    var A = P0.map(Number), B = P1.map(Number);
+    if (A.length !== B.length || A.length === 0) throw new Error("poles must be non-empty and the same dimension");
+    if (A.every(function (v, i) { return v === B[i]; })) throw new Error("poles must differ");
+    return {
+      P0: A, P1: B,
+      start: function (t) { return tauOf(t) === 1 ? A.slice() : B.slice(); },
+      end:   function (t) { return tauOf(t) === 1 ? B.slice() : A.slice(); },
+      at: function (s, t) {
+        t = tauOf(t);
+        if (!(-1e-12 <= s && s <= 1 + 1e-12)) throw new Error("s must lie in [0,1]");
+        // The law is start(tau) + tau*s*(P1-P0): the direction vector is always
+        // P1-P0, so at(s,+1) and at(1-s,-1) coincide and the pair sums to P0+P1.
+        var st = t === 1 ? A : B;
+        return st.map(function (p, i) { return p + t * s * (B[i] - A[i]); });
+      }
+    };
+  }
+
+  // f_exp maps [0,L] -> [0,1]; g_log is its exact inverse.
+  function _chkExp(b, k, L) {
+    if (!(b > 0) || b === 1) throw new Error("b must be >0 and !=1");
+    if (k === 0 || !(L > 0)) throw new Error("k must be nonzero and L>0");
+  }
+  function fExp(s, b, k, L) {
+    _chkExp(b, k, L);
+    if (!(0 <= s && s <= L)) throw new Error("s must lie in [0,L]");
+    var lb = Math.log(b);
+    return Math.expm1(k * s * lb) / Math.expm1(k * L * lb);
+  }
+  function gLog(u, b, k, L) {
+    _chkExp(b, k, L);
+    if (!(0 <= u && u <= 1)) throw new Error("u must lie in [0,1]");
+    var lb = Math.log(b);
+    return Math.log1p(u * Math.expm1(k * L * lb)) / (k * lb);
+  }
+
+  // Vector form of the viewer frame, for chart_sign and handedness.
+  var CHART_VEC = {
+    math:   { x: [1, 0, 0],  y: [0, 1, 0],  z: [0, 0, 1] },
+    raster: { x: [1, 0, 0],  y: [0, -1, 0], z: [0, 0, -1] },
+    sbaf0:  { x: [-1, 0, 0], y: [0, 1, 0],  z: [0, 0, -1] }
+  };
+  var MOVE_VEC = { L2R: [1, 0, 0], R2L: [-1, 0, 0], B2T: [0, 1, 0], T2B: [0, -1, 0], TOWARD: [0, 0, 1], AWAY: [0, 0, -1] };
+  function _dot3(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+  function _cross3(a, b) {
+    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  }
+  function chartSign(chart, axis, move) {
+    if (!CHART_VEC[chart]) throw new Error("unknown chart " + chart);
+    if (!CHART_VEC[chart][axis]) throw new Error("unknown axis " + axis);
+    if (!MOVE_VEC[move]) throw new Error("unknown move " + move);
+    var d = _dot3(MOVE_VEC[move], CHART_VEC[chart][axis]);
+    if (d === 0) throw new Error("move " + move + " is not along axis " + axis);
+    return d > 0 ? 1 : -1;
+  }
+  function handedness(x, y, z) {
+    var t = _dot3(x, _cross3(y, z));
+    return t > 0 ? "right" : t < 0 ? "left" : "degenerate";
+  }
+
+  // Deterministic PRNG so the self-test is reproducible on every run.
+  function _prng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---------- 7. Claim parser ---------- */
+  // A numeric slot accepts a literal number, a constant (pi, e, or a payload
+  // constant), or a fraction such as 8/3 or pi/2.  This makes "the sine of pi
+  // is 0" and "from 0 to pi/2" first-class claims.
+  var ATOM = "(?:\\d+(?:\\.\\d+)?(?:e[+-]?\\d+)?|pi|e)";
+  var NUM = "(-?" + ATOM + "(?:\\/" + ATOM + ")?)";
+  function isNumAtom(s) {
+    s = String(s).trim();
+    return /^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?(?:\/\d+(?:\.\d+)?(?:e[+-]?\d+)?)?$/i.test(s) ||
+      /^-?(pi|e)(?:\/(pi|e|\d+(?:\.\d+)?(?:e[+-]?\d+)?))?$/i.test(s) ||
+      Object.prototype.hasOwnProperty.call(PAYLOAD.constants || {}, s);
+  }
+  function numFromAtom(s) {
+    s = String(s).trim().toLowerCase();
+    var sign = 1;
+    if (s.charAt(0) === "-") { sign = -1; s = s.slice(1); }
+    var parts = s.split("/");
+    function one(p) {
+      if (p === "pi") return Math.PI;
+      if (p === "e") return Math.E;
+      if (Object.prototype.hasOwnProperty.call(PAYLOAD.constants || {}, p)) return +PAYLOAD.constants[p];
+      return parseFloat(p);
+    }
+    var v = one(parts[0]);
+    if (parts.length > 1) v = v / one(parts[1]);
+    return sign * v;
+  }
+  // A claim is true when the computed value, rounded to the precision the author
+  // wrote, equals what they wrote; a small relative floor absorbs float noise so
+  // that an exact integer claim (e.g. "sine of pi is 0") is not rejected.
+  function decimalsOf(s) {
+    s = String(s).trim().replace(/^[+-]/, "");
+    var slash = s.indexOf("/");
+    if (slash >= 0) s = s.slice(slash + 1);
+    var dot = s.indexOf(".");
+    return dot < 0 ? 0 : s.length - dot - 1;
+  }
+  function closeEnoughPrecise(value, expectedRaw, relFloor) {
+    if (typeof value !== "number" || !isFinite(value)) return false;
+    var expected = numFromAtom(expectedRaw);
+    if (!isFinite(expected)) return false;
+    var d = decimalsOf(expectedRaw);
+    var scale = Math.max(1, Math.abs(value), Math.abs(expected));
+    var tol = Math.max(d > 0 ? 0.5 * Math.pow(10, -d) : 0, (relFloor || 1e-9) * scale);
+    return Math.abs(value - expected) <= tol;
+  }
+  function parseLine(line, idx) {
+    var lower = String(line).trim().toLowerCase();
+    if (!lower) return { kind: "U", line: line, idx: idx };
+    var m;
+
+    m = lower.match(new RegExp("^d/dx\\s+of\\s+(.+?)\\s+at\\s+" + NUM + "\\s+is\\s+" + NUM + "\\.?$"));
+    if (m) return { kind: "DERIVATIVE", expr: m[1], x: numFromAtom(m[2]), expected: numFromAtom(m[3]), expectedRaw: m[3], line: line, idx: idx };
+
+    m = lower.match(new RegExp("^the\\s+integral\\s+of\\s+(.+?)\\s+from\\s+" + NUM + "\\s+to\\s+" + NUM + "\\s+is\\s+" + NUM + "\\.?$"));
+    if (m) return { kind: "INTEGRAL", expr: m[1], a: numFromAtom(m[2]), b: numFromAtom(m[3]), expected: numFromAtom(m[4]), expectedRaw: m[4], line: line, idx: idx };
+
+    m = lower.match(/^the\s+exponential\s+of\s+(.+?)\s+is\s+(.+?)\.?$/);
+    if (m) {
+      var xr = normalizeExpr(m[1]).normalized, er = normalizeExpr(m[2]).normalized;
+      if (isNumAtom(xr) && isNumAtom(er))
+        return { kind: "EXP", x: numFromAtom(xr), expected: numFromAtom(er), expectedRaw: er, line: line, idx: idx };
+    }
+
+    m = lower.match(new RegExp("^the\\s+logarithm\\s+base\\s+" + NUM + "\\s+of\\s+" + NUM + "\\s+is\\s+" + NUM + "\\.?$"));
+    if (m) return { kind: "LOG", b: numFromAtom(m[1]), x: numFromAtom(m[2]), expected: numFromAtom(m[3]), expectedRaw: m[3], line: line, idx: idx };
+
+    m = lower.match(new RegExp("^the\\s+(sine|cosine|tangent)\\s+of\\s+" + NUM + "\\s+is\\s+" + NUM + "\\.?$"));
+    if (m) return { kind: "TRIG", fn: m[1], x: numFromAtom(m[2]), expected: numFromAtom(m[3]), expectedRaw: m[3], line: line, idx: idx };
+
+    m = lower.match(new RegExp("^the\\s+determinant\\s+of\\s+\\[\\[\\s*" + NUM + "\\s*,\\s*" + NUM +
+                               "\\s*\\]\\s*,\\s*\\[\\s*" + NUM + "\\s*,\\s*" + NUM + "\\s*\\]\\]\\s+is\\s+" + NUM + "\\.?$"));
+    if (m) return { kind: "MATRIX", a: numFromAtom(m[1]), b: numFromAtom(m[2]), c: numFromAtom(m[3]), d: numFromAtom(m[4]), expected: numFromAtom(m[5]), expectedRaw: m[5], line: line, idx: idx };
+
+    m = lower.match(/^the\s+(row|column|depth)\s+axis\s+traverses\s+(.+?)\s+on\s+the\s+(math|raster|sbaf0)\s+chart\.?$/);
+    if (m) return { kind: "AXIS", axis: m[1], dir: m[2].trim(), chart: m[3], line: line, idx: idx };
+
+    m = lower.match(/^(?:assume|let)\s+([a-z_][a-z0-9_]*)\.?$/);
+    if (m) return { kind: "D", id: m[1], line: line, idx: idx };
+
+    m = lower.match(/^([a-z_][a-z0-9_]*)\s+(?:derives\s+from|depends\s+on)\s+(.+?)\.?$/);
+    if (m) {
+      var id = m[1], parents = [], parts = m[2].split(",");
+      for (var pi = 0; pi < parts.length; pi++) {
+        var segs = parts[pi].split(/\band\b/i);
+        for (var si = 0; si < segs.length; si++) {
+          var tok = segs[si].trim();
+          if (!tok) return { kind: "U", line: line, idx: idx, reservedParent: true, reservedId: RESERVED_PARENT_ID };
+          if (!/^[a-z_][a-z0-9_]*$/.test(tok)) return { kind: "U", line: line, idx: idx };
+          parents.push(tok);
+        }
+      }
+      if (!parents.length) return { kind: "U", line: line, idx: idx };
+      if (parents.indexOf(RESERVED_PARENT_ID) >= 0)
+        return { kind: "U", line: line, idx: idx, reservedParent: true, reservedId: RESERVED_PARENT_ID };
+      return { kind: "R", id: id, parents: parents, line: line, idx: idx };
+    }
+
+    m = lower.match(/^(.+?)\s+(plus|minus)\s+(.+?)\s+equals\s+(.+?)\.?$/);
+    if (m) {
+      // Longest unit name wins, so "meters" is not shadowed by a bare "m".
+      var units = Object.keys(PAYLOAD.units).sort(function (a, b) { return b.length - a.length; });
+      var findUnitIn = function (s) {
+        for (var u = 0; u < units.length; u++) {
+          var re = new RegExp("(?:^|[^a-z0-9_])" + units[u].replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![a-z0-9_])");
+          if (re.test(s)) return units[u];
+        }
+        return null;
+      };
+      var lu = findUnitIn(m[1]), ru = findUnitIn(m[3]), eu = findUnitIn(m[4]);
+      // Only a genuine dimensional claim is unit math; otherwise fall through so
+      // "2 plus 2 equals 4" is read as arithmetic.
+      if (lu || ru || eu)
+        return { kind: "UNIT_MATH", leftText: m[1], op: m[2], rightText: m[3], expectedText: m[4],
+                 lu: lu, ru: ru, eu: eu, line: line, idx: idx };
+    }
+
+    m = lower.match(new RegExp("^(.+?)\\s*(?:percent|%)\\s+of\\s+(.+?)\\s+is\\s+" + NUM + "\\.?$"));
+    if (m) {
+      var pctText = m[1], baseText = m[2];
+      // "50 percent of the atomic weight of iron" reads the fact as the base.
+      var fm = baseText.match(/^the\s+(.+)\s+of\s+(.+)$/);
+      if (fm) {
+        var fkey = (fm[2] + ":" + fm[1]).toLowerCase();
+        if (Object.prototype.hasOwnProperty.call(PAYLOAD.facts, fkey)) {
+          var fnum = factNumber(PAYLOAD.facts[fkey]);
+          if (fnum !== null) baseText = String(fnum);
+        }
+      }
+      return { kind: "PERCENT", pctText: pctText, baseText: baseText, expected: numFromAtom(m[3]), expectedRaw: m[3], line: line, idx: idx };
+    }
+
+    m = lower.match(/^the\s+(.+?)\s+of\s+(.+?)\s+is\s+(.+?)\.?$/);
+    if (m) return { kind: "FACT", property: m[1], entity: m[2], expected: m[3], line: line, idx: idx };
+
+    m = lower.match(/^(.+?)\s+equals\s+(.+?)\.?$/);
+    if (m) return { kind: "MATH", left: m[1], right: m[2], line: line, idx: idx };
+
+    return { kind: "U", line: line, idx: idx };
+  }
+
+  /* ---------- 8. Gate model & verdict ---------- */
+  var GATES = ["phi0","phi1","phi2","phi3","phi4","phi5","phi6","phi7","phi8","phi9","phi10"];
+
+  // HARD gates are computations the engine fully owns end to end.  A claim there
+  // that evaluates to a contradiction is a lie: the formulary cannot be believed.
+  var HARD = { phi2: 1, phi3: 1, phi4: 1, phi5: 1, phi7: 1, phi8: 1, phi9: 1, phi10: 1 };
+  // SOFT gates rest on payload data or on a declared convention, or could not be
+  // parsed at all.  A claim there that cannot be established blocks the verdict
+  // instead of convicting the formulary of lying.
+  var SOFT = { phi0: 1, phi1: 1, phi6: 1 };
+
+  // Which gate a claim kind exercises.  Every kind maps to exactly one gate.
+  var GATE_FOR_KIND = {
+    D: "phi0", U: "phi1",
+    INTEGRAL: "phi2", DERIVATIVE: "phi3",
+    EXP: "phi4", LOG: "phi5",
+    FACT: "phi6", AXIS: "phi6", UNIT_MATH: "phi6", PERCENT: "phi7",
+    MATH: "phi7", MATRIX: "phi8", TRIG: "phi9", R: "phi10"
+  };
+
+  // Verdict rule, total over every gate assignment:
+  //   fail  -> a claim in the gate was proven false
+  //   marginal -> a claim in the gate could not be evaluated
+  //   pass  -> every claim in the gate held
+  //   n/a   -> no claim exercised the gate
+  // A HARD failure convicts (LIED); any other failure or any marginal blocks
+  // (BLOCKED); no claims at all needs review (REVIEW); otherwise PASS.
+  function verdictFromGates(states, claimCount) {
+    if (claimCount === 0) return "REVIEW";
+    var anyFail = false, anyMarginal = false, hardFail = false;
+    GATES.forEach(function (g) {
+      var v = states[g];
+      if (v === "fail") { anyFail = true; if (HARD[g]) hardFail = true; }
+      else if (v === "marginal") anyMarginal = true;
+    });
+    if (hardFail) return "LIED";
+    if (anyFail || anyMarginal) return "BLOCKED";
+    return "PASS";
+  }
+
+  /* ---------- 9. Audit pipeline (pure) ---------- */
+  function runAuditCore(text, payloadOverride) {
+    var restore = null;
+    if (payloadOverride !== undefined && payloadOverride !== null) {
+      var saved = PAYLOAD;
+      resetPayload();
+      ingestPayload(payloadOverride);
+      restore = saved;
+    }
+    try {
+      var allLines = String(text == null ? "" : text).split(/\r\n|\r|\n/);
+      var claims = [];
+      allLines.forEach(function (raw, lineIdx) {
+        var line = raw.trim();
+        if (!line || line.charAt(0) === "#") return;
+        var c = parseLine(line, lineIdx);
+        c.lineNo = lineIdx + 1;   // 1-based line number in the original text
+        claims.push(c);
+      });
+
+      var firstSeen = {};
+      claims.forEach(function (c) {
+        if (c.kind === "D" || c.kind === "R") {
+          if (Object.prototype.hasOwnProperty.call(firstSeen, c.id)) c.dupOf = firstSeen[c.id];
+          else firstSeen[c.id] = c;
+        }
+      });
+
+      var results = [];
+      claims.forEach(function (c) {
+        var r = { claim: c, status: "pending", note: "", interp: "", rationale: "" };
+        results.push(r);
+        try { evaluate(c, r); }
+        catch (e) { r.status = "invalid"; r.note = (e && e.message) || String(e); r.rationale = "Internal error on this line; please report it."; }
+      });
+
+      resolveDerivations(results);
+
+      // Fold each claim into its gate as a three-state value:
+      //   failed  -> fail,  invalid -> marginal,  declared/verified -> pass.
+      // A gate keeps the worst outcome any of its claims produced.
+      var rank = { "n/a": -1, pass: 0, marginal: 1, fail: 2 };
+      var gateStates = {};
+      GATES.forEach(function (g) { gateStates[g] = "n/a"; });
+      results.forEach(function (r) {
+        var g = GATE_FOR_KIND[r.claim.kind];
+        if (!g) return;
+        var v = r.status === "failed" ? "fail" : r.status === "invalid" ? "marginal" : "pass";
+        if (rank[v] > rank[gateStates[g]]) gateStates[g] = v;
+      });
+
+      var verdict = verdictFromGates(gateStates, results.length);
+      return {
+        version: VERSION,
+        verdict: verdict,
+        gates: gateStates,
+        results: results.map(function (r) {
+          return { line: r.claim.line, lineNo: r.claim.lineNo || (r.claim.idx + 1), kind: r.claim.kind,
+                   status: r.status, badge: badgeFor(r), note: r.note, interp: r.interp, rationale: r.rationale };
+        }),
+        counts: countStatuses(results),
+        payload: payloadSummary()
+      };
+    } finally {
+      if (restore) PAYLOAD = restore;
+    }
+  }
+
+  function badgeFor(r) {
+    if (r.status === "declared" || r.status === "verified") return "PASS";
+    if (r.status === "failed") return "FAIL";
+    if (r.status === "invalid" && r.claim.kind === "U" && !r.claim.reservedParent) return "UNPARSEABLE";
+    return "INVALID";
+  }
+
+  function countStatuses(results) {
+    var c = { pass: 0, fail: 0, invalid: 0, unparseable: 0 };
+    results.forEach(function (r) {
+      var b = badgeFor(r);
+      if (b === "PASS") c.pass++;
+      else if (b === "FAIL") c.fail++;
+      else if (b === "UNPARSEABLE") c.unparseable++;
+      else c.invalid++;
+    });
+    return c;
+  }
+
+  function evaluate(c, r) {
+    switch (c.kind) {
+      case "D": return evalD(c, r);
+      case "R": return;                       // resolved later
+      case "U": return evalU(c, r);
+      case "FACT": return evalFact(c, r);
+      case "DERIVATIVE": return evalDerivative(c, r);
+      case "INTEGRAL": return evalIntegral(c, r);
+      case "EXP": return evalExp(c, r);
+      case "LOG": return evalLog(c, r);
+      case "TRIG": return evalTrig(c, r);
+      case "MATRIX": return evalMatrix(c, r);
+      case "AXIS": return evalAxis(c, r);
+      case "UNIT_MATH": return evalUnitMath(c, r);
+      case "PERCENT": return evalPercent(c, r);
+      case "MATH": return evalMath(c, r);
+    }
+    r.status = "invalid"; r.note = "unsupported claim kind";
+  }
+
+  function evalD(c, r) {
+    if (c.dupOf) {
+      r.status = "invalid";
+      r.note = "duplicate assumption id \"" + c.id + "\" (first at line " + (c.dupOf.idx + 1) + ")";
+      r.rationale = "Remove this line, or give the assumption a distinct id.";
+      return;
+    }
+    r.status = "declared"; r.note = "assumed true";
+  }
+
+  function evalU(c, r) {
+    if (c.reservedParent) {
+      r.status = "invalid";
+      r.note = "\"" + RESERVED_PARENT_ID + "\" is a reserved word and cannot be used as a parent id";
+      r.rationale = "Rename the assumption (e.g. \"and_axiom\") and reference the new id.";
+      return;
+    }
+    r.status = "invalid";
+    r.note = "line does not match any supported grammar";
+    r.rationale = "Use one of: FACT, DERIVATIVE, INTEGRAL, EXP, LOG, TRIG, AXIS, MATH, UNIT_MATH, assume, derives from.";
+  }
+
+  function factNumber(v) {
+    if (typeof v === "number") return isFinite(v) ? v : null;
+    if (v === null || v === undefined) return null;
+    var s = String(v).trim();
+    if (!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(s)) return null;
+    var n = Number(s);
+    return isFinite(n) ? n : null;
+  }
+
+  function evalFact(c, r) {
+    var key = (c.entity + ":" + c.property).toLowerCase();
+    if (!Object.prototype.hasOwnProperty.call(PAYLOAD.facts, key)) {
+      r.status = "invalid";
+      r.note = "fact not in payload: \"" + key + "\"";
+      r.rationale = "Load a payload containing \"" + key + "\", or rephrase the claim.";
+      return;
+    }
+    var actual = PAYLOAD.facts[key];
+    // A numeric fact is compared as a number so that "55.8450" matches 55.845;
+    // anything else is compared as text, case-insensitively.
+    var av = factNumber(actual), ev = factNumber(c.expected);
+    var ok, how;
+    if (av !== null && ev !== null) {
+      var d = decimalsOf(String(c.expected));
+      var tol = Math.max(d > 0 ? 0.5 * Math.pow(10, -d) : 0, 1e-12 * Math.max(1, Math.abs(av), Math.abs(ev)));
+      ok = Math.abs(av - ev) <= tol;
+      how = ok ? "" : "; expected " + c.expected;
+    } else {
+      ok = String(actual).trim().toLowerCase() === String(c.expected).trim().toLowerCase();
+      how = ok ? "" : "; expected " + c.expected;
+    }
+    r.status = ok ? "verified" : "failed";
+    r.note = c.property + " of " + c.entity + " = " + actual + how;
+    if (!ok) r.rationale = "Change " + c.expected + " \u2192 " + actual + ", or load a different payload.";
+  }
+
+  function evalDerivative(c, r) {
+    var compiled;
+    try { compiled = compileExpr(c.expr); }
+    catch (e) {
+      r.status = "invalid";
+      r.note = "expression \"" + c.expr + "\" could not be parsed: " + e.message;
+      r.rationale = "Check expression syntax (x, +, -, *, /, ^, sin, cos, tan, exp, log, sqrt).";
+      return;
+    }
+    r.interp = interpLine(compiled);
+    if (!compiled.usesX) {
+      r.status = "invalid";
+      r.note = "expression \"" + c.expr + "\" does not mention x";
+      r.rationale = "Use an expression of x, e.g. \"x^3\" or \"sin(x)\".";
+      return;
+    }
+    var dAst, val;
+    try { dAst = differentiate(compiled.ast); }
+    catch (e) {
+      r.status = "invalid";
+      r.note = "symbolic differentiation failed: " + e.message;
+      r.rationale = "Add a matching rule to the payload, or use a supported function.";
+      return;
+    }
+    val = evalAst(dAst, c.x);
+    if (!isFinite(val)) {
+      r.status = "invalid";
+      r.note = "derivative is non-finite at x = " + c.x;
+      r.rationale = "Move the evaluation point away from the singularity.";
+      return;
+    }
+    var ok = closeEnoughPrecise(val, c.expectedRaw, 1e-9);
+    r.status = ok ? "verified" : "failed";
+    r.note = "d/dx[" + compiled.normalized + "] = " + astToString(dAst) + "; at " + c.x + " \u2248 " + val.toFixed(6) +
+             (ok ? "" : "; expected " + c.expectedRaw);
+    if (!ok) r.rationale = "Change " + c.expectedRaw + " \u2192 " + val.toFixed(6) + ", or correct the expression.";
+  }
+
+  function evalIntegral(c, r) {
+    var compiled;
+    try { compiled = compileExpr(c.expr); }
+    catch (e) {
+      r.status = "invalid";
+      r.note = "integrand \"" + c.expr + "\" could not be parsed: " + e.message;
+      r.rationale = "Integrand must be an expression over x.";
+      return;
+    }
+    r.interp = interpLine(compiled);
+    if (!compiled.usesX) {
+      r.status = "invalid";
+      r.note = "integrand \"" + c.expr + "\" does not mention x";
+      r.rationale = "Replace with an expression of x, e.g. \"x^2\".";
+      return;
+    }
+    if (!(c.b > c.a)) {
+      r.status = "invalid";
+      r.note = "bounds must satisfy b > a (got [" + c.a + ", " + c.b + "])";
+      r.rationale = "Swap the bounds.";
+      return;
+    }
+    var val = integrate(compiled.ast, c.a, c.b);
+    if (!isFinite(val)) {
+      r.status = "invalid";
+      r.note = "integral diverges or is non-finite on [" + c.a + ", " + c.b + "]";
+      r.rationale = "Choose bounds that avoid any singularity.";
+      return;
+    }
+    var ok = closeEnoughPrecise(val, c.expectedRaw, 1e-7);
+    r.status = ok ? "verified" : "failed";
+    r.note = "\u222b_{" + c.a + "}^{" + c.b + "} " + compiled.normalized + " dx \u2248 " + val.toFixed(9) +
+             (ok ? "" : "; expected " + c.expectedRaw);
+    if (!ok) r.rationale = "Change " + c.expectedRaw + " \u2192 " + val.toFixed(9) + ", or correct the integrand or bounds.";
+  }
+
+  function evalExp(c, r) {
+    var val = Math.exp(c.x);
+    if (!isFinite(val)) {
+      r.status = "invalid";
+      r.note = "exp(" + c.x + ") overflows a double";
+      r.rationale = "Reduce the exponent (roughly |x| < 709).";
+      return;
+    }
+    var ok = closeEnoughPrecise(val, c.expectedRaw, 1e-12);
+    r.status = ok ? "verified" : "failed";
+    r.note = "exp(" + c.x + ") = " + val + (ok ? "" : "; expected " + c.expectedRaw);
+    if (!ok) r.rationale = "Change " + c.expectedRaw + " \u2192 " + val + ".";
+  }
+
+  function evalLog(c, r) {
+    if (!(c.b > 0) || c.b === 1) { r.status = "invalid"; r.note = "invalid log base " + c.b; r.rationale = "Base must be > 0 and != 1."; return; }
+    if (!(c.x > 0)) { r.status = "invalid"; r.note = "log argument must be > 0"; r.rationale = "Argument must be positive."; return; }
+    var val = Math.log(c.x) / Math.log(c.b);
+    var ok = closeEnoughPrecise(val, c.expectedRaw, 1e-12);
+    r.status = ok ? "verified" : "failed";
+    r.note = "log_" + c.b + "(" + c.x + ") = " + val + (ok ? "" : "; expected " + c.expectedRaw);
+    if (!ok) r.rationale = "Change " + c.expectedRaw + " \u2192 " + val + ".";
+  }
+
+  function evalTrig(c, r) {
+    var fn = { sine: Math.sin, cosine: Math.cos, tangent: Math.tan }[c.fn];
+    if (!fn) { r.status = "invalid"; r.note = "unknown trig function \"" + c.fn + "\""; r.rationale = "Use sine, cosine, or tangent."; return; }
+    if (c.fn === "tangent" && tangentDomainBad(c.x)) {
+      r.status = "invalid";
+      r.note = "tan(" + c.x + ") is undefined: the argument is an odd multiple of \u03c0/2";
+      r.rationale = "Move the argument away from odd multiples of \u03c0/2.";
+      return;
+    }
+    var val = fn(c.x);
+    if (!isFinite(val) || (c.fn === "tangent" && Math.abs(val) > TAN_MAGNITUDE_CEILING)) {
+      r.status = "invalid";
+      r.note = c.fn + "(" + c.x + ") is outside the honest range of a double";
+      r.rationale = "Move the argument away from the asymptote.";
+      return;
+    }
+    var ok = closeEnoughPrecise(val, c.expectedRaw, 1e-12);
+    r.status = ok ? "verified" : "failed";
+    r.note = c.fn + "(" + c.x + ") = " + val + (ok ? "" : "; expected " + c.expectedRaw);
+    if (!ok) r.rationale = "Change " + c.expectedRaw + " \u2192 " + val + ".";
+  }
+
+  function evalMatrix(c, r) {
+    // Determinant of a 2x2 matrix: a self-contained computation, so a mismatch
+    // is a lie rather than a block.
+    var det = c.a * c.d - c.b * c.c;
+    var ok = closeEnoughPrecise(det, c.expectedRaw, 1e-12);
+    r.status = ok ? "verified" : "failed";
+    r.note = "det[[" + c.a + ", " + c.b + "], [" + c.c + ", " + c.d + "]] = " + fmtNum(det) +
+             (ok ? "" : "; expected " + c.expectedRaw);
+    if (!ok) r.rationale = "Change " + c.expectedRaw + " \u2192 " + fmtNum(det) + ".";
+  }
+
+  function evalAxis(c, r) {
+    var chart = CHARTS[c.chart];
+    if (!chart) { r.status = "invalid"; r.note = "unknown chart \"" + c.chart + "\""; r.rationale = "Chart must be math, raster, or sbaf0."; return; }
+    var axComp = AXES[c.axis];
+    if (!axComp) { r.status = "invalid"; r.note = "unknown axis \"" + c.axis + "\""; r.rationale = "Axis must be row, column, or depth."; return; }
+    var move = MOVES[c.dir] ? c.dir : DIR_ALIASES[c.dir];
+    if (!move || !MOVES[move]) { r.status = "invalid"; r.note = "unknown direction \"" + c.dir + "\""; r.rationale = "Direction must be one of: " + Object.keys(MOVES).join(", ") + " (or a short form such as right, up, near)."; return; }
+    if (AXIS_OF_MOVE[move] !== axComp) {
+      r.status = "invalid";
+      r.note = "the " + c.axis + " axis cannot traverse \"" + c.dir + "\"";
+      r.rationale = "Match the axis to the direction (row\u2194horizontal, column\u2194vertical, depth\u2194near/far).";
+      return;
+    }
+    var tau = chart[axComp] * MOVES[move][axComp];
+    r.status = "verified";
+    r.note = c.axis + " on " + c.chart + " traversing " + c.dir + " \u2192 \u03c4 = " + (tau > 0 ? "+1" : "-1");
+  }
+
+  function evalUnitMath(c, r) {
+    var lu = c.lu ? PAYLOAD.units[c.lu] : null, ru = c.ru ? PAYLOAD.units[c.ru] : null, eu = c.eu ? PAYLOAD.units[c.eu] : null;
+    if (!lu || !ru || !eu) {
+      r.status = "invalid";
+      r.note = "unit not in payload (or malformed unit claim)";
+      r.rationale = "Ensure the units (" + (c.lu || "?") + ", " + (c.ru || "?") + ", " + (c.eu || "?") + ") are loaded in the payload.";
+      return;
+    }
+    if (lu.dimension !== ru.dimension) {
+      r.status = "failed";
+      r.note = "dimensional mismatch: [" + c.lu + "] (" + lu.dimension + ") " + c.op + " [" + c.ru + "] (" + ru.dimension + ") is invalid";
+      r.rationale = c.op === "plus" ? "You cannot add different dimensions." : "Subtraction requires matching dimensions.";
+      return;
+    }
+    if (lu.dimension !== eu.dimension) {
+      r.status = "failed";
+      r.note = "result dimension mismatch: expected [" + c.eu + "] (" + eu.dimension + ") but operands are [" + lu.dimension + "]";
+      r.rationale = "The result must share the operands' dimension.";
+      return;
+    }
+    var lv = firstNumber(c.leftText), rv = firstNumber(c.rightText), ev = firstNumber(c.expectedText);
+    if (lv !== null && rv !== null && ev !== null) {
+      var computedBase = (c.op === "plus" ? lv * lu.scale + rv * ru.scale : lv * lu.scale - rv * ru.scale);
+      var expectedBase = ev * eu.scale;
+      var ok = closeEnough(computedBase, expectedBase, 1e-9);
+      var shown = computedBase / eu.scale;
+      r.status = ok ? "verified" : "failed";
+      r.note = "dimensions match (" + lu.dimension + "); " + lv + " " + c.op + " " + rv + " = " + fmtNum(shown) +
+               (ok ? "" : ", expected " + ev);
+      if (!ok) r.rationale = "Change " + ev + " \u2192 " + fmtNum(shown) + ".";
+      return;
+    }
+    r.status = "verified";
+    r.note = "dimensional check passed: [" + c.lu + "] " + c.op + " [" + c.ru + "] = [" + c.eu + "]";
+  }
+
+  function evalPercent(c, r) {
+    var L, B;
+    try { L = compileExpr(c.pctText); } catch (e) { r.status = "invalid"; r.note = "percent amount parse error: " + e.message; r.rationale = "Give a numeric percent, e.g. \"5 percent of 200\"."; return; }
+    try { B = compileExpr(c.baseText); } catch (e) { r.status = "invalid"; r.note = "base value parse error: " + e.message; r.rationale = "Give a numeric base, e.g. \"5 percent of 200\"."; return; }
+    if (L.usesX || B.usesX) { r.status = "invalid"; r.note = "percent claim mentions x"; r.rationale = "Percent claims take plain numbers."; return; }
+    var pct = evalAst(L.ast, 0), base = evalAst(B.ast, 0);
+    if (!isFinite(pct) || !isFinite(base)) { r.status = "invalid"; r.note = "non-finite percent computation"; r.rationale = "Check the percent and the base."; return; }
+    var val = (pct / 100) * base;
+    var ok = closeEnoughPrecise(val, c.expectedRaw, 1e-12);
+    r.status = ok ? "verified" : "failed";
+    r.note = fmtNum(pct) + "% of " + fmtNum(base) + " = " + fmtNum(val) + (ok ? "" : "; expected " + c.expectedRaw);
+    if (!ok) r.rationale = "Change " + c.expectedRaw + " \u2192 " + fmtNum(val) + ".";
+  }
+
+  function evalMath(c, r) {
+    var L, R;
+    try { L = compileExpr(c.left); }
+    catch (e) { r.status = "invalid"; r.note = "left side parse error: " + e.message; r.rationale = "Check expression syntax."; return; }
+    try { R = compileExpr(c.right); }
+    catch (e) { r.status = "invalid"; r.note = "right side parse error: " + e.message; r.rationale = "Check expression syntax."; return; }
+    if (L.usesX || R.usesX) {
+      r.status = "invalid";
+      r.note = "arithmetic claim mentions x";
+      r.rationale = "Use an integral/derivative claim for expressions involving x.";
+      return;
+    }
+    var parts = [];
+    if (L.interpNotes.length) parts.push("L: " + L.interpNotes.join("; "));
+    if (R.interpNotes.length) parts.push("R: " + R.interpNotes.join("; "));
+    r.interp = parts.length ? ("interpreted: " + L.normalized + " = " + R.normalized + "  [" + parts.join(" | ") + "]")
+                            : ("interpreted: " + L.normalized + " = " + R.normalized);
+    var lv = evalAst(L.ast, 0), rv = evalAst(R.ast, 0);
+    if (!isFinite(lv) || !isFinite(rv)) {
+      r.status = "invalid";
+      r.note = "non-finite arithmetic result";
+      r.rationale = "Check for division by zero or overflow.";
+      return;
+    }
+    var ok = closeEnough(lv, rv, 1e-12);
+    r.status = ok ? "verified" : "failed";
+    r.note = L.normalized + " = " + fmtNum(lv) + ", " + R.normalized + " = " + fmtNum(rv) + (ok ? "" : " \u2014 unequal");
+    if (!ok) r.rationale = "The claim asserts " + fmtNum(lv) + " equals " + fmtNum(rv) + ", which is false.";
+  }
+
+  function interpLine(compiled) {
+    return compiled.interpNotes.length
+      ? "interpreted: " + compiled.normalized + "  [" + compiled.interpNotes.join("; ") + "]"
+      : "interpreted: " + compiled.normalized;
+  }
+
+  function firstNumber(s) {
+    var m = String(s).match(/-?\d+(?:\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  /* ---------- 10. Derivation resolution (topological, cycle-safe) ---------- */
+  function resolveDerivations(results) {
+    var canonical = {}, rResults = [];
+    results.forEach(function (r) {
+      var c = r.claim;
+      if (c.kind === "R") {
+        if (c.dupOf) {
+          r.status = "invalid";
+          r.note = "duplicate derivation id \"" + c.id + "\" (first at line " + (c.dupOf.idx + 1) + ")";
+          r.rationale = "Give the derivation a distinct id, or remove this line.";
+          return;
+        }
+        canonical[c.id] = r;
+        rResults.push(r);
+      } else if (c.kind === "D") {
+        if (!c.dupOf) canonical[c.id] = r;
+      }
+    });
+
+    var changed = true, guard = 0, limit = rResults.length + 2;
+    while (changed && guard++ < limit) {
+      changed = false;
+      rResults.forEach(function (r) {
+        if (r.status !== "pending") return;
+        var parents = r.claim.parents;
+        var missing = parents.filter(function (p) { return !canonical[p]; });
+        if (missing.length) {
+          r.status = "invalid";
+          r.note = "missing parent(s): " + missing.join(", ");
+          r.rationale = "Add \"assume " + missing[0] + "\" or a derivation of \"" + missing[0] + "\" earlier in the formulary.";
+          changed = true; return;
+        }
+        var prs = parents.map(function (p) { return canonical[p]; });
+        if (prs.some(function (p) { return p.status === "pending"; })) return;
+        var bad = prs.filter(function (p) { return p.status !== "declared" && p.status !== "verified"; });
+        if (bad.length) {
+          r.status = "failed";
+          r.note = "parent not verified: " + bad.map(function (p) { return p.claim.id; }).join(", ");
+          r.rationale = "Fix the derivation of " + bad.map(function (p) { return "\"" + p.claim.id + "\""; }).join(", ") + " first.";
+        } else {
+          r.status = "verified";
+          r.note = "derives from " + parents.join(", ");
+        }
+        changed = true;
+      });
+    }
+    rResults.forEach(function (r) {
+      if (r.status === "pending") {
+        // A cycle is not a falsehood: nothing was disproven, the chain simply
+        // never grounds out.  That blocks the verdict rather than convicting it.
+        r.status = "invalid";
+        r.note = "cycle: derivation does not terminate";
+        r.rationale = "Break the cycle by making at least one derivation point at an \"assume\" claim.";
+      }
+    });
+  }
+
+
+  /* ---------- 12. Self-test (faithful port of savf.py selftest) ---------- */
+  // Reproduces the Python core's own adequacy checks in the browser, so the
+  // engine can prove itself on any machine with no toolchain installed.
+  function selfTest(n, seed) {
+    n = n || 2000; seed = seed || 11;
+    var R = [], rng = _prng(seed);
+    function rec(name, ok, detail) { R.push({ name: name, ok: !!ok, detail: detail || "" }); }
+    function near(a, b, eps) { eps = eps || 1e-9; return a.length === b.length && a.every(function (v, i) { return Math.abs(v - b[i]) < eps; }); }
+
+    // 1. axis law: endpoints, reversal, reflection
+    var bad = 0;
+    for (var it = 0; it < n; it++) {
+      var d = 1 + Math.floor(rng() * 3);
+      var P0 = [], P1 = [];
+      for (var q = 0; q < d; q++) { P0.push(rng() * 18 - 9); P1.push(rng() * 18 - 9); }
+      var A = Axis(P0, P1), s = rng();
+      var mid = P0.map(function (v, i) { return v + P1[i]; });
+      var a1 = A.at(s, 1), am1 = A.at(s, -1);
+      var sm = a1.map(function (v, i) { return v + am1[i]; });
+      var ok = near(A.at(0, 1), A.start(1)) && near(A.at(1, 1), A.end(1)) && near(A.at(1, -1), A.end(-1)) &&
+               near(a1, A.at(1 - s, -1)) && near(sm, mid);
+      if (!ok) bad++;
+    }
+    rec("axis law: endpoints, reversal, reflection", bad === 0, n + " random axes, failures=" + bad);
+
+    // 2. mutation adequacy: the suite must kill the defective SBAF-1 law
+    function orig(a, b, s, t) { return a.map(function (p, i) { return p + t * s * (b[i] - p); }); }
+    var p0 = [0, 0], p1 = [100, 0];
+    var suite = {
+      "avg=(P0+P1)/2": function (L) { var u = L(p0, p1, .3, 1), w = L(p0, p1, .3, -1); return near(u.map(function (v, i) { return (v + w[i]) / 2; }), [50, 0]); },
+      "+ends at P1,- ends at P0": function (L) { return near(L(p0, p1, 1, 1), p1) && near(L(p0, p1, 1, -1), p0); },
+      "- reverses +": function (L) { return near(L(p0, p1, .25, 1), L(p0, p1, .75, -1)); }
+    };
+    function fixed(a, b, s, t) { return Axis(a, b).at(s, t); }
+    var survivors = Object.keys(suite).filter(function (k) { return suite[k](orig); });
+    var allPass = Object.keys(suite).every(function (k) { return suite[k](fixed); });
+    rec("mutation adequacy: suite kills the defective law", survivors.length === 0 && allPass, "survivors=[" + survivors.join(",") + "]");
+    rec("original midpoint test passes the defective law (why it was inadequate)",
+        near(orig(p0, p1, .3, 1).map(function (v, i) { return (v + orig(p0, p1, .3, -1)[i]) / 2; }), p0));
+
+    // 3. tau must be +-1
+    var tauOk = false;
+    try { Axis(p0, p1).at(.5, 5); } catch (e) { tauOk = /tau must be/.test(e.message); }
+    rec("tau must be +-1", tauOk);
+
+    // 4. spreadsheet COLUMN() delta sign
+    rec("spreadsheet COLUMN() delta is + in raster, - in sbaf0",
+        chartSign("raster", "x", "L2R") === 1 && chartSign("sbaf0", "x", "L2R") === -1);
+    rec("sbaf0 handedness is right",
+        handedness(CHART_VEC.sbaf0.x, CHART_VEC.sbaf0.y, CHART_VEC.sbaf0.z) === "right");
+    rec("raster with z toward viewer is left", handedness([1, 0, 0], [0, -1, 0], [0, 0, 1]) === "left");
+
+    // 5. exp/log pair
+    var badx = 0;
+    for (var it2 = 0; it2 < 3000; it2++) {
+      var bs = [2, Math.E, 10, .5][Math.floor(rng() * 4)], k = .1 + rng() * 2.9, L = .5 + rng() * 4.5;
+      if (Math.abs(k * L * Math.log(bs)) > 15) continue;
+      var s2 = rng() * L, u = fExp(s2, bs, k, L);
+      if (!(Math.abs(fExp(0, bs, k, L)) < 1e-12 && Math.abs(fExp(L, bs, k, L) - 1) < 1e-9 && Math.abs(gLog(u, bs, k, L) - s2) < 1e-6)) badx++;
+    }
+    rec("exp/log pair: f(0)=0, f(L)=1, g is the exact inverse", badx === 0, "failures=" + badx);
+
+    // 6. verdict total over every gate assignment (3^11)
+    var STATES = ["pass", "marginal", "fail"], cnt = {}, tot = 0;
+    (function walk(i, cur) {
+      if (i === GATES.length) {
+        var v = verdictFromGates(dict(cur), 1); cnt[v] = (cnt[v] || 0) + 1; tot++; return;
+      }
+      STATES.forEach(function (st) { cur.push(st); walk(i + 1, cur); cur.pop(); });
+    })(0, []);
+    function dict(arr) { var o = {}; GATES.forEach(function (g, i) { o[g] = arr[i]; }); return o; }
+    rec("verdict is total over all 3^11 gate states, exactly one PASS",
+        tot === Math.pow(3, 11) && cnt.PASS === 1, JSON.stringify(cnt));
+
+    return R;
+  }
+
+  /* ---------- 11. Public API (engine) ---------- */
+  var API = {
+    version: VERSION,
+    runAudit: runAuditCore,
+    parseLine: parseLine,
+    compileExpr: compileExpr,
+    differentiate: differentiate,
+    astToString: astToString,
+    evalAst: evalAst,
+    integrate: integrate,
+    normalizeExpr: normalizeExpr,
+    verdictFromGates: verdictFromGates,
+    hardGates: HARD,
+    softGates: SOFT,
+    ingestPayload: ingestPayload,
+    resetPayload: resetPayload,
+    payloadSummary: payloadSummary,
+    getPayload: function () { return PAYLOAD; },
+    gates: GATES,
+    charts: CHARTS,
+    moves: MOVES,
+    // axis core + self-test (faithful ports of savf.py)
+    Axis: Axis,
+    tau: TAU,
+    fExp: fExp,
+    gLog: gLog,
+    chartSign: chartSign,
+    handedness: handedness,
+    fmtNum: fmtNum,
+    selfTest: selfTest
+  };
+  if (typeof window !== "undefined") { window.SAVF = API; }
+})();
+</script>
+
+<!-- ===================== Inscriber studio layer ===================== -->
+<script>
+"use strict";
+/* =====================================================================
+   Darkith Inscriber — SAVF Lite Studio layer.
+   Wires the verbatim SAVF-1 engine to a lightweight code editor + terminal.
+   No dependencies. Offline. No build toolchain.
+   ===================================================================== */
+(function () {
+  "use strict";
+
+  var S = window.SAVF;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) {
+    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); };
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (_) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (_) { return false; } }
+  };
+  function bridge() { return (window.darkith && typeof window.darkith.fileList === "function") ? window.darkith : null; }
+
+  var LS = { doc: "darkith.inscriber.doc.v1", payload: "darkith.inscriber.payload.v1" };
+
+  var DEMO = [
+    "# SAVF-1 demo formulary. Lines starting with # are ignored.",
+    "",
+    "1 + 1 equals 2",
+    "1/3 + 1/3 + 1/3 equals 1",
+    "",
+    "d/dx of x^3 at 2 is 12",
+    "d/dx of sin(x) at 0 is 1",
+    "The integral of x^2 from 0 to 3 is 9",
+    "",
+    "The exponential of zero is one",
+    "the logarithm base 2 of 8 is 3",
+    "the sine of 0 is 0",
+    "The determinant of [[3, 8], [4, 6]] is -14",
+    "",
+    "The capital of France is Paris",
+    "The atomic weight of iron is 55.845",
+    "",
+    "assume axiom_a",
+    "lemma_1 derives from axiom_a",
+    "lemma_2 derives from lemma_1",
+    "",
+    "The row axis traverses left to right on the math chart",
+    "The depth axis traverses near to far on the raster chart"
+  ].join("\n");
+
+  /* =================================================================
+     Editor
+     ================================================================= */
+  var Editor = (function () {
+    var input = $("#input"), overlay = $("#overlay"), gutter = $("#gutter");
+    var gInner = document.createElement("div");
+    gutter.appendChild(gInner);
+    var docName = $("#doc-name");
+    var marks = {};   // lineNo(1-based) -> "fail" | "warn"
+
+    function lines() { return input.value.split("\n"); }
+
+    function highlight(src) {
+      // Tokenizer for a readable, dependency-free paint. Order matters.
+      var out = "", i = 0, n = src.length;
+      var KW = /^(?:d\/dx|integral|det|exp|log|sin|cos|tan|sqrt|abs|of|capital|atomic weight)\b/;
+      while (i < n) {
+        var c = src[i];
+        if (c === "#") {
+          var e = src.indexOf("\n", i); if (e < 0) e = n;
+          out += '<span class="hl-com">' + esc(src.slice(i, e)) + "</span>"; i = e; continue;
+        }
+        if (c === '"' || c === "'") {
+          var q = c, j = i + 1;
+          while (j < n && src[j] !== q) { if (src[j] === "\\") j++; j++; }
+          out += '<span class="hl-str">' + esc(src.slice(i, Math.min(j + 1, n))) + "</span>"; i = Math.min(j + 1, n); continue;
+        }
+        if (/[0-9]/.test(c)) {
+          var k = i; while (k < n && /[0-9._]/.test(src[k])) k++;
+          out += '<span class="hl-num">' + esc(src.slice(i, k)) + "</span>"; i = k; continue;
+        }
+        if (/[A-Za-z_]/.test(c)) {
+          var m = i; while (m < n && /[A-Za-z0-9_ ]/.test(src[m])) m++;
+          var word = src.slice(i, m);
+          var hit = KW.exec(word);
+          if (hit) {
+            out += '<span class="hl-kw">' + esc(hit[0]) + "</span>" + esc(word.slice(hit[0].length));
+          } else {
+            out += '<span class="hl-key">' + esc(word) + "</span>";
+          }
+          i = m; continue;
+        }
+        if (/[=+\-*/^(),:%]/.test(c)) { out += '<span class="hl-punc">' + esc(c) + "</span>"; i++; continue; }
+        out += esc(c); i++;
+      }
+      return out + "\n";  // trailing newline so the last line keeps height
+    }
+
+    function paint() {
+      overlay.innerHTML = highlight(input.value);
+      var ls = lines();
+      var g = "";
+      for (var i = 0; i < ls.length; i++) {
+        var mk = marks[i + 1];
+        g += '<div class="ln' + (mk ? '" data-mark="' + mk : "") + '">' + (i + 1) + "</div>";
+      }
+      gInner.innerHTML = g;
+      sync();
+      updateStatus();
+    }
+
+    function sync() {
+      overlay.scrollTop = input.scrollTop;
+      overlay.scrollLeft = input.scrollLeft;
+      gInner.style.transform = "translateY(" + (-input.scrollTop) + "px)";
+      var ln = input.value.slice(0, input.selectionStart).split("\n").length;
+      var col = input.selectionStart - input.value.lastIndexOf("\n", input.selectionStart - 1);
+      $("#st-pos").textContent = ln + ":" + col;
+    }
+
+    function currentLineNo() { return input.value.slice(0, input.selectionStart).split("\n").length; }
+
+    function updateStatus() {
+      var ls = lines();
+      $("#st-lines").textContent = ls.length + (ls.length === 1 ? " line" : " lines");
+      var cur = ls[currentLineNo() - 1] || "";
+      var kind = "—";
+      if (S && cur.trim() && cur.trim()[0] !== "#") {
+        try { kind = S.parseLine(cur.trim(), 0).kind || "—"; } catch (_) { kind = "?"; }
+      }
+      $("#st-kind").textContent = "kind: " + kind;
+    }
+
+    function jumpTo(lineNo) {
+      var ls = lines();
+      lineNo = clamp(lineNo, 1, ls.length);
+      var pos = 0;
+      for (var i = 0; i < lineNo - 1; i++) pos += ls[i].length + 1;
+      input.focus();
+      input.setSelectionRange(pos, pos + (ls[lineNo - 1] || "").length);
+      // bring into view
+      var lh = parseFloat(getComputedStyle(input).lineHeight) || 20;
+      input.scrollTop = Math.max(0, (lineNo - 1) * lh - input.clientHeight / 3);
+      sync();
+    }
+
+    function setMarks(map) { marks = map || {}; paint(); }
+
+    input.addEventListener("input", function () { paint(); store.set(LS.doc, input.value); });
+    input.addEventListener("scroll", sync);
+    input.addEventListener("keyup", function () { sync(); updateStatus(); });
+    input.addEventListener("click", function () { sync(); updateStatus(); });
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        var s = input.selectionStart, t = input.selectionEnd;
+        input.value = input.value.slice(0, s) + "  " + input.value.slice(t);
+        input.setSelectionRange(s + 2, s + 2); paint();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runAudit(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") { e.preventDefault(); saveDoc(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") { e.preventDefault(); Find.open(); }
+    });
+
+    return {
+      get value() { return input.value; },
+      set value(v) { input.value = v; paint(); },
+      paint: paint, jumpTo: jumpTo, setMarks: setMarks,
+      currentLineNo: currentLineNo, lines: lines,
+      name: function (n) { docName.textContent = n; },
+      focus: function () { input.focus(); }
+    };
+  })();
+
+  /* =================================================================
+     Audit
+     ================================================================= */
+  function runAudit(silent) {
+    if (!S) { toast("engine not loaded"); return null; }
+    var src = Editor.value;
+    var res;
+    try { res = S.runAudit(src); }
+    catch (e) { setVerdict("FAIL", "engine error: " + (e && e.message)); return null; }
+
+    setVerdict(res.verdict, describe(res));
+    renderGates(res.gates);
+    renderResults(res.results);
+    var marks = {};
+    res.results.forEach(function (r) {
+      if (r.badge === "FAIL") marks[r.lineNo] = "fail";
+      else if (r.badge === "INVALID" || r.badge === "UNPARSEABLE") marks[r.lineNo] = marks[r.lineNo] || "warn";
+    });
+    Editor.setMarks(marks);
+    var c = res.counts;
+    $("#st-counts").textContent = c.pass + " pass · " + c.fail + " fail · " + (c.invalid + c.unparseable) + " flag";
+    $("#res-count").textContent = res.results.length + " claims";
+    $("#audit-when").textContent = new Date().toLocaleTimeString();
+    if (!silent) Term.echo("audit: " + res.verdict + " (" + res.results.length + " claims, " + c.fail + " fail)", "t-acc");
+    return res;
+  }
+
+  function describe(res) {
+    var c = res.counts;
+    if (!res.results.length) return "No claims found — add lines or load the demo.";
+    return c.pass + " verified · " + c.fail + " failed · " + (c.invalid + c.unparseable) + " flagged · " + res.results.length + " total";
+  }
+
+  function setVerdict(v, sub) {
+    var d = $("#verdict-display");
+    d.className = "verdict " + String(v).replace(/\s+/g, "-");
+    d.innerHTML = '<span class="dot"></span>' + esc(v);
+    $("#verdict-sub").textContent = sub || "";
+  }
+
+  function renderGates(gates) {
+    var host = $("#gates-display");
+    host.innerHTML = S.gates.map(function (g) {
+      var st = gates[g] || "n/a";
+      var cls = st === "n/a" ? "na" : st;
+      return '<span class="gate ' + cls + '">' + g + " · " + st + "</span>";
+    }).join("");
+  }
+
+  function renderResults(results) {
+    var host = $("#results");
+    if (!results.length) { host.innerHTML = '<div class="empty">No claims.</div>'; return; }
+    host.innerHTML = results.map(function (r) {
+      var note = r.note || r.interp || "";
+      return '<div class="row" data-line="' + r.lineNo + '">' +
+        '<span class="n">' + r.lineNo + "</span>" +
+        '<span class="body"><span class="src">' + esc(r.line) + "</span>" +
+        (note ? '<span class="note">' + esc(note) + "</span>" : "") + "</span>" +
+        '<span class="b ' + r.badge + '">' + r.badge + "</span></div>";
+    }).join("");
+    $$(".row", host).forEach(function (row) {
+      row.addEventListener("click", function () { Editor.jumpTo(parseInt(row.dataset.line, 10)); });
+    });
+  }
+
+  /* =================================================================
+     Find & replace
+     ================================================================= */
+  var Find = (function () {
+    var bar = $("#find-bar"), q = $("#find-q"), r = $("#find-r"), re = $("#find-re");
+    function rx(global) {
+      var pat = q.value;
+      if (!pat) return null;
+      try { return new RegExp(re.checked ? pat : pat.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), global ? "g" : ""); }
+      catch (e) { toast("bad regex"); return null; }
+    }
+    function next() {
+      var pat = rx(false); if (!pat) return;
+      var v = Editor.value, m = pat.exec(v.slice($("#input").selectionEnd));
+      var from = m ? $("#input").selectionEnd + m.index : -1;
+      if (from < 0) { m = pat.exec(v); from = m ? m.index : -1; }
+      if (from < 0) { toast("not found"); return; }
+      var el = $("#input"); el.focus(); el.setSelectionRange(from, from + m[0].length);
+    }
+    function replaceOne() {
+      var pat = rx(false); if (!pat) return;
+      var el = $("#input"), v = el.value;
+      var m = pat.exec(v.slice(el.selectionStart, el.selectionEnd)) || pat.exec(v);
+      if (!m) { toast("not found"); return; }
+      var at = v.slice(el.selectionStart, el.selectionEnd).match(pat) ? el.selectionStart : m.index;
+      Editor.value = v.slice(0, at) + r.value + v.slice(at + m[0].length);
+      el.setSelectionRange(at, at + r.value.length);
+    }
+    function replaceAll() {
+      var pat = rx(true); if (!pat) return;
+      var count = 0;
+      Editor.value = Editor.value.replace(pat, function () { count++; return r.value; });
+      toast(count + " replaced");
+    }
+    return {
+      open: function () { bar.classList.add("open"); q.focus(); },
+      close: function () { bar.classList.remove("open"); Editor.focus(); },
+      next: next, replaceOne: replaceOne, replaceAll: replaceAll
+    };
+  })();
+
+  /* =================================================================
+     Terminal — a small, deterministic command surface over the studio.
+     ================================================================= */
+  var Term = (function () {
+    var host = $("#term"), cmd = $("#term-cmd"), history = [], hIdx = -1;
+
+    function line(html, cls) {
+      var d = document.createElement("div");
+      d.className = "tline " + (cls || "");
+      d.innerHTML = html;
+      host.appendChild(d);
+      host.scrollTop = host.scrollHeight;
+      return d;
+    }
+    function echo(text, cls) { line(esc(text), cls); }
+    function ok(text) { echo(text, "t-ok"); }
+    function err(text) { echo(text, "t-err"); }
+
+    var HELP = [
+      "commands:",
+      "  help                this text",
+      "  run | audit         audit the editor buffer",
+      "  demo                load the demo formulary",
+      "  open                open a file into the editor",
+      "  save [name]         save the buffer (download / bridge)",
+      "  ls                  list payload keys (facts/constants/units)",
+      "  payload             payload summary",
+      "  payload set k=v     add a fact (k may be namespaced, e.g. iron:atomic weight)",
+      "  selftest            run the engine self-test",
+      "  axis p0 p1 s tau    evaluate the axis law, e.g. axis 0,0 100,0 .3 1",
+      "  echo <text>         print text",
+      "  clear               clear the terminal",
+      "  version             engine + studio versions"
+    ].join("\n");
+
+    function run(raw) {
+      var s = raw.trim();
+      line('<span class="t-ps1">' + esc($("#term-ps1").textContent) + "</span> " + esc(s), "t-cmd");
+      if (!s) return;
+      history.push(s); hIdx = history.length;
+      var parts = s.split(/\s+/), c = parts[0].toLowerCase(), rest = s.slice(parts[0].length).trim();
+
+      switch (c) {
+        case "help": case "?": echo(HELP); break;
+        case "clear": host.innerHTML = ""; break;
+        case "version": ok("inscriber 1.0 · SAVF " + (S ? S.version : "unavailable")); break;
+        case "echo": echo(rest); break;
+        case "run": case "audit": runAudit(); break;
+        case "demo": Editor.value = DEMO; Editor.name("demo.txt"); ok("demo formulary loaded"); runAudit(true); break;
+        case "open": $("#file-input").click(); break;
+        case "save": saveDoc(parts[1]); break;
+        case "ls": {
+          if (!S) { err("engine unavailable"); break; }
+          var p = S.getPayload();
+          var rows = [];
+          Object.keys(p.facts).forEach(function (k) { rows.push("  fact  " + k + " = " + p.facts[k]); });
+          Object.keys(p.constants).forEach(function (k) { rows.push("  const " + k + " = " + p.constants[k]); });
+          Object.keys(p.units).forEach(function (k) { rows.push("  unit  " + k + " [" + p.units[k].dimension + "] scale " + p.units[k].scale); });
+          rows.push("  rules " + p.rules.length);
+          echo(rows.join("\n") || "  (empty)");
+          break;
+        }
+        case "payload": {
+          if (!S) { err("engine unavailable"); break; }
+          if (parts[1] === "set") {
+            var kv = rest.slice(4);
+            var eq = kv.indexOf("=");
+            if (eq < 0) { err("usage: payload set key=value"); break; }
+            var k = kv.slice(0, eq).trim(), v = kv.slice(eq + 1).trim();
+            var num = Number(v);
+            var obj = { facts: {} }; obj.facts[k] = (v !== "" && !isNaN(num)) ? num : v;
+            var r = S.ingestPayload(obj);
+            ok("added " + r.added + " fact(s)" + (r.rejected.length ? " · rejected " + r.rejected.length : ""));
+          } else {
+            var sm = S.payloadSummary();
+            ok("facts " + sm.facts + " · constants " + sm.constants + " · rules " + sm.rules + " · units " + sm.units);
+          }
+          break;
+        }
+        case "selftest": runSelfTest(); break;
+        case "axis": {
+          var m = rest.split(/\s+/);
+          if (m.length < 4) { err("usage: axis p0 p1 s tau   (e.g. axis 0,0 100,0 .3 1)"); break; }
+          var P0 = m[0].split(",").map(Number), P1 = m[1].split(",").map(Number);
+          try {
+            var A = S.Axis(P0, P1);
+            ok("at(" + m[2] + ", " + m[3] + ") = [" + A.at(Number(m[2]), Number(m[3])).join(", ") + "]");
+          } catch (e) { err(String(e.message || e)); }
+          break;
+        }
+        default: err("unknown command: " + c + " (try help)");
+      }
+    }
+
+    cmd.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { var v = cmd.value; cmd.value = ""; run(v); }
+      else if (e.key === "ArrowUp") { if (hIdx > 0) { hIdx--; cmd.value = history[hIdx] || ""; } e.preventDefault(); }
+      else if (e.key === "ArrowDown") { if (hIdx < history.length - 1) { hIdx++; cmd.value = history[hIdx] || ""; } else { hIdx = history.length; cmd.value = ""; } e.preventDefault(); }
+    });
+    host.addEventListener("click", function () { cmd.focus(); });
+
+    return {
+      run: run, echo: echo, ok: ok, err: err,
+      banner: function () {
+        line('<span class="t-acc">Darkith Inscriber</span> · SAVF Lite Studio', "t-ok");
+        echo("Offline. No build toolchain. Type 'help'.", "t-dim");
+      },
+      focus: function () { cmd.focus(); }
+    };
+  })();
+
+  /* =================================================================
+     Self-test / Axis / Payload panels
+     ================================================================= */
+  function runSelfTest() {
+    if (!S) { Term.err("engine unavailable"); return; }
+    var btn = $("#st-run"); btn.disabled = true;
+    $("#st-status").textContent = "running…";
+    setTimeout(function () {
+      var R;
+      try { R = S.selfTest(1500, 11); }
+      catch (e) { $("#st-status").textContent = "error"; Term.err("self-test error: " + (e && e.message)); btn.disabled = false; return; }
+      var pass = R.filter(function (r) { return r.ok; }).length;
+      $("#st-status").textContent = pass + "/" + R.length;
+      $("#st-summary").innerHTML = '<div class="verdict ' + (pass === R.length ? "PASS" : "FAIL") + '">' +
+        '<span class="dot"></span>' + pass + "/" + R.length + " checks</div>";
+      $("#st-out").innerHTML = R.map(function (r) {
+        return '<div class="row"><span class="b ' + (r.ok ? "PASS" : "FAIL") + '">' + (r.ok ? "PASS" : "FAIL") +
+          '</span><span class="body"><span class="src">' + esc(r.name) + '</span><span class="note">' + esc(r.detail) + "</span></span></div>";
+      }).join("");
+      Term.ok("self-test: " + pass + "/" + R.length + " checks");
+      btn.disabled = false;
+    }, 10);
+  }
+
+  function runAxis() {
+    try {
+      var P0 = $("#ax-p0").value.split(",").map(Number);
+      var P1 = $("#ax-p1").value.split(",").map(Number);
+      var s = Number($("#ax-s").value), tau = Number($("#ax-tau").value);
+      var A = S.Axis(P0, P1);
+      var out = "P0 = [" + P0.join(", ") + "]\nP1 = [" + P1.join(", ") + "]\n" +
+        "at(" + s + ", +1) = [" + A.at(s, 1).join(", ") + "]\n" +
+        "at(" + s + ", -1) = [" + A.at(s, -1).join(", ") + "]\n" +
+        "start(+1) = [" + A.start(1).join(", ") + "]  end(+1) = [" + A.end(1).join(", ") + "]";
+      $("#ax-out").textContent = out;
+    } catch (e) { $("#ax-out").textContent = "error: " + (e.message || e); }
+  }
+
+  function runChartSign() {
+    try {
+      var cs = S.chartSign($("#hs-chart").value, $("#hs-axis").value, $("#hs-move").value);
+      $("#hs-out").textContent = "sign = " + cs;
+    } catch (e) { $("#hs-out").textContent = "error: " + (e.message || e); }
+  }
+
+  function payloadSummary() {
+    if (!S) return;
+    var sm = S.payloadSummary();
+    $("#payload-status").textContent = "facts " + sm.facts + " · consts " + sm.constants + " · rules " + sm.rules + " · units " + sm.units;
+    $("#payload-out").textContent = "Active payload: " + JSON.stringify(sm);
+  }
+
+  function applyPayload() {
+    var txt = $("#payload-editor").value.trim();
+    if (!txt) { toast("payload editor is empty"); return; }
+    var json;
+    try { json = JSON.parse(txt); } catch (e) { toast("invalid JSON: " + e.message); return; }
+    var r = S.ingestPayload(json);
+    payloadSummary();
+    toast("ingested " + r.added + (r.rejected.length ? " · rejected " + r.rejected.length : ""));
+  }
+
+  /* =================================================================
+     Files
+     ================================================================= */
+  function saveDoc(name) {
+    var b = bridge();
+    var fname = name || Editor.name ? ($("#doc-name").textContent || "untitled.txt") : "untitled.txt";
+    if (b && typeof b.fileWrite === "function") {
+      try { var out = b.fileWrite("/sdcard/Download/" + fname, Editor.value); Term.ok("saved via bridge: " + out); return; } catch (e) { /* fall through */ }
+    }
+    var blob = new Blob([Editor.value], { type: "text/plain" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = fname; a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast("saved " + fname);
+  }
+
+  function openFile(file) {
+    var fr = new FileReader();
+    fr.onload = function () { Editor.value = String(fr.result); Editor.name(file.name); Editor.setMarks({}); toast("opened " + file.name); };
+    fr.readAsText(file);
+  }
+
+  /* =================================================================
+     Wiring
+     ================================================================= */
+  function toast(msg) { Term.echo(msg, "t-dim"); }
+
+  function tabs() {
+    var pairs = [["tab-audit", "view-audit"], ["tab-term", "view-term"], ["tab-payload", "view-payload"],
+                 ["tab-selftest", "view-selftest"], ["tab-axis", "view-axis"]];
+    pairs.forEach(function (p) {
+      $("#" + p[0]).addEventListener("click", function () {
+        pairs.forEach(function (q) {
+          $("#" + q[0]).setAttribute("aria-selected", q[0] === p[0] ? "true" : "false");
+          $("#" + q[1]).classList.toggle("on", q[0] === p[0]);
+        });
+        if (p[0] === "tab-term") Term.focus();
+      });
+    });
+  }
+
+  function boot() {
+    $("#env-pill").textContent = S ? ("SAVF v" + S.version) : "engine missing";
+    $("#bridge-pill").textContent = "bridge: " + (bridge() ? "native" : "local");
+
+    var saved = store.get(LS.doc, null);
+    Editor.value = (saved == null) ? DEMO : saved;
+    Editor.name(saved == null ? "demo.txt" : "untitled.txt");
+    Editor.paint();
+
+    var pl = store.get(LS.payload, null);
+    if (pl && S) { try { $("#payload-editor").value = JSON.stringify(pl, null, 2); } catch (_) {} }
+    payloadSummary();
+
+    tabs();
+    Term.banner();
+    Term.echo("editor ready · " + Editor.lines().length + " lines", "t-dim");
+
+    $("#run-btn").addEventListener("click", function () { runAudit(); });
+    $("#demo-btn").addEventListener("click", function () { Editor.value = DEMO; Editor.name("demo.txt"); runAudit(true); toast("demo loaded"); });
+    $("#open-btn").addEventListener("click", function () { $("#file-input").click(); });
+    $("#save-btn").addEventListener("click", function () { saveDoc(); });
+    $("#find-btn").addEventListener("click", function () { Find.open(); });
+    $("#file-input").addEventListener("change", function (e) { if (e.target.files[0]) openFile(e.target.files[0]); });
+
+    $("#find-next").addEventListener("click", Find.next);
+    $("#find-repl").addEventListener("click", Find.replaceOne);
+    $("#find-all").addEventListener("click", Find.replaceAll);
+    $("#find-close").addEventListener("click", Find.close);
+    $("#find-q").addEventListener("keydown", function (e) { if (e.key === "Enter") Find.next(); });
+
+    $("#st-run").addEventListener("click", runSelfTest);
+    $("#ax-run").addEventListener("click", runAxis);
+    $("#hs-run").addEventListener("click", runChartSign);
+
+    $("#pl-summary").addEventListener("click", payloadSummary);
+    $("#pl-reset").addEventListener("click", function () { S.resetPayload(); payloadSummary(); toast("payload reset"); });
+    $("#pl-load").addEventListener("click", function () { $("#payload-editor").focus(); });
+    $("#pl-export").addEventListener("click", function () { $("#payload-editor").value = JSON.stringify(S.getPayload(), null, 2); toast("payload exported to editor"); });
+    $("#pl-apply").addEventListener("click", applyPayload);
+
+    runAudit(true);
+    window.addEventListener("beforeunload", function () { store.set(LS.doc, Editor.value); });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+
+  // expose a tiny surface for headless verification
+  window.INSCRIBER = { runAudit: runAudit, editor: Editor, term: Term, booted: function () { return !!S; } };
+})();
+
+</script>
+</body>
+</html>

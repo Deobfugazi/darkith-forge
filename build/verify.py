@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One-command proof that every SAVF surface tells the same truth.
 
-Three checks, each of which fails loudly:
+Six checks, each of which fails loudly:
 
   1. sync      -- `build/build-forge.py --check` (no artifact has drifted)
   2. parity    -- the built JS core and `savf.py` return the same findings and
@@ -9,15 +9,22 @@ Three checks, each of which fails loudly:
   3. battery   -- savf.html, the studio and the fused forge boot from `file://`
                   in Chromium, Firefox and WebKit with zero page errors, zero
                   console errors, zero network, and identical verdicts
+  4. omega     -- the Ω exec contract and assistant policy, against real child
+                  processes and a real wasm32-wasi module
+  5. omega ui  -- omega.html boots from `file://` at 360x800, builtins are
+                  correct, and there is no horizontal overflow
+  6. savf cli  -- savf.py's selftest passes and bad input fails cleanly
+                  instead of dumping a traceback or a silent clean bill
 
-Run:  python3 build/verify.py            (all three)
-      python3 build/verify.py --fast     (sync + parity only; no browser)
+Run:  python3 build/verify.py            (all six)
+      python3 build/verify.py --fast     (all but the browser checks)
 
 Exit status is 0 only when every check passes.
 """
 import argparse
 import pathlib
 import re
+import shutil
 import subprocess
 import sys
 
@@ -30,6 +37,7 @@ ARTIFACTS = {
     "savf.html": "savf.html",
     "studio.html": "darkith code studio.html",
     "forge.html": "darkith forge.html",
+    "omega.html": "omega.html",
 }
 
 # A fixture is (name, source).  Together they exercise every rule the static
@@ -63,7 +71,7 @@ def run(cmd, **kw):
 
 
 def check_sync() -> bool:
-    print("[1/3] sync")
+    print("[1/6] sync")
     ok = True
     checkers = [
         ("build-forge.py", ["build-forge.py", "--check"]),
@@ -95,7 +103,7 @@ def cli_findings(path: pathlib.Path):
 
 
 def check_parity() -> bool:
-    print("[2/3] parity (JS core vs savf.py)")
+    print("[2/6] parity (JS core vs savf.py)")
     import json
     import tempfile
 
@@ -141,23 +149,44 @@ process.stdout.write(JSON.stringify(out));
 
 
 def check_battery() -> bool:
-    print("[3/3] battery (chromium/firefox/webkit, file://, no network)")
+    print("[3/6] battery (chromium/firefox/webkit, file://, no network)")
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
         print("      playwright not installed; skipping battery")
         return False
 
+    # Prefer playwright's bundled browsers; fall back to a system install so the
+    # battery still runs in a slim environment. An engine that is simply absent
+    # is skipped, not failed -- a missing browser is not a product defect.
+    system = {
+        "chromium": ["/usr/bin/chromium", "/usr/bin/chromium-browser", "/usr/bin/google-chrome"],
+        "firefox": ["/usr/bin/firefox"],
+        "webkit": [],
+    }
+
+    def launch(p, engine):
+        args = ["--no-sandbox", "--disable-gpu"] if engine == "chromium" else None
+        try:
+            return getattr(p, engine).launch(args=args), None
+        except Exception as e:
+            for path in system.get(engine, []):
+                if pathlib.Path(path).exists():
+                    try:
+                        return getattr(p, engine).launch(executable_path=path, args=args), None
+                    except Exception as e2:
+                        return None, str(e2).splitlines()[0][:70]
+            return None, str(e).splitlines()[0][:60]
+
     ok = True
+    ran_any = False
     with sync_playwright() as p:
         for engine in ("chromium", "firefox", "webkit"):
-            try:
-                args = ["--no-sandbox", "--disable-gpu"] if engine == "chromium" else None
-                browser = getattr(p, engine).launch(args=args)
-            except Exception as e:
-                print(f"      {engine:<9} unavailable: {str(e).splitlines()[0][:60]}")
-                ok = False
+            browser, why = launch(p, engine)
+            if browser is None:
+                print(f"      {engine:<9} skipped: {why}")
                 continue
+            ran_any = True
             for label, rel in ARTIFACTS.items():
                 pg = browser.new_page(viewport={"width": 360, "height": 800})
                 errs, net = [], []
@@ -168,18 +197,30 @@ def check_battery() -> bool:
                 try:
                     pg.goto("file://" + str(ROOT / rel), wait_until="load", timeout=30000)
                     pg.wait_for_timeout(2000)
-                    res = pg.evaluate(
-                        """(src)=>{
-                          var T = window.SavfTruth || window.SAVF;
-                          if(!T || typeof T.auditSource!=='function') return {core:'MISSING'};
-                          var a = T.auditSource('probe.py', src);
-                          return {core:'ok', verdict:a.verdict, n:a.findings.length};
-                        }""", PROBE)
+                    if label == "omega.html":
+                        res = pg.evaluate(
+                            """()=>{
+                              var O = window.Omega;
+                              if(!O || typeof O.calc!=='function') return {core:'MISSING'};
+                              return {core:'ok', verdict:String(O.calc('12*9+3')),
+                                      n:document.querySelectorAll('[role=tab]').length};
+                            }""")
+                        good = (res.get("core") == "ok" and res.get("verdict") == "111"
+                                and res.get("n") == 4 and not errs and not net)
+                    else:
+                        res = pg.evaluate(
+                            """(src)=>{
+                              var T = window.SavfTruth || window.SAVF;
+                              if(!T || typeof T.auditSource!=='function') return {core:'MISSING'};
+                              var a = T.auditSource('probe.py', src);
+                              return {core:'ok', verdict:a.verdict, n:a.findings.length};
+                            }""", PROBE)
+                        good = (res.get("core") == "ok" and res.get("verdict") == "LIED"
+                                and res.get("n") == 4 and not errs and not net)
                 except Exception as e:
                     res = {"core": "ERROR " + str(e)[:60]}
+                    good = False
                 pg.close()
-                good = (res.get("core") == "ok" and res.get("verdict") == "LIED"
-                        and res.get("n") == 4 and not errs and not net)
                 ok = ok and good
                 print(f"      {engine:<9} {label:<12} {res.get('core')} "
                       f"verdict={res.get('verdict')} findings={res.get('n')} "
@@ -187,7 +228,50 @@ def check_battery() -> bool:
                 for e in errs[:3]:
                     print("         err:", e[:100])
             browser.close()
-    return ok
+    return ok and ran_any
+
+
+def check_omega() -> bool:
+    """The Ω engine: exec contract, wasm tier, and assistant policy."""
+    print("[4/6] omega")
+    node = shutil.which("node")
+    if not node:
+        print("      node not installed; skipping omega contract tests")
+        return True
+    r = run([node, str(BUILD / "omega" / "omega-test.mjs")])
+    last = (r.stdout.strip().splitlines() or [""])[-1]
+    print("      " + last)
+    if r.returncode != 0:
+        print(r.stdout.strip()[-2000:])
+        print(r.stderr.strip()[-1000:])
+    return r.returncode == 0
+
+
+def check_omega_ui() -> bool:
+    """The Ω webapp UI: boots from file://, builtins correct, no overflow."""
+    print("[5/6] omega ui")
+    try:
+        from playwright.sync_api import sync_playwright  # noqa: F401
+    except ImportError:
+        print("      playwright not installed; skipping omega ui")
+        return True
+    r = run([sys.executable, str(BUILD / "omega" / "ui-test.py")])
+    last = (r.stdout.strip().splitlines() or [""])[-1]
+    print("      " + last)
+    if r.returncode != 0:
+        print(r.stdout.strip()[-2000:])
+    return r.returncode == 0
+
+
+def check_savf_cli() -> bool:
+    """The savf.py CLI: selftest passes and bad input fails cleanly."""
+    print("[6/6] savf cli")
+    r = run([sys.executable, str(BUILD / "savf-cli-test.py")])
+    last = (r.stdout.strip().splitlines() or [""])[-1]
+    print("      " + last)
+    if r.returncode != 0:
+        print(r.stdout.strip()[-2000:])
+    return r.returncode == 0
 
 
 def main() -> int:
@@ -198,6 +282,10 @@ def main() -> int:
     results = [("sync", check_sync()), ("parity", check_parity())]
     if not args.fast:
         results.append(("battery", check_battery()))
+    results.append(("omega", check_omega()))
+    if not args.fast:
+        results.append(("omega-ui", check_omega_ui()))
+    results.append(("savf-cli", check_savf_cli()))
 
     print()
     for name, ok in results:
