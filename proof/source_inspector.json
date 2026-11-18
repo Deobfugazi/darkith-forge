@@ -205,12 +205,12 @@
     "CH-09",
     "CH-10"
   ],
-  "files_examined": 55,
+  "files_examined": 57,
   "open": {
     "nonnull_assert": 5,
     "swallowed_exception": 18
   },
-  "root": "app/src/main/java/com/darkith/transliaison",
+  "root": "app",
   "trial": {
     "CH-01": {
       "sensitivity": true,
