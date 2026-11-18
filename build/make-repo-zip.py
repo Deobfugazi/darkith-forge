@@ -70,10 +70,12 @@ def build() -> int:
     }
 
     # 1. app/ is owned by the one-shot payload (current Kotlin, engine assets,
-    #    release key/cert, arm64 toolchain libs).
+    #    release key/cert, arm64 toolchain libs).  Payload members are rooted at
+    #    PREFIX (`darkith-forge/`), so compare on the path below it.
     for n in pay.namelist():
-        if n.startswith("app/") and not n.endswith("/"):
-            entries[n] = pay.read(n)
+        rel = n[len(PREFIX):] if n.startswith(PREFIX) else n
+        if rel.startswith("app/") and not n.endswith("/"):
+            entries[rel] = pay.read(n)
 
     # 2. webapp/ is owned by the project's current single-file apps.
     for rel, src in WEBAPP.items():

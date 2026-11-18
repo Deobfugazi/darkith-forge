@@ -39,11 +39,14 @@ APK = DELIVERY / "darkith-homekeeper-debug.apk"
 ONESHOT = DELIVERY / "darkith-one-shot.sh"
 
 APK_ASSET = "assets/homekeeper.html"
-PAYLOAD_ASSET = "app/src/main/assets/homekeeper.html"
+# `make-oneshot.py` roots the payload at this prefix (the tree extracts to
+# `darkith-forge/` on the phone), so every payload member name carries it.
+PAYLOAD_PREFIX = "darkith-forge/"
+PAYLOAD_ASSET = PAYLOAD_PREFIX + "app/src/main/assets/homekeeper.html"
 APK_KEY = "assets/engine/release_key"
-PAYLOAD_KEY = "app/src/main/assets/engine/release_key"
+PAYLOAD_KEY = PAYLOAD_PREFIX + "app/src/main/assets/engine/release_key"
 APK_LIB_DIR = "lib/"
-PAYLOAD_JNI_DIR = "app/src/main/jniLibs/"
+PAYLOAD_JNI_DIR = PAYLOAD_PREFIX + "app/src/main/jniLibs/"
 MARKER = b"__DARKITH_PAYLOAD_BELOW__"
 # Old signature entries: apksigner writes fresh ones.
 SIG_PREFIX = "META-INF/"

@@ -33,6 +33,11 @@ MARKER = b"\n__DARKITH_PAYLOAD_BELOW__\n"
 SOURCE_ZIP = DELIVERY / "darkith_source_fixed.zip"
 BUNDLE_ZIP = DELIVERY / "darkith-forge-bundle.zip"
 
+# `make-oneshot.py` roots its payload at this prefix (the tree extracts to
+# `darkith-forge/` on the phone).  Source-zip members are matched on the path
+# relative to that root, so strip it before comparing.
+PAYLOAD_PREFIX = "darkith-forge/"
+
 # Source-tree members that belong in darkith_source_fixed.zip, in payload order.
 SOURCE_PREFIXES = ("app/",)
 SOURCE_TOP = {
@@ -73,10 +78,13 @@ def write_zip(path: pathlib.Path, members: list[tuple[str, bytes]]) -> None:
 def build() -> int:
     pay = payload()
 
+    def rel(n: str) -> str:
+        return n[len(PAYLOAD_PREFIX):] if n.startswith(PAYLOAD_PREFIX) else n
+
     source = [
-        (n, pay.read(n))
+        (rel(n), pay.read(n))
         for n in pay.namelist()
-        if (n.startswith(SOURCE_PREFIXES) or n in SOURCE_TOP) and not n.endswith("/")
+        if (rel(n).startswith(SOURCE_PREFIXES) or rel(n) in SOURCE_TOP) and not n.endswith("/")
     ]
     write_zip(SOURCE_ZIP, source)
     print(f"  source_fixed.zip {SOURCE_ZIP.stat().st_size:,} B  entries {len(source)}")
@@ -118,18 +126,28 @@ def check() -> int:
             print(f"  MISSING {label}", file=sys.stderr)
             ok = False
             continue
-        z = zipfile.ZipFile(path)
-        data = z.read(member)
+        try:
+            data = zipfile.ZipFile(path).read(member)
+        except (KeyError, zipfile.BadZipFile) as e:
+            print(f"  STALE {label} {member}  (archive lacks it: {e})", file=sys.stderr)
+            ok = False
+            continue
         same = data == cur
         ok &= same
         print(f"  {'OK  ' if same else 'STALE'} {label} {member}  {sha256(data)[:16]}")
     # bundle's nested source zip must also carry the current webapp
-    z = zipfile.ZipFile(BUNDLE_ZIP)
-    inner = zipfile.ZipFile(io.BytesIO(z.read("darkith_source_fixed.zip")))
-    hk = inner.read("app/src/main/assets/homekeeper.html")
-    same = hk == cur
-    ok &= same
-    print(f"  {'OK  ' if same else 'STALE'} bundle source webapp  {sha256(hk)[:16]}")
+    try:
+        z = zipfile.ZipFile(BUNDLE_ZIP)
+        inner = zipfile.ZipFile(io.BytesIO(z.read("darkith_source_fixed.zip")))
+        hk = inner.read("app/src/main/assets/homekeeper.html")
+    except (KeyError, zipfile.BadZipFile) as e:
+        print(f"  STALE bundle source webapp  (archive lacks it: {e})", file=sys.stderr)
+        ok = False
+        hk = None
+    if hk is not None:
+        same = hk == cur
+        ok &= same
+        print(f"  {'OK  ' if same else 'STALE'} bundle source webapp  {sha256(hk)[:16]}")
     print("LEGACY ZIPS: " + ("in sync" if ok else "STALE -- run without --check"))
     return 0 if ok else 1
 
