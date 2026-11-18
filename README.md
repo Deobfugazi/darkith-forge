@@ -149,7 +149,7 @@ The tenth mode — the deliberate lie — is forbidden by the Prime Directive
 > HTML ↔ Kotlin contract); synchrony by `tools/synchrony_gate.py` (one clock,
 > UTC+8). Source: `docs/nt/NT-VI.txt`.
 
-### 2.5 The closure criterion: Σ = 0
+### 2.5 The closure criterion (Sigma equals zero)
 
 > **Plain.** The build is finished only when the residual is exactly zero: nothing the
 > tools verified is missing from the source, and nothing in the source fails to
@@ -421,7 +421,7 @@ The chain of guarantees, end to end:
 > the whole thing until the residual is zero.
 > **Precise.** The coupling law holds iff *disjointness*, *continuity*, and *synchrony*
 > hold ([§2.4](#24-the-mint-and-the-coupling-that-must-hold)); closure is `Σ = 0`
-> ([§2.5](#25-the-closure-criterion--0)).
+> ([§2.5](#25-the-closure-criterion-sigma-equals-zero)).
 > **Machine.** The three legs and their gates:
 
 | Coupling leg | Condition | Gate that enforces it |
