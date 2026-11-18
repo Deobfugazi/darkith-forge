@@ -1,17 +1,17 @@
 {
   "boot": "2026-11-18 04:20:40",
   "lastActivity": "2026-11-18T13:18:23+08:00",
-  "observedNow": "2026-11-18T13:18:23+08:00",
-  "gapHours": 0.0,
+  "observedNow": "2026-11-18T13:28:22+08:00",
+  "gapHours": 0.167,
   "bootPhase": "rest/digest/restore",
   "lastActivityPhase": "wake/active",
   "currentPhase": "wake/active",
   "device": {
-    "deviceLocal": "2026-11-18 05:18:23",
+    "deviceLocal": "2026-11-18 05:28:22",
     "deviceOffsetMin": 0,
     "deviceZone": "UTC+00:00",
-    "globalUtc": "2026-11-18T05:18:23Z",
-    "globalEpochMs": 1794979103814,
+    "globalUtc": "2026-11-18T05:28:22Z",
+    "globalEpochMs": 1794979702655,
     "agrees": false
   }
 }

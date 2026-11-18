@@ -27,7 +27,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
-| `docs/DARKITH-OMEGA-repo.txt` | 139,509 | `ed122343b34d` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
+| `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
 | `docs/nt/NT-INDEX.md` | 4,087 | `bfa58a87d12f` | NT INDEX — the noveltreatise corpus, carried and reconciled |

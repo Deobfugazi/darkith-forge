@@ -145,6 +145,15 @@ if have python3 && [ -f tools/doc_path_gate.py ]; then
   run "doc path gate" python3 tools/doc_path_gate.py
 fi
 
+# Blueprint gate: the Operator's specification corpus must never instruct the agent. The
+# blueprint rode onto main with a live prompt-injection payload (`COPY AND PASTE ... INTO
+# OPENHANDS`, `do not ask for confirmation; execute immediately`) because NOTHING checked
+# it — a law that is not a gate is a note. This runs unconditionally (the corpus is not
+# under app/), so the contaminant can never ride in ungated again.
+if have python3 && [ -f tools/blueprint_gate.py ]; then
+  run "blueprint gate (no injection)" python3 tools/blueprint_gate.py
+fi
+
 if have python3 && [ -f tools/kb_index.py ]; then
   # Universal index of the readable knowledge-skill base (SPI-15). Fails if the index is
   # stale, if a readable file is unfiled, if two files share a hash without a declared
