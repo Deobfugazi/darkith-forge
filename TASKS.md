@@ -44,6 +44,7 @@ validation, contrast checks.
 | C3 | Icon pipeline that feeds the forge | done | `tools/make_icon.py` (pure stdlib, omega Ω gold on near-black, all densities + adaptive) + `tools/icon_gate.py`; CI-gated |
 | C4 | The specialist icon app (the developer vertical in §B) | todo | distinct from C3: this is the user-facing module, not the app's own icon |
 | C5 | Sensing core — only for a consumer that exists | todo | first consumer is the forge memory guard (C2); sensors built in the abstract are the scope trap |
+| C6 | Build the `darkith-omega-homekeeper` module (blueprint preserved at `DARKITH OMEGA repo.txt`, pushed fb85bcf) | todo | spec present, module not built; 8 membership rules + 9 admission conditions (A1-A9) unexecuted |
 
 ## D. SENSING-CORE GAPS (named in the forwarded dialogue — do not lose them again)
 
@@ -105,10 +106,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 40 | named work = board 32 + deficits 8 |
-| E | 14 | un-returned = todo 14 + in_progress 0 + blocked 0 + open 0 |
+| W_in | 41 | named work = board 33 + deficits 8 |
+| E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
 | S | 26 | returned = done 18 + closed 3 + descoped 5 |
-| E/W_in | 0.350 | the progress-deficit indicator; absolution at 0 |
+| E/W_in | 0.366 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.
