@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 36,
+  "count": 37,
   "files": [
     {
       "bytes": 34829,
@@ -19,6 +19,12 @@
       "path": "DEFICITS.json",
       "register": "A-apparatus",
       "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
+    },
+    {
+      "bytes": 39408,
+      "path": "README.md",
+      "register": "A-apparatus",
+      "sha256": "43c0b357155f6cd74626e21488cd47c04a1de3399b32b0a80d56b225004c3449"
     },
     {
       "bytes": 4284,

@@ -23,7 +23,7 @@ import re
 import subprocess
 import sys
 
-DEFAULT_DOCS = ["AGENTS.md", "DARKITH.md", "RESUME.md"]
+DEFAULT_DOCS = ["README.md", "AGENTS.md", "DARKITH.md", "RESUME.md"]
 
 # Cited names that are legitimately NOT tracked: external jars fetched at build time,
 # generated delivery output, and doc names DARKITH.md explicitly records as consolidated
@@ -36,6 +36,8 @@ ALLOWLIST = {
     "dist/SHA256SUMS.txt", "dist/Darkith-1.1.0-omega.apk", "dist/_meta.json", "dist/index.html",
     # generated/orphan artifacts cited in delivery records (regenerable, never committed)
     "delivery/c7_patched_sources.zip", "delivery/darkith-one-shot.sh", "tree_omega/", "lib/",
+    # build output named in prose (produced inside the APK by the chain, never a repo path)
+    "classes.dex", "base.apk", "aligned.apk", "app-signed.apk",
 }
 
 # Extensions that mark a token as a file path (not prose).
