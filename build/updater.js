@@ -39,6 +39,14 @@
     "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/VERSION.json"
   ];
   var DEFAULT_MANIFEST_URL = DEFAULT_MANIFEST_URLS[0];
+  /* The signed APK, straight from the sovereign runtime host. The phone browser
+     downloads this and the package installer does the rest — the shortest path
+     for an unbanked, no-toolchain Operator. */
+  var DEFAULT_APK_URLS = [
+    "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-forge.apk",
+    "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/darkith-forge.apk"
+  ];
+  var DEFAULT_APK_URL = DEFAULT_APK_URLS[0];
   var DEFAULT_ONESHOT_URL =
     "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-one-shot.sh";
 
@@ -93,14 +101,18 @@
     }
     if (r < 0) {
       var rname = String(remote.versionName || remote.surfaceVersion || "?");
+      var apk = remote.apk_url || DEFAULT_APK_URL;
+      var one = remote.oneshot_url || DEFAULT_ONESHOT_URL;
       return {
         state: "update", actionable: true,
+        apkUrl: apk, oneshotUrl: one,
         title: "Sovereign upliftment available",
         message: "Installed: " + lname + " (code " + lcode + ")\n" +
                  "Remote:    " + rname + " (code " + codeOf(remote) + ")\n\n" +
                  "A newer build is live on the remote circuit tree" +
                  (remote.notes ? ":\n\n" + remote.notes : ".") + "\n\n" +
-                 "Update with the one-shot:\n" + (remote.oneshot_url || DEFAULT_ONESHOT_URL),
+                 "Install the APK:\n" + apk + "\n\n" +
+                 "Or build it on the phone with the one-shot:\n" + one,
         local: L, remote: remote
       };
     }
@@ -210,8 +222,10 @@
         (primary ? "background:rgba(232,194,104,.14);color:#f4e3b0" : "background:transparent;color:#b9b3a4");
       return b;
     }
-    var url = d && d.remote && (d.remote.oneshot_url || "") || (d && d.oneshotUrl) || null;
-    if (d && d.actionable && url) foot.appendChild(btn("Get the one-shot", true, url));
+    var apkUrl = (d && d.apkUrl) || (d && d.remote && d.remote.apk_url) || null;
+    var oneUrl = (d && d.oneshotUrl) || (d && d.remote && d.remote.oneshot_url) || null;
+    if (d && d.actionable && apkUrl) foot.appendChild(btn("Download APK", true, apkUrl));
+    if (d && d.actionable && oneUrl) foot.appendChild(btn("One-shot", !apkUrl, oneUrl));
     var dismiss = btn(d && d.actionable ? "Later" : "OK", !(d && d.actionable), null);
     function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); doc.removeEventListener("keydown", onKey); }
     function onKey(e) { if (e.key === "Escape") close(); }
@@ -307,6 +321,8 @@
     LOCAL: LOCAL,
     manifestUrl: DEFAULT_MANIFEST_URL,
     manifestUrls: DEFAULT_MANIFEST_URLS,
+    apkUrl: DEFAULT_APK_URL,
+    apkUrls: DEFAULT_APK_URLS,
     oneshotUrl: DEFAULT_ONESHOT_URL,
     codeOf: codeOf,
     cmp: cmp,

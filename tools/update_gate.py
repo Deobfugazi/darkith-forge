@@ -93,6 +93,12 @@ def main() -> int:
         problems.append("VERSION.json manifest_url is not the first mirror in manifest_urls")
     if man.get("oneshot_url") and man["oneshot_url"] not in js:
         problems.append("updater.js does not carry VERSION.json oneshot_url")
+    apks = man.get("apk_urls") or ([man["apk_url"]] if man.get("apk_url") else [])
+    for u in apks:
+        if u not in js:
+            problems.append(f"updater.js does not carry VERSION.json apk url {u}")
+    if man.get("apk_url") and apks and apks[0] != man.get("apk_url"):
+        problems.append("VERSION.json apk_url is not the first mirror in apk_urls")
 
     if problems:
         print("update_gate: FAIL")

@@ -129,10 +129,10 @@
       "sha256": "69326584950566f1d26672c77957f506f65621d4da975369b7567dd1c5da33c4"
     },
     {
-      "bytes": 1333506,
+      "bytes": 1334381,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "6b0e4d3c7f1f3416e4ac43662eb59762c4147f0020ca1f3ba166934946a67d32"
+      "sha256": "7f4cd120e4c78865da14edb45b91d59a22a6b9765ee81818b5b2fbbe2cc5a7ee"
     },
     {
       "bytes": 229875,
@@ -165,10 +165,10 @@
       "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
     },
     {
-      "bytes": 489205,
+      "bytes": 490080,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "9ca41756866cd606fa37132df3981f5827f27bc01344274e5cb87f6aa56284ec"
+      "sha256": "54eb6bb96df9658f5cde6d23079e84bc404c2add364e5fbdce600309be7c52ff"
     },
     {
       "bytes": 96784,

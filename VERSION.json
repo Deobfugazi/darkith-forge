@@ -14,6 +14,11 @@
   ],
   "manifest_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/VERSION.json",
   "release_tag_prefix": "oneshot-",
+  "apk_urls": [
+    "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-forge.apk",
+    "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/darkith-forge.apk"
+  ],
+  "apk_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-forge.apk",
   "oneshot_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-one-shot.sh",
   "notes": "Sovereign upliftment. Adds dual-register terminal help and the integrated client-coupling update watcher."
 }
