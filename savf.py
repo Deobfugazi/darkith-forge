@@ -840,6 +840,33 @@ def gate(root, src, test_cmd, reach_args, max_mutants, seed):
 # ======================================================================
 # CLI
 # ======================================================================
+def _is_data_token(tok):
+    """True for a value like `-3`, `-1.5`, or `-41.4,-8.1` -- data that merely
+    happens to start with a minus sign."""
+    if len(tok) < 2 or tok[0] != "-" or tok[1] == "-":
+        return False
+    for part in tok[1:].split(","):
+        try:
+            float(part)
+        except ValueError:
+            return False
+    return True
+
+
+def _normalize_argv(argv):
+    """argparse reads a leading '-' as an option, so `--p0 -41.4,-8.1` fails with
+    "expected one argument".  Fold such a value onto the option it follows
+    (`--p0=-41.4,-8.1`), which argparse accepts.  Real flags are untouched."""
+    out = []
+    for tok in argv:
+        if (out and out[-1].startswith("--") and "=" not in out[-1]
+                and _is_data_token(tok)):
+            out[-1] += "=" + tok
+        else:
+            out.append(tok)
+    return out
+
+
 def _parse_pt(s):
     try:
         return tuple(float(x) for x in s.split(","))
@@ -856,6 +883,8 @@ def _load_json_arg(path):
 
 
 def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
     ap = argparse.ArgumentParser(prog="savf", description=__doc__.split("\n")[0])
     ap.add_argument("--version", action="version", version=__version__)
     sp = ap.add_subparsers(dest="cmd", required=True)
@@ -890,7 +919,7 @@ def main(argv=None):
     g.add_argument("--test-cmd", required=True); g.add_argument("--reach-test", required=True)
     g.add_argument("--max", type=int, default=30); g.add_argument("--seed", type=int, default=1); g.add_argument("--out")
 
-    A = ap.parse_args(argv)
+    A = ap.parse_args(_normalize_argv(list(argv)))
     if A.cmd == "axis":
         try:
             ax = Axis(_parse_pt(A.p0), _parse_pt(A.p1))

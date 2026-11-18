@@ -53,6 +53,13 @@ check("axis: s outside [0,1] exits non-zero", r.returncode != 0)
 check("axis: s outside [0,1] has no traceback", "Traceback" not in r.stderr, r.stderr[-200:])
 check("axis: s outside [0,1] explains the range", "s must lie in [0,1]" in (r.stdout + r.stderr), r.stdout + r.stderr)
 
+# 5b. negative coordinates are ordinary data, not options
+r = run("axis", "--p0", "-4,-8", "--p1", "4,8", "--s", "0.5", "--tau", "1")
+check("axis: negative poles parse without a flag error", r.returncode == 0, r.stderr[-200:])
+check("axis: negative poles give the right point", "[0.0, 0.0]" in r.stdout, r.stdout.strip())
+r = run("axis", "--p0", "0,0", "--p1", "10,0", "--s", "0.5", "--tau", "-1")
+check("axis: a space-separated negative tau parses", r.returncode == 0 and "[10.0, 0.0]" in r.stdout, r.stdout.strip() + r.stderr[-120:])
+
 # 6. a missing scan target is an error, not a silent clean bill of health
 r = run("scan", "/tmp/savf-does-not-exist-xyz.py")
 check("scan: missing path exits non-zero", r.returncode != 0, r.stdout.strip())
