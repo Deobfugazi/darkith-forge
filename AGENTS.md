@@ -509,3 +509,34 @@ against the HWM), COSMETIC (autofixed; fatal only with `--fail-on-fixable`). The
 one scalar weighted 100:1:0.1. Commands: `trial` (calibrate + prove), `inspect` (verdict),
 `fix` (autofix reversible charges, idempotent), `ratchet` (advance the setpoint one
 delivery), `report`. Law: DARKITH.md §33 (NEVER #19, MUST #32/#33, SPI-27, W-048).
+
+## §34 THE VISUAL-AFFORDANCE SPECIALIST — the Ω Icon Forge (binding, 2026-11-10)
+
+  The first domain app of the launcher userspace: one offline, zero-dependency page
+  (`icon_forge.html`) that forges **icons, logos and thumbnails**. Five tabs — Icon, Logo,
+  Thumbnail, Couple, Ledger. It is a specialist in the §B sense: a typed spec in, a
+  deterministic artifact plus an audit record out.
+
+  What it emits is INSTALLABLE, not art: `res/drawable/ic_launcher_foreground.xml` (a real
+  VectorDrawable, or a PNG fallback), `res/values/ic_launcher_background.xml`, the two
+  `res/mipmap-anydpi-v26/{ic_launcher,ic_launcher_round}.xml`, and legacy mipmaps. The pack
+  travels as a STORED, fixed-timestamp ZIP, so a rebuild is byte-identical and `buildKey()`
+  (a sha256 of the spec) is a truthful identity.
+
+  Coupling is real: it writes every file through `window.darkith.fileWrite` to
+  `/sdcard/Darkith/icon-pack/` and records the device directory in the ledger. With no bridge
+  the coupling gate reads UNAVAILABLE — never a silent PASS. The four-state gate (measured /
+  unavailable / not-sampled / inferred) is the honest sensor; absence is a state.
+
+  Every emitted `android:pathData` is absolute `M/L/C/Z` only (arcs are converted to cubics
+  first). The safe-zone gate samples each path segment — a bbox-corner test over-estimates a
+  circle and would cry wolf, so it is gone.
+
+  Gates: `tools/test_icon_forge.js` (18 checks; a dependency-free DOM/canvas shim evaluates the
+  REAL script), wired into `tools/ci.sh`. Law: DARKITH.md §34 (NEVER #20, MUST #34, SPI-28,
+  W-049). Board: TASKS.md §I (H1-H7), which closes C4.
+
+  Note (SPI-2): a briefing claimed 19 `.kt` files had "Unclosed comment" errors at cited lines.
+  Reading the exact bytes, all 19 files are balanced and 18 of the 19 cited lines already open
+  a valid `/**` (the 19th, HomekeeperBridge.kt:282, is a code line). `tools/syntax_gate.py app`
+  = PASS, 55 files. The injector would have CREATED the defect it set out to fix.
