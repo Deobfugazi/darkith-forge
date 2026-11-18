@@ -101,6 +101,43 @@ const dflt = await U.check({ alert: false });
 ok("check() walks the configured mirrors by default", hits[0] === U.manifestUrls[0] && dflt.state === "current");
 ok("default mirrors lead with the runtime host", /prod-runtime\.all-hands\.dev/.test(U.manifestUrls[0]));
 
+console.log("presentation (overlay, host-agnostic)");
+function mkNode(tag) {
+  return {
+    tagName: tag, style: {}, children: [], attrs: {}, textContent: "", id: "",
+    href: "", target: "", rel: "", parentNode: null,
+    setAttribute(k, v) { this.attrs[k] = v; },
+    appendChild(c) { this.children.push(c); c.parentNode = this; return c; },
+    removeChild(c) { this.children = this.children.filter((x) => x !== c); },
+    addEventListener() {}, removeEventListener() {},
+    _find(id) { if (this.id === id) return this; for (const c of this.children) { const r = c._find && c._find(id); if (r) return r; } return null; }
+  };
+}
+const shimDoc = {
+  body: mkNode("body"),
+  createElement: (t) => mkNode(t),
+  getElementById: (id) => shimDoc.body._find(id),
+  addEventListener() {}, removeEventListener() {}
+};
+delete globalThis.UI; delete globalThis.document;
+ok("overlay declines when there is no DOM", U.overlay("t", "m", {}) === false);
+globalThis.document = shimDoc;
+const evil = '<img src=x onerror="pwn()">';
+ok("overlay draws with a DOM", U.overlay("Sovereign upliftment available", evil, { actionable: true, remote: { oneshot_url: "http://x/one.sh" } }) === true);
+const modal = shimDoc.getElementById("dku-modal");
+ok("modal element is present", !!modal);
+const panel = modal.children[0];
+ok("untrusted message is textContent, never markup", panel.children[1].textContent === evil && panel.children[1].innerHTML === undefined);
+ok("actionable dialog offers the one-shot link", panel.children[2].children.some((c) => c.href === "http://x/one.sh"));
+delete globalThis.document;
+let alerted = 0; globalThis.alert = () => { alerted++; };
+U.present("t", "m", {});
+ok("present falls back to alert without a DOM", alerted === 1);
+let dlg = 0; globalThis.UI = { dialog: async () => { dlg++; } };
+U.present("t", "m", {});
+ok("present prefers the host UI.dialog", dlg === 1);
+delete globalThis.UI; delete globalThis.alert;
+
 globalThis.fetch = realFetch;
 console.log("\nUPDATER: " + pass + "/" + (pass + fail) + (fail === 0 ? " — all checks pass" : " — FAILURES"));
 process.exit(fail === 0 ? 0 : 1);

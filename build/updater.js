@@ -164,17 +164,77 @@
     return L;
   }
 
-  /* ---------- presentation (host-agnostic) ---------- */
+  /* ---------- presentation (host-agnostic, dependency-free) ---------- */
 
-  function present(title, message) {
+  /* Prefer the host's own dialog. Otherwise draw a self-contained overlay in the
+     page's own palette, so the alert is legible and tappable on a 360px phone
+     instead of a blocking native alert. Every string goes in as textContent —
+     a remote manifest is untrusted and must never be able to inject markup. */
+  function overlay(title, message, d) {
+    var doc = global.document;
+    if (!doc || !doc.body) return false;
+    if (doc.getElementById("dku-modal")) return true;
+    var wrap = doc.createElement("div");
+    wrap.id = "dku-modal";
+    wrap.setAttribute("role", "dialog");
+    wrap.setAttribute("aria-modal", "true");
+    wrap.style.cssText =
+      "position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;" +
+      "background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);padding:14px";
+    var panel = doc.createElement("div");
+    panel.style.cssText =
+      "width:100%;max-width:340px;background:linear-gradient(180deg,#121212,#0a0a0a);" +
+      "border:1px solid rgba(232,194,104,.4);border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.7);" +
+      "color:#e9e4d6;font:13px/1.45 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden";
+    var head = doc.createElement("div");
+    head.style.cssText = "display:flex;gap:9px;align-items:center;padding:13px 15px;border-bottom:1px solid rgba(232,194,104,.18)";
+    var glyph = doc.createElement("span");
+    glyph.textContent = "Ω";
+    glyph.style.cssText = "color:#e8c268;font-size:19px;line-height:1";
+    var h = doc.createElement("strong");
+    h.textContent = title;
+    h.style.cssText = "font-weight:600;letter-spacing:.2px";
+    head.appendChild(glyph); head.appendChild(h);
+    var bodyEl = doc.createElement("div");
+    bodyEl.textContent = message;
+    bodyEl.style.cssText = "padding:13px 15px;white-space:pre-wrap;word-break:break-word;color:#cfc9ba";
+    var foot = doc.createElement("div");
+    foot.style.cssText = "display:flex;gap:9px;justify-content:flex-end;padding:0 15px 14px";
+    function btn(label, primary, href) {
+      var b = doc.createElement(href ? "a" : "button");
+      b.textContent = label;
+      if (href) { b.href = href; b.target = "_blank"; b.rel = "noopener noreferrer"; }
+      b.style.cssText =
+        "font:inherit;cursor:pointer;text-decoration:none;padding:8px 13px;border-radius:9px;border:1px solid " +
+        (primary ? "rgba(232,194,104,.55)" : "rgba(255,255,255,.16)") + ";" +
+        (primary ? "background:rgba(232,194,104,.14);color:#f4e3b0" : "background:transparent;color:#b9b3a4");
+      return b;
+    }
+    var url = d && d.remote && (d.remote.oneshot_url || "") || (d && d.oneshotUrl) || null;
+    if (d && d.actionable && url) foot.appendChild(btn("Get the one-shot", true, url));
+    var dismiss = btn(d && d.actionable ? "Later" : "OK", !(d && d.actionable), null);
+    function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); doc.removeEventListener("keydown", onKey); }
+    function onKey(e) { if (e.key === "Escape") close(); }
+    dismiss.addEventListener("click", close);
+    wrap.addEventListener("click", function (e) { if (e.target === wrap) close(); });
+    doc.addEventListener("keydown", onKey);
+    foot.appendChild(dismiss);
+    panel.appendChild(head); panel.appendChild(bodyEl); panel.appendChild(foot);
+    wrap.appendChild(panel);
+    doc.body.appendChild(wrap);
+    return true;
+  }
+
+  function present(title, message, d) {
     var g = global;
     try {
       if (g.UI && typeof g.UI.dialog === "function") {
         return g.UI.dialog({ title: title, msg: message, cancel: false, ok: "OK" });
       }
     } catch (e) { /* fall through */ }
-    try { if (typeof g.alert === "function") { g.alert(title + "\n\n" + message); return; } } catch (e2) {}
-    try { if (typeof g.console !== "undefined" && g.console.log) g.console.log("[" + title + "]\n" + message); } catch (e3) {}
+    try { if (overlay(title, message, d)) return; } catch (e2) { /* fall through */ }
+    try { if (typeof g.alert === "function") { g.alert(title + "\n\n" + message); return; } } catch (e3) {}
+    try { if (typeof g.console !== "undefined" && g.console.log) g.console.log("[" + title + "]\n" + message); } catch (e4) {}
   }
 
   /* ---------- the watcher ---------- */
@@ -192,9 +252,9 @@
       lastDecision = d;
       if (d.state === "update" && opts.alert !== false) {
         var rcode = codeOf(r.manifest);
-        if (lastAlertedCode !== rcode) { lastAlertedCode = rcode; present(d.title, d.message); }
+        if (lastAlertedCode !== rcode) { lastAlertedCode = rcode; present(d.title, d.message, d); }
       }
-      if (d.state === "unknown" && opts.alert === "always") present(d.title, d.message);
+      if (d.state === "unknown" && opts.alert === "always") present(d.title, d.message, d);
       render(d);
       return d;
     });
@@ -258,6 +318,7 @@
     watch: watch,
     mount: mount,
     present: present,
+    overlay: overlay,
     lastDecision: function () { return lastDecision; },
     _setEl: function (node) { el = node; }   /* test seam */
   };
