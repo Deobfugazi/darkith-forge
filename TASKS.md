@@ -37,10 +37,10 @@ the directive without the Operator repeating it.
 | P3 | README: the pristine rationale + the coupling stress-test map | done | `README.md` section 6 (six guarantees) + section 7 (three coupling legs -> `tools/fork_integrity_gate.sh`, `tools/bridge_contract_audit.py`, `tools/synchrony_gate.py`) |
 | P5 | README: elevate the SUI GENERIS CORE (GL/GPU renderer + mem allocator) to its own top section, three tongues, full mechanism | done | `README.md` section 3 (5 sub-sections: sui generis why, two poles, the GLES renderer, the trace evidence, the hardware ground truth); files `app/src/main/java/com/darkith/transliaison/core/{OmegaRenderer,AutophagicAllocator,MemoryGovernor,GpuScanner,Allocation}.kt`; doctrine `docs/nt/NT-X.txt` Part Three |
 | P6 | README: assimilate the four-register reader shell (`omega-reader.html`) — the doctrine unit as one self-contained page, integrated into §5.7, §8, §2.6 disambiguation, glossary; bugs fixed and tested | done | `omega-reader.html` (4 registers, hash routing, bookmarks, TOC, print CSS, theme+position memory, escaped machine/provenance, bounds-safe router); `tools/test_omega_reader.js` 22/22; wired into `tools/ci.sh`; source `docs/DARKITH-OMEGA-repo.txt` Part 7 |
-| P4 | Converge the three independent derivations byte-for-byte | in_progress | `tools/convergence_gate.py` (py==js clock, tree blob-hash x2); `proof/convergence.json` |
+| P4 | Converge the three independent derivations byte-for-byte | done | `tools/convergence_gate.py` legs A–D (py==js clock/iso/phase; tree blob-hash x2; source universe examiner==walk==git); `proof/convergence.json` (`converged`, `source.agree`) |
 | P7 | Source inspector: the routine trial examiner — 10 calibrated charges, idempotent autofix of reversible classes, escrow for the rest | done | `tools/source_inspector.py` (`trial` 10/10 charges + 4/4 ratchet laws; `fix` byte-identical on a second pass; `proof/source_inspector.json`); wired into `tools/ci.sh`; law DARKITH.md §33 |
 | P8 | Homeokinesis (not homeostasis): the escrow ratchet — HWM only falls, stasis force-degrades, `--justify` waives | done | `tools/source_inspector.py` `ratchet_advance`/`prove_ratchet` (L1–L4 PASS); `proof/source_inspector_baseline.json`; MUST #32 |
-| P9 | PARALLEL WORKER MANDATE: derive the source-invariant convergence formulation independently, then AGREE byte-for-byte | todo | `tools/source_inspector.py` charge registry; converge via `tools/convergence_gate.py`; board row is the shared channel (MUST #26) |
+| P9 | PARALLEL WORKER MANDATE: derive the source-invariant convergence formulation independently, then AGREE byte-for-byte | done | `tools/convergence_gate.py` leg D derives the source universe three ways (examiner iterator, filesystem walk, git index) and fails closed on divergence (proven: an untracked `.kt` is caught as "on disk only"); `proof/convergence.json` `source.agree: true` |
 
 ---
 
@@ -113,12 +113,13 @@ validation, contrast checks.
 <!-- real-time pulse test -->
 
 | F8 | Real-time board push + parallel-worker ping (§32 MUST #26) | done | `tools/board_pulse.sh` (`--check` gated in CI; ping `proof/board_pulse.json`) |
-| F9 | Parallel convergence proven, not asserted (§32 MUST #27) | done | `tools/convergence_gate.py` (clock py==js, phase py==js, tree git==independent blob hash) |
+| F9 | Parallel convergence proven, not asserted (§32 MUST #27) | done | `tools/convergence_gate.py` legs A–D (clock py==js, phase py==js, tree git==independent blob hash, source universe examiner==walk==git) |
 | F10 | Edge-device time coupling + boot-aware session (§32 MUST #28) | done | `tools/synchrony_pulse.py` (`proof/synchrony_pulse.json`: boot, last activity, cycle phase, device zone) |
 | F11 | NT XI retention law as the omega progress-deficit indicator on the board | done | `tools/omega_deficit.py` (W_in=39 E=14 S=25 E/W_in=0.359; §H on this board; `proof/omega_deficit.json`); CI-gated; M6 SE non-extractive |
 | F12 | Universal KB index + dedup of the readable knowledge-skill base (MUST #29) | done | `tools/kb_index.py` (`docs/INDEX.md` + `docs/kb_manifest.json`; 33 files, 6 registers); removed orphan `homeforge.html`, moved blueprint to `docs/`; CI-gated |
 | F13 | Fracture Scout: scheduled, manually-configurable novelty hunter (MUST #30) | done | `tools/fracture_scout.py` + `tools/fractures.txt` (6 sources, non-naive boolean parser → DNF); `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); `selftest` CI-gated; live scan → `proof/fracture_scout.json` |
 | F14 | No committed credentials: fail-closed secret gate + device push alert (MUST #31) | done | `tools/secret_gate.py` (10 detectors, fail-closed, `--staged`, ALLOW with reasons; `selftest` CI-gated); `tools/security_alert.py` (dedup'd `security`+`critical` issue → GitHub app push to device); token purged from `.git/config`, remote made token-free (env credential helper); wired into `tools/ci.sh` |
+| F15 | Escrow debt cleared to zero (homeokinesis flux down) | done | bounty 23.0 → 0: 5 `!!` guarded via elvis/let (`MainActivity`, `ProgressLedger`, `DonorUiConcat`); 18 empty catches resolved (12 logged actionable failures, 6 declared-intent `_`); ratchet flux −23.0; kotlinc 0 errors / 55 files; `proof/source_inspector.json` + `proof/source_inspector_baseline.json` |
 
 ## G. INSTALL + RUNTIME GATES (the two failures a user feels)
 
@@ -138,10 +139,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 53 | named work = board 45 + deficits 8 |
-| E | 17 | un-returned = todo 16 + in_progress 1 + blocked 0 + open 0 |
-| S | 36 | returned = done 28 + closed 3 + descoped 5 |
-| E/W_in | 0.321 | the progress-deficit indicator; absolution at 0 |
+| W_in | 54 | named work = board 46 + deficits 8 |
+| E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
+| S | 39 | returned = done 31 + closed 3 + descoped 5 |
+| E/W_in | 0.278 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

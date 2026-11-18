@@ -60,10 +60,10 @@ class HomekeeperActivity : Activity() {
                             File("/sdcard/Darkith/constraints/4gb_ledger.jsonl").appendText(
                                 "{\"event\":\"memory_pressure\",\"exit_info\":\"$desc\",\"ts\":${System.currentTimeMillis()}}\n"
                             )
-                        } catch (e: Exception) { }
+                        } catch (_: Exception) {}
                     }
                 }
-            } catch (e: Exception) { }
+            } catch (e: Exception) { android.util.Log.w("Darkith", "exit-info telemetry read failed", e) }
         }
 
         try {
@@ -73,7 +73,7 @@ class HomekeeperActivity : Activity() {
             } else {
                 startService(serviceIntent)
             }
-        } catch (e: Exception) { }
+        } catch (e: Exception) { android.util.Log.w("Darkith", "AegisReaper service start failed", e) }
 
         webView = WebView(this).apply {
             settings.javaScriptEnabled = true
@@ -136,7 +136,7 @@ class HomekeeperActivity : Activity() {
                 } catch (e: Exception) {
                     try {
                         startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
-                    } catch (e2: Exception) { }
+                    } catch (e2: Exception) { android.util.Log.w("Darkith", "all-files permission intent failed", e2) }
                 }
             }
         } else {
@@ -279,7 +279,7 @@ class HomekeeperActivity : Activity() {
             if (u.isNotEmpty()) {
                 try {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(u)))
-                } catch (e: Exception) { }
+                } catch (e: Exception) { android.util.Log.w("Darkith", "external open failed", e) }
             }
         })
         bar.addView(toolButton("✕") { hideBrowser() })
@@ -309,7 +309,7 @@ class HomekeeperActivity : Activity() {
                 if (low.startsWith("tel:") || low.startsWith("mailto:") || low.startsWith("sms:")) {
                     try {
                         this@HomekeeperActivity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(u)))
-                    } catch (e: Exception) { }
+                    } catch (e: Exception) { android.util.Log.w("Darkith", "scheme handler failed", e) }
                 }
                 return true
             }
@@ -339,7 +339,7 @@ class HomekeeperActivity : Activity() {
         bw.setDownloadListener { dlUrl, _, _, _, _ ->
             try {
                 this@HomekeeperActivity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(dlUrl)))
-            } catch (e: Exception) { }
+            } catch (e: Exception) { android.util.Log.w("Darkith", "download open failed", e) }
         }
         browserView = bw
         layer.addView(bw, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f))
@@ -421,7 +421,7 @@ class HomekeeperActivity : Activity() {
     override fun onDestroy() {
         try {
             browserView?.destroy()
-        } catch (e: Exception) { }
+        } catch (_: Exception) {}
         super.onDestroy()
     }
 }

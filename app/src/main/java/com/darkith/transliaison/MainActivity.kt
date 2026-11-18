@@ -32,10 +32,10 @@ class MainActivity : Activity() {
             val uris: Array<Uri>? = when {
                 resultCode != RESULT_OK -> null
                 data?.clipData != null -> {
-                    val clip = data.clipData!!
+                    val clip = data?.clipData ?: return
                     Array(clip.itemCount) { clip.getItemAt(it).uri }
                 }
-                data?.data != null -> arrayOf(data.data!!)
+                data?.data != null -> arrayOf(data?.data ?: return)
                 else -> null
             }
             cb.onReceiveValue(uris)
