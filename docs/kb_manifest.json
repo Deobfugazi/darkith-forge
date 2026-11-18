@@ -3,10 +3,10 @@
   "count": 42,
   "files": [
     {
-      "bytes": 41214,
+      "bytes": 41600,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "b2ffb448c23ac50f6953b4df58c8c96757b84c13cd26358969efa4d99152a88b"
+      "sha256": "0263f4013a36190faad3b015dfcb0d345af9a63eaa42a0fc9e0cd43f5510e401"
     },
     {
       "bytes": 65141,
@@ -207,10 +207,10 @@
       "sha256": "eb65d81efeb4c4b24e0ca38bd23dcf6e3260ecac0d21fadf8cea0a991365d1e0"
     },
     {
-      "bytes": 2823,
+      "bytes": 2457,
       "path": "proof/comment_premise_check.txt",
       "register": "E-evidence",
-      "sha256": "5713322369bae8f4bfb98330d78b87f27de519287d87070a2f409b2dc6862958"
+      "sha256": "19e0779e4bf847ca1a505514afe14e6e3ec21c8ac12d0d1ea5aa5806ed6548a7"
     },
     {
       "bytes": 1003,

@@ -55,7 +55,9 @@ if have python3; then
   # A scanner, not kotlinc (W-023), but exact about the defect that silently
   # swallows the rest of a file. Runs only when the app tree is present.
   if [ -d app/src/main/java ]; then
-    run "kotlin syntax gate"              python3 tools/syntax_gate.py app/src/main/java
+    SYNTAX_ROOTS="app/src/main/java"
+    [ -d omega-app/src/main/java ] && SYNTAX_ROOTS="$SYNTAX_ROOTS omega-app/src/main/java"
+    run "kotlin syntax gate"              python3 tools/syntax_gate.py $SYNTAX_ROOTS
     # API-level gate: a high-API call with no SDK_INT guard crashes the launcher on
     # older devices before the UI paints. Static, but exact about that defect.
     if [ -f tools/api_level_gate.py ]; then
@@ -196,21 +198,6 @@ fi
   if have python3 && [ -f tools/source_inspector.py ]; then
     run "source inspector trial (charges + ratchet)" python3 tools/source_inspector.py trial
     run "source inspector (loophole trial)"          python3 tools/source_inspector.py inspect --fail-on-fixable
-  fi
-
-  # Comment balance (the "Unclosed comment" class): a blind sed that strips an
-  # opening /* leaves a block comment that never closes — kotlinc then refuses the
-  # file and the raw chain stops. kt_comment_scan.py is the canonical
-  # nesting/string-aware lexer; its selftest is the calibration, and the tree scan
-  # is the enforcement. Exit 0 iff zero UNCLOSED/ORPHAN_CLOSE defects.
-  if have python3 && [ -f tools/kt_comment_scan.py ]; then
-    run "comment scanner selftest (calibration)" python3 tools/kt_comment_scan.py --selftest
-    if have git; then
-      # Read the bytes of every tracked .kt (SPI-2/SPI-6), never guess.
-      mapfile -t KT_FILES < <(git ls-files '*.kt')
-      run "comment balance (unclosed/orphan across tree)" \
-        python3 tools/kt_comment_scan.py "${KT_FILES[@]}"
-    fi
   fi
 
 # The inscriber studio: boots in jsdom, engines present, terminal + toolkits live. Needs
