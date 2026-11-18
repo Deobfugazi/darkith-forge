@@ -547,3 +547,30 @@ delivery), `report`. Law: DARKITH.md §33 (NEVER #19, MUST #32/#33, SPI-27, W-04
   Reading the exact bytes, all 19 files are balanced and 18 of the 19 cited lines already open
   a valid `/**` (the 19th, HomekeeperBridge.kt:282, is a code line). `tools/syntax_gate.py app`
   = PASS, 55 files. The injector would have CREATED the defect it set out to fix.
+
+## §35 THE DUAL-REGISTER MANUAL — TermKit `help beginner` / `help dev` (binding, 2026-11-10)
+
+  TermKit's `help` now has two registers, both served from ONE source of truth so they can
+  never disagree with each other or with the engine:
+
+  - `help beginner` — plain-language guide for a first-time user: what the shell is, six
+    rules, worked samples printed with their REAL output, files, failure codes, and a
+    pointer to `help dev`. It never uses the word "invariant".
+  - `help dev` — the machine register for experts and AIs: the model, the POSIX-subset
+    grammar, the invariant list, every fixture as `cmd => expected ($?)` with a one-line
+    `why`, a TermKit-vs-Termux/Linux comparison table, and the fracture-closure rationale
+    for each design choice.
+
+  Single source: `build/termkit-help.js` sets `global.__TermKitHelp` (beginner, dev,
+  compare, closure, fixtures, builtins, version). `build/build-forge.py` injects it into
+  the canonical shell between `<!-- TERMKIT-HELP:START/END -->` markers (idempotent), and
+  the shell's `help` builtin consults it (`help`, `help CMD`, `help beginner`, `help dev`).
+
+  No drift is possible: `tools/termkit_help_audit.mjs` extracts the REAL Part A+B core from
+  `darkith home forge.html`, runs every fixture in a fresh `Shell`, and asserts stdout +
+  exit status against what the manual prints (84 checks, 34 fixtures), and cross-checks the
+  manual's builtin list against the engine's. Wired into `tools/ci.sh`, so a lying sample
+  turns CI red. The canonical page also carries an in-page `hk58 help dual register` test.
+
+  Regenerate after editing the manual: `python3 build/build-forge.py` (writes the fused
+  page) then `python3 build/make-oneshot.py` (the one-shot embeds the shell).
