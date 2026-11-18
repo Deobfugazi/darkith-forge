@@ -77,6 +77,7 @@ function parseArgs(argv) {
     else if (a === '--height') o.height = +val();
     else if (a === '--lib') o.lib = val();
     else if (a === '--chrome') o.chrome = val();
+    else if (a === '--expect') o.expect = val().split(',').filter(Boolean);
     else if (a === '--out') o.out = val();
     else if (a.startsWith('--')) { console.error('unknown flag: ' + a); usage(2); }
     else o.files.push(a);

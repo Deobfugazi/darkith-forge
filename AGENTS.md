@@ -642,3 +642,42 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   7/7 and prints "DONE". The checked-in `app-signed.apk` was STALE (1.1.0-omega / code 2);
   after any surface change you must rebuild it or the APK lags the page. Verify with
   `aapt2 dump badging` and by reading the watcher out of the packaged `assets/homekeeper.html`.
+
+## §36 THE OMEGA TERMKIT PRE-RUNNER + CLEARANCELOOP (binding, 2026-11-18)
+- WHAT SHIPPED: two offline engines, injected into EVERY surface as one integration step.
+  (a) PRE-RUNNER — `app/src/main/assets/vendor/prerunner.js` (canonical). One report contract,
+  two engines: a sandboxed offscreen iframe for in-app/WebView, a real headless Chromium for
+  node (`tools/prerunner.js`, playwright-core + system `/usr/bin/chromium`, no browser download).
+  (b) CLEARANCELOOP — `app/src/main/assets/vendor/clearanceloop.js`. The homeokinetic debt
+  ratchet of §33 (`tools/source_inspector.py`) carried into the runtime: per-class friction HWM
+  may only flux DOWN, a rise is a regression = FAIL, stasis over `WINDOW`=5 deliveries is
+  force-degraded to a blocker, a rise needs a recorded waiver. `absorb(report)` closes the loop
+  between them: a pre-run's errors + long tasks become friction debt.
+- INJECTED BY `build/integrate-engines.py` (idempotent, marker-delimited: `<!-- PRERUNNER:START|END -->`
+  + `<!-- PRERUN-SHIM:START|END -->`). It writes BOTH the surface's own shell AND the `studio-src`
+  carrier inside `darkith home forge.html`, because `build-forge.py` regenerates the standalone
+  studio AND the fused forge FROM that carrier. Run it BEFORE `build-forge.py`; `build/verify.py`
+  (sync step 1) runs its `--check`, so drift fails CI.
+- ANCHOR TRAP (cost a cycle): inject AFTER THE FIRST `<script>…</script>`, never after `<body>`.
+  `build/make_core.py` extracts the SAVF core from savf.html's FIRST script — a block ahead of it
+  is mistaken for the core and the build dies "engine or reference marker missing". Anchoring
+  after the first script is also invisible to `build-forge.py` (which injects at the last `</body>`),
+  so both `--check`s reproduce byte-for-byte.
+- `</script` TRAP (cost two cycles): the carrier round-trips its payload through a `text/plain`
+  script, escaping then UNescaping the raw closing-script sequence. So a literal `</script` OR its
+  backslash-escaped form inside an injected engine/shim gets unescaped to `</script` and closes the
+  tag early (SyntaxError). Neither engine nor the shim may contain that sequence — build it at
+  runtime (`'<'+'/script>'`) and assemble closing-script regexes with `new RegExp`.
+- RUNTIME SURFACE every app gains: `window.DarkithPreRunner`, `window.DarkithPrerun`,
+  `window.ClearanceLoop`, `window.DarkithCL`; a floating `▶` FAB (id `prerun-fab`); a `prerun`
+  and a `clearance` terminal builtin/command wherever the surface has one (omega `Omega.BUILTINS`,
+  studio `CMD_REGISTRY`/`dispatchCommand`).
+- REAL BUG THE FUZZER FOUND: the studio's `saveToPool()` HALTed `SAVE_FAIL` on `file://` because
+  Chromium denies IndexedDB there — the app's exact offline case. Fixed in the canonical carrier
+  to degrade to a toast. Re-apply if the carrier is ever regenerated from a stale source.
+- GATES: `python3 tools/prerunner_gate.py` (engine surface + CLI exit contract + honest verdicts),
+  `python3 tools/clearanceloop_gate.py` (the four ratchet laws + engines wired into every surface),
+  and `node tools/prerunner.js --selftest` (8/8). All three in `tools/ci.sh`. Dogfood proof: all six
+  surfaces PASS with 0 page errors at 360×800 (`node tools/prerunner.js <surface> --stress 15
+  --expect DarkithPreRunner,ClearanceLoop`).
+

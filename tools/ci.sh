@@ -170,6 +170,11 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
   if [ -f "$ROOT/tools/prerunner_gate.py" ]; then
     run "pre-runner gate (engine + exit contract)" python3 tools/prerunner_gate.py
   fi
+  # The ClearanceLoop ratchet is the governing law; lock its four laws and assert
+  # the engines are wired into every surface, or a surface silently loses them.
+  if [ -f "$ROOT/tools/clearanceloop_gate.py" ]; then
+    run "clearanceloop gate (ratchet laws + integration)" python3 tools/clearanceloop_gate.py
+  fi
   run "bridge contract audit" \
     python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
   run "doc consolidation check" \

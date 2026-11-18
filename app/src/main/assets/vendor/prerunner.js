@@ -14,6 +14,12 @@
   var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
   var sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
   var NEEDS = function (l, w) { var e = new Error('NEEDS_ADAPTER: ' + l + ' needs ' + w); e.needs = true; return e; };
+  /* Script tags, assembled at runtime. The forge build round-trips its embedded
+     studio through a `text/plain` carrier that escapes then unescapes the raw
+     closing-script sequence, so this file must never contain that sequence (nor
+     its backslash-escaped form) — the tags are built here instead of written. */
+  var SE = '<' + '/script>';
+  var SEE = '<' + '\\' + '/script';
 
 
   /* ---------- ADAPTERS (virtual transpile, in memory only) ---------- */
@@ -107,15 +113,15 @@
 
 
   function buildHtml(tp, token) {
-    var probe = '<script>' + PROBE.replace('__TOKEN__', token) + '<\/script>';
-    var safe = function (s) { return String(s).replace(/<\/script/gi, '<\\/script'); };
+    var probe = '<script>' + PROBE.replace('__TOKEN__', token) + SE;
+    var safe = function (s) { return String(s).replace(new RegExp(SEE, 'gi'), SEE + '>'); };
     if (tp.ent.html) {
       var h = tp.ent.html;
       return /<head[^>]*>/i.test(h) ? h.replace(/<head[^>]*>/i, function (m) { return m + probe; }) : probe + h;
     }
     return '<!doctype html><meta charset="utf-8">' + probe + '<body>' +
-      tp.pre.map(function (s) { return '<script>' + safe(s) + '<\/script>'; }).join('') +
-      '<script' + (tp.ent.module ? ' type="module"' : '') + '>' + safe(tp.ent.js) + '<\/script></body>';
+      tp.pre.map(function (s) { return '<script>' + safe(s) + SE; }).join('') +
+      '<script' + (tp.ent.module ? ' type="module"' : '') + '>' + safe(tp.ent.js) + SE + '</body>';
   }
 
 
@@ -173,17 +179,24 @@
         if (o.stress) await pg.evaluate('window.__dprFuzz(' + (o.stress | 0) + ',' + ((o.seed || 1) + i) + ')');
         shots.push({ t: Date.now() - t0, png: 'data:image/png;base64,' + Buffer.from(await pg.screenshot({ type: 'png' })).toString('base64') });
       }
-      return finish('node', o, tp, await pg.evaluate('window.__dprDump()'), shots);
+      return finish('node', o, tp, await pg.evaluate('window.__dprDump()'), shots,
+                    o.expect ? await pg.evaluate(function (ks) { var o = {}; ks.forEach(function (k) { o[k] = typeof window[k]; }); return o; }, o.expect) : null);
     } finally { await br.close(); }
   }
 
 
-  function finish(engine, o, tp, d, shots) {
+  function finish(engine, o, tp, d, shots, globals) {
     var r = { engine: engine, entry: o.entry, ok: true, verdict: 'PASS',
               console: d.console, errors: d.errors, metrics: d.metrics, shots: shots,
               target: { width: o.width || 390, height: o.height || 780, shots: o.shots || 4,
                         interval: o.interval || 600, stress: o.stress || 0, seed: o.seed || 1 },
               transpile: { ms: tp.ms, notes: tp.notes } };
+    if (globals) {
+      r.globals = globals;
+      Object.keys(globals).forEach(function (k) {
+        if (globals[k] === 'undefined') r.errors = r.errors.concat('expected global missing: ' + k);
+      });
+    }
     r.verdict = verdict(r); r.ok = r.verdict !== 'FAIL'; return r;
   }
 
@@ -198,6 +211,58 @@
                verdict: e.needs ? 'NEEDS_ADAPTER' : 'ERROR', errors: [e.message],
                console: [], metrics: {}, shots: [], transpile: {} };
     }
+  }
+
+
+  /* ---------- UI (optional): a self-contained report overlay ---------- */
+  var VC = { PASS: '#3fb950', WARN: '#d29922', FAIL: '#f85149', NEEDS_ADAPTER: '#58a6ff', ERROR: '#8b949e' };
+  function el(tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; }
+  function ui(opts) {
+    if (typeof document === 'undefined') return run(opts);
+    opts = opts || {};
+    var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    var card = el('div', 'width:min(560px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    host.appendChild(card); document.body.appendChild(host);
+    var close = function () { if (host.parentNode) host.remove(); };
+    host.addEventListener('click', function (e) { if (e.target === host) close(); });
+    var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
+    head.appendChild(el('span', 'color:#ff8a3d;font-weight:700', '\u25b6 Pre-runner'));
+    var pill = el('span', 'padding:2px 9px;border-radius:999px;font-weight:700;font-size:12px;background:#161a20;color:#8b949e', 'running\u2026');
+    head.appendChild(pill);
+    var x = el('button', 'margin-left:auto;background:transparent;border:0;color:#8b949e;font-size:16px;cursor:pointer', '\u2715');
+    x.addEventListener('click', close); head.appendChild(x); card.appendChild(head);
+    var body = el('div', 'padding:12px 14px'); card.appendChild(body);
+    body.appendChild(el('div', 'color:#8b949e', 'racing the race before the race\u2026'));
+    Promise.resolve(run(opts)).then(function (r) {
+      pill.textContent = r.verdict; pill.style.color = '#05070a'; pill.style.background = VC[r.verdict] || '#8b949e';
+      body.innerHTML = '';
+      var m = r.metrics || {}, t = r.target || {}, mrow = el('div', 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px');
+      [['fps', m.fps], ['long', m.longTasks], ['max ms', m.maxLongMs], ['nodes', m.nodes], ['heap MB', m.heapMB]].forEach(function (kv) {
+        if (kv[1] == null) return;
+        mrow.appendChild(el('span', 'padding:3px 8px;border:1px solid #262a31;border-radius:8px;color:#c9d1d9', kv[0] + ' ' + kv[1]));
+      });
+      body.appendChild(mrow);
+      body.appendChild(el('div', 'color:#8b949e;margin-bottom:4px', 'errors: ' + r.errors.length));
+      if (r.errors.length) {
+        var eb = el('div', 'max-height:130px;overflow:auto;background:#140a0c;border:1px solid #3d1d22;border-radius:8px;padding:8px;color:#ffb4ad;white-space:pre-wrap;margin-bottom:10px');
+        eb.textContent = r.errors.slice(0, 20).join('\n'); body.appendChild(eb);
+      }
+      if (r.shots && r.shots.length) {
+        var strip = el('div', 'display:flex;gap:8px;overflow:auto;padding-bottom:6px');
+        r.shots.forEach(function (s, i) {
+          if (!s.png) return;
+          var im = el('img', 'height:150px;border:1px solid #262a31;border-radius:8px;background:#fff');
+          im.src = s.png; im.alt = 'shot ' + (i + 1); im.title = 't=' + s.t + 'ms'; strip.appendChild(im);
+        });
+        body.appendChild(strip);
+      }
+      var foot = el('div', 'display:flex;align-items:center;gap:8px;margin-top:10px;color:#8b949e;font-size:12px');
+      foot.appendChild(el('span', null, 'seed ' + (t.seed || 1) + ' \u00b7 shots ' + (t.shots || 4) + ' \u00b7 stress ' + (t.stress || 0) + ' \u00b7 ' + r.engine));
+      var again = el('button', 'margin-left:auto;background:#161a20;border:1px solid #262a31;color:#e8edf3;border-radius:8px;padding:5px 10px;cursor:pointer', '\u21bb Re-run');
+      again.addEventListener('click', function () { close(); ui(opts); });
+      foot.appendChild(again); body.appendChild(foot);
+    });
+    return host;
   }
 
 
@@ -218,5 +283,5 @@
   }
 
 
-  return { run: run, register: register, transpile: transpile, adapters: AD };
+  return { run: run, ui: ui, register: register, transpile: transpile, adapters: AD };
 });

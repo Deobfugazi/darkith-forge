@@ -85,6 +85,7 @@ def check_sync() -> bool:
     ok = True
     checkers = [
         ("build-forge.py", ["build-forge.py", "--check"], False),
+        ("integrate-engines.py", ["integrate-engines.py", "--check"], False),
         ("sync-delivery.py", ["sync-delivery.py", "--check"], True),
         ("make-repo-zip.py", ["make-repo-zip.py", "--check"], True),
         ("make-bundle-zip.py", ["make-bundle-zip.py", "--check"], True),
