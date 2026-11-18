@@ -14,6 +14,7 @@ Run:  python3 build/sync-delivery.py [--check]
 """
 import argparse
 import hashlib
+import html
 import pathlib
 import re
 import shutil
@@ -26,8 +27,10 @@ INDEX = DELIVERY / "index.html"
 # repo file -> name inside delivery/
 COPY = {
     ROOT / "savf.html": DELIVERY / "savf.html",
+    ROOT / "savf.py": DELIVERY / "savf.py",
     ROOT / "darkith forge.html": DELIVERY / "darkith-forge.html",
     ROOT / "omega.html": DELIVERY / "omega.html",
+    ROOT / "VERSION.json": DELIVERY / "VERSION.json",
 }
 
 # Documents that quote a size and a sha256 for the webapp.  Kept in step with
@@ -97,6 +100,9 @@ def check_links(text: str) -> list:
     for href in sorted(set(hrefs)):
         if href.startswith(("http:", "https:", "#", "mailto:")):
             continue
+        # The href is HTML-escaped in the source (`&amp;` in `build&install.sh`); a
+        # browser decodes it before resolving, so the on-disk name is the unescaped form.
+        href = html.unescape(href)
         if not (DELIVERY / href).exists():
             missing.append(href)
     return missing
@@ -184,6 +190,12 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.check:
+        # `delivery/` is regenerable output that .gitignore forbids committing, so a
+        # clean checkout has no index.html. Absent is a skip, not a failure (the same
+        # rule verify.py check_sync applies): the gate must pass from a clean clone.
+        if not INDEX.exists():
+            print("delivery: no index.html bundle (regenerable, not committed) — skip")
+            return 0
         ok = True
         index = INDEX.read_text(encoding="utf-8")
         if refresh_index(index) != index:

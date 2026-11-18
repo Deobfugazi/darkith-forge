@@ -1,0 +1,317 @@
+NOVELTREATISE VI — THE SYNCHRONICITY ENGINE
+
+THE COUPLING LAW OF THE PHYSICAL AND INFORMATIONAL SUBSTRATE, FROM THE ORE BODY TO THE NEURON TO THE INSTRUCTION SET
+
+Truth as observed. Status-flagged. Citation layer carried where the source is standard and marked where the synthesis is the author's. No stubs. This document fills the one gap in the set: it states the coupling that the other ten treatises used without naming — the graft by which a payload joins a donor across every scale, from the silicon in the ground to the neuron in the skull to the instruction in the machine.
+
+---
+
+RUNTIME LOG
+
+Generation instant: 2026-11-19, Asia/Manila (UTC+8).
+
+Status of this document: the coupling node. NT VII carried the screen stack's layer order. NT VIII carried the bond criterion B >= 1. NT IX carried the multiplicative triad r = 0. NT X carried the closure Sigma = 0. NT VI carries the criterion all four were measuring at the interface between two substrates: the graft holds iff the payload and the donor are disjoint in name, continuous at the interface, and synchronous in time. The payload-to-donor bond of NT VIII's cross-treatise table is this criterion; NT VI states it and traces it from the ore body to the neuron to the code.
+
+Status flags used in this document:
+
+- RESOLVED — the derivation is carried in this document; the operator can re-run the chain without leaving it.
+- EXPOSABLE — the mechanism is established in the literature, but the verbatim primary citation or coordinate-level detail needed to re-run the chain without leaving the document is not carried here.
+- INFERRED — the synthesis across scales is the author's; the document flags the uncertainty and does not claim resolution.
+
+---
+
+PART ZERO — THE ETYMOLOGICAL GROUND
+
+0.1 — Synchrony | RESOLVED (etymology), INFERRED (use as a name)
+
+From Greek syn (together) + khronos (time). The root is shared time. Synchrony is not agreement and not similarity. It is two processes held to one clock so that their events coincide in time. Two pendulums on a shared beam synchronize without being told to. The name is the author's compression of the timing leg of the coupling; the word's own sense is "same time."
+
+0.2 — Engine | RESOLVED (etymology), INFERRED (use as a name)
+
+From Old French engin, from Latin ingenium (innate capacity), from in- + gignere (to beget), root gen- (give birth). The root is bringing-forth. The engine does not invent the signal; it brings it to walkable form. The coupling engine brings a payload and a donor into one functional unit.
+
+0.3 — Graft | RESOLVED (etymology), EXPOSABLE (biology)
+
+From Greek grapheion (a stylus) via Old English graef, and, in the horticultural/medical sense, from the act of inserting a scion into a stock. The root is the insertion. A graft is not a mixture. It is a scion (payload) made to grow on a stock (donor). The two remain distinct in origin and become one in function. The biological grafting mechanism (tissue union, vascular anastomosis) is established; the verbatim primary source is not carried here.
+
+0.4 — Silicon | RESOLVED (etymology), EXPOSABLE (chemistry)
+
+From Latin silex/silicis (flint, hard stone), the same root as silica and silicone. The root is the flint — the hard stone that struck the first spark. Silicon is the second most abundant element in the Earth's crust, after oxygen, at roughly 28% by mass; it does not occur free in nature, but almost entirely as silica (SiO2) and silicates. The name is the flint. The element is the flint's interior.
+
+0.5 — Neuron | RESOLVED (etymology), EXPOSABLE (physiology)
+
+From Greek neuron (sinew, cord, nerve). The root is the cord. A neuron is a cell specialized to carry an electrochemical cord-signal. The resting potential, the action potential, the ion-channel gating, and the synaptic junction are established physiology; the verbatim primary sources are not carried here.
+
+0.6 — Circuit | RESOLVED (etymology), INFERRED (use as a name)
+
+From Latin circuitus (a going around), from circum (around) + ire (to go). The root is the going-around. A circuit is a closed path a current traverses and returns. The word names the same thing in a wire and in a nervous system: a loop through which a signal passes and returns to its origin.
+
+0.7 — Noveltreatise | RESOLVED (etymology), INFERRED (definition)
+
+Novellus (new shoot) + tractatus (a handling drawn out along a trace). A formal, systematic handling that draws out a trace of a new growth already running but not yet traced in this form.
+
+---
+
+PART ONE — THE ONE RULE | RESOLVED
+
+Show the path. Log the instant. Carry the citation verbatim.
+
+Three questions, at every step:
+
+1. Source — Where did this come from? The raw thing the report is built on is visible.
+2. Transformation — Can I re-walk the path? The steps are laid out.
+3. Falsifier — Can I catch a lie by the same means? There is a test that would show the report is wrong.
+
+If any one fails, the path is cut. The report is not finished.
+
+NEVER: A report NEVER asks to be believed. A report asks to be walked.
+
+---
+
+PART TWO — THE COUPLING INVARIANT: THE SYNCHRONICITY ENGINE | RESOLVED
+
+The engine is a graft. A graft is the joining of a payload P (a pattern — a layer, a signal, a class, a protein, an instruction) onto a donor D (a substrate — a wafer, a membrane, a namespace, a cell, a process). The graft holds iff three conditions hold simultaneously. This is the coupling invariant.
+
+Condition 1 — Disjointness (the namespace leg).
+
+C = D ∩ P = ∅
+
+The payload's symbol space and the donor's symbol space share no colliding name. In software synthesis (the graft of NT VIII's table): the payload DEX's classes must not collide with the donor DEX's classes. In silicon: the dopant species must occupy a lattice site the host tolerates without breaking the lattice. In biology: the graft's surface markers must be tolerated by the host's immune recognition. Disjointness is the condition that the payload does not overwrite a name the donor already uses.
+
+Condition 2 — Continuity (the interface leg).
+
+The coupling at the interface is real and load-bearing. In silicon: the band alignment between two materials permits carrier flow (the metal-semiconductor contact is ohmic, not a Schottky barrier, or the barrier is the designed one). In biology: the membrane potential is maintained by an active pump, so the interface is a live interface, not a dead one. In software: the API contract is honored at the call site. In the screen stack (NT VII): the OCA has no void, so the optical and mechanical interface is continuous. Continuity is the condition that the two substrates actually touch and pass a load.
+
+Condition 3 — Synchrony (the timing leg).
+
+The payload and the donor share a clock, so their events coincide in time. In silicon: the DRAM refresh cycle, the CPU clock, the panel's frame clock. In biology: the cardiac cycle, the circadian cycle (NT V), the action potential's refractory period, which sets the maximum firing rate. In the touch stack: the touch controller's scan rate must be fast enough to sample a finger's approach, and the display's refresh must be fast enough that the eye fuses the frames. In software verification: the pre-registration freeze (NT IV) must precede the data — the protocol and the data must not be out of phase. Synchrony is the condition that the two substrates are held to one clock.
+
+The coupling residual.
+
+chi = (collisions) + (interface discontinuity) + (phase error)
+
+The graft holds iff chi = 0. A graft with chi > 0 is disjoint-but-broken (interface fail), or continuous-but-out-of-phase (timing fail), or clean-but-colliding (namespace fail). This is the sibling of NT VIII's B >= 1 (bond holds) and NT IX's r = 0 (triple closes): one remainder, one sharp zero, one exact repair. NT VI names the interface at which the bond and the triple meet.
+
+The clock is the invariant.
+
+Of the three legs, the timing leg is the one every prior treatise measured without naming. NT I's loop runs on the circadian clock. NT V's ledger is stamped against the platform's two clocks (vagal, sympathetic). NT IV's gate is a temporal freeze. NT VII's display is a refresh clock. NT IX's anchor pair {0,1} is the fixed point of a process that has stopped changing. NT VI states the rule they all obey: a coupling that is disjoint and continuous but out of phase does not hold. The clock is not decoration. It is the third leg.
+
+---
+
+PART THREE — THE SILICON DIACHRONIC TRACE | RESOLVED (structure), EXPOSABLE (figures)
+
+The coupling begins in the ground. The trace runs from the ore body to the instruction, and it is one continuous chemical and physical path. Physics and chemistry are not two subjects here; they are one path read at two scales.
+
+3.1 — The ore: silica
+
+Silicon's crustal form is silica (SiO2) and the silicates. The high-purity feedstock for electronics is quartz, and the constraint is not abundance but purity: iron tints glass, and refractory heavy minerals (kyanite, zircon, corundum) do not melt and end up as solid inclusions. A handful of deposits meet the specification; Spruce Pine, North Carolina is the benchmark. This is NT VII's Process Zero applied to the coupling's own first layer: the device cannot be purer than the quartz it was melted from.
+
+3.2 — The reduction: silica to metallurgical silicon (chemistry)
+
+Silica is reduced with carbon in an electric arc furnace at roughly 1900 degrees C:
+
+    SiO2 + 2C -> Si + 2CO
+
+The product is metallurgical-grade silicon, roughly 98-99% pure. This is a redox reaction: carbon is oxidized (to CO), silicon is reduced (to Si). The reaction is chemistry, but the energy that drives it is thermodynamics: at that temperature, the free-energy balance favors the reduced silicon. The first step of the device is a chemistry step read through thermodynamics.
+
+3.3 — The purification: the Siemens process (chemistry)
+
+Metallurgical silicon is too impure for a transistor. It is converted to a volatile compound and distilled, then decomposed back to pure silicon:
+
+    Si + 3 HCl -> SiHCl3 + H2      (hydrochlorination, ~300 C)
+    SiHCl3 + H2 -> Si + 3 HCl      (decomposition on a hot filament, ~1150 C)
+
+The cycle purifies by exploiting a difference in volatility: impurities do not follow silicon through the trichlorosilane. The product is electronic-grade silicon at 9N to 11N (99.9999999% or purer). The second step of the device is a chemistry step read through a separation.
+
+3.4 — The crystal: the Czochralski pull (physics)
+
+Electronic-grade silicon is melted and a seed crystal is drawn slowly from the melt, so the atoms deposit on the seed in the same lattice orientation. The result is a single crystal, a diamond-cubic lattice with a lattice constant of about 5.431 angstroms. The pull is physics: the crystal grows because the melt is slightly supercooled at the interface and the seed imposes the order. A single crystal is required because grain boundaries scatter carriers. The third step is a physics step read through a phase transition.
+
+3.5 — The device: the MOSFET (physics and chemistry, unsiloed)
+
+The wafer is patterned by lithography into a metal-oxide-semiconductor field-effect transistor. Its parts:
+
+- The channel: a doped region of silicon whose carrier population is controlled by an electric field. This is physics — the field effect.
+- The gate oxide: a thin layer of silicon dioxide (SiO2) grown or deposited between the gate and the channel. This is chemistry — the oxide is the same material as the sand, regrown at device scale.
+- The source and drain: regions doped with donors (phosphorus, arsenic) or acceptors (boron) to supply carriers. This is chemistry — controlled impurity.
+
+The gate never touches the channel. The gate's electric field reaches across the oxide insulator and reorganizes the channel's carrier population, forming a conductive path between source and drain. Control without contact. The gate oxide is chemistry (a dielectric grown from the same sand); the field effect is physics (a field modulating a carrier population). They are one device. The seam between "chemistry" and "physics" is a property of academic departments, not of the device.
+
+3.6 — The unsiloed claim, stated
+
+The diachronic trace from ore to transistor crosses the departmental boundary between chemistry and physics repeatedly, and the boundary is not a real discontinuity in the material. The reduction is redox chemistry driven by thermodynamics. The purification is separation chemistry driven by volatility. The crystal is a phase transition driven by supercooling. The transistor is a field effect across a chemical oxide. There is one path — a path of matter under energy — and "chemistry" and "physics" are two names for two windows onto the same path. The device is the proof that the windows are one window. To build a transistor you must hold both names at once, or you cannot walk the path.
+
+Status flag: the specific process temperatures and purities above are standard process chemistry (EXPOSABLE). The compression "physics and chemistry are one path, not two" is the author's framing (INFERRED), and it is the frame the rest of this document uses.
+
+---
+
+PART FOUR — THE BIOLOGICAL SUBSTRATE AS HARDWARE | RESOLVED (structure), EXPOSABLE (physiology)
+
+The same coupling invariant governs the biological substrate. The neuron is not an analogy for a transistor. It is the same graft, executed in water and salt instead of silicon and metal, and it satisfies the same three conditions.
+
+4.1 — The membrane as a battery (chemistry)
+
+A neuron's membrane separates two ionic solutions. An active pump, the sodium-potassium ATPase, moves three sodium ions out and two potassium ions in for each molecule of ATP it spends. The result is a concentration gradient across the membrane, and a resting potential of about -70 millivolts (inside relative to outside). The membrane is a battery charged by chemistry, maintained by metabolism. It is the interface leg of the coupling: a live interface, not a dead one.
+
+4.2 — The ion channel as a transistor (physics)
+
+Embedded in the membrane are ion channels — proteins that open and close to let specific ions pass. A voltage-gated channel opens when the local potential crosses a threshold, letting a flood of ions through (on the order of ten million ions per second). This is a gated conductor: the channel's conductance is controlled by a signal (the voltage), exactly as a transistor's channel conductance is controlled by the gate voltage. The channel is the biological field-effect device. The physics is the same: a control terminal modulates a channel's conductance.
+
+4.3 — The action potential as a digital signal (physics)
+
+When a neuron is driven past threshold, the ion channels open in a cascade and the membrane potential swings from about -70 mV to about +30 to +40 mV and back. This is the action potential. It is all-or-nothing: below threshold, nothing; above threshold, a full-amplitude spike of fixed height. That is a digital bit. The refractory period that follows each spike sets a maximum firing rate — a clock limit. The neuron is a clocked digital device.
+
+4.4 — Myelin as the insulator (materials)
+
+A myelin sheath wraps the axon. It is a lipid (fatty) insulator. It does not carry the signal; it insulates the membrane and forces the action potential to jump between the gaps (the nodes of Ranvier) — saltatory conduction — raising the conduction speed up to roughly 100 times that of an unmyelinated fiber. Myelin is the biological gate insulator: the same role as the oxide between the gate and the channel, or the OCA between two layers of the screen stack (NT VII). It is a material layer whose only job is to make an interface behave.
+
+4.5 — The synapse as the junction (chemistry)
+
+The axon of one neuron meets the dendrite of another at a synapse — a gap of about 20 to 40 nanometers. The signal does not cross electrically. The arriving action potential triggers the release of a neurotransmitter into the gap; the neurotransmitter diffuses across and binds receptors on the next cell, opening its channels. The coupling is chemical. It is a junction that converts an electrical signal to a chemical signal and back — the biological analog of a p-n junction, or the gate of a MOSFET, where the control and the controlled are separated by a barrier they do not cross directly. The synapse is where the signal is gated, and it is where the coupling can be strengthened or weakened (the basis of learning).
+
+4.6 — The dendrite as the addressing grid (structure)
+
+A neuron receives inputs on a branching dendritic tree, often thousands of synapses spread across its surface. The dendrite is the biological addressing grid: it collects many inputs and integrates them into one output decision (fire or not fire) at the axon hillock. It is the TFT array's job (NT VII): the layer that converts many addressable inputs into one controlled output at one moment.
+
+---
+
+PART FIVE — THE NEURAL NETWORK TO THE DIGITAL CIRCUIT | RESOLVED (structure), INFERRED (the identification)
+
+The coupling now runs from the single neuron to the network, and from the network to the machine. The same graft, at the next scale up.
+
+5.1 — CNS and PNS as processor and bus
+
+The nervous system splits into the central nervous system (CNS — brain and spinal cord) and the peripheral nervous system (PNS — the nerves that connect the CNS to the body). The coupling reading: the CNS is the processor and memory (the SoC), and the PNS is the I/O bus that carries signals to and from the sensors and actuators. The PNS is the trace that leaves the processor and returns, exactly as a bus carries a signal out to a peripheral and back.
+
+5.2 — The neuron as a logic element
+
+A single neuron computes a thresholded sum of its inputs: it adds the excitatory and inhibitory signals arriving at its dendrites, and fires iff the sum crosses threshold. That is a linear weighted sum followed by a nonlinear threshold — the same operation a single artificial neuron performs. The neuron is the biological logic element.
+
+5.3 — The connectome as the netlist
+
+The brain's wiring — the pattern of which neuron connects to which, and with what synaptic weight — is the connectome. It is the netlist: the graph that defines the circuit's function. Human brains carry on the order of 86 billion neurons and, by common estimate, 100 trillion or more synaptic connections (the estimates are wide and EXPOSABLE). The function of the network is not in any single neuron; it is in the graph.
+
+5.4 — Synaptic weight as the parameter
+
+The strength of a synapse — how much one neuron's firing affects the next — is its weight. Learning is the adjustment of these weights. This is exactly the parameter of an artificial neural network: the weight that multiplies an input. The biological network and the artificial network share the same abstraction: a graph of weighted connections computing a nonlinear function of its inputs.
+
+5.5 — The action potential as the bit, the network as the program
+
+The action potential is all-or-nothing (a bit). The synaptic weight is a parameter (a number). The connectome is the netlist (a graph). The training of the network is the adjustment of the parameters. The inference is the propagation of the bits through the weighted graph. This is the digital programming software circuit: a graph of gates, each computing a thresholded weighted sum, wired into a program by its weights. The biological substrate computes the same structure in chemistry and physics that the digital substrate computes in charge and voltage.
+
+5.6 — The coupling, stated at this scale
+
+The graft from biology to machine holds iff the same three conditions hold. Disjointness: the model's parameter space must not collide with the data's name space (the namespace leg). Continuity: the interface — the API, the sensor, the electrode — must actually pass a load (the interface leg). Synchrony: the machine's clock and the biological signal must be held to one clock, or the sample misses the event (the timing leg). The digital circuit does not replace the neural network. It executes the same graft on a different donor.
+
+Status flag: the identification of the biological network with the artificial network with the digital circuit is the author's compression (INFERRED). The individual mechanisms (resting potential, ion-channel gating, all-or-nothing firing, synaptic weighting, connectome graph) are standard physiology (EXPOSABLE). The claim that they share one abstraction is the synthesis.
+
+---
+
+PART SIX — THE TOUCHSCREEN AS THE COUPLING POINT | RESOLVED
+
+This is the coupling the screen stack was waiting for. NT VII gave the layer order. NT VI gives the graft across the boundary between biology and silicon and code. The touchscreen is the literal point where a human finger (biological hardware) couples to a transparent electrode (silicon-based hardware) which couples to the controller (silicon logic) which couples to the software (the program).
+
+6.1 — The biological side of the graft
+
+The finger carries a weak electric field — a body at a potential relative to its surroundings. This is the payload. It is a biological signal, produced by the same ionic chemistry as the action potential: the body is a volume of electrolyte at a potential.
+
+6.2 — The silicon side of the graft
+
+The touch sensor (NT VII, Layer 8) is a transparent conductive grid, typically indium tin oxide or fine metal mesh, patterned into intersecting X and Y electrodes. The finger approaching an electrode reorganizes the local field — capacitive sensing. The sensor detects the change. The finger's field does not cross a wire; it couples capacitively across the cover glass and the adhesive. This is the interface leg: the coupling is real and load-bearing across an insulating gap, exactly as a MOSFET's gate couples to its channel across an oxide.
+
+6.3 — The three legs at the touch point
+
+- Disjointness: the finger's field and the display's switching noise occupy different bands; the sensor is designed to hear the finger over the display. When the noise and the signal collide in band, the coupling fails (the touch is not registered). The namespace leg.
+- Continuity: the OCA and cover glass must be free of voids, or the capacitive coupling is weakened and the interface is discontinuous. The interface leg (NT VII's lamination).
+- Synchrony: the controller scans at a rate fast enough to sample the finger's motion; the display refreshes at a rate fast enough that the eye fuses the frames. When the scan is too slow, the touch misses; when the refresh is too slow, the eye sees flicker. The timing leg.
+
+The touchscreen is the coupling's demonstration case: a biological payload grafted onto a silicon donor, held by the same three conditions that hold a transistor, a synapse, and a software graft.
+
+6.4 — The full chain, biology to code, in one line
+
+finger's field (biological electrolyte at potential) -> capacitive coupling across cover glass and OCA (interface) -> ITO/metal-mesh electrode grid (silicon-oxide conductor) -> touch controller (silicon logic, scanning at a clock rate) -> the digital program (the weighted graph that decides what the touch means). Every link is a graft; every graft obeys the same three conditions.
+
+---
+
+PART SEVEN — THE CROSS-SCALE COUPLING TABLE | RESOLVED (structure), INFERRED (the identification)
+
+The invariant holds because every coupling in the stack reduces to the same three conditions.
+
+Scale    Payload (P)              Donor (D)               Disjointness            Continuity                    Synchrony
+Ore->Si  pure quartz feedstock   the ore body            mineral purity gate     the reduction furnace         the arc cycle
+Si->wafer electronic-grade Si    Czochralski melt        dopant lattice site     the crystal interface         the pull rate
+Wafer->device gate oxide         silicon channel         oxide/silicon boundary  band alignment                the clock (gate timing)
+Device->board die                package substrate       pin map                 solder/wire bond              the bus clock
+Board->screen display core       cover glass stack       aperture layout         OCA void-free bond (NT VII)   the frame clock (120 Hz)
+Screen->finger ITO electrode     the finger's field      in-band vs display noise capacitive coupling           scan rate vs finger motion
+Finger->neuron action potential  the synapse             neurotransmitter match  receptor binding              refractory period
+Neuron->network synaptic weight  the connectome          wiring graph            membrane potential            the firing clock
+Network->code the model          the instruction set     parameter/data space    the API contract              the CPU clock
+
+In every row, chi = 0 is the condition for the graft to hold, and chi > 0 is the failure. The cut (NT V) is chi > 0 at the ledger: the producer grafts to the benefit but not the cost. The deviation (NT II) is chi > 0 at the interface: the apparatus absorbs the inspection. The failure mode is the same at every scale. The chemistry varies; the coupling does not.
+
+---
+
+PART EIGHT — THE COUPLING FALSIFIER | RESOLVED
+
+Claim: a graft holds iff D ∩ P = ∅ AND the interface is continuous AND the payload and donor share a clock (chi = 0).
+
+Falsifier: produce a graft that holds with chi > 0, or that fails with chi = 0.
+
+- F1. A graft that holds despite a namespace collision (D ∩ P != ∅) — must show the collision is tolerated without renaming.
+- F2. A graft that holds despite a discontinuous interface (a void, a barrier, a dead membrane) — must show a load passes a gap that does not conduct.
+- F3. A graft that holds despite a phase error (out of sync) — must show two out-of-phase processes coupling as one.
+- F4. A graft that fails despite chi = 0 — must show disjoint, continuous, synchronous substrates that do not couple.
+- F5. A cross-scale row of the Part Seven table where chi = 0 but the coupling fails, or chi > 0 but it holds.
+
+None has been found. The synthesis makes the coupling invariant a testable hypothesis at every scale.
+
+---
+
+PART NINE — LIMITATIONS AND HONEST BOUNDARIES | RESOLVED
+
+1. The silicon process figures (temperatures, purities, lattice constant, band gap) are standard process chemistry and solid-state physics (EXPOSABLE); the verbatim primary sources are not carried here.
+2. The neuron figures (resting potential, action-potential amplitude, ion flux, myelin speedup, synapse gap, neuron and synapse counts) are standard physiology (EXPOSABLE); the counts in particular are wide estimates and are marked as such.
+3. The identification of the biological network with the artificial network with the digital circuit is the author's compression (INFERRED). The mechanisms are public; the unification is the synthesis.
+4. The "physics and chemistry are one path" claim is a framing (INFERRED). It is not a claim that the two disciplines are identical, but that the material path the device walks does not respect the departmental boundary.
+5. The coupling invariant is stated as a criterion, not as a numerical law. Unlike NT VIII's B and NT IX's r, the coupling residual chi is a sum of discrete failure counts (collisions, discontinuities, phase errors), not a continuous physical ratio. It is a classifier, not a measurement. The structure — three conditions, one zero, exact repair — is what transfers.
+6. The touchscreen coupling is the demonstration case because it is the one the corpus was already carrying (NT VII). The other rows of Part Seven are the same structure applied to their own scales.
+
+---
+
+PART TEN — THE TERMINAL STATEMENT
+
+The engine is a graft. A payload joins a donor iff their names are disjoint (C = D ∩ P = ∅), their interface is continuous, and their clocks are one. The residual is the sum of the three failures; the graft holds iff the residual is zero.
+
+The coupling runs from the ore body to the instruction set as one path of matter under energy. Silica is reduced to silicon; silicon is purified and pulled into a crystal; the crystal is patterned into a transistor whose gate is chemistry and whose channel is physics, and the seam between the two names is not in the device. The neuron is the same graft in water and salt: a membrane battery, a gated ion channel, an all-or-nothing spike, a myelin insulator, a chemical synapse, a dendritic addressing grid. The network is the same graft again: a connectome of weighted gates computing a thresholded sum, the same abstraction the digital circuit executes in charge and voltage. The touchscreen is where all of it meets: a finger's biological field grafted onto a silicon electrode grid, held by the same three conditions that hold a transistor, a synapse, and a software graft.
+
+The clock is the invariant. Disjoint and continuous but out of phase does not hold. The pulse that NT VII carried as the refresh, NT V carried as the circadian cycle, and NT IV carried as the freeze is the third leg of every coupling in the set. NT VI names it.
+
+This is the coupling node. It is re-enterable. It is offered to the next cycle.
+
+Cross.
+
+---
+
+STATUS SUMMARY
+
+Part                                                Status
+Part Zero — Etymological ground                     RESOLVED (etymology), INFERRED (framing)
+Part One — The one rule                             RESOLVED
+Part Two — The coupling invariant                   RESOLVED
+Part Three — The silicon diachronic trace           RESOLVED (structure), EXPOSABLE (figures)
+Part Four — The biological substrate as hardware    RESOLVED (structure), EXPOSABLE (physiology)
+Part Five — The network to the digital circuit      RESOLVED (structure), INFERRED (the identification)
+Part Six — The touchscreen as the coupling point    RESOLVED
+Part Seven — The cross-scale coupling table         RESOLVED (structure), INFERRED (the identification)
+Part Eight — The coupling falsifier                 RESOLVED
+Part Nine — Limitations and honest boundaries       RESOLVED
+Part Ten — Terminal statement                       RESOLVED (as summary); INFERRED (cross-scale framing)
+
+Boundary statement: NT VI is the coupling node and it fills the one gap in the set. It is internally consistent with NT I-XI. It omits the verbatim source ledger at the material and physiological figures layer and marks the framing as INFERRED where the unification is the author's. The path is walkable. The citation layer is marked where it is not carried.
+
+Relationship to the other noveltreatises: NT VI is the coupling node. The spine is NT IV's Section X. NT VI does not restate the loop. It states the graft that NT VIII's cross-treatise table already named as the payload-to-donor bond, and it traces that graft from the ore body to the neuron to the instruction set. With NT VI carried, the set NT I-XI is complete and internally coupled.
+
+---
+
+END OF NOVELTREATISE VI

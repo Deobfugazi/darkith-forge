@@ -204,9 +204,13 @@ def _finding(rule, phi, path, line, msg, sev):
 
 def scan_file(path, local, installed=None):
     try:
-        src = open(path, encoding="utf-8").read()
+        # Decode exactly as CPython does: a UTF-8 BOM or a PEP 263 `coding:`
+        # cookie on line 1 or 2 selects the codec.  A file Python can run must
+        # never be reported as unparseable.
+        with tokenize.open(path) as fh:
+            src = fh.read()
         tree = ast.parse(src, path)
-    except (SyntaxError, UnicodeDecodeError, RecursionError, ValueError) as e:
+    except (SyntaxError, UnicodeDecodeError, LookupError, RecursionError, ValueError) as e:
         # CPython's own compiler recurses, so a long enough expression raises
         # RecursionError.  That is a failure to parse, not a reason to abort the
         # whole scan: report it as a parse finding like any other.
@@ -917,10 +921,14 @@ def main(argv=None):
             print(f"{len(F)} finding(s)")
         return 1 if any(x["sev"] == "high" for x in F) else 0
     elif A.cmd == "reach":
+        if not os.path.isdir(A.root):
+            raise SystemExit(f"reach: no such root directory: {A.root}")
         out = reach(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test)
         print(json.dumps(out, indent=2))
         return 0 if not out["missed"] and out["tests_exit"] == 0 else 1
     elif A.cmd == "mutate":
+        if not os.path.isdir(A.root):
+            raise SystemExit(f"mutate: no such root directory: {A.root}")
         out = mutate(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test_cmd, A.max, A.seed)
         print(json.dumps(out, indent=2))
     elif A.cmd == "freeze":
@@ -964,4 +972,15 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # The tool promises bad input yields a clean, non-zero error, never a raw
+    # traceback. SystemExit (argparse usage, deliberate messages) passes through;
+    # every other operational failure is reported as one line on stderr.
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except KeyboardInterrupt:
+        sys.exit(130)
+    except Exception as e:
+        sys.stderr.write(f"savf: {type(e).__name__}: {e}\n")
+        sys.exit(2)

@@ -8,6 +8,11 @@ __pycache__/
 # ---- scratch harnesses (regenerable) ------------------------------------
 .shell-harness/
 
+# ---- generated webapp output (rebuild with build/build-forge.py) --------
+# The canonical shell is `darkith home forge.html`; this fused artifact is regenerated
+# from it. Tracking both is two live copies of one file (NEVER #11).
+darkith forge.html
+
 # ---- regenerated delivery output (rebuild with build/*.py) --------------
 delivery/
 dl/
@@ -28,3 +33,9 @@ build/omega/*.png
 *.keystore
 *.p8
 *.pem
+
+# ---- agent session memory (ephemeral, never tracked) ----
+.openhands/memory/
+
+# ---- savf runtime state (lock + manifest live in the CWD) ----
+.savf/

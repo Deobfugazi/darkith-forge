@@ -4,8 +4,8 @@ import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Prevents the app from throwing its own java.lang.OutOfMemoryError by keeping tracked
- * allocations under a safety fraction of Runtime.maxMemory(). 
- * 
+ * allocations under a safety fraction of Runtime.maxMemory().
+ *
  * It does NOT prevent Android's lmkd from killing the process (lmkd evaluates system-wide
  * pressure and oom_adj_score, not app-internal bookkeeping). It only keeps the app's own
  * internal heap pristine.

@@ -44,6 +44,19 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "tools" / "deps.txt"
 
+# Synchrony bylaw (MUST #23/#24): every bot logs with a timestamp so its output sorts
+# diachronically against every app's. The clock is GENERATED (build/gen_synchrony.py),
+# never hand-written. Fall back to tools/omega_time.py if the generated copy is absent.
+sys.path.insert(0, str(ROOT / "build" / "gen"))
+try:
+    from omega_time_runtime import log as tlog  # noqa: E402
+except ImportError:  # pragma: no cover - generator not run yet
+    sys.path.insert(0, str(ROOT / "tools"))
+    from omega_time_runtime import stamp as _stamp
+
+    def tlog(msg, stream=None):
+        print(f"[{_stamp()}] {msg}", file=stream or sys.stdout)
+
 PYPI_BASE = "https://pypi.org"
 NPM_BASE = "https://registry.npmjs.org"
 TIMEOUT = 20
@@ -168,8 +181,8 @@ def cmd_report(args) -> int:
 
     width = max((len(f"{e} {n}") for e, n, *_ in rows), default=10)
     for eco, name, pinned, newest, state in rows:
-        print(f"  {eco + ' ' + name:<{width}}  {pinned:<12} -> {newest:<12} {state}")
-    print(f"\n{len(rows)} dependencies, {drift} needing attention")
+        tlog(f"  {eco + ' ' + name:<{width}}  {pinned:<12} -> {newest:<12} {state}")
+    tlog(f"\n{len(rows)} dependencies, {drift} needing attention")
     return 0 if drift == 0 else 1
 
 
@@ -180,16 +193,16 @@ def cmd_update(args) -> int:
         try:
             newest, _ = latest(eco, name, args.pypi_base, args.npm_base)
         except (urllib.error.URLError, KeyError, TimeoutError) as e:
-            print(f"  skip {eco} {name}: registry unreachable ({e})", file=sys.stderr)
+            tlog(f"  skip {eco} {name}: registry unreachable ({e})", stream=sys.stderr)
             continue
         if compare_versions(pinned, newest) < 0:
             updates[f"{eco} {name}"] = newest
-            print(f"  bump {eco} {name}: {pinned} -> {newest}")
+            tlog(f"  bump {eco} {name}: {pinned} -> {newest}")
     if not updates:
-        print("  nothing to update")
+        tlog("  nothing to update")
         return 0
     write_manifest(args.manifest, updates)
-    print(f"  wrote {args.manifest}")
+    tlog(f"  wrote {args.manifest}")
     return 0
 
 
@@ -210,7 +223,7 @@ def cmd_export(args) -> int:
             lines.append(f"{name}=={ver}")
     out = pathlib.Path(args.out)
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"  wrote {out} ({sum(1 for _, e, *_ in deps if e == 'pypi')} pypi entries)")
+    tlog(f"  wrote {out} ({sum(1 for _, e, *_ in deps if e == 'pypi')} pypi entries)")
     return 0
 
 

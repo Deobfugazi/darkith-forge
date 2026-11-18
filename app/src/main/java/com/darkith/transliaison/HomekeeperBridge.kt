@@ -313,7 +313,7 @@ class HomekeeperBridge(private val host: HomekeeperActivity) {
             i.setDataAndType(uri, if (mime.isEmpty()) "*/*" else mime)
             i.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
             if (pkg.isNotEmpty()) i.setPackage(pkg)
-            host.runOnUiThread { try { host.startActivity(i) } catch (ex: Exception) { } }
+            host.runOnUiThread { try { host.startActivity(i) } catch (ex: Exception) { android.util.Log.w("Darkith", "open-with launch failed", ex) } }
             "OK"
         } catch (e: Exception) { "ERROR: " + (e.message ?: e.javaClass.simpleName) }
     }
@@ -335,7 +335,7 @@ class HomekeeperBridge(private val host: HomekeeperActivity) {
             i.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
             val ch = android.content.Intent.createChooser(i, "Share")
             ch.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-            host.runOnUiThread { try { host.startActivity(ch) } catch (ex: Exception) { } }
+            host.runOnUiThread { try { host.startActivity(ch) } catch (ex: Exception) { android.util.Log.w("Darkith", "share launch failed", ex) } }
             "OK"
         } catch (e: Exception) { "ERROR: " + (e.message ?: e.javaClass.simpleName) }
     }
@@ -350,7 +350,7 @@ class HomekeeperBridge(private val host: HomekeeperActivity) {
                     val cm = host.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                     cm.setPrimaryClip(android.content.ClipData.newPlainText("path", path))
                     host.startActivity(li)
-                } catch (ex: Exception) { }
+                } catch (ex: Exception) { android.util.Log.w("Darkith", "open-folder launch failed", ex) }
             }
             "OK"
         } catch (e: Exception) { "ERROR: " + (e.message ?: e.javaClass.simpleName) }

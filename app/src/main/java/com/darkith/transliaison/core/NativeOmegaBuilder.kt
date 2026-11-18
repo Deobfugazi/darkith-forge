@@ -10,7 +10,7 @@ class NativeOmegaBuilder(private val renderer: OmegaRenderer, private val contex
     private val allocator = AutophagicAllocator()
     private val governor = MemoryGovernor()
     private val handler = Handler(Looper.getMainLooper())
-    
+
     private var lastCpuTotal = 0L
     private var lastCpuIdle = 0L
     private var isRunning = false
@@ -19,11 +19,11 @@ class NativeOmegaBuilder(private val renderer: OmegaRenderer, private val contex
     private val ticker = object : Runnable {
         override fun run() {
             if (!isRunning) return
-            
+
             // Measure memory
             val freeRam = Debug.getNativeHeapFreeSize()
             val usedRam = Debug.getNativeHeapAllocatedSize()
-            
+
             // Measure CPU from /proc/stat
             val cpuLoad = try {
                 val parts = File("/proc/stat").readLines()
@@ -39,18 +39,18 @@ class NativeOmegaBuilder(private val renderer: OmegaRenderer, private val contex
 
             // 1. Autophagic Allocator derives the frame budget
             val allocation = allocator.tick(freeRam, usedRam, cpuLoad, renderer.lastFrameMs.toDouble())
-            
+
             // 2. Governor asserts internal heap safety and reciprocally throttles memory
             val coupling = governor.reciprocate(usedRam, allocation.vertexBudget)
             lastStatus = "vB=" + allocation.vertexBudget + " cpu=" + (cpuLoad * 100).toInt() + "% oomSafe=" + coupling.selfOomSafe
             if (!coupling.selfOomSafe) {
-                // Structurally bypassed: the governor has clamped the budgets. 
+                // Structurally bypassed: the governor has clamped the budgets.
                 // In a real LLM runtime, this is where the model's KV cache trim is enforced.
             }
 
             // 3. Renderer consumes the invariantly mapped Allocation
             renderer.apply(allocation)
-            
+
             handler.postDelayed(this, 16L)
         }
     }

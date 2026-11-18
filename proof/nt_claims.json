@@ -1,0 +1,1047 @@
+[
+  {
+    "id": "ENGINE-RULE",
+    "kind": "A",
+    "note": "NT Engine Part 2/Part 1: show the path, log the instant, carry the citation verbatim; three questions Source/Transformation/Falsifier. The meta-rule every NT claim is judged by."
+  },
+  {
+    "id": "ENGINE-LABELS",
+    "kind": "A",
+    "note": "Three labels RESOLVED/EXPOSABLE/INFERRED map onto SAVF states: RESOLVED->pass, EXPOSABLE->marginal (external referent needed), INFERRED->marginal."
+  },
+  {
+    "id": "NT1-RSA-EVIDENCE",
+    "kind": "W",
+    "referent": "NT I contestation note (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'correlate of autonomic state' in s and 'three-state interpretation of them is the contested layer' in s; print('RSA-CONTESTED-FLAGGED')\"",
+      "expect": "RSA-CONTESTED-FLAGGED",
+      "external": true
+    },
+    "note": "NT I repaired RSA from 'direct readout' to 'correlate' and flagged the contested layer."
+  },
+  {
+    "id": "NT1-RSA-DOWNGRADE",
+    "kind": "R",
+    "derived_from": [
+      "NT1-RSA-EVIDENCE"
+    ],
+    "note": "NT I: RSA/HRV is a correlate of autonomic state, not a direct readout of ventral vagal tone."
+  },
+  {
+    "id": "NT2-RULE-W",
+    "kind": "W",
+    "referent": "NT Engine Part 2 (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'Carry the citation verbatim' in s and 'Source, transformation, falsifier' in s; print('REENTER-RULE-PRESENT')\"",
+      "expect": "REENTER-RULE-PRESENT",
+      "external": true
+    },
+    "note": "The re-enterability rule is carried in the corpus."
+  },
+  {
+    "id": "NT2-REENTERABILITY",
+    "kind": "R",
+    "derived_from": [
+      "NT2-RULE-W"
+    ],
+    "note": "NT II: the offload inversion; the corrective criterion is re-enterability (source/transformation/falsifier). The philosophy this repo's gates enforce."
+  },
+  {
+    "id": "NT2-CI-EXIT0",
+    "kind": "W",
+    "referent": "tools/ci.sh",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('tools/ci.sh').read(); assert 'delivery gate' in s; print('CI-SH-WIRED')\"",
+      "expect": "CI-SH-WIRED",
+      "external": true
+    },
+    "note": "The re-enterability gates exist and are wired into one provider-neutral CI."
+  },
+  {
+    "id": "NT3-CHR-W",
+    "kind": "W",
+    "referent": "NT III structure (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'PART I: THE 22 AUTOSOMES' in s and 'Count check' in s; print('NT3-STRUCTURE-CARRIED')\"",
+      "expect": "NT3-STRUCTURE-CARRIED",
+      "external": true
+    },
+    "note": "NT III carries the 23-pair structure and its own count check."
+  },
+  {
+    "id": "NT3-TAXONOMY",
+    "kind": "R",
+    "derived_from": [
+      "NT3-CHR-W"
+    ],
+    "note": "NT III: DOSAGE/GEOMETRY/ENERGETICS assigned by the rescue assay, not by the earliest event. Coherent, standard genetics."
+  },
+  {
+    "id": "NT4-STATUS-W",
+    "kind": "W",
+    "referent": "NT Engine Part 3 labels (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-I-IV-protocol.md').read(); assert 'The path is inside the report' in s and 'The path leaves the report for one specific place' in s; print('NT4-LABELS-CARRIED')\"",
+      "expect": "NT4-LABELS-CARRIED",
+      "external": true
+    },
+    "note": "NT IV's status discipline (RESOLVED/EXPOSABLE/INFERRED) is carried."
+  },
+  {
+    "id": "NT4-GATE",
+    "kind": "R",
+    "derived_from": [
+      "NT4-STATUS-W"
+    ],
+    "note": "NT IV: pre-registration gate (temporal priority, specificity, publicity, outcome independence) + reflexive Stage 0."
+  },
+  {
+    "id": "NT4-RABTSEVICH",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IV's live demonstration (Rabtsevich TESS pre-registration; VAAR; FAIA) is an EXTERNAL referent not carried in the repo and not verifiable here. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT5-CUT-W",
+    "kind": "W",
+    "referent": "NT V invariant statement (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-V.txt').read(); assert 'produces an output controls the narrative' in s and 'consumes the output bears the cost' in s; print('CUT-INVARIANT-CARRIED')\"",
+      "expect": "CUT-INVARIANT-CARRIED",
+      "external": true
+    },
+    "note": "NT V carries the cut's invariant statement."
+  },
+  {
+    "id": "NT5-CUT",
+    "kind": "R",
+    "derived_from": [
+      "NT5-CUT-W"
+    ],
+    "note": "NT V: the cut (producer keeps benefit, consumer absorbs cost); P1-P13; the two-clock payroll gap; the autophagic recycle bin."
+  },
+  {
+    "id": "NT6-BODY-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-VI.txt (the generated body)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VI.txt').read(); assert 'C = D \u2229 P = \u2205' in s and 'the coupling invariant' in s and 'the clock is the invariant' in s.lower(); print('NT6-COUPLING-CARRIED')\"",
+      "expect": "NT6-COUPLING-CARRIED",
+      "external": true
+    },
+    "note": "The NT VI body is carried and states the coupling invariant (C = D n P = empty; three conditions; clock as invariant)."
+  },
+  {
+    "id": "NT6-SILICON-TRACE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-VI.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VI.txt').read(); assert 'SiO2 + 2C -> Si + 2CO' in s and 'SiHCl3 + H2 -> Si + 3 HCl' in s and 'Czochralski' in s; print('NT6-SILICON-TRACE-CARRIED')\"",
+      "expect": "NT6-SILICON-TRACE-CARRIED",
+      "external": true
+    },
+    "note": "The diachronic silicon trace (silica reduction, Siemens purification, Czochralski pull) is carried."
+  },
+  {
+    "id": "NT6-BIO-TRACE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-VI.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VI.txt').read(); assert 'sodium-potassium ATPase' in s and 'all-or-nothing' in s and 'saltatory conduction' in s and 'connectome' in s; print('NT6-BIO-TRACE-CARRIED')\"",
+      "expect": "NT6-BIO-TRACE-CARRIED",
+      "external": true
+    },
+    "note": "The biological trace (membrane pump, all-or-nothing firing, saltatory conduction, connectome) is carried."
+  },
+  {
+    "id": "NT6-SYNCHRONICITY",
+    "kind": "R",
+    "derived_from": [
+      "NT6-BODY-W"
+    ],
+    "note": "NT VI - The Synchronicity Engine. The payload-to-donor graft: the graft holds iff D n P = empty (disjointness), the interface is continuous, and the payload and donor share a clock (chi = 0)."
+  },
+  {
+    "id": "NT6-SILICON-TRACE",
+    "kind": "R",
+    "derived_from": [
+      "NT6-SILICON-TRACE-W"
+    ],
+    "note": "The coupling runs from the ore body to the instruction set as one path: silica -> Si (redox) -> electronic-grade Si (Siemens) -> single crystal (Czochralski) -> MOSFET (gate oxide = chemistry, field effect = physics). Physics and chemistry unsiloed."
+  },
+  {
+    "id": "NT6-BIO-SUBSTRATE",
+    "kind": "R",
+    "derived_from": [
+      "NT6-BIO-TRACE-W"
+    ],
+    "note": "The neuron is the same graft in water and salt: membrane battery (chemistry), gated ion channel (physics), all-or-nothing spike (digital bit), myelin insulator (materials), chemical synapse (junction), dendritic addressing grid (structure)."
+  },
+  {
+    "id": "NT6-NET-TO-CODE",
+    "kind": "A",
+    "note": "The identification of the connectome (weighted graph of threshold gates) with the digital circuit (weighted graph of gates in charge and voltage) is the author's compression, self-marked INFERRED. Coherent as a mapping."
+  },
+  {
+    "id": "NT6-TOUCH-COUPLING",
+    "kind": "R",
+    "derived_from": [
+      "NT6-SYNCHRONICITY",
+      "NT7-STACK-W"
+    ],
+    "note": "The touchscreen is the coupling's demonstration case: a finger's biological field (payload) grafted onto a silicon electrode grid (donor), held by the same three conditions - in-band disjointness, void-free continuity, scan/refresh synchrony."
+  },
+  {
+    "id": "NT7-STACK-W",
+    "kind": "W",
+    "referent": "NT VII serial order (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VII.txt').read(); assert 'Bedrock (chassis)' in s and 'Cover Glass (ceiling)' in s; print('STACK-ANCHORS-CARRIED')\"",
+      "expect": "STACK-ANCHORS-CARRIED",
+      "external": true
+    },
+    "note": "NT VII carries the bedrock-to-ceiling anchor order."
+  },
+  {
+    "id": "NT7-STACK-ORDER",
+    "kind": "R",
+    "derived_from": [
+      "NT7-STACK-W"
+    ],
+    "note": "NT VII: the serial layer order is fixed by adjacency necessity (light-control between source and eye; field-sensing above light-control; addressing grid against the LC)."
+  },
+  {
+    "id": "NT7-PROCESS-ZERO",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT VII Part 13 material-stream figures (indium/iodine/gallium/rare-earth supply) carried without verbatim source. Resolution target: EXPOSABLE (figures), RESOLVED (mechanisms)."
+  },
+  {
+    "id": "NT7-FIELD-FRAMING",
+    "kind": "A",
+    "note": "NT VII: the 'never-still continuum' field framing is the author's, self-marked INFERRED, not claimed as settled physics. No contradiction: flagged by the author."
+  },
+  {
+    "id": "NT8-BOND-W",
+    "kind": "W",
+    "referent": "NT VIII bond criterion (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VIII.txt').read(); assert 'W_A / W_coh' in s and 'The universal bonding condition is' in s; print('BOND-CRITERION-CARRIED')\"",
+      "expect": "BOND-CRITERION-CARRIED",
+      "external": true
+    },
+    "note": "NT VIII carries B and its universal condition."
+  },
+  {
+    "id": "NT8-BOND",
+    "kind": "R",
+    "derived_from": [
+      "NT8-BOND-W"
+    ],
+    "note": "NT VIII: B = (W_A/W_coh)(a_inf/a_gel)eta >= 1; B_c = 1; alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2]. The bond criterion."
+  },
+  {
+    "id": "NT8-CROSS-TREATISE",
+    "kind": "A",
+    "note": "NT VIII: the identification of each prior NT's bond with B is the author's compression, self-marked INFERRED. Coherent as a mapping."
+  },
+  {
+    "id": "NT9-MATH-W",
+    "kind": "W",
+    "referent": "the real number system (IEEE doubles)",
+    "evidence": {
+      "cmd": "python3 -c \"import math; b,n=2.0,3.0; x=b**n; r=math.log(x)-n*math.log(b); assert abs(r)<1e-12; assert abs(x**(1.0/n)-b)<1e-12; assert abs(math.log(x)/math.log(b)-n)<1e-12; print('TRIAD-EXACT')\"",
+      "expect": "TRIAD-EXACT",
+      "external": true
+    },
+    "note": "NT IX closed-triple algebra executed against reality: b^n=x, r=ln x - n ln b=0, both unfold legs exact."
+  },
+  {
+    "id": "NT9-TRIAD",
+    "kind": "R",
+    "derived_from": [
+      "NT9-MATH-W"
+    ],
+    "note": "NT IX: b^n = x is a closed triple with one redundancy (3-for-2); residual r = ln x - n ln b."
+  },
+  {
+    "id": "NT9-ANCHOR",
+    "kind": "R",
+    "derived_from": [
+      "NT9-MATH-W"
+    ],
+    "note": "NT IX: anchor pair {0,1}; b^0=1, log_b(1)=0; collapse signals a stationary frame - change the frame, do not force the leg."
+  },
+  {
+    "id": "NT9-BUILD-W",
+    "kind": "W",
+    "referent": "build.sh in the repo",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('build.sh').read(); assert '6/7 zipalign' in s and '7/7 apksigner' in s and 'aapt2 link' in s; print('BUILD-SH-7STEP')\"",
+      "expect": "BUILD-SH-7STEP",
+      "external": true
+    },
+    "note": "The repo build.sh realizes the NT IX 7-step chain in order."
+  },
+  {
+    "id": "NT9-BUILD-CHAIN",
+    "kind": "R",
+    "derived_from": [
+      "NT9-BUILD-W"
+    ],
+    "note": "NT IX Part 9: aapt2 compile->link->kotlinc->d8->zip->zipalign->apksigner; API-34 ceiling; zipalign mandatory before signing; signer input is aligned.apk."
+  },
+  {
+    "id": "NT9-NOGRADLE-W",
+    "kind": "W",
+    "referent": "build.sh contains no Gradle",
+    "evidence": {
+      "cmd": "python3 -c \"import re; s=open('build.sh').read(); assert not re.search(r'^[ \\t]*gradle|gradlew', s, re.M); print('NO-GRADLE-IN-BUILD')\"",
+      "expect": "NO-GRADLE-IN-BUILD",
+      "external": true
+    },
+    "note": "Gradle is physically forbidden; witnessed in build.sh."
+  },
+  {
+    "id": "NT9-CROSS-SCALE",
+    "kind": "A",
+    "note": "NT IX: the claim that every prior NT tested the same triad is the author's compression, self-marked INFERRED. Boundary stated (multiplicative, not additive)."
+  },
+  {
+    "id": "NT9-DEMO-ECON",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IX Part 4 economic demonstrations (Harvard 718 firms, Atlassian 2026, Anthropic junior hires, METR horizon, CO2 Mauna Loa) are external source data not carried verbatim. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT9-COMPILER-SAMPLES",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IX Part 8 live compiler bug reports (LLVM/GCC/rustc/CompCert/MLIR issue numbers) are external referents not carried in the repo. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT9-AAPT2-API35",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT IX aapt2 API-35 fracture (Termux issue #22667) is an external referent not carried in the repo. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT10-PRIME-W",
+    "kind": "W",
+    "referent": "NT X Prime Directive (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-X.txt').read(); assert 'NEVER WRITE A STUB' in s and 'The Honest Boundary' in s; print('PRIME-CARRIED')\"",
+      "expect": "PRIME-CARRIED",
+      "external": true
+    },
+    "note": "NT X carries the Prime Directive and the honest-boundary distinction."
+  },
+  {
+    "id": "NT10-PRIME",
+    "kind": "R",
+    "derived_from": [
+      "NT10-PRIME-W"
+    ],
+    "note": "NT X: never write a stub; the honest boundary (declare an unwritten artifact EXPOSABLE) is distinct from a stub."
+  },
+  {
+    "id": "NT10-SIGMA-W",
+    "kind": "W",
+    "referent": "NT X closure criterion (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-X.txt').read(); assert '\u03a3 = \u03a3_S + \u03a3_B = 0' in s; print('SIGMA0-CARRIED')\"",
+      "expect": "SIGMA0-CARRIED",
+      "external": true
+    },
+    "note": "NT X carries the Sigma=0 closure criterion."
+  },
+  {
+    "id": "NT10-SIGMA0",
+    "kind": "R",
+    "derived_from": [
+      "NT10-SIGMA-W"
+    ],
+    "note": "NT X closure: Sigma = Sigma_S + Sigma_B = 0; Sigma_B>0 impossible by construction; Sigma_S>0 is substrate-layer semantic drift."
+  },
+  {
+    "id": "NT10-ALLOCATOR",
+    "kind": "A",
+    "note": "NT X Part 3: the autophagic memory allocator (PID with anti-windup, Lyapunov candidate) is a design; the math is standard control theory."
+  },
+  {
+    "id": "NT10-HARDWARE",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT X Part 2 TECNO KM4k / MT6768 hardware ground truth is external to the repo. Resolution target: EXPOSABLE (declared device fact)."
+  },
+  {
+    "id": "NT10-HEALER-ANDROIDX",
+    "kind": "C",
+    "note": "CONTRADICTION (resolved): NT X 4.4/5.4 Healer example originally named import androidx.compose.material3.Button as verified truth, contradicting the repo law (fork_integrity_gate: zero import androidx; SPI-13/NEVER #12). The reference android.jar carries android/widget/Button.class and zero androidx symbols, so the raw import is the truthful one. The corpus example was re-pointed to import android.widget.Button in NT-X.txt and NT-XII.txt. Resolved."
+  },
+  {
+    "id": "NT11-RETENTION-W",
+    "kind": "W",
+    "referent": "NT XI retention equation (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XI.txt').read(); assert 'W_{in} - E = S' in s; print('RETENTION-CARRIED')\"",
+      "expect": "RETENTION-CARRIED",
+      "external": true
+    },
+    "note": "NT XI carries the retention equation W_in - E = S != 0."
+  },
+  {
+    "id": "NT11-RETENTION",
+    "kind": "R",
+    "derived_from": [
+      "NT11-RETENTION-W"
+    ],
+    "note": "NT XI: lim(E/W_in)=0 subject to d(wellbeing)/dt>0 and d(resource use)/dt<=0."
+  },
+  {
+    "id": "NT11-AQP-W",
+    "kind": "W",
+    "referent": "NT XI forced derivation (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XI.txt').read(); assert 'exactly six BUILD modules' in s and 'seven ADOPT substrates' in s; print('AQP-FORCED-CARRIED')\"",
+      "expect": "AQP-FORCED-CARRIED",
+      "external": true
+    },
+    "note": "NT XI carries the forced derivation result."
+  },
+  {
+    "id": "NT11-AQP-FORCED",
+    "kind": "R",
+    "derived_from": [
+      "NT11-AQP-W"
+    ],
+    "note": "NT XI synthesis: 6 BUILD modules (M1 AQP, M2 RLCR, M3 Detect, M4 Retention, M5 PID, M6 SE), 7 ADAPTER targets (S1-S7), 1 COMPOSE predicate (integrates), 1 partial build order, 2 frozen resolutions."
+  },
+  {
+    "id": "NT11-AQP-FALSIFIER",
+    "kind": "A",
+    "note": "NT XI: the F1-F8 falsifier set; the six-module set is the unique invariant iff none of F1-F8 fires. Self-contained logical derivation."
+  },
+  {
+    "id": "NT11-PRAXIS-ACTUALS",
+    "kind": "C",
+    "note": "CONTRADICTION (unresolved): NT XI Part 2 praxis actuals (Champlain Housing Trust, Mondragon, PODER Emma, BRED, Paris PB, UNCTAD 2026) are external referents not carried verbatim. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT12-BODY-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt (the carried terminal convergence)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'NOVELTREATISE XII' in s and 'terminal convergence' in s and 'the manufactory node' in s; print('NT12-CARRIED')\"",
+      "expect": "NT12-CARRIED",
+      "external": true
+    },
+    "note": "The NT XII body is carried and states its status (terminal convergence; the manufactory node)."
+  },
+  {
+    "id": "NT12-BOND-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert '\\u212c = (W_A / W_coh) \\u00b7 (\\u03b1_\\u221e / \\u03b1_gel) \\u00b7 \\u03b7' in s and '\\u212c \\u2265 1' in s and '\\u03b1_gel \\u2208 [0.17, 0.80]' in s and 'W_A/W_coh < 1/3' in s and 'W_A/W_coh > 1/2' in s; print('NT12-BOND-CARRIED')\"",
+      "expect": "NT12-BOND-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Bond Formation Number B, its universal condition B>=1, and the numerical signatures (alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2])."
+  },
+  {
+    "id": "NT12-TRIAD-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'r = ln x \\u2212 n ln b' in s and 'b^n = x' in s and '{0,1}' in s; print('NT12-TRIAD-CARRIED')\"",
+      "expect": "NT12-TRIAD-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Triadic Resolver (closed triple b^n=x; residual r=ln x - n ln b; anchor pair {0,1})."
+  },
+  {
+    "id": "NT12-SIGMA-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert '\\u03a3 = \\u03a3_S + \\u03a3_B = 0' in s and 'NEVER WRITE A STUB. EVER.' in s; print('NT12-SIGMA-CARRIED')\"",
+      "expect": "NT12-SIGMA-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Healer closure criterion Sigma = Sigma_S + Sigma_B = 0 and the Prime Directive (never write a stub)."
+  },
+  {
+    "id": "NT12-ASE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'W_in \\u2212 E = S \\u2260 0' in s and '(E / W_in) = 0' in s and 'The Retention Equation' in s; print('NT12-ASE-CARRIED')\"",
+      "expect": "NT12-ASE-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Autophagic Sovereign Economy retention law (W_in - E = S != 0; lim E/W_in = 0)."
+  },
+  {
+    "id": "NT12-BUILD-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'aapt2 compile' in s and 'zipalign -p 4 base.apk aligned.apk' in s and 'apksigner sign' in s and 'NO-GRADLE' in s; print('NT12-BUILD-CARRIED')\"",
+      "expect": "NT12-BUILD-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the no-Gradle 7-step forced chain (aapt2 compile -> link -> kotlinc -> d8 -> zip -> zipalign -> apksigner; align before sign)."
+  },
+  {
+    "id": "NT12-TRACE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'Campitello Quarry' in s and 'Mauna Loa' in s and 'METR' in s; print('NT12-TRACE-CARRIED')\"",
+      "expect": "NT12-TRACE-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the diachronic trace (birch bark tar / Campitello) and the live demonstrations (Mauna Loa CO2; METR horizon)."
+  },
+  {
+    "id": "NT12-HONEST-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'honest boundary' in s.lower() and 'It does not ask to be believed' in s and 'STATUS SUMMARY' in s; print('NT12-HONEST-CARRIED')\"",
+      "expect": "NT12-HONEST-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the honest-boundary discipline and the per-part status summary; the field-report rule (walk it, do not believe it)."
+  },
+  {
+    "id": "NT12-BOND",
+    "kind": "R",
+    "derived_from": [
+      "NT12-BOND-W"
+    ],
+    "note": "NT XII: B = (W_A/W_coh)(a_inf/a_gel)eta >= 1; B_c = 1; alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2]. The terminal statement of the bond criterion (NT VIII's number, closed across scales)."
+  },
+  {
+    "id": "NT12-TRIAD",
+    "kind": "R",
+    "derived_from": [
+      "NT12-TRIAD-W"
+    ],
+    "note": "NT XII: the Triadic Resolver closes the triple; r = ln x - n ln b = 0 on the relation; anchor pair {0,1}."
+  },
+  {
+    "id": "NT12-SIGMA0",
+    "kind": "R",
+    "derived_from": [
+      "NT12-SIGMA-W"
+    ],
+    "note": "NT XII: Sigma = Sigma_S + Sigma_B = 0 (the Healer closure), sibling of NT VIII's B>=1 and NT IX's r=0."
+  },
+  {
+    "id": "NT12-CROSS-SCALE",
+    "kind": "A",
+    "note": "NT XII Part 8/17: the identification of every prior NT's bond with B is the author's compression, self-marked INFERRED; the closure is complete in structure, the cross-scale identification is the synthesis."
+  },
+  {
+    "id": "NT12-DEMOS",
+    "kind": "A",
+    "note": "NT XII Part 12.3: the seven live demonstrations (AI productivity gap; junior-gap; token economics; technical debt; platform lock-in; METR horizon; CO2 anchor refusal) carry live source data; the arithmetic is re-walkable, the sources are external."
+  },
+  {
+    "id": "NT12-HARDWARE-COUPLED",
+    "kind": "W",
+    "referent": "the reference android.jar (the compiler's ground truth) + the carried corpus",
+    "evidence": {
+      "cmd": "python3 tools/nt_sensor.py",
+      "expect": "HEALER-RAW-IMPORT-HARDWARE-VERIFIED",
+      "external": true
+    },
+    "note": "NT XII 14.2's Healer example is checked against reality's reference: the corpus names the raw import (android.widget.Button), the repo law forbids 'import androidx' (SPI-13), and the reference android.jar carries android/widget/Button.class with zero androidx symbols. This is the hardware-coupled sensor: the compiler's own ground truth, not an assertion."
+  },
+  {
+    "id": "XII-ONE-RULE-W",
+    "kind": "W",
+    "referent": "NT XII Part One (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClNob3cgdGhlIHBhdGguIExvZyB0aGUgaW5zdGFudC4gQ2FycnkgdGhlIGNpdGF0aW9uIHZlcmJhdGltLgpYSUktT05FLVJVTEUtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ONE-RULE-W",
+      "external": true
+    },
+    "note": "The one rule: source / transformation / falsifier, at every step."
+  },
+  {
+    "id": "XII-BFN-W",
+    "kind": "W",
+    "referent": "NT XII Part Five (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkJvbmQgRm9ybWF0aW9uIE51bWJlcgpYSUktQkZOLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BFN-W",
+      "external": true
+    },
+    "note": "The treatise states the Bond Formation Number."
+  },
+  {
+    "id": "XII-BFN-FORM-W",
+    "kind": "W",
+    "referent": "NT XII Part Five (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmlzIHRoZSBuZWNlc3NhcnkgYW5kIHN1ZmZpY2llbnQgY29uZGl0aW9uIGZvciBhIGR1cmFibGUgam9pbnQKWElJLUJGTi1GT1JNLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BFN-FORM-W",
+      "external": true
+    },
+    "note": "The universal bonding condition (B >= 1) is stated."
+  },
+  {
+    "id": "XII-CRIT-W",
+    "kind": "W",
+    "referent": "NT XII Part Six (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmlzIHRoZSBib3VuZGFyeSBiZXR3ZWVuIGEgYm9uZGVkIGpvaW50IGFuZCBhIG5vbi1ib25kZWQgaW50ZXJmYWNlClhJSS1DUklULVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-CRIT-W",
+      "external": true
+    },
+    "note": "The critical value is exactly 1 (the adhesive-cohesive transition)."
+  },
+  {
+    "id": "XII-ALPHAGEL-W",
+    "kind": "W",
+    "referent": "NT XII Part Six (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Cs6xX2dlbCDiiIggWzAuMTcsIDAuODBdClhJSS1BTFBIQUdFTC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ALPHAGEL-W",
+      "external": true
+    },
+    "note": "The critical conversion range is carried."
+  },
+  {
+    "id": "XII-RATIO-W",
+    "kind": "W",
+    "referent": "NT XII Part Six (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CihXX0EgLyBXX2NvaClfYyDiiIggWzEvMywgMS8yXQpYSUktUkFUSU8tVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-RATIO-W",
+      "external": true
+    },
+    "note": "The critical thermodynamic-ratio band is carried."
+  },
+  {
+    "id": "XII-NINE-W",
+    "kind": "W",
+    "referent": "NT XII Part Seven (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Ck5vIG1lY2hhbmlzbSBjbGFzcyBlc2NhcGVzIHRoZSBpbnZhcmlhbnQKWElJLU5JTkUtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-NINE-W",
+      "external": true
+    },
+    "note": "The nine mechanism classes close the invariant."
+  },
+  {
+    "id": "XII-TRIAD-W",
+    "kind": "W",
+    "referent": "NT XII Part Twelve (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClJvb3RpbmcgdW5kb2VzIHRoZSBiYXNlOyBsb2ctaW5nIHVuZG9lcyB0aGUgZXhwb25lbnQKWElJLVRSSUFELVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-TRIAD-W",
+      "external": true
+    },
+    "note": "The closed triple: R o F = pi_b and L o F = pi_n; one redundancy, 3-for-2."
+  },
+  {
+    "id": "XII-RESIDUAL-W",
+    "kind": "W",
+    "referent": "NT XII Part Twelve (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CnIgPSBsbiB4IOKIkiBuIGxuIGIKWElJLVJFU0lEVUFMLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-RESIDUAL-W",
+      "external": true
+    },
+    "note": "The residual r measures the distance off the surface; r = 0 on the relation."
+  },
+  {
+    "id": "XII-ANCHOR-W",
+    "kind": "W",
+    "referent": "NT XII Part Twelve (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkFuY2hvciBQYWlyIHswLCAxfQpYSUktQU5DSE9SLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ANCHOR-W",
+      "external": true
+    },
+    "note": "The anchor pair {0,1} and the refusal of the log leg at b=1."
+  },
+  {
+    "id": "XII-SIGMA-W",
+    "kind": "W",
+    "referent": "NT XII Part Fourteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Cs6jID0gzqNfUyArIM6jX0IgPSAwClhJSS1TSUdNQS1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-SIGMA-W",
+      "external": true
+    },
+    "note": "The closure criterion: substrate + bytecode residual must be zero."
+  },
+  {
+    "id": "XII-SIGMA-DEF-W",
+    "kind": "W",
+    "referent": "NT XII Part Fourteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClN1YnN0cmF0ZSByZXNpZHVhbApYSUktU0lHTUEtREVGLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-SIGMA-DEF-W",
+      "external": true
+    },
+    "note": "The two residuals (substrate, bytecode) are defined."
+  },
+  {
+    "id": "XII-RETENTION-W",
+    "kind": "W",
+    "referent": "NT XII Part Sixteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmxpbV97dCDihpIg4oiefSAoRSAvIFdfaW4pID0gMApYSUktUkVURU5USU9OLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-RETENTION-W",
+      "external": true
+    },
+    "note": "The retention equation; absolution as E/W_in -> 0."
+  },
+  {
+    "id": "XII-ASE-W",
+    "kind": "W",
+    "referent": "NT XII Part Sixteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSBBdXRvcGhhZ2ljIFNvdmVyZWlnbiBFY29ub215IChBU0UpClhJSS1BU0UtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ASE-W",
+      "external": true
+    },
+    "note": "The ASE is stated with its survival constraints."
+  },
+  {
+    "id": "XII-PRIME-W",
+    "kind": "W",
+    "referent": "NT XII Part Fourteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Ck5FVkVSIFdSSVRFIEEgU1RVQi4gRVZFUi4KWElJLVBSSU1FLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-PRIME-W",
+      "external": true
+    },
+    "note": "The Prime Directive forbids a stub that makes the build green."
+  },
+  {
+    "id": "XII-MANUFACTORY-W",
+    "kind": "W",
+    "referent": "NT XII Part Fifteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkdlbmVyYXRpdmUgTWFudWZhY3RvcnkKWElJLU1BTlVGQUNUT1JZLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-MANUFACTORY-W",
+      "external": true
+    },
+    "note": "The artifact is a generative manufactory, not an app."
+  },
+  {
+    "id": "XII-MINT-W",
+    "kind": "W",
+    "referent": "NT XII Part Fifteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSBNYW51ZmFjdG9yeSAoVGhlIEFydGlmYWN0KQpYSUktTUlOVC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-MINT-W",
+      "external": true
+    },
+    "note": "The mint is the codified harvest of the zeroed residual."
+  },
+  {
+    "id": "XII-BUILD-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmFhcHQyIGNvbXBpbGUKWElJLUJVSUxELVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-W",
+      "external": true
+    },
+    "note": "The seven-step forced chain begins at aapt2 compile."
+  },
+  {
+    "id": "XII-BUILD-SIGN-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmFwa3NpZ25lcgpYSUktQlVJTEQtU0lHTi1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-SIGN-W",
+      "external": true
+    },
+    "note": "The chain ends at apksigner (sign after align)."
+  },
+  {
+    "id": "XII-BUILD-CEIL-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmFuZHJvaWQtMzQvYW5kcm9pZC5qYXIKWElJLUJVSUxELUNFSUwtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-CEIL-W",
+      "external": true
+    },
+    "note": "The one external artifact is android-34/android.jar (API 34 ceiling)."
+  },
+  {
+    "id": "XII-BUILD-API34-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkFQSSAzNCAoQW5kcm9pZCAxNCkKWElJLUJVSUxELUFQSTM0LVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-API34-W",
+      "external": true
+    },
+    "note": "The ceiling is stated empirically as API 34."
+  },
+  {
+    "id": "XII-COUNT-W",
+    "kind": "W",
+    "referent": "NT XII Runtime Log (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSBlbGV2ZW4gcHJlY2VkaW5nIG5vdmVsdHJlYXRpc2VzClhJSS1DT1VOVC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-COUNT-W",
+      "external": true
+    },
+    "note": "The treatise is truthful about its substrate: eleven preceding treatises."
+  },
+  {
+    "id": "XII-SET-W",
+    "kind": "W",
+    "referent": "NT XII Part Seventeen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSB0d2VsdmUgbm92ZWx0cmVhdGlzZXMgZWFjaCB0ZXN0ZWQgYSBib25kClhJSS1TRVQtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-SET-W",
+      "external": true
+    },
+    "note": "The whole set (eleven carried + this one) is twelve."
+  },
+  {
+    "id": "XII-INDEX-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-INDEX.md",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1JTkRFWC5tZApOVCBJTkRFWApYSUktSU5ERVgtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-INDEX-W",
+      "external": true
+    },
+    "note": "The corpus index exists and enumerates the carried treatises."
+  },
+  {
+    "id": "XII-REPO-BUILD-W",
+    "kind": "W",
+    "referent": "build.sh",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('YnVpbGQuc2gKYWFwdDIKWElJLVJFUE8tQlVJTEQtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-BUILD-W",
+      "external": true
+    },
+    "note": "The repo build.sh realizes the no-Gradle chain."
+  },
+  {
+    "id": "XII-REPO-NOGRADLE-W",
+    "kind": "W",
+    "referent": "build.sh",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('YnVpbGQuc2gKR3JhZGxlClhJSS1SRVBPLU5PR1JBRExFLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-NOGRADLE-W",
+      "external": true
+    },
+    "note": "build.sh names Gradle only to forbid it (SPI-1)."
+  },
+  {
+    "id": "XII-REPO-NTGATE-W",
+    "kind": "W",
+    "referent": "tools/nt_gate.py",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('dG9vbHMvbnRfZ2F0ZS5weQpudF9nYXRlClhJSS1SRVBPLU5UR0FURS1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-NTGATE-W",
+      "external": true
+    },
+    "note": "The corpus reconciliation is gated by tools/nt_gate.py (SPI-15)."
+  },
+  {
+    "id": "XII-REPO-DEFICIT-W",
+    "kind": "W",
+    "referent": "tools/omega_deficit.py",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('dG9vbHMvb21lZ2FfZGVmaWNpdC5weQpFL1dfaW4KWElJLVJFUE8tREVGSUNJVC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-DEFICIT-W",
+      "external": true
+    },
+    "note": "The retention law is gated as the project's own progress-deficit indicator."
+  },
+  {
+    "id": "XII-BFN",
+    "kind": "R",
+    "derived_from": [
+      "XII-BFN-W",
+      "XII-BFN-FORM-W"
+    ],
+    "note": "The Bond Formation Number B = (W_A/W_coh)(a_inf/a_gel)eta >= 1 is stated."
+  },
+  {
+    "id": "XII-CRIT",
+    "kind": "R",
+    "derived_from": [
+      "XII-CRIT-W"
+    ],
+    "note": "B_c = 1 is exact (the adhesive-cohesive transition)."
+  },
+  {
+    "id": "XII-BANDS",
+    "kind": "R",
+    "derived_from": [
+      "XII-ALPHAGEL-W",
+      "XII-RATIO-W"
+    ],
+    "note": "The numerical signatures: alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2]."
+  },
+  {
+    "id": "XII-NINE",
+    "kind": "R",
+    "derived_from": [
+      "XII-NINE-W"
+    ],
+    "note": "The nine mechanism classes are limits of the invariant."
+  },
+  {
+    "id": "XII-TRIAD",
+    "kind": "R",
+    "derived_from": [
+      "XII-TRIAD-W",
+      "XII-RESIDUAL-W"
+    ],
+    "note": "b^n = x is a closed triple (3-for-2) with residual r = ln x - n ln b."
+  },
+  {
+    "id": "XII-ANCHOR",
+    "kind": "R",
+    "derived_from": [
+      "XII-ANCHOR-W"
+    ],
+    "note": "The anchor pair {0,1}; a collapse signals a stationary frame; do not force the log leg."
+  },
+  {
+    "id": "XII-SIGMA",
+    "kind": "R",
+    "derived_from": [
+      "XII-SIGMA-W",
+      "XII-SIGMA-DEF-W"
+    ],
+    "note": "Sigma = Sigma_S + Sigma_B = 0; a build is closed iff Sigma = 0."
+  },
+  {
+    "id": "XII-RETENTION",
+    "kind": "R",
+    "derived_from": [
+      "XII-RETENTION-W",
+      "XII-ASE-W"
+    ],
+    "note": "W_in - E = S != 0; absolution as E/W_in -> 0."
+  },
+  {
+    "id": "XII-PRIME",
+    "kind": "R",
+    "derived_from": [
+      "XII-PRIME-W"
+    ],
+    "note": "The Prime Directive: no stub; declare an unwritten artifact as a named boundary."
+  },
+  {
+    "id": "XII-MANUFACTORY",
+    "kind": "R",
+    "derived_from": [
+      "XII-MANUFACTORY-W",
+      "XII-MINT-W"
+    ],
+    "note": "The mints are zipped into a single generative manufactory file."
+  },
+  {
+    "id": "XII-BUILD",
+    "kind": "R",
+    "derived_from": [
+      "XII-BUILD-W",
+      "XII-BUILD-SIGN-W",
+      "XII-BUILD-CEIL-W",
+      "XII-BUILD-API34-W"
+    ],
+    "note": "The seven-step forced chain; API 34 ceiling; align before sign."
+  },
+  {
+    "id": "XII-COUNT",
+    "kind": "R",
+    "derived_from": [
+      "XII-COUNT-W",
+      "XII-SET-W",
+      "XII-INDEX-W"
+    ],
+    "note": "The treatise's corpus count is true: eleven preceding, twelve in the set."
+  },
+  {
+    "id": "XII-REPO-CHAIN",
+    "kind": "R",
+    "derived_from": [
+      "XII-REPO-BUILD-W",
+      "XII-REPO-NOGRADLE-W",
+      "XII-BUILD"
+    ],
+    "note": "The repo realizes the treatise's chain without Gradle."
+  },
+  {
+    "id": "XII-REPO-GATED",
+    "kind": "R",
+    "derived_from": [
+      "XII-REPO-NTGATE-W",
+      "XII-REPO-DEFICIT-W"
+    ],
+    "note": "The treatise's two closure laws are executable gates in this repo (SPI-15)."
+  },
+  {
+    "id": "XII-CROSSTREATISE-A",
+    "kind": "A",
+    "note": "INFERRED: the identification of every prior treatise's bond with B is the author's compression."
+  },
+  {
+    "id": "XII-DIACHRONIC-A",
+    "kind": "A",
+    "note": "INFERRED: the reading of birch-bark hafting as the first attestation of the bonding function is the author's."
+  },
+  {
+    "id": "XII-ONTOLOGY-A",
+    "kind": "A",
+    "note": "INFERRED: the ontological framing (truth as observed, the mint backed by exhaustion) is the author's."
+  },
+  {
+    "id": "XII-MANUFACTORY-A",
+    "kind": "A",
+    "note": "INFERRED: the SAVF Generative Manufactory is the author's synthesis of the derivation, execution, and mint."
+  },
+  {
+    "id": "XII-LAMINAR-A",
+    "kind": "A",
+    "note": "INFERRED: the lamination (the pen stroke and the motor gap) as the first material attestation is the author's analogy."
+  },
+  {
+    "id": "XII-DEMO-ECON-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the live economic demonstrations carry external figures (Harvard 718 firms/725k workers; Anthropic 27%->9%; GitClear 623M changes; Zylo 79%) not carried verbatim."
+  },
+  {
+    "id": "XII-MATERIALS-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the material-stream and diachronic dates (Campitello ~200 kya; ochre ~70 kya) are external archaeology not carried verbatim."
+  },
+  {
+    "id": "XII-API35-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the API-35 fracture rests on an external report (Termux issue #22667) not carried verbatim."
+  },
+  {
+    "id": "XII-NOVELTY-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the novelty boundary ('Bond Formation Number' absent from the literature) rests on an external literature search not carried verbatim."
+  },
+  {
+    "id": "XII-HEALER-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the Autophagic Healer (libllama.so / .gguf) is a design, not executed in this repo."
+  },
+  {
+    "id": "XII-ASE-PRAXIS-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the ASE modules carry praxis actuals (external co-op/housing figures) not carried verbatim."
+  }
+]

@@ -1,0 +1,254 @@
+{
+  "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
+  "count": 39,
+  "files": [
+    {
+      "bytes": 46710,
+      "path": "AGENTS.md",
+      "register": "A-apparatus",
+      "sha256": "8214250da7d2967b9fae7352c98c5c83139de21fbe503679b0ea18c484699f36"
+    },
+    {
+      "bytes": 60564,
+      "path": "DARKITH.md",
+      "register": "A-apparatus",
+      "sha256": "5c15916533eecd9d660146e8447784cd08ecd5b276aec72532c162263c78c107"
+    },
+    {
+      "bytes": 3356,
+      "path": "DEFICITS.json",
+      "register": "A-apparatus",
+      "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
+    },
+    {
+      "bytes": 64239,
+      "path": "README.md",
+      "register": "A-apparatus",
+      "sha256": "7bd8873e65e509fb8e4642aa447e614d80702d88f2114ce80679bf2de9899fc0"
+    },
+    {
+      "bytes": 4284,
+      "path": "RESUME.md",
+      "register": "A-apparatus",
+      "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
+    },
+    {
+      "bytes": 15433,
+      "path": "TASKS.md",
+      "register": "A-apparatus",
+      "sha256": "4efc36cbb816dd06d41c2eb62b537d3cd896f804cb1fa729e12884a08045f746"
+    },
+    {
+      "bytes": 9608,
+      "path": "docs/ARCHITECTURE-OMEGA.md",
+      "register": "B-knowledge",
+      "sha256": "43c74ae223ecf5ca8eff63d04219ebb6cdfffae60dbe81433cc40fdd5a715619"
+    },
+    {
+      "bytes": 120500,
+      "path": "docs/DARKITH-OMEGA-repo.txt",
+      "register": "B-knowledge",
+      "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
+    },
+    {
+      "bytes": 3960,
+      "path": "docs/SECURITY_REMEDIATION.md",
+      "register": "B-knowledge",
+      "sha256": "714045540aa609926a3f1fed7c94d7282296016db34f73a4e1e824d2f635fddf"
+    },
+    {
+      "bytes": 2729,
+      "path": "docs/UPDATES.md",
+      "register": "B-knowledge",
+      "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
+    },
+    {
+      "bytes": 146183,
+      "path": "docs/nt/NT-I-IV-protocol.md",
+      "register": "B-knowledge",
+      "sha256": "5c35948728cd69540108fc5aac5f930e4ec033a315652ce0ec641fa328dc7165"
+    },
+    {
+      "bytes": 4329,
+      "path": "docs/nt/NT-INDEX.md",
+      "register": "B-knowledge",
+      "sha256": "c244fba77d05b16d9c8ac7b4f0eb36b4449044c1a0e31d3ba3303e2730979306"
+    },
+    {
+      "bytes": 47852,
+      "path": "docs/nt/NT-IX.txt",
+      "register": "B-knowledge",
+      "sha256": "148373385f6089a2d6b530f54243d360aebb55f6d57279d9a6ebfd453538e213"
+    },
+    {
+      "bytes": 154001,
+      "path": "docs/nt/NT-V.txt",
+      "register": "B-knowledge",
+      "sha256": "fc36c1018bacfd6954155f587dbf59ba328441b10aaa4ccf9a48e83125cf7d06"
+    },
+    {
+      "bytes": 31069,
+      "path": "docs/nt/NT-VI.txt",
+      "register": "B-knowledge",
+      "sha256": "72a2ca0e1a6a4cb7f1858b41955640bc90975551d5871ad7c490d24bdc4646e9"
+    },
+    {
+      "bytes": 133393,
+      "path": "docs/nt/NT-VII.txt",
+      "register": "B-knowledge",
+      "sha256": "f08f9b048066fae56d9350291f1b2d2aacd9a212e7379c5053d74df8414720a3"
+    },
+    {
+      "bytes": 30927,
+      "path": "docs/nt/NT-VIII.txt",
+      "register": "B-knowledge",
+      "sha256": "6cd891c3be9a85ea15fe518f9c9f7f1fe9edc754db0217c8c1b963d0c9bdbdd9"
+    },
+    {
+      "bytes": 27503,
+      "path": "docs/nt/NT-X.txt",
+      "register": "B-knowledge",
+      "sha256": "560b5904324ac2111bb93d2dbec4768ea2c3e88d0611fcade63b7ef45ca0048e"
+    },
+    {
+      "bytes": 70277,
+      "path": "docs/nt/NT-XI.txt",
+      "register": "B-knowledge",
+      "sha256": "a46ef4198869cb8eda778676d1bdcbb394f4386884bfc9f374a562a1ec50924b"
+    },
+    {
+      "bytes": 78125,
+      "path": "docs/nt/NT-XII.txt",
+      "register": "B-knowledge",
+      "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
+    },
+    {
+      "bytes": 543124,
+      "path": "darkith code studio.html",
+      "register": "C-skillbase",
+      "sha256": "69326584950566f1d26672c77957f506f65621d4da975369b7567dd1c5da33c4"
+    },
+    {
+      "bytes": 1334381,
+      "path": "darkith home forge.html",
+      "register": "C-skillbase",
+      "sha256": "7f4cd120e4c78865da14edb45b91d59a22a6b9765ee81818b5b2fbbe2cc5a7ee"
+    },
+    {
+      "bytes": 229875,
+      "path": "darkith-inscriber.html",
+      "register": "C-skillbase",
+      "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+    },
+    {
+      "bytes": 24606,
+      "path": "omega-reader.html",
+      "register": "C-skillbase",
+      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
+    },
+    {
+      "bytes": 41959,
+      "path": "omega.html",
+      "register": "C-skillbase",
+      "sha256": "a11d595c79b96dbf94a7b14ef82de5d5d8831e64b287232632c2f91b6e557edf"
+    },
+    {
+      "bytes": 402921,
+      "path": "savf.html",
+      "register": "C-skillbase",
+      "sha256": "9893a3eb7019598864b74692b7bfff20af763702d0e94f54662aede279feb250"
+    },
+    {
+      "bytes": 229875,
+      "path": "app/src/main/assets/darkith_ui.html",
+      "register": "D-asset",
+      "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+    },
+    {
+      "bytes": 490080,
+      "path": "app/src/main/assets/homekeeper.html",
+      "register": "D-asset",
+      "sha256": "54eb6bb96df9658f5cde6d23079e84bc404c2add364e5fbdce600309be7c52ff"
+    },
+    {
+      "bytes": 96784,
+      "path": "app/src/main/assets/savf_core.html",
+      "register": "D-asset",
+      "sha256": "addc4f6d44b94ed4f26f21dffd88b9c1d4334753da4a454fa11c0d013d9812d2"
+    },
+    {
+      "bytes": 11203,
+      "path": "proof/FIELD_REPORT_THIS_TAB.md",
+      "register": "E-evidence",
+      "sha256": "bd7589bc3d9344ae2d0996d0774ed1b5ad543ab7259bf162a8a143fe31e26fb9"
+    },
+    {
+      "bytes": 7185,
+      "path": "proof/NT_RECONCILIATION.md",
+      "register": "E-evidence",
+      "sha256": "fa523afa591475099b08349515e14f8e73c96661b3dfcaf97483d79b0feed920"
+    },
+    {
+      "bytes": 1214,
+      "path": "proof/comment_19files_proof.txt",
+      "register": "E-evidence",
+      "sha256": "eb65d81efeb4c4b24e0ca38bd23dcf6e3260ecac0d21fadf8cea0a991365d1e0"
+    },
+    {
+      "bytes": 2823,
+      "path": "proof/comment_premise_check.txt",
+      "register": "E-evidence",
+      "sha256": "5713322369bae8f4bfb98330d78b87f27de519287d87070a2f409b2dc6862958"
+    },
+    {
+      "bytes": 1003,
+      "path": "proof/kt_compile_proof.txt",
+      "register": "E-evidence",
+      "sha256": "ca98b4c82cb37c862441016782bf412a7c4ab5d61c9e8a28f896a5f6779f3233"
+    },
+    {
+      "bytes": 2924,
+      "path": "proof/nt_ledger_prereconcile.txt",
+      "register": "E-evidence",
+      "sha256": "800061c03912d4ff0b3c3fad4ab977180d9369e2b0d3abdbd3a780d8b24a76c7"
+    },
+    {
+      "bytes": 1556,
+      "path": "proof/oneshot_proof.txt",
+      "register": "E-evidence",
+      "sha256": "dcda10db485e5df1515568e2f5b0fb8d266a327b52ea5aa29a00b50896c59104"
+    },
+    {
+      "bytes": 117,
+      "path": "requirements-dev.txt",
+      "register": "F-config",
+      "sha256": "2af67f5a849a5ed8b88d7d2f4d494dd64c69947ddc371e083f282d3f1961378e"
+    },
+    {
+      "bytes": 537,
+      "path": "tools/deps.txt",
+      "register": "F-config",
+      "sha256": "c6cd897d22b1785f9d9c2ad5c5bf61eac75301162b0f7fec788cb89f9c5d9704"
+    },
+    {
+      "bytes": 2766,
+      "path": "tools/fractures.txt",
+      "register": "F-config",
+      "sha256": "ba75264a289742e8182bb756d9ce05d08981e46601f17a0391073e4c8530b2df"
+    }
+  ],
+  "mirrors": [
+    {
+      "a": "app/src/main/assets/darkith_ui.html",
+      "b": "darkith-inscriber.html"
+    }
+  ],
+  "registers": {
+    "A-apparatus": "Governance \u2014 the machine+human laws (read first)",
+    "B-knowledge": "Corpus \u2014 the human-readable knowledge base",
+    "C-skillbase": "Skill surfaces \u2014 the interactive web apps",
+    "D-asset": "Shipped runtime assets",
+    "E-evidence": "Machine-generated proof",
+    "F-config": "Build configuration \u2014 dependency manifests"
+  }
+}

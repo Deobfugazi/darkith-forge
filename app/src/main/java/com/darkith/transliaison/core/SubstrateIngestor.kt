@@ -15,7 +15,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-// * M2 carrier for one fetched artifact: what it IS and what it IS NOT. Holds iff all nine subfields are non-blank. // 
+// * M2 carrier for one fetched artifact: what it IS and what it IS NOT. Holds iff all nine subfields are non-blank. //
 data class IngestBoundary(
     val state: String,
     val property: String,
@@ -66,7 +66,7 @@ data class IngestArtifact(
 
 data class IngestDeficit(val node: String, val reason: String)
 
-// * Invariant: artifacts is non-empty OR deficits is non-empty. Never both empty (an empty answer is a stub). // 
+// * Invariant: artifacts is non-empty OR deficits is non-empty. Never both empty (an empty answer is a stub). //
 class IngestOutcome(val artifacts: List<IngestArtifact>, val deficits: List<IngestDeficit>, val fromCache: Boolean) {
     fun status(): String = if (artifacts.isEmpty()) "DEFICITS" else if (fromCache) "CACHED" else "FOUND"
 
@@ -414,7 +414,7 @@ class SubstrateIngestor(
         val out = ArrayList<JSONObject>()
         for (line in f.readLines(Charsets.UTF_8)) {
             if (line.isBlank()) continue
-            try { out.add(JSONObject(line)) } catch (e: Exception) { }
+            try { out.add(JSONObject(line)) } catch (_: Exception) {}
         }
         return out
     }
@@ -440,7 +440,7 @@ class SubstrateIngestor(
         return out
     }
 
-    // * M6: most-voted fully-qualified import for a bare symbol, from remembered Kotlin/Java artifacts only. // 
+    // * M6: most-voted fully-qualified import for a bare symbol, from remembered Kotlin/Java artifacts only. //
     fun recallImport(symbol: String): String? {
         if (!Regex("[A-Za-z_][A-Za-z0-9_]*").matches(symbol)) return null
         val rx = Regex("^\\s*import\\s+([A-Za-z0-9_.]+)\\." + Regex.escape(symbol) + "\\s*;?\\s*$")

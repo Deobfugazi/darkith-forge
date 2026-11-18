@@ -61,6 +61,12 @@ jobs:
           python3 -m pip install --quiet -r requirements-dev.txt
           python3 -m playwright install --with-deps chromium
 
+      - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
+        # The §19 compile proof (MUST-11) and the delivery gate's currency law need a real
+        # kotlinc + android.jar; without them those gates fail CLOSED, not skip. The stager
+        # is idempotent and caches into .tools/ (gitignored).
+        run: bash tools/fetch_toolchain.sh
+
       - name: Run the repository's tests (tools/ci.sh)
         run: bash tools/ci.sh
 
@@ -137,6 +143,10 @@ jobs:
       # opened with GITHUB_TOKEN would sit in approval-required state and never reach the
       # merge job, so test-then-commit is the self-contained, still-gated path for the
       # bot's own bumps. A failed test leaves main untouched.
+      - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
+        if: steps.bump.outputs.changed == 'true'
+        run: bash tools/fetch_toolchain.sh
+
       - name: Test, then commit only if green
         if: steps.bump.outputs.changed == 'true'
         run: |

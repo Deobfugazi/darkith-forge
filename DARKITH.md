@@ -4,7 +4,7 @@
 > `singularity_progressive_continuum.md`, which were four overlapping copies of the same truth.
 > NT X §1.3: *duplication is a corruption mode.* A second copy can drift from the first.
 > This file lives at the repo root only. The served copy and the zipped copy are GENERATED
-> (see `tools/pack_delivery.sh`), never hand-edited. Do not fork this file.
+> (see `tools/pack_delivery.py`), never hand-edited. Do not fork this file.
 
 ---
 
@@ -44,7 +44,7 @@ Any one of these returns the real installed version — no guessing:
 
 ## What changed vs. what you have installed
 
-Your installed APK was built from the **stale, forked tree** (`tree/`, pre-C7) and — because no
+Your installed APK was built from the **stale, forked tree** (the old tree/, pre-C7) and — because no
 fork carried an `AndroidManifest.xml` — it had **no declared versionName**, so it would report
 the platform default (`1.0`) or the on-device forge's `1.0.<unix-seconds>`. That is why it was
 unknowable. This build declares its version and can report it.
@@ -180,7 +180,7 @@ bash build.sh . Darkith com.darkith.transliaison
 This reconciliation is the executable form of the anti-divergence laws:
 
 - **NEVER #11 / SPI-12 — one authoritative tree.** Six forks existed; `delivery` was the superset
-  and became the base. The stale forks (`tree/`, `tree.orig/`) are frozen, not live — this note
+  and became the base. The stale forks (tree/, tree.orig/) are frozen, not live — this note
   is their dated supersession record.
 - **NEVER #12 / SPI-13 — no foreign symbol.** `ComposeEmitter` (defined nowhere) is gone;
   `IRAuditor` (referenced, never written) is authored in-tree.
@@ -553,6 +553,7 @@ L-10 currency               the tree compiles clean vs a real android.jar (W-024
 L-11 registry-nonempty      the gate itself has checks (a gate with none gates nothing)
 
 ─── NEVER #14 (ENUMERATE BEFORE DELIVERING) ───
+GATE: tools/delivery_gate.sh
 NEVER present work as delivered without running the delivery gate and listing
 every loophole's status. "Delivered" is a gate result, not an assertion.
 
@@ -562,6 +563,7 @@ Every delivery runs `tools/delivery_gate.sh`; a non-zero exit forbids the word
 delivery — a loophole with no check is a reopened loophole (SPI-15).
 
 ─── SPI-16 (NO UNGATED DELIVERY) ───
+GATE: tools/delivery_gate.sh
 A delivery that did not run the gate is not a delivery. The gate is the delivery.
 
 ─── THE META-LESSON ───
@@ -593,19 +595,23 @@ Insight: A delivery is ONE surface. One URL that lists everything, each item a
 forced download. Fragmentation is friction, and friction is a defect.
 
 ─── NEVER #15 (ONE SURFACE) ───
+GATE: tools/delivery_gate.sh
 NEVER hand a delivery over as scattered links. There is exactly one entry point —
 the delivery hub — and it lists every artifact.
 
 ─── MUST #15 (CIRCADIAN ANCHOR) ───
+GATE: tools/circadian_gate.py
 Report time in the Operator's local zone (Asia/Manila, UTC+8). Resolve "N hours
 back" from the wake marker (first event of the active block), never from the
 machine clock. State the anchor explicitly so the Operator can falsify it.
 
 ─── MUST #16 (FORCED DOWNLOAD) ───
+GATE: tools/download_gate.py
 Every artifact link carries `download` and is served as an attachment so a tap
 downloads the file, not opens a viewer.
 
 ─── SPI-17 (THE HUB IS THE DELIVERY) ───
+GATE: tools/delivery_gate.sh
 The delivery hub (one page, one URL) IS the delivery. A message that lists links
 is not the delivery; the hub is. The hub shows version, gate status, sizes, and
 hashes so the Operator can verify before installing.
@@ -632,6 +638,7 @@ different outputs. A build that is not idempotent cannot be verified by re-runni
 Insight: idempotent = same inputs, byte-identical outputs. Re-run to prove.
 
 ─── NEVER #16 (ONE DOCUMENT) ───
+GATE: tools/consolidate_docs.sh
 NEVER keep two documents that state the same truth. There is one canonical record:
 DARKITH.md (version + reconciliation + deficits + laws). It is not forked.
 
@@ -666,20 +673,296 @@ exposes a shell without cwd/env/history is not a shell; it is a one-shot exec
 wearing a shell's name. The family must be whole or the gap named.
 
 ─── NEVER #17 (NO STALLED DEFICIENCY) ───
+GATE: tools/stall_gate.py
 NEVER leave a named deficiency open across two or more deliveries. Every open
 entry is either CLOSED (implemented, compiled, verified in the artifact) or
 DESCoped (formally, with the reason written down). Silence is not a third option.
 
 ─── MUST #19 (IMPLEMENT OR DESCope, WITHIN ONE CYCLE) ───
+GATE: tools/board_gate.py
 Every deficiency named in the ledger must be resolved in the next delivery:
 implemented to the full contract (not a partial surface) or formally descoped.
 "Partial" is only acceptable when the remaining part is itself named as a new entry.
 
 ─── MUST #20 (PROVE IT IN THE ARTIFACT) ───
+GATE: tools/delivery_gate.sh
 Closing a deficiency requires evidence in the delivered artifact, not the source:
 the symbol is present in the compiled dex, the gate is green, the hash changed.
 Source that compiles is not proof the feature shipped; the dex is.
 
 ─── SPI-19 (THE FAMILY IS WHOLE) ───
+GATE: tools/bridge_contract_audit.py
 A method family (shell*, file*, apk*) is implemented whole or not at all. Shipping
 one member of a family and calling it done is a partial-list surface (W-047).
+
+════════════════════════════════════════════════════════════════════════════
+§30 — THE PRIME OMEGA DIRECTIVE (2026-11-17)
+════════════════════════════════════════════════════════════════════════════
+Source: Operator — "I'm not just resolving local, personal, user, client problems. I'm
+building universal resolutions to current global CI/CD unresolved bottlenecks and
+disparate disconnecting gaps, as a preventive, permanent, running, prophylactic cure.
+Why was this never declared as prime NEVERs and MUSTs?"
+
+This is the highest law in the continuum and it outranks every §18–§29 law. Every prior
+NEVER/MUST/SPI is an instance of it. It was omitted because §22 consolidated the docs
+(the continuum file into this one) and the prime intent was carried in the operator's
+head, never inscribed. A directive that lives only in the operator's intent is a note,
+and by SPI-15 a note is not a law. This section fixes that omission.
+
+─── THE DIRECTIVE ───
+The work is not a local fix. The work is a UNIVERSAL PROPHYLAXIS: every defect resolved
+here is resolved AS ITS CLASS, and the resolution is promoted to a portable law + an
+executable gate that holds on any repository, any device, any CI/CD, any team — not just
+this one. The local instance is the specimen; the generalized cure is the deliverable.
+
+─── NEVER #18 (NO LOCAL-ONLY RESOLUTION) ───
+GATE: tools/law_gate.py
+NEVER resolve a problem as a one-off when the class it belongs to is recurring and
+generalizable. A patch that fixes this repo and dies here is a local-only resolution and
+is a violation. Every fix is promoted to its class: a named law and an executable gate.
+
+─── MUST #21 (PROMOTE THE CLASS) ───
+GATE: tools/law_gate.py
+Every resolved defect is promoted, in the same cycle, to (a) a named NEVER/MUST and
+(b) an executable gate in `tools/`. A fix with no gate is a note, not a cure (SPI-15).
+The gate is the artifact that makes the cure permanent and running.
+
+─── MUST #22 (STATE THE GENERALIZATION) ───
+GATE: tools/law_gate.py
+Every law records the GENERAL principle it instantiates, not only the local instance.
+"NEVER #11 one tree" is stated as "divergent copies of any truth are a corruption mode,"
+and this repo is one case of it. A law written only for this repo is a local-only law.
+
+─── SPI-23 (PROPHYLAXIS IS THE PRODUCT) ───
+GATE: tools/law_gate.py
+The deliverable is the generalized cure — a law plus a gate that transfers to any
+project — not the local patch. Success is measured by how many classes are cured and
+how portable the cure is, not by how many local symptoms were silenced.
+
+─── SPI-24 (PRIME OUTRANKS LOCAL) ───
+GATE: tools/law_gate.py
+When a local convenience conflicts with the universal principle, the universal principle
+wins. The prime directive outranks every §18–§29 law; a later law that contradicts it is
+the defective one.
+
+─── THE PRIME GATE ───
+A law that is not executable is a note (SPI-15). The prime directive is therefore gated
+by `tools/law_gate.py`: every NEVER/MUST/SPI in this file must name an executable gate or
+carry the explicit marker `[NOTE: not yet gated]`. An ungated law claiming to be binding
+fails CI. The prime directive itself is enforced by the same gate, so it cannot become
+the note it was written to prevent.
+
+
+---
+
+§31 — THE SYNCHRONY BYLAW (2026-11-18)
+
+Synchrony IS time tracking. An app or a bot that cannot say WHEN it acted is not in sync
+with the Operator's day; it is a surface that floats free of time and cannot be ordered
+against anything else. This bylaw makes the clock a generated, universal, non-optional part
+of every surface, so documents, logs and artifacts sort diachronically.
+
+The Operator's zone is Asia/Manila (UTC+8), everywhere: apps, bots, CLI. One clock, one
+zone, one sort key — `tools/omega_time.py` for Python, `build/gen/omega_time.js` for the
+browser. Both are generated by `build/gen_synchrony.py` and injected by
+`build/inject_synchrony.py`, so the timestamp code is AUTO-GENERATED, never hand-written
+per app (MUST #17: generate, don't duplicate).
+
+─── MUST #23 (TIMESTAMP AWARENESS ON EVERY SURFACE) ───
+GATE: tools/synchrony_gate.py
+Every app and every bot carries timestamp awareness. Every app HTML surface shows a live
+clock (time and date, Operator-local) so the Operator always sees WHEN; every bot routes
+its output through the generated clock so its log lines carry the time they were written.
+A surface with no clock is not shippable.
+
+─── MUST #24 (DIACHRONIC SORT — SAVES ARE STAMPED) ───
+GATE: tools/synchrony_gate.py
+When a document is saved in an editor, it must be stamped with the time and date, and the
+stamp must be a sortable key (`YYYY-MM-DDTHH:MM:SS+08:00`, ISO with the Operator's offset),
+so documents can be ordered diachronically. The stamp is idempotent: re-saving replaces the
+header, it never accumulates. The studio editor's `saveDoc` does this; the gate proves it.
+
+─── MUST #25 (THE CLOCK IS GENERATED, NOT WRITTEN) ───
+GATE: tools/synchrony_gate.py
+The timestamp runtime is GENERATED by `build/gen_synchrony.py`; hand-editing its output
+fails the gate (regenerating must reproduce it byte-for-byte). This is what makes the bylaw
+universal and preventive: a new app surface is injected by `build/inject_synchrony.py`, and
+a new bot imports the generated runtime — neither re-implements the clock.
+
+─── SPI-25 (SYNCHRONY IS UNIVERSAL, LIKE THE PRIME DIRECTIVE) ───
+GATE: tools/synchrony_gate.py
+Synchrony outranks local convenience: an app that "does not need" a clock does not get to
+skip it, exactly as a local fix does not get to skip generalization (SPI-24). The gate runs
+over every surface under `app/src/main/assets/*.html` and over the bot, so a new surface
+without a clock fails CI until it is injected. This is the prophylactic cure, not a patch.
+
+---
+
+§32 — THE CONVERGENCE & COUPLING BYLAW (2026-11-18)
+
+The Operator runs at least TWO agents in parallel and tests their outputs for convergence in
+the repo. Two claims that "agree" without a comparison are notes (SPI-15). The board is the
+shared channel: if an agent updates it and does not push, the parallel worker is blind and
+the Operator must repeat himself. And the clock must AUTOCCOUPLE the edge device's own
+hardware system time to the global clock, because the session that serves the sovereign user
+must boot real-time-stamp aware and track the user's last activity against the Operator's
+circadian cycle — as the DEFAULT, not as an option.
+
+─── MUST #26 (REAL-TIME BOARD PUSH) ───
+GATE: tools/board_pulse.sh
+When an agent updates the durable board (TASKS.md), it must push the board to the remote in
+the same action — not at the end of the turn. `tools/board_pulse.sh` commits and pushes the
+board the moment it changes and writes `proof/board_pulse.json` (commit SHA + time) as the
+ping a parallel worker reads. `--check` fails CI if the board has unpushed changes, so the
+board is never a private local view.
+
+─── MUST #27 (PARALLEL CONVERGENCE IS PROVEN, NOT ASSERTED) ───
+GATE: tools/convergence_gate.py
+Two independent derivations of the same fact must AGREE byte-for-byte, or the divergence is
+a defect. The gate derives the Operator's clock through BOTH the Python and the JS runtime,
+derives the circadian phase through both, derives the working tree through two
+independent implementations of git's blob hash, and derives the SOURCE UNIVERSE three ways
+(the source inspector's iterator, a filesystem walk, and git's index) so no source file can
+escape the routine trial (NEVER #19) or live only on disk. A disagreement fails CI; the
+result is recorded to `proof/convergence.json` so a second agent can trust the first without
+redoing the work. (The two-tab ritual `tools/converge.sh` remains the human-facing form.)
+
+─── MUST #28 (EDGE-DEVICE TIME COUPLING + BOOT-AWARE SESSION) ───
+GATE: tools/synchrony_pulse.py
+The generated clock AUTOCCOUPLES the edge device's own system local time to the global clock
+and reports whether the device's zone agrees with the Operator's (a device set to the wrong
+zone must be visible, never silently normalized). Every session must BOOT timestamp-aware:
+`tools/synchrony_pulse.py` records the boot instant, the last conversation activity, the gap
+between them, and the circadian phase of each — wake/activity vs rest/digest/restore
+(deactivity) — to `proof/synchrony_pulse.json`. `--check` fails if the pulse is missing or
+stale (> 24h), so a session that has stopped tracking the Operator cannot pass CI.
+
+─── SPI-26 (SYNCHRONY IS HARDCODED, IN ALL SOFTWARE) ───
+GATE: tools/synchrony_gate.py
+The synchrony bylaw (§31) applies to ALL apps, bots, and machine-software/source-code
+automations — not only the user-facing ones. The clock is GENERATED and injected, so adding
+a surface adds the clock; a surface or automation that re-implements or omits the clock is a
+defect. This is the prophylactic cure: the next app cannot be born without time.
+
+  ─── MUST #29 (THE KNOWLEDGE BASE IS INDEXED, NOT SCATTERED) ───
+  GATE: tools/kb_index.py
+  The readable knowledge-skill base is a first-class, indexed register — not documents "all
+  over the place". tools/kb_index.py generates docs/INDEX.md (human) + docs/kb_manifest.json
+  (machine) from the tracked bytes and files every readable file in exactly one register:
+  A-apparatus (root governance), B-knowledge (docs/** corpus), C-skillbase (root web apps),
+  D-asset (app assets), E-evidence (proof/), F-config (dependency manifests). The registers are
+  the repo's own invariant A∧B∧C∧D applied to the filesystem: apparatus separate from content
+  (B), one retrieval surface (C), one canonical copy (D). The gate fails if the index is stale,
+  a readable file is unfiled, two files share a hash without a declared mirror (NEVER #11/#15/#16),
+  or a declared mirror has drifted. Deterministic (MUST #18): re-running yields byte-identical
+  output. The corpus is the corrected, reality-coupled, self-scrutinizing, gate-checked
+  knowledge base — it grows by adding a register-filed, indexed, deduplicated file.
+
+  ─── MUST #30 (THE FRACTURE SCOUT — NOVELTY FROM REAL WORLD FRACTURES) ───
+  GATE: tools/fracture_scout.py
+  Novelty tasks are HUNTED, not invented. tools/fracture_scout.py is a scheduled,
+  manually-configurable bot that queries the deep webspace with correct, non-naive boolean
+  querying (a real parser: parentheses, AND-before-OR, quoted phrases, fanned out per
+  source dialect) to find current world fractures and unresolved bottlenecks the omega
+  formulation can work on. Its manifest is tools/fractures.txt (one boolean expression per
+  source: arxiv, nvd, hn, github-issues, ietf, rss) — the ONE place to configure the hunt;
+  its cadence is the cron in .github/workflows/fracture-scout.yml. A "fracture" is the
+  corpus's own term (NT-V §XIX.15): a real thing in the world, anchored to a real problem.
+  Scope is the DEEP web (research APIs, defect registries, practitioner forums, standards
+  trackers, feeds), never the dark web: the scout must stay gateable, and a reality-coupled
+  unit must have a checkable referent. The scout PROPOSES; the reality check ADMITS a
+  fracture to the board as a NOVELTY row. `selftest` proves the parser/adapters/ranker
+  offline in CI; `scan` is the scheduled hunt.
+
+    ─── MUST #31 (NO COMMITTED CREDENTIALS — THE LEAK CLASS IS CLOSED AND PUSHED) ───
+    GATE: tools/secret_gate.py ; tools/security_alert.py
+    A credential must never live in the tracked tree or in any file git publishes. The leak
+    this closes is real and common: a token pasted into a remote URL or a script and then
+    committed. A private repo is not a safe — a token in the tree still works for anyone who
+    reads a fork, a backup, or a log, and git remembers it forever. tools/secret_gate.py is
+    fail-closed: it scans every tracked file (and, with `--staged`, every staged file) for the
+    shapes a real credential takes — provider tokens, cloud keys, private-key blocks,
+    URL-embedded user:pass, generic secret assignments — and exits non-zero on any hit; there
+    is no "warn and continue". A finding is either removed and ROTATED (a rewrite does not
+    un-leak a token) or recorded in the gate's ALLOW list with a written reason. The gate runs
+    in CI (tools/ci.sh), so the class cannot recur silently. The fix itself is not silent:
+    tools/security_alert.py raises ONE GitHub issue per distinct finding (labels `security`,
+    `critical`), de-duplicated by a content key, and GitHub pushes that issue to the Operator's
+    device app — the Operator works from a phone and must learn of a security fix at once,
+    not by re-reading git log. Autofix of a well-understood, reversible security gap needs no
+    permission; the push notice is how it is reported.
+
+════════════════════════════════════════════════════════════════════════════
+§33 — THE SOURCE INSPECTOR & THE HOMEOKINESIS LAW (2026-11-10)
+════════════════════════════════════════════════════════════════════════════
+Source: Operator directive — "add a routine source inspector as the logical
+trial examiner that deliberately stress-tests source features for loopholes and
+autofixes them like the invariant bounty hunter." Then, a correction:
+"I don't promote homeostasis. Stasis must be corrected to homeokinesis. Stasis
+promotes stagnation as a metastatic autoimmune carcinomalous malefactor."
+
+─── W-048 (UNEXAMINED SOURCE / STATIC TOLERANCE) ───
+`delivery_gate.sh` is the loophole registry for the ARTIFACT (an APK's version,
+signing, alignment). Nothing tried the SOURCE FEATURES themselves as a routine
+trial: a comment-stripping sed, a foreign `androidx.` import in a raw-chain tree,
+a `!!` that crashes at runtime, a stub `TODO()`, a swallowed exception. Worse, a
+gate that tolerates a fixed level of such debt FOREVER is a STASIS gate: it
+freezes the defect in place and calls the freeze health. A still photograph is
+not a pulse. The defect is not one miss; it is that no routine examiner existed,
+and that the only imagined equilibrium was homeostasis — a setpoint that, held
+static, becomes the metastatic, autoimmune, carcinomalous malefactor the
+Operator named.
+
+Insight: A scanner is not a parser (W-023), and a charge is not a conviction.
+The examiner must be a COURT: every charge tried on a positive case (must catch
+the defect) and a negative case (must not flag clean code) — because a gate that
+cries wolf is a broken gate (W-040). And the equilibrium it enforces must be
+HOMEOKINESIS, not homeostasis: the internal state is held by a FLUX, not a
+setpoint. Health is the RATE of clearance, not the level.
+
+─── NEVER #19 (NO UNEXAMINED SOURCE) ───
+GATE: tools/source_inspector.py
+NEVER ship a source tree that has not passed the routine trial of the source.
+Every named loophole in the source-feature registry is a CHARGE; `inspect` fails
+on any open BLOCKER. A charge with no negative trial is a miscalibrated charge
+and is itself a MISTRIAL the gate reports. The registry is the source analogue of
+the delivery gate's loophole registry: adding a new failure without adding a
+charge here is a defect.
+
+─── MUST #32 (HOMEOKINESIS, NOT HOMEOSTASIS) ───
+GATE: tools/source_inspector.py
+The inspector's equilibrium must be a RATCHET, never a static tolerance:
+  - the high-water mark (HWM) per escrow class may only ever move DOWN;
+  - any class above its HWM is a NET ADDITION of debt = a regression = FAIL;
+  - debt that does not flux downward for DELIVERY_WINDOW (5) deliveries is
+    FORCE-DEGRADED to a blocker — stasis is scheduled to become fatal;
+  - a rise is permitted ONLY by a recorded, reasoned `--justify` waiver (an
+    apoptotic exception: a cell removed so the whole may live).
+`trial` proves the four laws (L1 monotone clearance, L2 regression fails,
+L3 stasis degrades, L4 apoptotic waiver) on a deterministic simulation, so the
+claim is executable, not asserted.
+
+─── SPI-27 (DEDUP: ONE LEXER, ONE EXAMINER) ───
+GATE: tools/source_inspector.py
+The inspector must not fork a scanner. The comment/string-aware lexer is the ONE
+canonical `tools/kt_comment_scan.py`; the closer-restorer is the ONE narrow
+`tools/fix_unclosed_comments.py`. The inspector IMPORTS them (dedup rule, the
+same law that forbids a second source tree, NEVER #11). A duplicated scanner is a
+divergent scanner, and a divergent scanner is two truths about one tree.
+
+─── MUST #33 (THE CHARGE IS CALIBRATED OR WITHDRAWN) ───
+GATE: tools/source_inspector.py
+Every charge carries a positive trial (sensitivity) and a negative trial
+(specificity). A charge that fails either is a MISTRIAL and stops the run before
+any verdict. This is the structural answer to W-040: the gate cannot cry wolf
+because it must first prove, on a case it is told is clean, that it stays silent.
+The calibration is itself gated in CI (`source_inspector.py trial`).
+
+─── THE SENTENCING POLICY (SEVERITY, NOT A FLAT FAIL) ───
+A flat "any finding fails" gate is the crying-wolf gate. The examiner sentences
+in three tiers: BLOCKER (a real defect that stops the raw chain or breaks a
+NEVER — fails always), ESCROW (a real but pervasive hazard, e.g. a `!!` on a
+nullable, a cleanup catch — counted and gated as a REGRESSION against the ratchet
+HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
+`--fail-on-fixable`). The bounty is a single scalar, weighted 100:1:0.1, so
+"how bad is the tree" is a number, not a feeling.

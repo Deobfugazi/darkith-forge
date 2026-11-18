@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Refresh the host APK and the Termux one-shot with the current webapp.
+"""Refresh the host APK and the Termux one-shot with the current app UI surface.
 
-The host app ships its UI as `assets/homekeeper.html`, a byte-for-byte copy of
-the fused webapp. When that webapp is rebuilt the APK and the one-shot payload
-must be refreshed too, or they ship a stale UI (exactly the drift this tool
-exists to end).
+The host app ships its UI as `assets/homekeeper.html`, a byte-for-byte copy of the
+app surface `app/src/main/assets/homekeeper.html` (loaded by HomekeeperActivity).
+When that surface is rebuilt the APK and the one-shot payload must be refreshed
+too, or they ship a stale UI (exactly the drift this tool exists to end).
 
 Both artifacts are re-signed with the SAME key that already signs the host APK
 (`assets/engine/release_key` / `release_cert`, CN=Darkith Release), so the
@@ -32,16 +32,22 @@ import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DELIVERY = ROOT / "delivery"
-WEBAPP = ROOT / "darkith forge.html"          # the fused webapp (source of truth)
+WEBAPP = ROOT / "app/src/main/assets/homekeeper.html"   # the app UI surface (source of truth)
+# The fused `darkith forge.html` is GENERATED from `darkith home forge.html` by
+# build/build-forge.py and is a separate deliverable; it is NOT the APK's UI asset
+# (`homekeeper.html` is a synchrony-injected surface loaded by HomekeeperActivity).
 APK = DELIVERY / "darkith-homekeeper-debug.apk"
 ONESHOT = DELIVERY / "darkith-one-shot.sh"
 
 APK_ASSET = "assets/homekeeper.html"
-PAYLOAD_ASSET = "app/src/main/assets/homekeeper.html"
+# `make-oneshot.py` roots the payload at this prefix (the tree extracts to
+# `darkith-forge/` on the phone), so every payload member name carries it.
+PAYLOAD_PREFIX = "darkith-forge/"
+PAYLOAD_ASSET = PAYLOAD_PREFIX + "app/src/main/assets/homekeeper.html"
 APK_KEY = "assets/engine/release_key"
-PAYLOAD_KEY = "app/src/main/assets/engine/release_key"
+PAYLOAD_KEY = PAYLOAD_PREFIX + "app/src/main/assets/engine/release_key"
 APK_LIB_DIR = "lib/"
-PAYLOAD_JNI_DIR = "app/src/main/jniLibs/"
+PAYLOAD_JNI_DIR = PAYLOAD_PREFIX + "app/src/main/jniLibs/"
 MARKER = b"__DARKITH_PAYLOAD_BELOW__"
 # Old signature entries: apksigner writes fresh ones.
 SIG_PREFIX = "META-INF/"

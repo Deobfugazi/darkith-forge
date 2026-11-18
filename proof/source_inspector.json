@@ -1,0 +1,68 @@
+{
+  "_law": "source_inspector: the routine trial of the source for loopholes",
+  "autofixable": 0,
+  "bounty": [],
+  "bounty_score": 0,
+  "by_severity": {
+    "blocker": 0,
+    "cosmetic": 0,
+    "escrow": 0
+  },
+  "charges": [
+    "CH-01",
+    "CH-02",
+    "CH-03",
+    "CH-04",
+    "CH-05",
+    "CH-06",
+    "CH-07",
+    "CH-08",
+    "CH-09",
+    "CH-10"
+  ],
+  "files_examined": 55,
+  "open": {},
+  "root": "app/src/main/java/com/darkith/transliaison",
+  "trial": {
+    "CH-01": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-02": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-03": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-04": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-05": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-06": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-07": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-08": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-09": {
+      "sensitivity": true,
+      "specificity": true
+    },
+    "CH-10": {
+      "sensitivity": true,
+      "specificity": true
+    }
+  }
+}

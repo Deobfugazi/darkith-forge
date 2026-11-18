@@ -206,3 +206,35 @@ After the fix both files are **byte-identical** to their `tree_omega` counterpar
 absent from the classpath (see §4) is why 147 errors appeared; the two unclosed comments
 are only 2 of those 147. Fixing the comments does not make the tree compile — the
 classpath must also carry `android.jar`.
+
+---
+
+# FINAL PROOF (2026-11-10)
+
+1. Comment defects — measured with tools/syntax_gate.py over all three trees:
+   `PASS — 155 .kt files, every block comment closed.`
+   Two failure modes were scanned: (A) unclosed block comment (depth>0 at EOF) and
+   (B) a stray `*/` with no `/*` (the "stripped opener" the briefing described).
+   Before the fix: tree.orig had 2 files with mode A (CssLite.kt, SubstrateIngestor.kt).
+   After: 0 of either mode, in any tree.
+
+2. The two real defects were a mangled CLOSER (`*/` -> `//`), not a stripped opener:
+   - tree.orig CssLite.kt line 8: ` // ` -> ` */ `
+   - tree.orig SubstrateIngestor.kt line 97: ` // ` -> ` */ `
+   Plus a stray trailing `}` deleted from tree.orig/CssLite.kt. Both files are now
+   byte-identical (cmp) to their tree_omega counterparts.
+
+3. Compile blocker (Problem 2) is separate and still open: the real log has 147 errors,
+   118 of them `unresolved reference`, and android.jar is ABSENT from this box. No source
+   edit removes those; kotlinc needs `-classpath android.jar` (plus the AndroidX/Compose
+   jars, or the code must be rewritten to raw android.*). Not attempted here, per briefing.
+
+4. APK repack bug (build.sh) fixed on main: the repack block now forces ZIP_STORED for
+   `resources.arsc` and `lib/**/*.so`, so Android 11+ can mmap them (fixes the bare
+   "App not installed").
+
+5. Fragmentation engine stopped: main now tracks all 55 app .kt files (was 0), key-free
+   (0 keystore/apk leaks), with a coordinate index (tools/tree_index.py) and a syntax gate
+   (tools/syntax_gate.py) wired into tools/ci.sh.
+
+CI on a fresh clone of main: PASS.

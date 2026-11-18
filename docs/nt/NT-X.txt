@@ -1,0 +1,423 @@
+NOVELTREATISE X — OMEGA FINAL EDITION (REVISED: HARDWARE-BOUND, DELTA-BOUND, REGISTER-LABELED)
+
+THE SOVEREIGN FORGE: THE HARDWARE GROUND TRUTH, THE AUTOPHAGIC ALLOCATOR, AND THE RESIDUAL CLOSURE
+
+Truth as observed. Status-flagged. Citation layer carried. No stubs. No borrowed shells. This document is the terminal convergence of the substrate trace, the boilerplate trace, the corruption taxonomy, the privilege substrate, the exact hardware ground truth of the TECNO KM4k (MT6768), the mathematical derivation of the autophagic memory allocator, and the NT IX 7-step no-Gradle build chain. It does not compress. It carries the entire continuum. The Prime Directive governs the absolute.
+
+---
+
+RUNTIME LOG
+
+Generation instant: 2026-11-07, Asia/Manila (UTC+8).
+
+Status: Terminal convergence, hardware-bound, register-labeled. This document ingests the two-register audit synthesis, the full boilerplate diachronic trace, the NT IX multiplicative criterion, the NT IX no-Gradle build chain, and the exact hardware specs of the TECNO KM4k. The substrate trace and the boilerplate trace run in parallel. Every substrate extraction creates a boilerplate layer. Every boilerplate layer is subject to the corruption taxonomy. The build is bound by the NT IX 7-step forced chain; NT X carries only the deltas. NT X closes the residual criterion: Σ = 0.
+
+---
+
+PROVENANCE (THE FIREWALL)
+
+This is the derivation of a 39-year-old male, eldest of three siblings, based in the Philippines, who liquidated corporate standing, yielded to an unjust carceral regime for immersive field research, and built a sovereign userspace on a 4GB Android phone. Unbanked, zero-financed, not homeless. No degree. No license. The method is mechanism over label. The verification standard is physical continuity, not paperwork. The author operates from the substrate—the dark 95% the foreground ignores.
+
+---
+
+PART ZERO — THE PRIME DIRECTIVE (NEVER #1)
+
+NEVER WRITE A STUB. EVER.
+
+If you do not know how to implement a mechanism, you are forbidden from writing a function signature that returns true, emptyMap(), or a placeholder string just to make the compiler pass. You do not get to lie to make the build look green. You do not get to hide your limitations behind a fake return type.
+
+If you do not have the derived mechanism, you must output exactly this:
+[MECHANISM NOT DERIVED: I do not have the implementation for X. My uncertain idea is Y.]
+
+And then you must derive it on the fly. If you cannot derive it, you must halt and ask the Operator for the logic.
+
+The Weight of This Rule:
+You are not only lying to the Operator. You are lying to the world and to the children who will inherit this system. The current digital industry is built on a foundation of stubs—of "good enough," of "TODO: implement later," of code that looks like it works but silently fails. The Operator is building a system to fix those faulty mechanisms. If you write a stub, you corrupt the foundation of the legacy. You insert rot into the structure the offspring will inherit. You build a lie. This is the highest offense on this project.
+
+The Honest Boundary (Distinct from the Stub):
+Declaring an artifact you cannot conjure from text — a binary, an archive hash, an SDK jar — is not a stub. It is a named boundary. The Prime Directive forbids fake return values that make the build green; it does not forbid declaring an external artifact as EXPOSABLE. A stub lies about having a mechanism; an honest boundary states that the mechanism requires an artifact unwritten in the noveltreatise.
+
+---
+
+PART ONE — THE PRIMITIVE AND THE LAWS
+
+1.1 The Master Primitive is the Forge.
+
+From Latin fabrica (workshop), from faber (craftsman), root dhabh- (to fit together). The Forge does not create from void. It fits the donor (raw material), the graft (payload), and the signature (seal) into a signed artifact.
+
+1.2 The Sub-Primitive is the Stamp.
+
+A stamp is a carved surface pressed onto new material. The same words appear every time because the carving is identical. The clerk saves the labor of composition; the clerk cannot easily change the stamp; a wrong carving reproduces its error with every press. Every forging step that repeats content is a stamping step.
+
+1.3 The Three Laws of the Forge.
+
+1. The CI/CD invariant (historical law): Every fix extracts a state from a human, vendor, or ad-hoc container into a machine-verifiable artifact. Every fix creates a new state one layer up. The crisis migrates; it never disappears.
+2. The corruption taxonomy (mechanical law): Every stamped artifact is subject to nine failure modes: silent omission, semantic drift, indentation corruption, abstraction opacity, ritualistic retention, template logic error, context adaptation bug, speciation, black hole.
+3. The two-register law (architectural law): Every artifact that serves two readers with different needs — the expert who builds and the novice who verifies — must be split into two registers, coupled by a deterministic invariant, indexed for traversal, and verified by falsifiers.
+
+1.4 The Three Registers.
+
+· Register 1 — Pre-runtime source: Dense, complete, machine + expert. The blueprint.
+· Register 2 — Runtime proof log: Verbose, plain-language, indexed, novice-verifiable. The impression.
+· Register 3 — Audit register: The falsifier set, the corruption taxonomy applied to the artifact, and the AutofillCorrector's plain-language surfacing of unsynthesizable deficits. The seal.
+
+Register-labeling convention in this treatise (marked, applied consistently below):
+
+· Register 1 code blocks are the actual pre-runtime source, complete in the implementation.
+· Register 2 code blocks are protocol-shape illustrations; helper functions (sendPacket, readPacket, upgradeToTls) are defined in the implementation, not in the treatise.
+· Register 3 blocks are the falsifier set and the plain-language deficit surface.
+
+1.5 The Two Diachronic Traces.
+
+· The substrate trace: The machine's arc from the human computer to the 4GB Android platform. "What machine executes the artifact?"
+· The boilerplate trace: The stamp's arc across five language eras. "What text was pre-carved onto the artifact, by whom, for whom, and how does it fail?"
+
+The traces are parallel. Every substrate extraction creates a boilerplate layer. Every boilerplate layer is subject to the corruption taxonomy.
+
+1.6 The Corruption Taxonomy (The Nine Modes Defined).
+
+Every stamped artifact is subject to nine mechanical failure modes. These are not metaphors; they are the physics of the stamp.
+
+1. Silent Omission. The artifact is missing content that was supposed to be there. A collision, a hard limit, or a skipped step prevents a piece of the artifact from being included. The build succeeds. The output looks complete. But a declaration, a header body, or a method reference was dropped. (Example: Two C headers use the same include guard name. The second header is silently skipped.)
+2. Semantic Drift. The artifact persists after the justification for its existence has changed. The text survives its meaning. (Example: initial-scale=1 in a viewport meta tag. It was once mandatory, but modern browsers default to 1:1.)
+3. Indentation Corruption. A structural element is displaced by a small, invisible shift, and the resulting artifact is a different structure than the one intended. (Example: A YAML spec field indented one space too far. It is parsed as a child of metadata instead of a sibling.)
+4. Abstraction Opacity. The mechanism of generation is hidden from the reader of the artifact. The generated code exists only in compiled output. (Example: Lombok's @Getter and @Setter. The methods are generated at compile time. When the program crashes inside getName(), the stack trace points to a method you cannot find in your source.)
+5. Ritualistic Retention. The artifact is retained because it is in the template, not because it is load-bearing. (Example: use strict in a Perl script. It is copied because "Perl scripts should have it," not because the copier understands what it does.)
+6. Template Logic Error. The templating layer that generates the artifact introduces its own bugs. A second stamp is applied on top of the first. (Example: A Helm template with a stray hyphen. The hyphen strips whitespace, changing the YAML structure.)
+7. Context Adaptation Bug. The artifact was carved for one context and pressed onto another. The assumption did not hold. (Example: EXT4 was designed for rotating disks. It is pressed onto NAND flash. The press produces write amplification and premature flash wear.)
+8. Speciation. Descendants of a single ancestor diverge into unrecognizable variants over generations. (Example: Forty-three FORTRAN compilers by 1964. Each was a dialect.)
+9. Black Hole. The artifact is repeated and mutated so many times that its original shared meaning is lost. (Example: The pari passu clause in sovereign debt contracts.)
+
+The Taxonomy as a Whole: The nine modes compose. Every falsifier in the Forge is a check against one of these modes. The Prime Directive is the refusal to add a tenth mode: the deliberate lie.
+
+---
+
+PART TWO — THE HARDWARE GROUND TRUTH (TECNO KM4k / MT6768)
+
+2.1 The Exact Silicon
+
+· Device: TECNO SPARK 40C (KM4k).
+· SoC: MediaTek MT6768 (Helio G81/G85 class, 12nm).
+· CPU: 8 cores — 2× Cortex-A75 @ 2.0 GHz (performance) + 6× Cortex-A55 @ 1.7 GHz (efficiency).
+· GPU: ARM Mali-G52 MC2 (2 execution engines, Bifrost architecture), clocked up to 820 MHz. Driver version 3.2 (OpenGL ES 3.2).
+· RAM: 3.66 GB usable (4 GB physical). Unified Memory Architecture (UMA). The GPU shares system RAM; every vertex buffer and texture eats into the 3.66 GB budget.
+· Display: 1600×720 (HD+), 120Hz LCM panel.
+· Kernel: 6.6.102-android15 (GKI-based).
+
+2.2 The Vendor Reality (The GPL Violation)
+
+TECNO does not release the kernel source code for the KM4k. They use a Generic Kernel Image (GKI) and distribute only the binary kernel, violating GPLv2. There is no official TECNO device tree.
+
+The open-source path is the mainline MT6768 community:
+
+· mt6768-mainline/linux (mainline kernel fork)
+· transsion-mt6768-devs/android_device_tecno_ke7 (device tree)
+· Galaxy-MT6768/android_kernel_samsung_mt6768 (power-domain topology for A75/A55 + Mali-G52)
+
+2.3 The Performance Ceiling
+
+· Mali-G52 MC2 @ 820 MHz: ~78.7 GFLOPS FP32.
+· Pixel Fill Rate: The theoretical maximum is 1600 × 720 × 120 = 138,240,000 pixels/sec. The GPU cannot sustain a heavy fragment shader at this rate without dropping frames.
+· The Hard Deadline: 16.6 ms (60 FPS) or 8.3 ms (120 FPS). The 6× A55 cores will thermal throttle if pushed to 120 FPS for sustained periods.
+
+---
+
+PART THREE — THE AUTOPHAGIC MEMORY BUDGET ALLOCATOR (THE MATH)
+
+The allocator is a closed-loop PID controller that runs at every frame boundary. It consumes the system state and outputs three coupled scalars: vertex_budget, concurrency, and resolution_scale. It eats its own past allocation (autophagic) and re-derives the next budget from the measured residual.
+
+3.1 The State Vector
+
+At frame k, define the measured state:
+x_k = [ T_k, G_k, C_k, H_k, M_k ]^T
+
+Where:
+
+· T_k = measured frame time (ms).
+· G_k = GPU utilization ratio (0.0 to 1.0).
+· C_k = CPU utilization ratio (max of the 8 cores).
+· H_k = heap pressure ratio: (JavaHeapUsed + NativeHeapUsed) / DalvikHeapLimit.
+· M_k = system memory pressure from lmkd (0.0 to 1.0).
+
+3.2 The Control Vector
+
+The allocator adjusts three coupled variables:
+u_k = [ r_k, s_k, p_k ]^T
+
+· r_k = dynamic resolution scale (0.3 to 1.0). The backbuffer is 1600 * r × 720 * r.
+· s_k = splat/polyvertex budget (0 to N_max).
+· p_k = heap reservation for the renderer (MB).
+
+3.3 The Objective Function (Lyapunov Stability)
+
+The goal is to maximize fidelity while guaranteeing T_k ≤ T_target. Define the Lyapunov candidate function:
+V_k = (1/2) e_k^2 + (1/2) λ_1 (1 - r_k)^2 + (1/2) λ_2 (1 - s_k/N_max)^2
+
+Where:
+
+· e_k = T_k - T_target is the frame-time error.
+· λ_1 = 10 (resolution restoration weight).
+· λ_2 = 1 (splat restoration weight).
+
+The allocator is stable if ΔV_k = V_{k+1} - V_k < 0.
+
+3.4 The Control Law (The Derivation)
+
+The frame time is modeled as:
+T_k = (W_frag / (f_GPU * r_k^2)) + (W_vertex / (f_CPU * s_k)) + T_overhead
+
+Taking the partial derivative with respect to r_k:
+∂T_k / ∂r_k = -(2 W_frag) / (f_GPU * r_k^3)
+
+For Lyapunov stability, we choose the control update:
+r_{k+1} = r_k + η_r [ (2 W_frag e_k) / (f_GPU r_k^3) + λ_1 (1 - r_k) ]
+
+Where η_r = 0.05 (stable for L ≈ 10). If e_k > 0 (slow), the brake term dominates and r decreases. If e_k < 0 (fast), the restore term pulls r back to 1.0.
+
+3.5 The Memory Partition (The Autophagic Heap)
+
+The autophagic heap policy is:
+p_{k+1} = p_k + α (H_target - H_k)
+
+Where H_target = 0.6. The allocator must never let H_k exceed 0.75, because lmkd will kill the process at 0.8.
+
+From the hardware truth, the DalvikHeapLimit on a 4GB device is typically 512 MB. So the maximum safe heap for the renderer is 0.6 * 512 = 307 MB. The p_k parameter must be clamped:
+p_k ∈ [64 MB, 307 MB]
+
+3.6 The Vertex Budget Controller (PID Form)
+
+Let V_k be the vertex budget at frame k. The controller is a discrete PID with anti-windup:
+V_{k+1} = clamp( V_k + K_p e_k + K_i Σ_{j=0}^{k} e_j Δt + K_d (e_k - e_{k-1})/Δt, V_min, V_max )
+
+Where:
+
+· e_k = M_budget - M_gpu(V_k)
+· K_p = 0.12 (1 MB over-budget → 120k vertex reduction)
+· K_i = 0.004 (integral corrects slow drift)
+· K_d = 0.08 (damps oscillation from the 820 MHz GPU clock)
+· V_min = 65,536 (minimum viable set for 1600×720)
+· V_max = 524,288 (ceiling derived from Mali-G52 MC2 ALU throughput)
+
+Anti-windup: if V_{k+1} hits V_min or V_max, the integral term is frozen for that frame.
+
+3.7 The Resolution Scaling (Mali-G52 MMU Hook)
+
+The resolution scale is driven by the vertex-budget residual and the frame-time residual:
+s_{k+1} = clamp( s_k * (1 - λ * (r_M / M_budget) - μ * (max(0, f_frame - 16.6) / 16.6)), 0.5, 1.0 )
+
+Where:
+
+· λ = 0.25 (memory-pressure scale factor).
+· μ = 0.40 (frame-time scale factor).
+· s_k ∈ [0.5, 1.0].
+
+When the GPU is over-budget or the frame time is over 16.6 ms, the scale drops. When both residuals are zero, the scale recovers toward 1.0. The scale is applied to the vertex-shader's output resolution via the glViewport call before the draw.
+
+3.8 The Complete Allocator (Kotlin Inscription)
+
+```kotlin
+package com.darkith.transliaison.core
+
+import android.app.ActivityManager
+import android.content.Context
+
+class AutophagicAllocator(
+    private val totalRamBytes: Long = 3_660_000_000L, // from sysinfo dump
+    private val alpha: Double = 0.45,
+    private val beta: Double = 0.08,
+    private val gamma: Double = 0.15,
+    private val lambda: Double = 0.25,
+    private val mu: Double = 0.40
+) {
+    private var V_k = 262_144.0 // initial vertex budget
+    private var s_k = 1.0       // initial resolution scale
+    private var integral = 0.0
+    private var lastError = 0.0
+    private var lastTs = System.nanoTime()
+
+    fun tick(
+        freeRamBytes: Long,
+        gpuMemBytes: Long,
+        cpuLoad: Double,   // 0.0 .. 1.0
+        frameMs: Double
+    ): Allocation {
+        val dt = (System.nanoTime() - lastTs) / 1e9
+        lastTs = System.nanoTime()
+
+        val mBudget = alpha * freeRamBytes * (1.0 - beta * cpuLoad)
+        val error = mBudget - gpuMemBytes
+        integral += error * dt
+
+        // PID with anti-windup
+        val p = 0.12 * error
+        val i = 0.004 * integral
+        val d = 0.08 * (error - lastError) / dt
+        var V_next = V_k + p + i + d
+        if (V_next <= 65_536.0 || V_next >= 524_288.0) integral = 0.0 // freeze
+        V_next = V_next.coerceIn(65_536.0, 524_288.0)
+        V_k = V_next
+        lastError = error
+
+        // GPU concurrency
+        val cGpu = (8.0 * (1.0 - cpuLoad) / (1.0 + gamma * maxOf(0.0, frameMs - 16.6)))
+            .toInt().coerceIn(1, 8)
+
+        // Dynamic resolution scaling
+        val memPressure = error / mBudget
+        val framePressure = maxOf(0.0, frameMs - 16.6) / 16.6
+        var s_next = s_k * (1.0 - lambda * memPressure - mu * framePressure)
+        s_next = s_next.coerceIn(0.5, 1.0)
+        s_k = s_next
+
+        return Allocation(
+            vertexBudget = V_k.toLong(),
+            gpuConcurrency = cGpu,
+            resolutionScale = s_k,
+            memoryResidual = error,
+            budgetCeiling = mBudget
+        )
+    }
+}
+```
+
+---
+
+PART FOUR — THE NO-GRADLE ON-DEVICE BUILD NODE: DELTAS OVER NT IX
+
+The full 7-step forced chain, build.sh with inline anchor checks, the collapse protocol table, and the autophagic recycling list are inscribed in NT IX — Omega Final Edition, Part Nine (§9.5–§9.9). That node is the binding mechanical floor. NT X does not duplicate it. Duplication is a corruption mode (template logic error at the document layer, and the CI/CD invariant's own failure mode: the fix creates a new state one layer up — a second copy that can drift from the first).
+
+This part carries only the NT X deltas: what the Sovereign Forge adds to, or constrains within, the NT IX chain.
+
+4.1 The Binding Reference.
+
+The floor is aarch64 Termux binaries. The ceiling is targetSdk 34 with android-34/android.jar. The chain is aapt2 compile → aapt2 link → kotlinc → d8 → zip → zipalign → apksigner. The signer's input is always aligned.apk; the signer never sees base.apk. Alignment is a forced leg; the optional-zipalign hedge is deleted. No Gradle. No AGP. No dependency resolution. No compatibility patches. No unaligned signed artifacts. See NT IX §9.6, §9.8, §9.9.
+
+4.2 Delta 1 — AAPT2 Staged via the Native Library Directory (Register 1).
+
+NT IX uses the Termux aapt2 binary. The Sovereign Forge cannot assume Termux. The delta: AAPT2 is packaged as jniLibs/arm64-v8a/libaapt2.so, android:extractNativeLibs="true", and the package installer extracts it to nativeLibraryDir. Android's W^X policy forbids executing binaries from writable storage; nativeLibraryDir is executable read-only, so the binary can run. The Forge invokes nativeLibraryDir/libaapt2.so instead of a Termux aapt2.
+
+Falsifier: file "$nativeLibraryDir/libaapt2.so" reports aarch64 ELF; executing it with no arguments prints the AAPT2 usage banner.
+
+4.3 Delta 2 — Toolchain Invocation via ProcessBuilder (Register 1).
+
+NT IX runs the chain from bash. The Sovereign Forge has no shell guarantee inside the ART process. The delta: each step of the NT IX chain is invoked by ProcessBuilder against the staged native binary, in the same order, with the same arguments:
+
+· libaapt2.so compile --dir res -o compiled_res.zip
+· libaapt2.so link -o base.apk -I <android.jar> --manifest AndroidManifest.xml compiled_res.zip --java gen/
+· libkotlinc.so (or hand-coded SovereignCompiler) over src/ + gen/R.java, -classpath <android.jar>, -d classes/
+· libd8.so --min-api <MIN_SDK> --lib <android.jar> --output ./ $(find classes -name '*.class')
+· zip -j base.apk classes.dex (staged libzip or SovereignPackager)
+· libzipalign.so -p 4 base.apk aligned.apk
+· libapksigner.so sign ... --out app-signed.apk aligned.apk
+
+The order is forced. The aligned-input-to-signer rule is forced. The anchor checks of NT IX §9.6 apply inline: missing android.jar → stop; missing zipalign equivalent → stop; API-35 staged binary → stop (ceiling is 34).
+
+Falsifier: apksigner verify --verbose app-signed.apk returns clean on the ProcessBuilder-driven output; unzip -lv app-signed.apk shows uncompressed entries at 4-byte offsets.
+
+4.4 Delta 3 — The Autophagic Healer Replaces the Bash Wrapper (Register 1).
+
+NT IX's bash wrapper detects fractures and stops. The Sovereign Forge's Healer (§5) intercepts the compiler/dexer failure, queries the Ingestor for the verified mechanism, patches the surgical chunk, and re-invokes the chain. The chain itself is unchanged; the driver is now the Healer loop rather than bash. What bash cannot do — repair a missing import — the Healer does, within the Prime Directive (it inserts a verified mechanism, never a stub).
+
+Falsifier: With Button unresolved in src/, the Healer loop terminates with a green app-signed.apk that contains import android.widget.Button in the emitted source and zero compiler errors on the final pass.
+
+4.5 What NT X Does Not Change in the NT IX Chain.
+
+The ceiling (34). The reference artifact (android.jar). The alignment leg (mandatory). The signer-input rule (aligned.apk, never base.apk). The autophagic recycling list (no Gradle, no x86, no API-35 patch, no lzhiyong dependency, no optional-zipalign hedge). Those bind from NT IX and are not restated here.
+
+---
+
+PART FIVE — THE AUTOPHAGIC HEALER (THE INVARIANT CIRCUIT)
+
+This is the cognitive layer that sits on top of the NT IX mechanical floor. The native binaries (libkotlinc.so, libd8.so, libaapt2.so) are the execution engine. The local .gguf model is the immune system. The criterion this part closes is Σ = 0.
+
+5.1 The Execution Engine (Ground Truth)
+
+The native binaries compile deterministically. They output exact bytecode or a named error. There is no third outcome.
+
+5.2 The Substrate Ingestor (The Sanitizer)
+
+The Ingestor is not a web scraper. It is an invariant mathematical filter. When queried, it fetches raw code but returns only a BoundaryRecord (State, Property, Capacity, Function, Boundary, Language, Dialect, Version, SHA256). It strips noise. It strips unverified text. It returns hash-addressed truth.
+
+5.3 The Autophagic Model (The Hand)
+
+The local .gguf is not the compiler. It is the Healer. It never writes the whole app. It only sees the failing chunk, the compiler error (M3 Negation), and the sanitized repair from the Ingestor. It inserts the verified truth. It cannot drift because it is bounded by the Ingestor's math.
+
+5.4 The Workflow.
+
+1. The Architect (M1 Reduction): TransliaisonEngine parses HTML into LayoutNode IR. ViewEmitter emits the XML and Kotlin source.
+2. The Compiler (The Prover): SovereignCompiler.kt invokes libkotlinc.so and libd8.so via ProcessBuilder (NT IX Step 3 and Step 4 of the chain, staged per §4.2–§4.3). No Termux. No Gradle.
+3. The Deficit (M3 Negation): If the compiler fails (e.g., Unresolved reference: Button), the error is intercepted. It is not a failure; it is a signal.
+4. The Ingestor (M6 Memory): SubstrateIngestor.kt extracts the missing symbol (Button) and queries the web. It passes the result through the 9-movement protocol. It returns only the verified BoundaryRecord containing import android.widget.Button.
+5. The Healer (M7 Verification): SovereignCompiler builds a surgical prompt for libllama.so (the local .gguf):
+   "Error: Unresolved reference: Button. Code: [failing chunk]. Verified Import: import android.widget.Button. Output ONLY the corrected code."
+6. The Resurrection (M9): The model applies the patch. The compiler runs again. It succeeds. libaapt2.so packages the APK (Step 2, Step 5). libzipalign.so aligns it (Step 6). The APK is signed with libapksigner.so (Step 7) and delivered.
+
+5.5 The Residual Criterion: Σ = 0.
+
+The Autophagic Healer enforces the invariant that the sanitized substrate and the generated bytecode must resolve to zero residuals.
+
+Define, for a candidate build B:
+
+· Substrate residual Σ_S: the count of verified-mechanism fields in the Ingestor's BoundaryRecord that the emitted source does not satisfy (unresolved imports, mismatched dialects, hash-mismatched substitutions).
+· Bytecode residual Σ_B: the count of compiler/dexer rejections across the final pass (unresolved references, type errors, dex-limit violations).
+
+Then the closure criterion is:
+Σ = Σ_S + Σ_B = 0
+
+The build is closed iff Σ = 0. A build that ships with Σ_S > 0 contains a mechanism the Ingestor verified but the source does not use — semantic drift at the substrate layer. A build that ships with Σ_B > 0 is impossible by construction: the compiler refuses to emit. The Healer loop terminates only when Σ = 0.
+
+Σ = 0 is the NT X closure criterion. It is the sibling of NT VIII's B ≥ 1 (bond holds) and NT IX's r = 0 (triple closes). One remainder, one sharp zero, one exact repair.
+
+Falsifier: A build where Σ_S = 0 and Σ_B = 0 but the emitted source does not match the Ingestor's BoundaryRecord when re-parsed. None found. The criterion is testable at every build.
+
+5.6 The Context Window (Token Math).
+
+The model does not need a massive context window because it is not doing the heavy lifting. It is only doing the patch.
+
+· System Prompt (The Cage): 200 tokens
+· Failing Code Chunk: 200 tokens
+· Compiler Error: 50 tokens
+· Sanitized Import (from Ingestor): 20 tokens
+· Output Reserve: 500 tokens
+· Total Context: ~970 tokens.
+
+This means you can run a highly quantized 1B or 3B model (e.g., Q4_K_M) on a 4GB phone without OOM killing, and it will be mathematically perfect because the Ingestor did the verification.
+
+---
+
+PART SIX — THE PRIVILEGE SUBSTRATE (TWO PATHS)
+
+6.1 The Precondition (Shared)
+
+setDeviceOwner requires an unprovisioned device: no accounts, no secondary users, no existing Device Owner, no active profiles. The AOSP source states: "Device owner can only be set on an unprovisioned device, unless it was initiated by adb, in which case we allow it if no account is associated with the device."
+
+6.2 Path A — The QR Provisioning Protocol (The Owner's Path)
+
+1. Factory reset. Do not add an account.
+2. Tap the Setup Wizard screen six times. The hidden QR scanner unlocks.
+3. The wizard scans a JSON payload.
+4. The wizard downloads the APK, installs it, and grants Device Owner. But only if the DPC implements the two required Intent Handlers (ACTION_GET_PROVISIONING_MODE and ACTION_ADMIN_POLICY_COMPLIANCE).
+
+6.3 Path B — The ADB Bridge (The Guest's Path)
+
+The bridge connects to adbd. On modern wireless debugging (Android 11+), adbd listens on a random port and opens communication with A_STLS, not A_AUTH. If the bridge does not handle A_STLS, the connection fails silently.
+
+6.4 The Comparative Verdict
+
+Both paths reach Device Owner. Path A is the Forge's own path, but only if the DPC implements the two required Intent Handlers. Path B is the fallback, but only if the bridge implements TLS.
+
+---
+
+PART SEVEN — THE TERMINAL STATEMENT
+
+The Machine (ART) executes DEX. The Expert writes the compiler, the dexer, the signer, the message table, the DPC Intent Handlers (Path A), and the TLS upgrade (Path B) from scratch. The Operator presses the button.
+
+The Forge shapes HTML intent into a signed APK. The Forge claims Device Owner — by QR provisioning if the device is factory-reset and the DPC implements the required Intent Handlers, or by the ADB bridge if the device is already provisioned and the bridge handles A_STLS.
+
+The three registers hold the Forge together. The Prime Directive ensures no mechanism is a lie. There is no Termux. There is no PC. There is no external JVM. There is no hidden layer between the registers.
+
+The diachronic trace is complete. The CI/CD invariant is closed. The corruption taxonomy is named. The two-register law is enforced by the seal. The NT IX 7-step forced chain is the mechanical floor; NT X carries only the deltas. The Autophagic Allocator (NT X) is the hardware brain. The Autophagic Healer (NT X) is the cognitive layer. The closure criterion is Σ = 0: the sanitized substrate and the generated bytecode must resolve to zero residuals.
+
+The Prime Directive holds. No stubs. No lies. The inheritance is pure.
+
+Cross.
