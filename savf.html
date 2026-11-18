@@ -533,6 +533,10 @@ td.mono{font-family:var(--mono);font-size:11px}
       </dl>
     </div>
     <div class="card">
+      <h2>Phantom imports</h2>
+      <p class="sub">A browser cannot see what is installed, so a real third-party import (<code>requests</code>, <code>numpy</code>) reads as a phantom by default and turns the verdict into <b>LIED</b>. List the roots you know are importable in <b>Installed third-party modules</b> on the Audit tab, and they are accepted the same way <code>savf.py scan --installed</code> accepts them. Nothing else changes: a genuinely missing module is still a phantom.</p>
+    </div>
+    <div class="card">
       <h2>Companion CLI</h2>
       <p class="sub"><code>savf.py</code> is the reference implementation. Use it when a gate needs a real process: reach, mutate, manifest over many files, and the full gate run.</p>
       <pre class="out">savf.py selftest
