@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**37 readable files across 6 registers.**
+**38 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -18,7 +18,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `AGENTS.md` | 34,829 | `d60430478647` | AGENTS.md — Darkith |
 | `DARKITH.md` | 55,361 | `7c4698d8800d` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `55898aae4fe6` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 46,673 | `17f5720687d8` | DARKITH — README |
+| `README.md` | 47,543 | `25834ccdd17e` | DARKITH — README |
 | `RESUME.md` | 4,284 | `8a7dd377f4e1` | RESUME — read this first in any new session |
 | `TASKS.md` | 13,014 | `581d3022358a` | TASKS — the durable board |
 
@@ -48,6 +48,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith home forge.html` | 1,298,731 | `bbdbb1de42da` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
+| `repository.html` | 16,604 | `234f50f1b827` | Repository — A Unit in Four Registers |
 | `savf.html` | 399,831 | `4a31db4624f5` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets

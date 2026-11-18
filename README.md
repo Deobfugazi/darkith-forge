@@ -361,6 +361,7 @@ no server and no internet.
 | `darkith-inscriber.html` | Hand-written studio app (repo-root copy). | The browser copy of the studio. |
 | `savf.html` | Hand-written SAVF engine (repo-root). | The universal audit engine as a standalone page. |
 | `omega.html` | Hand-written design page. | The Omega terminal + local-assistant design surface. |
+| `repository.html` | Hand-written **four-register reader** (repo-root). | The invariant format ([§14](#14-the-invariant-format-the-reusable-spec)) as a live page: one argument projected into four registers — Plain, Paper, Machine, Provenance — over one `#/volume/section` route. |
 | `darkith home forge.html` | Hand-written main studio. | The main offline studio page. |
 | `darkith code studio.html` | Hand-written audit studio. | The offline code-audit studio page. |
 
@@ -712,6 +713,14 @@ an answer that opens a new question. Steps 2, 4, 6, and 7 close those four leaks
 proves the closure. A README that also states its **principle** (step 3) and inventories
 its **assets** (step 5) is what makes it a description of a specific repository rather
 than a generic template.
+
+**The live instance.** The shape above is not only prose: `repository.html` is this same
+argument carried in **four registers** — Plain, Paper, Machine, Provenance — over one
+`#/volume/section` route. The Plain register is the novice's path, the Paper register the
+expert's, the Machine register the literal `key: value` synthesis, and the Provenance
+register the audit that lists, per claim, who asserted it, who verified it, its referent,
+and its falsifier. It runs from `file://` with no server and no network, so a reader who
+has only the file still has all four registers.
 
 ---
 

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repository — A Unit in Four Registers</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #d9d5cc;
+    --accent: #7a3e1d; --panel: #f2efe8; --max: 46rem;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #141414; --ink: #e8e4dc; --muted: #9a958c; --rule: #2e2c28;
+    --accent: #d99a6c; --panel: #1d1c1a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 Georgia, "Iowan Old Style", serif;
+    transition: background .2s, color .2s;
+  }
+  #bar {
+    position: sticky; top: 0; z-index: 10; display: flex; gap: .5rem;
+    flex-wrap: wrap; row-gap: .35rem;
+    align-items: center; padding: .55rem 1rem;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule);
+    font-family: system-ui, sans-serif; font-size: .82rem;
+  }
+  #bar a, #bar button {
+    color: var(--muted); text-decoration: none; background: none;
+    border: 1px solid transparent; border-radius: 6px;
+    padding: .3rem .55rem; cursor: pointer; font: inherit;
+  }
+  #bar a:hover, #bar button:hover { color: var(--ink); border-color: var(--rule); }
+  #bar .grow { flex: 1; }
+  #bar .vol { border: 1px solid var(--rule); border-radius: 999px; padding: .28rem .7rem; }
+  #bar .vol[aria-current="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  main { max-width: var(--max); margin: 0 auto; padding: 3rem 1.4rem 8rem; }
+  h1, h2, h3 { font-family: system-ui, sans-serif; line-height: 1.2; letter-spacing: -.015em; }
+  h1 { font-size: 2rem; margin: 0 0 .4rem; }
+  h2 { font-size: 1.35rem; margin: 2.4rem 0 .6rem; }
+  h3 { font-size: 1.05rem; margin: 1.8rem 0 .4rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--accent); }
+  .kicker { font-family: system-ui, sans-serif; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .lede { font-size: 1.12rem; color: var(--muted); }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+  pre, code { font-family: var(--mono); font-size: .82rem; }
+  pre {
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 1rem; overflow-x: auto; line-height: 1.5;
+  }
+  details.provenance {
+    margin: 1rem 0; padding: .6rem .8rem;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 6px;
+    font-family: var(--mono); font-size: .78rem;
+  }
+  details.provenance summary {
+    cursor: pointer; color: var(--accent); font-family: system-ui, sans-serif;
+    font-size: .78rem; letter-spacing: .05em; text-transform: uppercase;
+  }
+  details.provenance pre { background: transparent; border: 0; padding: .5rem 0 0; margin: 0; }
+  #pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; font-family: system-ui, sans-serif; font-size: .9rem; }
+  #pager a { text-decoration: none; border: 1px solid var(--rule); border-radius: 8px; padding: .6rem .9rem; }
+  #pager a:hover { border-color: var(--accent); }
+</style>
+</head>
+<body data-theme="light">
+
+<header id="bar">
+  <a href="#/plain/0" style="font-weight:600;color:var(--ink)">Repository</a>
+  <span class="grow"></span>
+  <a class="vol" data-vol="plain" href="#/plain/0">Plain</a>
+  <a class="vol" data-vol="paper" href="#/paper/0">Paper</a>
+  <a class="vol" data-vol="machine" href="#/machine/0">Machine</a>
+  <a class="vol" data-vol="provenance" href="#/provenance/0">Provenance</a>
+  <button id="theme" aria-label="Toggle theme">◐</button>
+</header>
+
+<main id="view" tabindex="-1"></main>
+
+<script>
+const SECTIONS = [
+  { id: 0,  title: "Front matter" },
+  { id: 1,  title: "Introduction" },
+  { id: 2,  title: "Etymology" },
+  { id: 3,  title: "Eleven senses" },
+  { id: 4,  title: "Eight specifications" },
+  { id: 5,  title: "Four conditions" },
+  { id: 6,  title: "Information layers" },
+  { id: 7,  title: "Security" },
+  { id: 8,  title: "Composition" },
+  { id: 9,  title: "Closure" },
+  { id: 10, title: "Conclusion" },
+];
+
+const CONTENT = {
+  plain: {
+    0: `<p class="lede">A plain-language way into the argument, for a reader with no prior background.</p>
+        <p>People use the word <em>repository</em> for very different things: a place where software history lives, a place where packages are downloaded from, a library that promises to keep files for decades. This volume explains, in ordinary words, what those things share — and why the word is not just being stretched.</p>`,
+    1: `<h2>Why this matters</h2><p>When two teams say "put it in the repository," they may mean two incompatible things. The plain volume fixes the shared meaning before the technical volume proves it.</p>`,
+    2: `<h2>Where the word comes from</h2><p>Latin <em>repositorium</em>: a stand or tray — something that holds a thing, separate from the thing held. That separation is the seed of the whole argument.</p>`,
+    3: `<h2>Eleven historical senses</h2><p>From a food tray to a tomb to a library to a Git repository: each one keeps the same four ingredients.</p>`,
+    4: `<h2>Eight technical specifications</h2><p>Version control, package managers, container registries, the DDD pattern, institutional archives. Each one is <em>for</em> something distinct.</p>`,
+    5: `<h2>The four conditions</h2><p>(1) It holds things and is where they live. (2) The organizing apparatus is separate from the raw content. (3) It promises preservation, retrieval, and a boundary. (4) It is the original, not a copy. Drop any one and you get a recognizable near-miss: a bare box, a folder, a cache, a mirror.</p>`,
+    6: `<h2>Layers</h2><p>Every repository has raw content, an inflated organizing layer, and a deflated descriptor that points back to the raw content.</p>`,
+    7: `<h2>Security</h2><p>Eight layers, from transport to isolation. Each layer protects against a specific failure.</p>`,
+    8: `<h2>Composition</h2><p>Each specification decomposes into a counted list of components.</p>`,
+    9: `<h2>Closure</h2><p>The paper says where it could be wrong (four falsifiers) and what is new (the synthesis, not the components).</p>`,
+    10: `<h2>Conclusion</h2><p>Repository names one invariant across eleven senses and eight specifications. The four conditions are a checklist you can carry away.</p>`,
+  },
+  paper: {
+    0: `<p class="kicker">Abstract</p><p>The English lexeme <em>repository</em> is used across software engineering, library and information science, package management, and institutional data governance as if it were univocal. It is not. This paper argues that the term names a single functional invariant — an authoritative, bounded, persistent holding environment whose organizational apparatus is separate from its raw content and which mediates access through an internal logic of preservation, retrieval, modification, distribution, or versioned reconstruction — instantiated across eleven attested historical senses and eight technical specifications.</p>`,
+    1: `<h2>1. Introduction</h2><p>Three claims and one non-claim. (1) eleven senses re-instantiate one invariant; (2) eight specifications are distinct instantiations; (3) the invariant decomposes into four conditions individually necessary and jointly sufficient. Non-claim: the invariant is not newly discovered.</p>`,
+    2: `<h2>2. Etymology</h2><p>Latin <em>repositorium</em> from <em>repositus</em>, past participle of <em>reponere</em> (<em>re-</em> "back" + <em>ponere</em> "to place"). Root sense: "put back in its proper place." Prototype present: a support structure separated from the thing supported.</p>`,
+    3: `<h2>3. Diachrony</h2><p>Sense inventory S1–S11, count 11. Every sense satisfies Core A and at least one of B/C/D. Re-instantiation, not drift.</p>`,
+    4: `<h2>4. Synchrony</h2><p>Specification inventory T1–T8, count 8. T5 is the storage-layer specification of T1, not a rival.</p>`,
+    5: `<h2>5. Structure</h2><p>Four conditions: A (relational), B (structural), C (functional), D (authority). §5.3 argues C does not entail A (constructive counterexamples) and A does not entail C (analytic coherence). Each conjunct removable; four jointly sufficient.</p>`,
+    6: `<h2>6. Information layers</h2><p>Raw (R), Inflated (I), Deflated (Δ). Metadata taxonomy: 16 classes, primary-function partition.</p>`,
+    7: `<h2>7. Security</h2><p>Eight layers, closed. TUF: 5 roles, 7 threats, with threat-to-mitigation closure.</p>`,
+    8: `<h2>8. Composition</h2><p>T1 (10), T2 (6), T3 (8), T4 (6), T5 (8), T6 (11), T7 (5), T8 (5).</p>`,
+    9: `<h2>9. Closure</h2><p>Novelty boundary: component-novel, not component-invented. Seven resolved points. Four falsification conditions F1–F4.</p>`,
+    10: `<h2>10. Conclusion</h2><p>Repository names a functional invariant. Conjunction A∧B∧C∧D. Each conjunct necessary; four jointly sufficient.</p>`,
+  },
+  machine: {
+    0: `entity: repository_invariant\nstatus: synthesis_over_public_components\nconditions: [A, B, C, D]\nnecessity: each_removable\nsufficiency: conjunction_sufficient\nsenses: 11\nspecifications: 8\nfalsifiers: [F1, F2, F3, F4]`,
+    1: `claims:\n  - id: 1\n    text: eleven_senses_reinstantiate_one_invariant\n  - id: 2\n    text: eight_specs_distinct_layers_not_rival_definitions\n  - id: 3\n    text: four_conditions_necessary_and_jointly_sufficient\nnon_claim: invariant_not_newly_discovered`,
+    2: `root:\n  latin: repositorium\n  verb: reponere\n  sense: put_back_in_proper_place\n  prototype:\n    - support_separate_from_supported\n    - placement_logic`,
+    3: `senses:\n  count: 11\n  ids: [S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11]\n  membership_rule: OED_1a-6b_plus_technical_reinstantiation\n  check: every_sense_satisfies_A_and_at_least_one_of_B_C_D`,
+    4: `specifications:\n  count: 8\n  ids: [T1,T2,T3,T4,T5,T6,T7,T8]\n  admission_rule: distinct_instantiation_and_distinguishable_apparatus\n  T5: storage_layer_of_T1_not_rival`,
+    5: `conditions:\n  - id: A\n    name: relational\n    requires: [authoritative_holding_environment, persistence, access_mediation]\n    failure_mode: bare_container\n  - id: B\n    name: structural\n    requires: [apparatus_separate_from_raw]\n    failure_mode: folder\n  - id: C\n    name: functional\n    requires: [preservation_contract, retrieval_mechanism, purpose_boundary]\n    failure_mode: cache\n  - id: D\n    name: authority\n    requires: [server_of_record, not_derived_copy]\n    failure_mode: mirror\nnecessity: remove_any_one_not_a_repository\nsufficiency: A_and_B_and_C_and_D_is_repository`,
+    6: `layers: [raw, inflated, deflated]\nmetadata_classes:\n  count: 16\n  partition: primary_function\n  limitation: edge_cases_inferred`,
+    7: `security_layers:\n  count: 8\nTUF:\n  roles: 5\n  threats: 7\nthreat_mitigation: every_layer_has_named_threat_and_mitigation`,
+    8: `composition:\n  T1: 10\n  T2: 6\n  T3: 8\n  T4: 6\n  T5: 8\n  T6: 11\n  T7: 5\n  T8: 5`,
+    9: `novelty: component_novel_not_invented\nresolved_points: 7\nfalsifiers:\n  - id: F1\n    condition: attested_sense_satisfies_no_core\n  - id: F2\n    condition: spec_fails_B_yet_called_repository\n  - id: F3\n    condition: domain_without_apparatus_separation_treated_as_repository\n  - id: F4\n    condition: prior_publication_same_synthesis`,
+    10: `conclusion:\n  invariant: A_and_B_and_C_and_D\n  necessity: each_conjunct\n  sufficiency: four_conjuncts\n  offered_as: contribution_to_terminology`,
+  },
+  provenance: {
+    0: `# PROVENANCE — Layer 2 projected into the reader\n# The repository holds the pseudonym resolution.\nclaims: []`,
+    1: `claims:\n  - id: C-1-01\n    text: repository_names_one_invariant\n    asserted_by: pseudonym-author\n    verified_by: [adversary-VM, verifier-VM]\n    referent: { kind: derivation, ref: "§5.3" }\n    status: resolved\n    falsifier: F4`,
+    2: `claims:\n  - id: C-2-01\n    text: root_sense_is_put_back_in_proper_place\n    asserted_by: pseudonym-author\n    verified_by: [verifier-VM]\n    referent: { kind: citation, ref: "Lewis & Short 1879" }\n    status: resolved\n    falsifier: null`,
+    3: `claims:\n  - id: C-3-01\n    text: eleven_senses_reinstantiate_one_invariant\n    asserted_by: pseudonym-author\n    verified_by: [adversary-VM]\n    referent: { kind: observation, ref: "OED 3rd ed." }\n    status: resolved\n    falsifier: F1`,
+    4: `claims:\n  - id: C-4-01\n    text: eight_specs_distinct_layers_not_rival_definitions\n    asserted_by: pseudonym-author\n    verified_by: [adversary-VM]\n    referent: { kind: derivation, ref: "§4" }\n    status: resolved\n    falsifier: F2`,
+    5: `claims:\n  - id: C-5-01\n    text: four_conditions_necessary_and_jointly_sufficient\n    asserted_by: pseudonym-author\n    verified_by: [adversary-VM, human]\n    referent: { kind: derivation, ref: "§5.3" }\n    status: resolved\n    falsifier: F3`,
+    6: `claims:\n  - id: C-6-01\n    text: metadata_taxonomy_primary_function_partition\n    asserted_by: pseudonym-author\n    verified_by: [verifier-VM]\n    referent: { kind: derivation, ref: "§6" }\n    status: inferred\n    falsifier: null`,
+    7: `claims:\n  - id: C-7-01\n    text: security_layers_closed_at_eight_with_threat_mitigation_closure\n    asserted_by: pseudonym-author\n    verified_by: [verifier-VM]\n    referent: { kind: citation, ref: "TUF v1.0.31" }\n    status: resolved\n    falsifier: null`,
+    8: `claims:\n  - id: C-8-01\n    text: composition_counts_are_closed\n    asserted_by: pseudonym-author\n    verified_by: [verifier-VM]\n    referent: { kind: derivation, ref: "§8" }\n    status: resolved\n    falsifier: null`,
+    9: `claims:\n  - id: C-9-01\n    text: novelty_is_component_novel_not_component_invented\n    asserted_by: pseudonym-author\n    verified_by: [human]\n    referent: { kind: derivation, ref: "§9.1" }\n    status: resolved\n    falsifier: F4`,
+    10: `claims:\n  - id: C-10-01\n    text: invariant_conjunction_A_and_B_and_C_and_D_is_the_conclusion\n    asserted_by: pseudonym-author\n    verified_by: [adversary-VM]\n    referent: { kind: derivation, ref: "§10" }\n    status: resolved\n    falsifier: null`,
+  }
+};
+
+const view = document.getElementById("view");
+const VOLUMES = Object.keys(CONTENT);
+const LAST_SEC = SECTIONS.length - 1;
+let currentVol = 'plain';
+let currentSec = 0;
+
+function clampSec(n) {
+  n = Number.isFinite(n) ? Math.trunc(n) : 0;
+  return Math.min(Math.max(n, 0), LAST_SEC);
+}
+
+function render() {
+  const section = SECTIONS[currentSec] || SECTIONS[0];
+  const content = (CONTENT[currentVol] && CONTENT[currentVol][currentSec]) || '<p>Content not found.</p>';
+
+  let html = `<h1>${section.title}</h1>`;
+
+  if (currentVol === 'machine' || currentVol === 'provenance') {
+    html += `<pre>${content}</pre>`;
+  } else {
+    html += content;
+  }
+
+  if (currentVol !== 'provenance') {
+    const prov = CONTENT.provenance[currentSec];
+    if (prov) {
+      html += `<details class="provenance"><summary>Provenance</summary><pre>${prov}</pre></details>`;
+    }
+  }
+
+  const prev = currentSec > 0 ? `<a href="#/${currentVol}/${currentSec - 1}">\u2190 ${SECTIONS[currentSec - 1].title}</a>` : '<span></span>';
+  const next = currentSec < LAST_SEC ? `<a href="#/${currentVol}/${currentSec + 1}">${SECTIONS[currentSec + 1].title} \u2192</a>` : '<span></span>';
+  html += `<div id="pager">${prev}${next}</div>`;
+
+  view.innerHTML = html;
+
+  document.title = `${section.title} \u2014 Repository`;
+  document.querySelectorAll('.vol').forEach(el => {
+    el.setAttribute('aria-current', el.dataset.vol === currentVol ? 'true' : 'false');
+  });
+}
+
+function route() {
+  const parts = window.location.hash.replace(/^#\/?/, '').split('/');
+  const vol = parts[0];
+  const sec = parts[1];
+
+  currentVol = VOLUMES.indexOf(vol) !== -1 ? vol : 'plain';
+  currentSec = sec !== undefined ? clampSec(parseInt(sec, 10)) : 0;
+
+  const canonical = `#/${currentVol}/${currentSec}`;
+  if (window.location.hash !== canonical) {
+    window.location.replace(canonical);
+    return;
+  }
+
+  render();
+  view.focus({ preventScroll: true });
+}
+
+window.addEventListener('hashchange', route);
+window.addEventListener('DOMContentLoaded', route);
+
+document.getElementById('theme').addEventListener('click', () => {
+  const current = document.body.dataset.theme;
+  document.body.dataset.theme = current === 'light' ? 'dark' : 'light';
+});
+</script>
+</body>
+</html>

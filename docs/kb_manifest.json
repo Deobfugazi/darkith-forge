@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 37,
+  "count": 38,
   "files": [
     {
       "bytes": 34829,
@@ -21,10 +21,10 @@
       "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
     },
     {
-      "bytes": 46673,
+      "bytes": 47543,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "17f5720687d879ed0f12269c56edbdc9b218c55377e3d1a97de5d5072497b0cb"
+      "sha256": "25834ccdd17e15f4ddbb56d457054f34cd2c03fc6e99d670dbc09cd68fe2f863"
     },
     {
       "bytes": 4284,
@@ -139,6 +139,12 @@
       "path": "omega.html",
       "register": "C-skillbase",
       "sha256": "a11d595c79b96dbf94a7b14ef82de5d5d8831e64b287232632c2f91b6e557edf"
+    },
+    {
+      "bytes": 16604,
+      "path": "repository.html",
+      "register": "C-skillbase",
+      "sha256": "234f50f1b827c38bd92fd233c03a016a5403828cad31c6a5a3d0d99b233d9b23"
     },
     {
       "bytes": 399831,

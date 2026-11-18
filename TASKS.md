@@ -36,6 +36,7 @@ the directive without the Operator repeating it.
 | P2 | README: inventory every hand-made asset + function, mark generated ones | done | `README.md` section 4 (10 groups: shell, forge, absolution, engine core, observability, native binaries, web studio, engine inputs, python, build scripts); generated marked: `app/src/main/assets/engine/template.dex` |
 | P3 | README: the pristine rationale + the coupling stress-test map | done | `README.md` section 5 (six guarantees) + section 6 (three coupling legs -> `tools/fork_integrity_gate.sh`, `tools/bridge_contract_audit.py`, `tools/synchrony_gate.py`) |
 | P4 | Converge the three independent derivations byte-for-byte | in_progress | `tools/convergence_gate.py` (py==js clock, tree blob-hash x2); `proof/convergence.json` |
+| P5 | Assimilate the four-register reader: one argument in Plain/Paper/Machine/Provenance registers over one `#/volume/section` route | done | `repository.html` (hand-written, offline, zero-dependency; 0 page errors on malformed/out-of-range routes; README section 4.7 + section 14) |
 
 ---
 
