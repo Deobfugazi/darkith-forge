@@ -61,7 +61,7 @@ SELF = {"docs/INDEX.md", "docs/kb_manifest.json"}
 # Readable registers. Governance lives at the root (apparatus, read first); the corpus
 # lives under docs/ (content); the skill surfaces are the root web apps (build-coupled, so
 # they cannot move without breaking ~15 build scripts — the boundary is stated, not violated).
-GOVERNANCE = {"AGENTS.md", "DARKITH.md", "RESUME.md", "TASKS.md", "DEFICITS.json"}
+GOVERNANCE = {"README.md", "AGENTS.md", "DARKITH.md", "RESUME.md", "TASKS.md", "DEFICITS.json"}
 READABLE_EXTS = {".md", ".txt", ".html"}
 
 # The one declared mirror: one page under two names by design (the app ships the asset; the

@@ -15,6 +15,30 @@ Status values: `done` | `in_progress` | `todo` | `blocked`.
 
 ---
 
+## ★ PRIORITY DIRECTIVE — CONVERGE THE INVARIANT SYNTHESIS (top priority, 2026-11-18)
+
+**Operator directive (verbatim intent):** the README must state what makes this repo
+unique *in principle* (not how to use it), and must inventory **every hand-made
+source asset and its function** — why the source is hand-coded from scratch so the
+shipped app is *pristine* (free of the nine corruption modes), post-hoc stress-tested
+in exact coupling relation to every other asset as minted assets.
+
+**Parallel convergence mandate (MUST #27).** Two further agents run in parallel; three
+in total. Each derives the invariant synthesis of the README **independently**, then
+the derivations must AGREE byte-for-byte via `tools/convergence_gate.py`. A
+disagreement is a defect, not a preference. This board is the shared channel
+(MUST #26): it is pushed in the same action it changes, so the parallel workers read
+the directive without the Operator repeating it.
+
+| # | task | status | evidence |
+|---|---|---|---|
+| P1 | README: state the unique principle (Prime Directive / stamp-vs-hand / 9 modes / mint / coupling / Sigma=0 / 3 registers / A and B and C and D) | done | `README.md` section 2 (7 sub-sections); doctrine `docs/nt/NT-X.txt` 1.6, `docs/nt/NT-VI.txt`, `docs/nt/NT-XII.txt` |
+| P2 | README: inventory every hand-made asset + function, mark generated ones | done | `README.md` section 4 (10 groups: shell, forge, absolution, engine core, observability, native binaries, web studio, engine inputs, python, build scripts); generated marked: `app/src/main/assets/engine/template.dex` |
+| P3 | README: the pristine rationale + the coupling stress-test map | done | `README.md` section 5 (six guarantees) + section 6 (three coupling legs -> `tools/fork_integrity_gate.sh`, `tools/bridge_contract_audit.py`, `tools/synchrony_gate.py`) |
+| P4 | Converge the three independent derivations byte-for-byte | in_progress | `tools/convergence_gate.py` (py==js clock, tree blob-hash x2); `proof/convergence.json` |
+
+---
+
 ## A. THE OBJECTIVE (what "omega state" means — a checkable set, not perfection)
 
 A holistic sovereign synchronic system that couples to the owner's hardware, senses it,
@@ -109,10 +133,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 44 | named work = board 36 + deficits 8 |
-| E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 29 | returned = done 21 + closed 3 + descoped 5 |
-| E/W_in | 0.341 | the progress-deficit indicator; absolution at 0 |
+| W_in | 48 | named work = board 40 + deficits 8 |
+| E | 16 | un-returned = todo 15 + in_progress 1 + blocked 0 + open 0 |
+| S | 32 | returned = done 24 + closed 3 + descoped 5 |
+| E/W_in | 0.333 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

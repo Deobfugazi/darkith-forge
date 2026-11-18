@@ -7,7 +7,7 @@
   "phase.active.js": "wake/active",
   "phase.rest.py": "rest/digest/restore",
   "phase.rest.js": "rest/digest/restore",
-  "tree.files": 210,
+  "tree.files": 211,
   "tree.blobsha.agree": true,
   "converged": true,
   "agent": "primary"

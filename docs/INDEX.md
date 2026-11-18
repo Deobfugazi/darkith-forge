@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**36 readable files across 6 registers.**
+**37 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -18,8 +18,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `AGENTS.md` | 34,829 | `d60430478647` | AGENTS.md — Darkith |
 | `DARKITH.md` | 55,361 | `7c4698d8800d` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `55898aae4fe6` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
+| `README.md` | 46,646 | `b72e13bc4e8e` | DARKITH — README |
 | `RESUME.md` | 4,284 | `8a7dd377f4e1` | RESUME — read this first in any new session |
-| `TASKS.md` | 11,003 | `ba2a6aa6db36` | TASKS — the durable board |
+| `TASKS.md` | 13,014 | `db622caa704d` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
