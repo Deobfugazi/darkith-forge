@@ -64,7 +64,18 @@ jobs:
           git checkout -b "$branch"
           git add proof/fracture_scout.json
           git commit -m "fracture scout: candidate NOVELTY tasks $(date -u +%Y-%m-%d)"
-          git push -u origin "$branch"
+          # A re-run (retry, or a manual dispatch on the same day) finds the day's branch
+          # already on the remote, so a plain `git push -u` is rejected as non-fast-forward
+          # and the whole run fails. The branch is the scout's own single-purpose record:
+          # publish it by creating it, or updating it under a lease that still aborts if
+          # another writer moved the branch after we looked (never a blind --force).
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            git fetch --no-tags origin "+refs/heads/$branch:refs/remotes/origin/$branch"
+            git push --force-with-lease="refs/heads/$branch:refs/remotes/origin/$branch" \
+              origin "HEAD:refs/heads/$branch"
+          else
+            git push -u origin "$branch"
+          fi
           {
             echo "Candidate world fractures found by \`tools/fracture_scout.py\`. Each is a real"
             echo "problem anchored to a real source (NT-V §XIX.15); the scout proposes, the"
@@ -74,7 +85,11 @@ jobs:
             echo
             echo "_This PR was created by an AI agent (OpenHands) on behalf of the repository Operator._"
           } > "$RUNNER_TEMP/body.md"
-          gh pr create --base "${GITHUB_REF_NAME:-main}" \
-            --title "fracture scout: candidate NOVELTY tasks ($(date -u +%Y-%m-%d))" \
-            --body-file "$RUNNER_TEMP/body.md" \
-            || echo "a PR for this branch may already exist; the record was pushed"
+          # Update the day's PR if it already exists; otherwise open it. Best-effort: the
+          # record is already pushed, so a PR hiccup must not redden an otherwise-good run.
+          gh pr view "$branch" >/dev/null 2>&1 \
+            && gh pr edit "$branch" --body-file "$RUNNER_TEMP/body.md" \
+            || gh pr create --base "${GITHUB_REF_NAME:-main}" \
+                 --title "fracture scout: candidate NOVELTY tasks ($(date -u +%Y-%m-%d))" \
+                 --body-file "$RUNNER_TEMP/body.md" \
+            || echo "the record was pushed; PR open/update did not complete (see above)"
