@@ -132,6 +132,13 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
     # aapt2 (R.java for the compile proof) and zipalign live in aapt2d/; put them on PATH
     # so both the §19 proof and the install gate find real tools on a fresh runner.
     export PATH="$TOOLCHAIN/aapt2d:${JAVA_HOME:+$JAVA_HOME/bin:}$PATH"
+    # apksigner (the install gate's signature check) ships in the Android build-tools tree
+    # that build/refresh-host-artifacts.py stages under .tools/bt/. Stage it too, or the
+    # install gate skips even though every tool it needs is present.
+    if [ -d "$TOOLCHAIN/bt/android-14" ]; then
+      export PATH="$TOOLCHAIN/bt/android-14:$PATH"
+      [ -x "$TOOLCHAIN/bt/android-14/apksigner" ] && export APKSIGNER="$TOOLCHAIN/bt/android-14/apksigner"
+    fi
     run "§19 fork integrity gate (compile proof)" \
       bash tools/fork_integrity_gate.sh app/src/main/java/com/darkith/transliaison "$ANDROID_JAR" "$EXTRA_CP"
   else
