@@ -68,6 +68,7 @@ validation, contrast checks.
 |---|---|---|---|
 | E1 | Durable board (this file), read-first from `RESUME.md` + `AGENTS.md` | done | this file; referenced in RESUME §0 and AGENTS §29 |
 | E2 | `tools/board_gate.py` fails CI when a `done` item has no evidence | done | wired into `tools/ci.sh` |
+| E3 | Knowledgebase index — every doc declares one role; orphans fail CI (SPI-24) | done | `tools/doc_index.py` -> `docs/INDEX.md` (generated, deterministic); wired into `tools/ci.sh`; removed orphan `homeforge.html` (0 refs) |
 
 ## F. GATE-EVERY-LAW + SYNCHRONY BYLAW (2026-11-18)
 
@@ -106,10 +107,27 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 42 | named work = board 33 + deficits 9 |
+| W_in | 48 | named work = board 39 + deficits 9 |
 | E | 14 | un-returned = todo 14 + in_progress 0 + blocked 0 + open 0 |
-| S | 28 | returned = done 19 + closed 4 + descoped 5 |
-| E/W_in | 0.333 | the progress-deficit indicator; absolution at 0 |
+| S | 34 | returned = done 25 + closed 4 + descoped 5 |
+| E/W_in | 0.292 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.
+
+## I. NOVELTY SCOUT — scheduled deep-web fracture discovery (2026-11-18)
+
+The omega program needs a stream of REAL, current world fractures to work on, not a static
+backlog. `tools/novelty_scout.py` crawls public below-the-surface sources (arXiv, Crossref,
+GitHub issues, StackExchange, HN) with smart, field-targeted queries, scores each result for
+novelty-fracture x omega-fit, de-duplicates against a ledger, and writes ranked candidates to
+`proof/novelty_tasks.md`. The operator promotes worthwhile rows here; the board stays
+human-owned. Config: `tools/novelty_scout.json`. Schedule: `.github/workflows/novelty-scout.yml`.
+
+| # | task | status | evidence |
+|---|---|---|---|
+| N1 | Novelty scout tool — crawl/score/dedup/rank, stdlib-only, provider-neutral | done | `tools/novelty_scout.py` (`scan`/`tasks`/`check`/`sources`); live crawl surfaced 40 real fractures |
+| N2 | Manually-configurable smart querying (fracture x field terms, not naive keywords) | done | `tools/novelty_scout.json`; `python3 tools/novelty_scout.py sources` lists every template |
+| N3 | Fail-closed gate — findings well-formed and each carries a witness marker | done | `tools/novelty_scout.py check` wired into `tools/ci.sh`; PASS on committed findings |
+| N4 | Scheduled + manually-triggerable crawl that commits refreshed candidates | done | `.github/workflows/novelty-scout.yml` (daily 05:23 UTC + `workflow_dispatch` inputs) |
+| N5 | De-duplication ledger so a re-run never re-surfaces the same fracture | done | `proof/novelty_seen.json`; re-scan of a seen source surfaces only new ids |

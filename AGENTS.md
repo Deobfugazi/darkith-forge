@@ -278,6 +278,24 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   almost all `unresolved reference android` — the classpath lacked `android.jar`, not a source
   defect. Fixing source would have been motion, not progress.
 
+## §33 NOVELTY SCOUT — scheduled fracture discovery (binding)
+- The omega program works on REAL current fractures, not a static backlog. `tools/novelty_scout.py`
+  crawls public below-the-surface sources (arXiv, Crossref, GitHub issues, StackExchange, HN) with
+  SMART, field-targeted queries (a fracture phrase AND a field term — never one naive keyword),
+  scores each item for novelty-fracture x omega-fit, de-duplicates against a ledger, and writes
+  ranked candidates. Config: `tools/novelty_scout.json` (editable by hand; `sources` lists it).
+- PROPOSED, NOT PROMOTED: the bot never edits the board. It writes `proof/novelty_tasks.md`; the
+  operator promotes a row into `TASKS.md`. The board stays human-owned (MUST #29).
+- WITNESS, NOT VIBE: every surfaced finding carries its `markers` (the exact terms that scored it)
+  and its `url`; a finding with no marker is not surfaced, and `check` fails if one slips through.
+- GATE (SPI-15): `python3 tools/novelty_scout.py check` runs in `tools/ci.sh` — offline, so CI
+  never needs the network; the crawl itself runs on a schedule
+  (`.github/workflows/novelty-scout.yml`, daily + `workflow_dispatch`).
+- FAIL SAFE: a network blip must not clobber a good findings file with an empty one
+  (`min_write`); a re-run must not re-surface a seen fracture (`proof/novelty_seen.json`).
+- PUBLIC ONLY: the bot reads ordinary HTTPS JSON/XML from public endpoints. It does not fetch
+  from onion services or evade a block; "deep" means below-the-front-page, not criminal.
+
 ## §25 DELIVERY RECORD — API 30 install fix + pre-run evidence (2026-11-17)
 - INSTALL DEFECT FIXED (both shipped APKs): `resources.arsc` and `lib/*.so` were
   DEFLATED, so Android 11+ refused the install ("App not installed"). Repacked

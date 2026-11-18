@@ -841,3 +841,36 @@ The synchrony bylaw (§31) applies to ALL apps, bots, and machine-software/sourc
 automations — not only the user-facing ones. The clock is GENERATED and injected, so adding
 a surface adds the clock; a surface or automation that re-implements or omits the clock is a
 defect. This is the prophylactic cure: the next app cannot be born without time.
+
+════════════════════════════════════════════════════════════════════════════
+§33 — THE NOVELTY SCOUT (2026-11-18)
+════════════════════════════════════════════════════════════════════════════
+Source: Operator directive — a scheduled, manually-configurable bot that crawls the public
+deep webspace with smart (non-naive) keyword querying to generate NOVELTY tasks: real,
+current world fractures and unresolved problems/bottlenecks the omega formulation can work on.
+Status: APPENDED. Permanent.
+
+─── MUST #29 (NOVELTY IS SOURCED, NOT INVENTED) ───
+GATE: tools/novelty_scout.py
+The omega program works on REAL current fractures, not a static or imagined backlog. A
+scheduled bot (`tools/novelty_scout.py`, schedule in `.github/workflows/novelty-scout.yml`)
+crawls public below-the-surface sources with SMART, field-targeted queries — a fracture phrase
+AND a field term, never one naive keyword — scores each item for novelty-fracture x omega-fit,
+de-duplicates against a ledger (`proof/novelty_seen.json`), and writes ranked candidates. A
+task whose fracture is not witnessed by a source is not a novelty task; it is a wish.
+
+─── SPI-27 (THE SCOUT PROPOSES; THE OPERATOR PROMOTES) ───
+GATE: tools/novelty_scout.py
+The bot never edits the board. It writes `proof/novelty_tasks.md` (PROPOSED, not promoted);
+the Operator promotes a row into `TASKS.md`. This keeps the board human-owned (MUST #29) and
+keeps the gate honest: `check` fails if a surfaced finding has no witness marker, so the bot
+cannot surface a vibe. The crawl is scheduled and manually configurable
+(`tools/novelty_scout.json`); the gate is OFFLINE (CI never needs the network).
+
+─── NEVER #19 (NO CLANDESTINE FETCH) ───
+GATE: tools/novelty_scout.py
+The scout reads ordinary HTTPS JSON/XML from public endpoints only. It does not fetch from
+onion services, does not evade a block or a paywall, and holds no credential but an optional
+public read token. "Deep" means below-the-front-page (preprint servers, issue trackers, Q&A,
+aggregators) — never the criminal darknet. A source adapter that would require evasion is a
+defect, not a feature.

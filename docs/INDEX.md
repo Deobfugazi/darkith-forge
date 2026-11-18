@@ -109,6 +109,7 @@ The corpus grows by adding NT files and their claims; the count below is read li
 - `proof/comment_19files_proof.txt` — proof / evidence log (append-only)
 - `proof/comment_premise_check.txt` — proof / evidence log (append-only)
 - `proof/kt_compile_proof.txt` — proof / evidence log (append-only)
+- `proof/novelty_tasks.md` — proof / evidence log (append-only)
 - `proof/nt_ledger_prereconcile.txt` — proof / evidence log (append-only)
 - `proof/oneshot_proof.txt` — proof / evidence log (append-only)
 

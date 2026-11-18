@@ -136,6 +136,12 @@ if have python3 && [ -f tools/doc_index.py ]; then
   run "doc index gate (knowledgebase)" python3 tools/doc_index.py
 fi
 
+# Novelty scout gate (§33): the committed findings are well-formed and each carries a
+# witness marker. Offline — the crawl itself runs on a schedule (novelty-scout.yml).
+if have python3 && [ -f tools/novelty_scout.py ] && [ -f proof/novelty_findings.json ]; then
+  run "novelty scout gate" python3 tools/novelty_scout.py check
+fi
+
 if have node && [ -f tools/test_darktools.js ]; then
   run "darktools unit tests" node tools/test_darktools.js
 fi

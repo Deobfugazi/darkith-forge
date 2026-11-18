@@ -1,0 +1,83 @@
+# novelty-scout — a thin GitHub adapter for tools/novelty_scout.py.
+#
+# Everything that decides anything lives in tools/novelty_scout.py + tools/novelty_scout.json,
+# which are provider-neutral and stdlib-only. This file is only the GitHub-specific glue: when
+# to run, and how to commit the result. Move to another host and you rewrite this file, never
+# the tool.
+#
+# What it does on the schedule: crawls public below-the-surface sources (arXiv, Crossref,
+# GitHub issues, StackExchange, HN) with the configured smart queries, scores each result for
+# novelty-fracture x omega-fit, de-duplicates against the ledger, and commits the refreshed
+# candidate list (proof/novelty_findings.json, proof/novelty_tasks.md). The operator reads
+# proof/novelty_tasks.md and promotes worthwhile rows into TASKS.md — the board stays
+# human-owned and is never auto-edited.
+#
+# Manual run with custom settings: Actions -> "novelty scout" -> Run workflow, and set
+# since_days / max / only (or edit tools/novelty_scout.json and commit).
+#
+# Security posture: reads public HTTPS JSON/XML only; no secrets required; actions pinned to
+# full commit SHAs; least privilege (contents: write only for the commit step).
+name: novelty scout
+
+on:
+  schedule:
+    - cron: "23 5 * * *"   # daily 05:23 UTC (13:23 Asia/Manila) — fresh fractures
+  workflow_dispatch:
+    inputs:
+      since_days:
+        description: "only keep items newer than this many days"
+        default: "120"
+      max:
+        description: "per-query result cap"
+        default: "15"
+      only:
+        description: "restrict to one source key (blank = all)"
+        default: ""
+      min_score:
+        description: "minimum score to surface"
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  scout:
+    name: crawl + score + commit candidates
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.x"
+
+      - name: Crawl, score, de-duplicate, write candidates
+        env:
+          ONLY: ${{ github.event.inputs.only }}
+          SINCE: ${{ github.event.inputs.since_days }}
+          MAX: ${{ github.event.inputs.max }}
+          MIN: ${{ github.event.inputs.min_score }}
+        run: |
+          args="--max ${MAX:-15} --since-days ${SINCE:-120} --write"
+          if [ -n "$ONLY" ]; then args="$args --only $ONLY"; fi
+          if [ -n "$MIN" ];  then args="$args --min-score $MIN"; fi
+          python3 tools/novelty_scout.py scan $args
+          python3 tools/novelty_scout.py tasks --write
+
+      - name: Gate the refreshed findings (fail closed)
+        run: python3 tools/novelty_scout.py check
+
+      - name: Commit only if the candidate set actually changed
+        run: |
+          if git diff --quiet -- proof/novelty_findings.json proof/novelty_tasks.md proof/novelty_seen.json; then
+            echo "no new candidates this run"
+            exit 0
+          fi
+          git config user.name  "novelty-scout"
+          git config user.email "novelty-scout@users.noreply.github.com"
+          git add proof/novelty_findings.json proof/novelty_tasks.md proof/novelty_seen.json
+          git commit -m "novelty-scout: refresh candidate fractures ($(date -u +%Y-%m-%dT%H:%MZ))"
+          git push

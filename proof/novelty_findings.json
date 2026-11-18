@@ -1,0 +1,682 @@
+{
+  "generated": "2026-11-18T09:23:48+08:00",
+  "config": "tools/novelty_scout.json",
+  "since_days": 150,
+  "gathered": 106,
+  "surfaced": 40,
+  "skipped": [
+    "github_issues:label:\"help wanted\" \"no known fix\" memor: no items",
+    "stackexchange:unresolved bottleneck deterministic buil: no items",
+    "stackexchange:out of memory low ram android: no items",
+    "stackexchange:no known method efficient on-device infe: no items",
+    "hn_algolia:unresolved bottleneck: no items"
+  ],
+  "findings": [
+    {
+      "title": "A Neuromorphic Reinforcement Learning Framework for Efficient Pathfinding in Robotic Mobile Fulfillment Systems",
+      "summary": "Dynamic environmental changes, confined workspaces, and stringent real-time constraints make pathfinding in Robotic Mobile Fulfillment Systems (RMFS) a challenging problem for conventional search- and rule-based methods, which typically suffer from high computational complexity and long decision latency. While reinforcement learning (RL) has emerged as a powerful alternative, deploying learned policies with extreme energy efficiency on resource-constrained hardware remains an open challenge. We present SDQN-RMFS, an end-to-end framework that achieves high-fidelity deployment of an RL-trained policy from a full-precision artificial neural network (ANN) through to a neuromorphic chip. By computing only when triggered by sparse events, this framework unlocks ultra-low-power RMFS pathfinding. Our full-stack pipeline operates as follows: an ANN policy is first efficiently trained via a collision-allowing strategy to densify informative trajectories, and then converted into a spiking neural network (SNN) via a hard-label knowledge distillation approach. This effectively addresses the output distribution mismatch, preserving policy capability across the ANN-to-SNN pipeline while substanti",
+      "url": "https://arxiv.org/abs/2606.20031v3",
+      "published": "2026-06-18",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 13.5,
+      "markers": [
+        "fracture:open challenge",
+        "fracture:remains an open",
+        "omega:resource-constrained",
+        "omega:edge",
+        "omega:mobile",
+        "omega:energy",
+        "omega:latency"
+      ],
+      "id": "0df99212d7b5ae02"
+    },
+    {
+      "title": "Jointly Optimizing Sensing Pipelines for Multimodal Mixed Reality Interaction",
+      "summary": "Natural human interactions for Mixed Reality Applications are overwhelmingly multimodal: humans communicate intent and instructions via a combination of visual, aural and gestural cues. However, supporting low-latency and accurate comprehension of such multimodal instructions (MMI), on resource-constrained wearable devices, remains an open challenge, especially as the state-of-the-art comprehension techniques for each individual modality increasingly utilize complex Deep Neural Network models. We demonstrate the possibility of overcoming the core limitation of latency--vs.--accuracy tradeoff by exploiting cross-modal dependencies -- i.e., by compensating for the inferior performance of one model with an increased accuracy of more complex model of a different modality. We present a sensor fusion architecture that performs MMI comprehension in a quasi-synchronous fashion, by fusing visual, speech and gestural input. The architecture is reconfigurable and supports dynamic modification of the complexity of the data processing pipeline for each individual modality in response to contextual changes. Using a representative \"classroom\" context and a set of four common interaction primitive",
+      "url": "https://arxiv.org/abs/2010.06584v2",
+      "published": "2020-10-13",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 13.0,
+      "markers": [
+        "fracture:open challenge",
+        "fracture:remains an open",
+        "fracture:limitation",
+        "fracture:tradeoff",
+        "omega:resource-constrained",
+        "omega:latency"
+      ],
+      "id": "6aeedb20ebfeb8e7"
+    },
+    {
+      "title": "Instrument Decapod Execution with Time-Series Telemetry for Product Intelligence and Diagnostics",
+      "summary": "## Product and architecture reconciliation \u2014 2026-11-15 **Baseline:** accepted master `e9c40e929ee33aa5443c38b57276f96111db0b92` (v0.146.0). **Classification:** unresolved product-outcome measurement; reuse existing receipts. ### Problem The backlog has many tests and telemetry ideas but no credible paired measurement of useful, correctly verified autonomous work per unit of human attention. Synthetic fixture improvements cannot establish real agent value or justify more infrastructure. ### Current implementation Broker/trajectory/validation history already record bounded operation identities and outcomes. [tests/unit/core/reflection_tests.rs](https://github.com/DecapodLabs/decapod/blob/e9c40e929ee33aa5443c38b57276f96111db0b92/tests/unit/core/reflection_tests.rs) prints paired deterministic escalation measurements. Historical candidate d52943740cac03fa45046317ea4af090f919fec6 on Buildkite #10722 recorded 3\u21920 unnecessary fixture questions, 3 admissible fixture decisions, 6 rounds, 2,584,443\u00b5s including setup and 20,665 governance bytes. Those are not real-model completion or interruption-rate measurements. Storage baselines are #1682; latency is #1400/#1672. This audit also observed",
+      "url": "https://github.com/DecapodLabs/decapod/issues/1095",
+      "published": "2026-11-17",
+      "source": "github_issues",
+      "query": "label:\"performance\" bottleneck embedded is:issue",
+      "score": 12.5,
+      "markers": [
+        "fracture:unresolved",
+        "fracture:cannot",
+        "omega:deterministic",
+        "omega:autonom",
+        "omega:audit",
+        "omega:latency",
+        "recency:1d"
+      ],
+      "id": "3e9f9601eabb0257"
+    },
+    {
+      "title": "Agentic Self-Healing for Data and AI Pipelines: An Affordable Vendor-Agnostic Architecture using Open-Source Software",
+      "summary": "Modern organizations rely on data, machine learning, and software delivery pipelines to move data, train models, deploy applications, refresh dashboards, and support business-critical decisions. However, these pipelines often fail because of data quality issues, schema changes, upstream source changes, infrastructure problems, orchestration failures, and model workflow issues. Existing ZeroOps, observability, and AI operations platforms can help teams detect incidents, investigate root causes, and in some cases recommend or execute fixes. However, many of these solutions are expensive, vendor-specific, or difficult for smaller teams to adapt across different tools and environments. This paper first compares existing off-the-shelf solutions for AI-assisted pipeline monitoring, root-cause analysis, and automated remediation, including their strengths, limitations, and practical trade-offs. Based on this comparison, we find that the main gap is architectural rather than technological: the required ingredients for self-healing pipelines already exist, but they are fragmented across vendor-specific platforms, observability tools, incident systems, and open-source components. We therefor",
+      "url": "https://arxiv.org/abs/2608.01955v1",
+      "published": "2026-08-03",
+      "source": "arxiv",
+      "query": "abs:\"self-healing\" AND abs:\"system\" AND abs:\"open\"",
+      "score": 12.0,
+      "markers": [
+        "fracture:limitation",
+        "fracture:trade-off",
+        "fracture:gap",
+        "omega:self-healing",
+        "omega:self-heal",
+        "recency:107d"
+      ],
+      "id": "17289b5a489e6cef"
+    },
+    {
+      "title": "Mechanizing Typed Regulatory Actions for Security Tokens: Semantics, Falsification, and Bounded EVM Evidence",
+      "summary": "Security-token standards expose privileged controls without identifying the legal effect executed or the evidence and reversal obligations it carries. We formalize in Isabelle/HOL a reference execution semantics for the six ERC-8319 meanings: FREEZE, SEIZE, CONFISCATE, LIQUIDATE, RESTRICT, and RECOVER. It distinguishes applied, rejected, and operational-failure outcomes and mechanizes action-specific reversals, replay and epoch rules, complete frames, case-local terminality, and final receipts; the session builds without unproved placeholders or additional axioms. An indistinguishability theorem shows that bound kernel inputs cannot establish external facts about title, settlement, or entitlement. Constructive witnesses and direct mutations establish reachability and sensitivity for the declared fault set. For a successor ERC-TRUST Solidity/EVM candidate, we report separately scoped Foundry, Certora, Kontrol/KEVM, mutation, deterministic-build, runtime-identity, and independent-reproduction evidence. All twelve named evidence lanes pass with none pending, while the 74-row obligation ledger remains conditional: 70 rows are closed, two runtime-link rows remain successor obligations, ",
+      "url": "https://arxiv.org/abs/2608.29134v3",
+      "published": "2026-08-29",
+      "source": "arxiv",
+      "query": "abs:\"deterministic build\" OR abs:\"reproducible build\"",
+      "score": 11.0,
+      "markers": [
+        "fracture:cannot",
+        "omega:edge",
+        "omega:deterministic",
+        "omega:runtime",
+        "omega:formal",
+        "recency:81d"
+      ],
+      "id": "3145683894f8181c"
+    },
+    {
+      "title": "Jointly Optimizing Memory, Computing and Offloading for Energy-Efficient DNN Inference",
+      "summary": "In edge intelligence systems, computation offloading and dynamic voltage and frequency scaling (DVFS) are widely used to improve energy efficiency. However, as applications like deep neural network (DNN) inference evolve in complexity, their demands for memory resources have progressively increased, establishing memory as a critical bottleneck that impacts both latency and energy consumption. In this paper, we propose a joint optimization scheme integrating memory, computing and offloading for energy-efficient DNN inference. We formulate the energy minimization problem under deadline constraints as a mixed-integer nonlinear programming (MINLP) problem, where the main challenge arises from the coupling between offloading and resource optimization. To address this issue, we decompose the original problem into two subproblems under a fixed offloading policy. The local subproblem is transformed into an equivalent geometric programming (GP) problem to derive the optimal memory frequency and computing frequency, while the edge subproblem is solved via convex optimization. An efficient coordinate descent (CD) algorithm is further developed to jointly optimize all variables. Simulation res",
+      "url": "https://arxiv.org/abs/2611.11106v1",
+      "published": "2026-11-08",
+      "source": "arxiv",
+      "query": "abs:\"on-device\" AND abs:\"energy\" AND abs:\"constraint\"",
+      "score": 11.0,
+      "markers": [
+        "fracture:bottleneck",
+        "omega:edge",
+        "omega:energy",
+        "omega:memory",
+        "omega:latency",
+        "recency:10d"
+      ],
+      "id": "a206a4e2ad81e736"
+    },
+    {
+      "title": "Learning in Orbit: Onboard Training and Closed-Loop Attitude Control with a Thermal Segmentation Model on a Spacecraft",
+      "summary": "Deep space missions increasingly require spacecraft capable of autonomously operating in environments with communication delays and bandwidth limitations. A key enabler of such autonomy is the ability to run learning-based algorithms directly onboard. In this work, we present a flight deployment on a 6U CubeSat that demonstrates (1) onboard training and inference of a thermal segmentation model on an NVIDIA Jetson TX2 NX GPU in space and (2) closed-loop attitude control using the segmentation model on a real-time, thermal image feed to track the Moon. In addition to this demonstration, we implement ROS 2 Foxy as a data transport middleware and integrate an open-source file system that provides strong data integrity guarantees and self-healing features. Over the course of approximately one year, we performed 12 experiments on the spacecraft, advancing the state of the art in autonomous spacecraft systems by showing how modern learning-based pipelines, commercially available hardware, and open-source software can operate reliably under the compute and environmental constraints of Low Earth Orbit (LEO).",
+      "url": "https://arxiv.org/abs/2610.19122v1",
+      "published": "2026-10-13",
+      "source": "arxiv",
+      "query": "abs:\"self-healing\" AND abs:\"system\" AND abs:\"open\"",
+      "score": 11.0,
+      "markers": [
+        "fracture:limitation",
+        "omega:thermal",
+        "omega:self-healing",
+        "omega:self-heal",
+        "omega:autonom",
+        "recency:36d"
+      ],
+      "id": "bad8f7757bb65271"
+    },
+    {
+      "title": "Energy Measurement and Optimization of TinyML in Resource-Constrained Embedded Systems: A Systematic Mapping Study",
+      "summary": "The rapid expansion of the Internet of Things (IoT) has increased the volume of data generated at the network edge, where many devices operate under severe memory, processing, and energy constraints. In this context, Tiny Machine Learning (TinyML) enables machine learning (ML) tasks to be executed on microcontrollers, smart sensors, and other resource-constrained platforms. However, the literature remains heterogeneous regarding the algorithms evaluated, energy-measurement methods, reported metrics, influencing factors, and optimization strategies. This study presents a systematic mapping of energy-aware TinyML research. It identifies the main models and learning approaches, classifies energy-evaluation methodologies and metrics, examines the technical factors affecting energy consumption, and organizes the reported optimization techniques into a structured taxonomy. The findings highlight the frequent use of convolutional and lightweight architectures, direct measurements and analytical estimations, and factors related to model architecture, hardware, communication, numerical precision, and input characteristics. The optimization strategies were grouped into model compression, har",
+      "url": "https://arxiv.org/abs/2611.07264v1",
+      "published": "2026-11-05",
+      "source": "arxiv",
+      "query": "abs:\"on-device\" AND abs:\"energy\" AND abs:\"constraint\"",
+      "score": 10.5,
+      "markers": [
+        "omega:resource-constrained",
+        "omega:embedded",
+        "omega:edge",
+        "omega:energy",
+        "omega:memory",
+        "recency:13d"
+      ],
+      "id": "b43a44e050e19351"
+    },
+    {
+      "title": "AI-NativeBench: An Open-Source White-Box Agentic Benchmark Suite for AI-Native Systems",
+      "summary": "The transition from Cloud-Native to AI-Native architectures is fundamentally reshaping software engineering, replacing deterministic microservices with probabilistic agentic services. However, this shift renders traditional black-box evaluation paradigms insufficient: existing benchmarks measure raw model capabilities while remaining blind to system-level execution dynamics. To bridge this gap, we introduce AI-NativeBench, the first application-centric and white-box AI-Native benchmark suite grounded in Model Context Protocol (MCP) and Agent-to-Agent (A2A) standards. By treating agentic spans as first-class citizens within distributed traces, our methodology enables granular analysis of engineering characteristics beyond simple capabilities. Leveraging this benchmark across 21 system variants, we uncover critical engineering realities invisible to traditional metrics: a parameter paradox where lightweight models often surpass flagships in protocol adherence, a pervasive inference dominance that renders protocol overhead secondary, and an expensive failure pattern where self-healing mechanisms paradoxically act as cost multipliers on unviable workflows. This work provides the first ",
+      "url": "https://arxiv.org/abs/2601.09393v1",
+      "published": "2026-01-14",
+      "source": "arxiv",
+      "query": "abs:\"self-healing\" AND abs:\"system\" AND abs:\"open\"",
+      "score": 10.5,
+      "markers": [
+        "fracture:insufficient",
+        "fracture:gap",
+        "omega:deterministic",
+        "omega:self-healing",
+        "omega:self-heal"
+      ],
+      "id": "b723f55615373d7a"
+    },
+    {
+      "title": "GoodSpeed: Optimizing Fair Goodput with Adaptive Speculative Decoding in Distributed Edge Inference",
+      "summary": "Large language models (LLMs) have revolutionized natural language processing, yet their high computational demands pose significant challenges for real-time inference, especially in multi-user server speculative decoding and resource-constrained environments. Speculative decoding has emerged as a promising technique to accelerate LLM inference by using lightweight draft models to generate candidate tokens, which are subsequently verified by a larger, more accurate model. However, ensuring both high goodput (the effective rate of accepted tokens) and fairness across multiple draft servers cooperating with a central verification server remains an open challenge. This paper introduces GOODSPEED, a novel distributed inference framework that optimizes goodput through adaptive speculative decoding. GOODSPEED employs a central verification server that coordinates a set of heterogeneous draft servers, each running a small language model to generate speculative tokens. To manage resource allocation effectively, GOODSPEED incorporates a gradient scheduling algorithm that dynamically assigns token verification tasks, maximizing a logarithmic utility function to ensure proportional fairness ac",
+      "url": "https://arxiv.org/abs/2512.09963v2",
+      "published": "2025-12-10",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 10.5,
+      "markers": [
+        "fracture:open challenge",
+        "fracture:remains an open",
+        "omega:resource-constrained",
+        "omega:edge",
+        "omega:verification"
+      ],
+      "id": "c749b7abbef968b4"
+    },
+    {
+      "title": "Where Should Models Run? A Collaborative Inference Framework for Embodied Intelligence in 6G",
+      "summary": "Embodied intelligence systems rely on fast and reliable inference to enable real-time perception, reasoning, and control. Recent advances in large-scale artificial intelligence (AI) models, including Large Language Models (LLMs) and Vision-Language-Action (VLA) models, have significantly enhanced the capabilities of embodied agents in complex environments. However, deploying these models remains challenging due to the limited computational resources and energy budgets of robotic platforms. A fundamental question is where inference should be executed. Collaborative inference, which partitions models across end devices, edge servers, and the cloud, has emerged as a promising solution. Yet determining the optimal partitioning point remains an open problem, as it depends on wireless network conditions, model structure, and privacy requirements. This article reviews the state of the art in collaborative inference for embodied intelligence and proposes an edge-centric framework in which the edge coordinates model partitioning and execution. Through both simulation and real-world experiments over WiFi and 5G networks, we demonstrate that the optimal partitioning strategy varies with netwo",
+      "url": "https://arxiv.org/abs/2611.11023v1",
+      "published": "2026-11-07",
+      "source": "arxiv",
+      "query": "cat:cs.LG AND abs:\"open problem\"",
+      "score": 10.0,
+      "markers": [
+        "fracture:open problem",
+        "fracture:remains an open",
+        "omega:edge",
+        "omega:energy",
+        "recency:11d"
+      ],
+      "id": "5fd171afa0c04dc7"
+    },
+    {
+      "title": "Development of Sapphire-Based Solid-State Neutron Detectors for Fusion Environments",
+      "summary": "Single-crystal diamond is the reference solid-state technology for fast neutron detection in fusion devices. Despite this, its complex manufacturing increases their costs and puts limitations on their geometry. Moreover, the limits in their long-term stability and their behaviour in harsh environments further constraint its applications. Synthetic sapphire (Al2O2) is a promising alternative as a solid state detector material: it is available in large, low-cost wafers and features both a wider bandgap and a higher displacement energy compared to diamond. Despite this, it has so far received little-to-no attention as a neutron detector. This work presents the first steps of a development programme for sapphire-based fast neutron detectors. Eight prototypes with 4.5 x 4.5 mm2 and 9 x 9 mm2 active areas and 625 um thickness were fabricated from commercial wafers with Al-Si electrodes and coupled to different electronic configurations. All prototypes detected 5.47 MeV alpha particles from a 241Am source, confirming the viability of both the fabrication process and the use of sapphire as an active material. The small signals (30-40 mV over a peak-to-peak noise of about 8 mV) and the coun",
+      "url": "https://arxiv.org/abs/2611.14745v1",
+      "published": "2026-11-10",
+      "source": "arxiv",
+      "query": "abs:\"on-device\" AND abs:\"energy\" AND abs:\"constraint\"",
+      "score": 10.0,
+      "markers": [
+        "fracture:limitation",
+        "fracture:gap",
+        "omega:on device",
+        "omega:energy",
+        "recency:8d"
+      ],
+      "id": "c1fd1a5d55d72831"
+    },
+    {
+      "title": "SpecValley: Aggregation as Spectral Valley in Dense Heterophilic Graphs",
+      "summary": "Node classification in heterophilic graphs remains an open problem: aggregating over neighbourhoods can damp precisely the part of the signal that carries the labels. The field has answered with ever more expressive propagation operators, leaving the aggregation step that precedes them fixed by degree normalisation. However, degree normalisation acts as a spectral valley in its own right, attenuating a fixed middle band whose position at lambda equal 1 is set by the normalisation rather than by the data, exactly where the eigenvalues of dense graphs accumulate. We therefore begin with the representations rather than the propagation, in two stages: a learnable aggregation followed by an ordinary spectral filter. The first, SpecValley learns the position, sharpness and flank gains of the valley for every graph. We show formally how the aggregation operator and downstream filter interact. We establish that the response 1 minus lambda of degree normalisation vanishes exactly at that accumulation point. A spectral energy budget shows that what aggregation removes from a band, no linear spectral filter can recover. Crowding alone says nothing about the benefit. That is decided by how muc",
+      "url": "https://arxiv.org/abs/2611.14176v1",
+      "published": "2026-11-10",
+      "source": "arxiv",
+      "query": "cat:cs.LG AND abs:\"open problem\"",
+      "score": 10.0,
+      "markers": [
+        "fracture:open problem",
+        "fracture:remains an open",
+        "omega:energy",
+        "omega:formal",
+        "recency:8d"
+      ],
+      "id": "c3695614717b499d"
+    },
+    {
+      "title": "TIDE: Efficient and Lossless MoE Diffusion LLM Inference with I/O-aware Expert Offload",
+      "summary": "Diffusion Large Language Models (dLLMs) have emerged as a competitive alternative to autoregressive (AR) models, offering better hardware utilization and bidirectional context through parallel block-level decoding. However, as dLLMs continue to scale up with mixture-of-experts (MoE) architectures, their deployment on resource-constrained devices remains an open challenge. Existing AR-based methods often incur either prohibitive I/O overhead or significant compute bottlenecks. In this work, we propose TIDE, a novel resource-efficient inference system that leverages the temporal stability of expert activations during the diffusion process within the block. Specifically, we leverage the temporal stability of expert activations during the diffusion process within the block and introduce an interval-based expert refresh strategy that updates the expert placement in an I/O-aware fashion. To ensure optimal performance, we formulate the inference scheduling as a mathematical programming problem, solving for the optimal interval that minimizes I/O traffic and CPU computation. Most importantly, TIDE is a lossless optimization that requires no model training, providing a \"free lunch\" accelera",
+      "url": "https://arxiv.org/abs/2605.20179v1",
+      "published": "2026-05-19",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 9.5,
+      "markers": [
+        "fracture:open challenge",
+        "fracture:remains an open",
+        "fracture:bottleneck",
+        "omega:resource-constrained"
+      ],
+      "id": "3392c0d7dd6d7783"
+    },
+    {
+      "title": "Show HN: Cactus v2 \u2013 On-device AI with cloud fallback",
+      "summary": "Hi HN, Roman and Henry here from Cactus ( https:&#x2F;&#x2F;github.com&#x2F;cactus-compute&#x2F;cactus ). We just shipped the biggest upgrade to our on-device inference platform: - Built-in model confidence-based routing to hand off inference runs to the cloud - Converter for any PyTorch model - Lossless 4-bit quantization (evals on our GitHub README) - GPU acceleration on compatible devices (starting with Apple Metal) - Minimal RAM footprint - Runs on any Arm device: iOS, Android, Mac, DGX Spark, Raspberry Pi, and more All in, a Gemma 4 E2B class model runs at 169 tok&#x2F;sec on M5 Max, takes 2.7GB disk space with no accuracy degradation from FP16, uses 1.3GB of RAM, and requests help from cloud models when needed. The problem we started with eighteen months ago: inference engines are built for datacenters, but consumer hardware has different physics: you share RAM with the OS, you get thermally throttled, and the same model behaves differently on different hardware. So we wrote a runtime from scratch for resource-constrained devices. Since then, Cactus has grown to process millions of weekly inference runs, and tens of thousands of monthly active developers. Our biggest learning",
+      "url": "https://news.ycombinator.com/item?id=48864459",
+      "published": "2026-07-10",
+      "source": "hn_algolia",
+      "query": "on-device inference constraint",
+      "score": 9.5,
+      "markers": [
+        "omega:resource-constrained",
+        "omega:on-device",
+        "omega:android",
+        "omega:arm",
+        "omega:thermal",
+        "omega:runtime"
+      ],
+      "id": "87287d42c0b6863b"
+    },
+    {
+      "title": "Mongo and collections: deliver shared COW defaults and public performance gains",
+      "summary": "## Current relaxed YCSB outcome \u2014 complete, 2026-11-14 The scoped user-requested outcome is met: actual merged main `6d221ed3bed8a15bbefb869687ee5aac9bbe4763`, tree `a2d791185aefaf2792c17d1792cfb4ca67359c9c`, beats MongoDB in all six fixed matched relaxed mixed-throughput comparisons on server 111. **This broader parent remains OPEN** for its distinct unresolved/durable obligations. [Full result, raw identities, independent audits and limits](https://github.com/snissn/gomap/issues/5225#issuecomment-6878718190). Delivered increments: correctness #5429 / PR #5430 merged `73f85a87`; read cache #5428 / PR #5424 merged `dfe8316`; maintenance batching #5432 / PR #5433 merged `6d221ed3`. Last PR has 57 successful checks, exact-head Codex clean, no unresolved review threads, and actual merge tree/all six changed files verified. No correctness/CI override. The documented candidate/base short performance tradeoff remains accepted; all original failures are retained. Fresh 100k fixtures, 16 clients, uniform 95% READ / 5% UPDATE, BSON all-field reads, 10x100 B fields, zero secondary indexes; relaxed `w=1`, no journal request, retryWrites=false. Same client/Mongo 8.2.7 image/native Go 1.26.10/d",
+      "url": "https://github.com/snissn/gomap/issues/5225",
+      "published": "2026-11-14",
+      "source": "github_issues",
+      "query": "label:\"performance\" bottleneck embedded is:issue",
+      "score": 9.5,
+      "markers": [
+        "fracture:unresolved",
+        "fracture:tradeoff",
+        "omega:audit",
+        "omega:throughput",
+        "recency:4d"
+      ],
+      "id": "a56d70391e197568"
+    },
+    {
+      "title": "Reproducibility is Not Enough: Artifact Verifiability in Decentralized-Build Package Ecosystems",
+      "summary": "Reproducible and verifiable builds increase trust in distributed software artifacts by enabling independent parties to detect artifacts produced by compromised build or release pipelines. However, artifact verification requires more than deterministic builds: a verifier must also recover the source state, build environment, dependencies, and build instructions that produced the artifact. Decentralized-build ecosystems make this difficult because artifacts are produced through heterogeneous tools, maintainer-controlled workflows, and fragmented metadata. As a result, it remains unclear how often artifacts in these ecosystems can be independently verified. This paper studies artifact verifiability across four popular decentralized-build package ecosystems. We define an independent verifier model that relies only on registry-derivable metadata and an artifact comparison model with tiered equivalence levels. We implement these models in an Artifact Verification Pipeline and use it to measure artifact verifiability across the target ecosystems. Our results show that, beyond build determinism, verifiability is limited by missing source and build metadata, implicit release transformations",
+      "url": "https://arxiv.org/abs/2608.18180v1",
+      "published": "2026-08-18",
+      "source": "arxiv",
+      "query": "abs:\"deterministic build\" OR abs:\"reproducible build\"",
+      "score": 9.0,
+      "markers": [
+        "omega:deterministic",
+        "omega:reproducible",
+        "omega:verification",
+        "omega:decentral",
+        "recency:92d"
+      ],
+      "id": "3d37e1ec76eaa636"
+    },
+    {
+      "title": "SwiftF0: Fast and Accurate Monophonic Pitch Detection",
+      "summary": "Accurate and real-time monophonic pitch estimation in noisy conditions, particularly on resource-constrained devices, remains an open challenge in audio processing. We present \\emph{SwiftF0}, a novel, lightweight neural model that sets a new state-of-the-art for monophonic pitch estimation. Through training on diverse speech, music, and synthetic datasets with extensive data augmentation, SwiftF0 achieves robust generalization across acoustic domains while maintaining computational efficiency. SwiftF0 achieves a 91.80\\% harmonic mean (HM) at 10 dB SNR, outperforming baselines like CREPE by over 12 percentage points and degrading by only 2.3 points from clean audio. SwiftF0 requires only 95,842 parameters and runs approximately 42x faster than CREPE on CPU, making it ideal for efficient, real-time deployment. To address the critical lack of perfectly accurate ground truth pitch in speech corpora (which typically rely on algorithmic estimators or laryngograph signals), we introduce \\emph{SpeechSynth}. This synthetic speech dataset, generated by a phoneme-level TTS model, provides exact, on-demand ground-truth pitch curves, enabling more robust model training and evaluation. Furthermo",
+      "url": "https://arxiv.org/abs/2508.18440v1",
+      "published": "2025-08-25",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 9.0,
+      "markers": [
+        "fracture:open challenge",
+        "fracture:remains an open",
+        "omega:resource-constrained",
+        "omega:arm"
+      ],
+      "id": "6f2c9b6aa0d4d7dd"
+    },
+    {
+      "title": "PTC-Decoder: Towards Intelligent SLMs on Offline Resource-Constrained Edge Devices",
+      "summary": "Deploying small language models (SLMs) on offline, resource-constrained edge devices such as remote sensing satellites presents a fundamental challenge: their limited reasoning capacity hinders reliable execution of multi-step agent tasks requiring complex tool orchestration. Existing plan-solve paradigms rely on prompt-based enforcement, which our experiments show SLMs almost entirely disregard: weak models fail to invoke the plan. We propose PTC-Decoder (Plan-Tool Constrained Decoder), a training-free, plug-and-play decoder framework that combines (1) a Plan-to-Act paradigm, which elevates planning to an atomic tool and forces its invocation at the first inference step, and (2) TC-Decoder, a deterministic finite automaton that imposes token-level hard constraints on tool names while preserving freedom over parameter generation, thereby retaining SLM reasoning capability. Evaluated on 200 real remote-sensing satellite tasks across 7 SLMs, PTC-Decoder yields a statistically significant mean overall score gain of +1.21 (p<0.01), 95% CI [+1.13, +1.29]), with consistent improvements across models and other datasets. An ablation study that removes TC-Decoder causes substantial performa",
+      "url": "https://arxiv.org/abs/2609.30836v1",
+      "published": "2026-09-25",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 9.0,
+      "markers": [
+        "omega:resource-constrained",
+        "omega:edge",
+        "omega:offline",
+        "omega:deterministic",
+        "recency:54d"
+      ],
+      "id": "8d0bf393402cd852"
+    },
+    {
+      "title": "Risk-Aware Joint Inference and Resource Control for Physical AI in 6G Networks",
+      "summary": "Wireless edge inference enables Physical-AI devices to execute edge-inferred actions using transmitted sensory inputs. Since the risk of incorrect actions vary across observations and tasks, the associated uplink transmission of sensory inputs requires different levels of wireless reliability. For instance, applying a fixed signal-to-interference-plus-noise ratio (SINR) requirement can overprovision low-risk tasks while underprovisioning high-risk ones. Therefore, we propose risk-aware control for edge inference (RACE), which maps predicted action-failure probability and task criticality to adaptive SINR targets and combines them with deadline-derived SINR requirements. A slow-timescale large language model (LLM) proposes task requirements for deterministic validation, while a fast hybrid actor selects inference configurations and transmit power levels, complemented by analytical receive beamforming and finite power restoration. Simulations show $11\\%$ improvement in the average accuracy-latency-energy objective over fixed-high-SINR control, with near-zero constraint outage.",
+      "url": "https://arxiv.org/abs/2611.14696v1",
+      "published": "2026-11-10",
+      "source": "arxiv",
+      "query": "abs:\"on-device\" AND abs:\"energy\" AND abs:\"constraint\"",
+      "score": 9.0,
+      "markers": [
+        "omega:edge",
+        "omega:energy",
+        "omega:deterministic",
+        "omega:latency",
+        "recency:8d"
+      ],
+      "id": "b4ceb0a5b864cef5"
+    },
+    {
+      "title": "EASE: Practical and Efficient Safety Alignment for Small Language Models",
+      "summary": "Small language models (SLMs) are increasingly deployed on edge devices, making their safety alignment crucial yet challenging. Current shallow alignment methods that rely on direct refusal of malicious queries fail to provide robust protection, particularly against adversarial jailbreaks. While deliberative safety reasoning alignment offers deeper alignment for defending against sophisticated attacks, effectively implanting such reasoning capability in SLMs with limited capabilities remains an open challenge. Moreover, safety reasoning incurs significant computational overhead as models apply reasoning to nearly all queries, making it impractical for resource-constrained edge deployment scenarios that demand rapid responses. We propose EASE, a novel framework that enables practical and Efficient safety Alignment for Small languagE models. Our approach first identifies the optimal safety reasoning teacher that can effectively distill safety reasoning capabilities to SLMs. We then align models to selectively activate safety reasoning for dangerous adversarial jailbreak queries while providing direct responses to straightforward malicious queries and general helpful tasks. This select",
+      "url": "https://arxiv.org/abs/2511.06512v1",
+      "published": "2025-11-09",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 9.0,
+      "markers": [
+        "fracture:open challenge",
+        "fracture:remains an open",
+        "omega:resource-constrained",
+        "omega:edge"
+      ],
+      "id": "faa003f3e094080e"
+    },
+    {
+      "title": "From Question-First to Analyst-First: Domain-Expert Skills and Verified Knowledge Compilation for Proactive Enterprise Analytics",
+      "summary": "Conversational analytics systems assume the user already has a well-formed question, leaving a non-expert facing a blank query box on an unfamiliar enterprise schema. Commercial 'proactive' tools narrow this gap only by detecting statistical anomalies over analyst-curated metric layers, and academic next-question recommenders depend on query logs that a fresh dataset lacks. We describe a production analytics system that inverts the interaction model from question-first to analyst-first through two coupled architectural ideas. First, a pluggable domain-expert 'skill' abstraction: a folder-based, database-free subject-matter pack (a manifest, per-stage prompt facets, keyword-routed references, report templates, and optional compute) auto-selected per (client, dataset) by deterministic schema matching and spliced as a cross-cutting concern into every stage of an agentic pipeline, the schema explorer, and the report engines, degrading to a strict no-op when absent. Because a skill is a self-contained folder resolved deterministically, the catalogue is open-ended: an extensible marketplace of domain experts. Second, an offline knowledge-compilation loop: an agent probes the dataset's pa",
+      "url": "https://arxiv.org/abs/2608.28594v1",
+      "published": "2026-06-15",
+      "source": "arxiv",
+      "query": "abs:\"self-healing\" AND abs:\"system\" AND abs:\"open\"",
+      "score": 8.5,
+      "markers": [
+        "fracture:gap",
+        "omega:edge",
+        "omega:offline",
+        "omega:deterministic"
+      ],
+      "id": "265b6a33e453ddfd"
+    },
+    {
+      "title": "CyberForge: Verified Vulnerability Injection at Repository Level for Cybersecurity Agent Training",
+      "summary": "Despite recent advances, frontier large language model (LLM) agents remain limited in discovering and patching complex vulnerabilities in real-world software. Generally available agents can already aid attackers, who only need to find one exploitable weakness, while defenders must continuously identify and patch all vulnerabilities across fast-growing codebases. Stronger defensive agents would help close this gap, yet the scarcity of security training data with reproducible build and execution environments remains a bottleneck. We present CyberForge, a framework that synthesizes executable, repository-level security training data by injecting vulnerabilities into real C/C++ projects. It validates each instance dynamically: the injected build must pass the project's unit tests, and generated proof-of-vulnerability (PoV) must trigger on the injected build and not on the clean one. CyberForge is not limited by the availability of disclosed vulnerabilities, therefore it can scale in comparison to data augmentation techniques which rely on historic CVE data. The resulting corpus holds 1034 validated vulnerabilities across 80 projects and 63 weakness categories, with edit locality simila",
+      "url": "https://arxiv.org/abs/2608.06471v1",
+      "published": "2026-08-06",
+      "source": "arxiv",
+      "query": "abs:\"deterministic build\" OR abs:\"reproducible build\"",
+      "score": 8.5,
+      "markers": [
+        "fracture:bottleneck",
+        "fracture:gap",
+        "omega:reproducible",
+        "recency:104d"
+      ],
+      "id": "37b1e0005bfd025b"
+    },
+    {
+      "title": "Hash Functions and Benchmarks for Resource Constrained Passive Devices: A Preliminary Study",
+      "summary": "Recently, we have witnessed the emergence of intermittently powered computational devices, an early example is the Intel WISP (Wireless Identification and Sensing Platform). How we engineer basic security services to realize mutual authentication, confidentiality and preserve privacy of information collected, stored and transmitted by, and establish the veracity of measurements taken from, such devices remain an open challenge; especially for batteryless and intermittently powered devices. While the cryptographic community has significantly progressed lightweight (in terms of area overhead) security primitives for low cost and power efficient hardware implementations, lightweight software implementations of security primitives for resource constrained devices are less investigated. Especially, the problem of providing security for intermittently powered computational devices is unexplored. In this paper, we illustrate the unique challenges posed by an emerging class of intermittently powered and energy constrained computational IoT devices for engineering security solutions. We focus on the construction and evaluation of a basic hash primitive---both existing cryptographic hash fun",
+      "url": "https://arxiv.org/abs/1902.03040v1",
+      "published": "2019-02-08",
+      "source": "arxiv",
+      "query": "abs:\"remains an open challenge\" AND abs:\"resource-constrained\"",
+      "score": 8.5,
+      "markers": [
+        "fracture:open challenge",
+        "omega:resource constrained",
+        "omega:energy",
+        "omega:battery"
+      ],
+      "id": "6af7aeca2304d02e"
+    },
+    {
+      "title": "AROMA+: A Study of Factors Affecting Reproducible Builds in the Maven Ecosystem",
+      "summary": "Modern software engineering establishes software supply chains and relies on tools and libraries to improve productivity. However, reusing external software in a project presents a security risk when the source of the component is unknown or the consistency of a component cannot be verified. Reproducible builds present a mitigation strategy, as they can confirm the origin and consistency of reused components. A large reproducibility community has formed for Debian, but the reproducibility of the Maven ecosystem, the backbone of the Java supply chain, remains understudied in comparison. Reproducible Central is an initiative that curates a list of reproducible Maven libraries, but the list is limited and challenging to maintain due to manual efforts. Our research aims to support these efforts in the Maven ecosystem through automation. We investigate the feasibility of automatically finding the source code of a library from its Maven release and recovering information about the original release environment. Our tool, AROMA+, can obtain this critical information from the artifact and the source repository through several heuristics and we use the results for reproduction attempts of pa",
+      "url": "https://arxiv.org/abs/2608.27125v1",
+      "published": "2026-08-27",
+      "source": "arxiv",
+      "query": "abs:\"deterministic build\" OR abs:\"reproducible build\"",
+      "score": 8.0,
+      "markers": [
+        "fracture:cannot",
+        "omega:reproducible",
+        "omega:supply chain",
+        "recency:83d"
+      ],
+      "id": "1af06fe0ecb2bdc5"
+    },
+    {
+      "title": "Community-Centered Resilience Enhancement of Urban Power and Gas Networks via Microgrid Partitioning, Mobile Energy Storage, and Data-Driven Risk Assessment",
+      "summary": "Urban energy systems face increasing challenges due to high penetration of renewable energy sources, extreme weather events, and other high-impact, low-probability disruptions. This project proposes a community-centered, open-access framework to enhance the resilience and reliability of urban power and gas networks by integrating microgrid partitioning, mobile energy storage deployment, and data-driven risk assessment. The approach involves converting passive distribution networks into active, self-healing microgrids using distributed energy resources and remotely controlled switches to enable flexible reconfiguration during normal and emergency operations. To address uncertainties from intermittent renewable generation and variable load, an adjustable interval optimization method combined with a column and constraint generation algorithm is developed, providing robust planning solutions without requiring probabilistic information. Additionally, a real-time online risk assessment tool is proposed, leveraging 25 multi-dimensional indices including load, grid status, resilient resources, emergency response, and meteorological factors to support operational decision-making during extr",
+      "url": "https://arxiv.org/abs/2602.09673v1",
+      "published": "2026-02-10",
+      "source": "arxiv",
+      "query": "abs:\"self-healing\" AND abs:\"system\" AND abs:\"open\"",
+      "score": 8.0,
+      "markers": [
+        "omega:mobile",
+        "omega:energy",
+        "omega:self-healing",
+        "omega:self-heal"
+      ],
+      "id": "3da953f606424edd"
+    },
+    {
+      "title": "LLM Fine-Tuning Workloads: Characterization, Challenges, and Opportunities for Serverless AI",
+      "summary": "Serverless execution of Large Language Models (LLMs) is becoming important, reflecting their wide societal use. An increasingly present stage in LLM pipelines is fine-tuning, which specializes trained models and improves inference performance. Serverless operation of LLM fine-tuning workloads shifts operational concerns from the user to the provider. For these new workloads, providers face important operational complexities, such as performance issues, resource waste, and even service failure due to misconfiguration. However, optimizing such workloads is still at an early stage, and, relevant to this work, relatively little is currently known about how LLM fine-tuning workloads run in practice. In this work, we address the knowledge gap by characterizing the execution of LLM fine-tuning workloads on clusters equipped with different GPUs, running LLM models at various scales. We analyze IBM's LLMFineTuningBench, a large-scale, diverse profiling dataset of 30,920 fine-tuning experiments that records both successful and failing configurations. We provide quantitative insight into throughput (expressed in tokens/s), scaling, failure, and potential for performance optimization for four ",
+      "url": "https://arxiv.org/abs/2610.40983v1",
+      "published": "2026-10-29",
+      "source": "arxiv",
+      "query": "abs:\"no known\" AND abs:\"efficient\" AND cat:cs.DC",
+      "score": 8.0,
+      "markers": [
+        "fracture:gap",
+        "omega:edge",
+        "omega:throughput",
+        "recency:20d"
+      ],
+      "id": "ec9ca5da5ab04a60"
+    },
+    {
+      "title": "Circuit Theory-Informed AI for Condition Monitoring in Power Electronics",
+      "summary": "Artificial intelligence for power electronics is evolving toward a deeper comprehension of system intrinsic behaviors and dynamics. As a novel integration of neural computation and electric circuits, spike-based neuromorphic computing offers promising potential in high energy efficiency and adaptability for data-driven applications. Building on the latency-coding principles, this article proposes a framework for data-light condition monitoring that relies solely on three-phase AC current measurements. The AC current signals are encoded as membrane potentials of RC-based spiking neurons, which are inherently compatible with spiking neural networks that can effectively facilitate the estimation of device parameters. Case studies are presented to validate the performances, while constraints and further optimizations are also evaluated and discussed, and future extensions of the methodology are provided.",
+      "url": "https://arxiv.org/abs/2611.09141v1",
+      "published": "2026-11-06",
+      "source": "arxiv",
+      "query": "abs:\"on-device\" AND abs:\"energy\" AND abs:\"constraint\"",
+      "score": 8.0,
+      "markers": [
+        "fracture:tension",
+        "omega:energy",
+        "omega:latency",
+        "recency:12d"
+      ],
+      "id": "f21433ff0a0e6a30"
+    },
+    {
+      "title": "Mobility-Aware Task Offloading in Mobile Edge Computing-Empowered Space-Air-Ground Integrated Internet-of-Things Networks",
+      "summary": "Mobile edge computing (MEC)-empowered spaceair-ground integrated Internet-of-Things (IoT) networks (SAGIINs) provide a promising solution for computation-intensive tasks generated by mobile IoT devices (IDs). However, task offloading in SAGIINs is challenging due to time-varying IDto-unmanned aerial vehicle (UAV) channels, intermittent LEO satellite service availability, and the coupling among UAV trajectory, communication, computation, and energy decisions. This paper investigates an energy-efficient task offloading and UAV trajectory planning problem in an MEC-empowered SAGIIN, where one UAV acts as both an aerial relay and an MEC server, and multiple LEO satellites provide supplementary computing resources. The UAV trajectory planning, task splitting, and computing resource allocation are jointly optimized to minimize the total system energy consumption under task completion, communication, computation, flight region, and satellite service window constraints. The resulting non-convex problem is decomposed into a UAV trajectory planning subproblem and a task splitting and computing resource allocation subproblem. To solve the former, a retrieval-augmented generation (RAG)-assiste",
+      "url": "https://arxiv.org/abs/2611.14102v1",
+      "published": "2026-11-10",
+      "source": "arxiv",
+      "query": "abs:\"on-device\" AND abs:\"energy\" AND abs:\"constraint\"",
+      "score": 7.5,
+      "markers": [
+        "omega:edge",
+        "omega:mobile",
+        "omega:energy",
+        "recency:8d"
+      ],
+      "id": "099f932949f7404c"
+    },
+    {
+      "title": "Adapting Multi-Stage Distributed Real-Time Systems Design to Vehicular Edge Computing",
+      "summary": "Vehicular Edge Computing (VEC) aims to support computation-intensive applications in intelligent transportation systems while meeting stringent latency requirements. When processed remotely, applications require access to different resource types in a specific sequence, forming a multi-stage processing pipeline. This structure closely resembles multi-stage distributed applications executing across heterogeneous resources, making established multi-stage distributed real-time scheduling techniques well suited for modeling VEC systems. The resulting model accommodates diverse resource configurations and access patterns. Building on this model, we propose a joint mapping and scheduling approach that accounts for vehicle mobility and real-time constraints. The proposed heuristic extends optimal priority assignment for multi-stage systems to the VEC setting, to construct feasible schedules while minimizing local-device energy consumption and ensuring that offloaded jobs meet their deadlines. Extensive simulations show that the proposed approach consistently outperforms both a baseline based on the same delay-composition framework and a deadline decomposition-based approach.",
+      "url": "https://arxiv.org/abs/2611.12370v1",
+      "published": "2026-11-09",
+      "source": "arxiv",
+      "query": "abs:\"on-device\" AND abs:\"energy\" AND abs:\"constraint\"",
+      "score": 7.5,
+      "markers": [
+        "omega:edge",
+        "omega:energy",
+        "omega:latency",
+        "recency:9d"
+      ],
+      "id": "607b56d678f558a8"
+    },
+    {
+      "title": "Scout: Open-World Species Recognition on the Edge",
+      "summary": "Large vision-language models (VLMs) enable recognition beyond a fixed class set, but their computational demands prevent them from running on many edge devices. Cloud offload makes this capability accessible, but sending every image consumes scarce bandwidth and communication energy. We ask how to bring the open-world recognition capability of VLMs to the edge while operating within tight compute, energy, and bandwidth budgets. Wildlife monitoring provides a natural setting for exploring this question because camera traps encounter species not known at deployment. We present Scout, an autonomous open-world recognition system that invokes a cloud VLM intermittently to teach new classes to a compact edge model. Given only the deployment location and empty site frames, Scout autonomously turns each species identified by the VLM into persistent, site-conditioned recognition capability in a resource-efficient edge model, without a predefined species list, human labeling, or manual tuning. Across 30 camera-trap deployments in three regions on an NVIDIA Jetson Orin Nano, the accuracy of Scout remains within 0.1-2.5% of a model given a predefined species list. On species outside its initia",
+      "url": "https://arxiv.org/abs/2609.22897v1",
+      "published": "2026-09-19",
+      "source": "arxiv",
+      "query": "abs:\"no known\" AND abs:\"efficient\" AND cat:cs.DC",
+      "score": 7.5,
+      "markers": [
+        "omega:edge",
+        "omega:energy",
+        "omega:autonom",
+        "recency:60d"
+      ],
+      "id": "62fe8915d94f7e67"
+    },
+    {
+      "title": "Modernization and Statistical Validation of a Multilayer TRIM.SP Code for Low-Energy Muon and Ion Implantation",
+      "summary": "We describe the staged modernization of a local multilayer TRIM.SP implementation, denoted TRIM.SP-NL. The work included behavior-preserving refactoring, correction of localized bookkeeping and initialization defects, support for more than five elements per layer, reproducible build modes, and a runtime-selectable random-number-generator (RNG) interface. The RANLUX RNG remains the default reference backend, while PCG32 and xoshiro256** provide faster alternatives without changing the input-deck format. The code validation combined exact regression testing with statistical comparisons over 13 representative target multilayer configurations, comprising 143 energy-configuration points per backend and 429 simulations in total. Across the test suite, PCG32 and xoshiro256** reduced runtime by factors of 1.98 and 2.01, respectively. The implanted, backscattered, and transmitted fractions, as well as the mean implantation depths, range straggling, and representative depth profiles showed no systematic RNG dependence. Together with a Node.js-based graphical interface for setup, scans, and result collection, the Fortran engine forms the open-source TRIM.SP-NL Workbench.",
+      "url": "https://arxiv.org/abs/2609.00094v1",
+      "published": "2026-08-31",
+      "source": "arxiv",
+      "query": "abs:\"deterministic build\" OR abs:\"reproducible build\"",
+      "score": 7.5,
+      "markers": [
+        "omega:energy",
+        "omega:reproducible",
+        "omega:runtime",
+        "recency:79d"
+      ],
+      "id": "6e0c536f39d7869c"
+    },
+    {
+      "title": "Turbo-VAED: Fast and Stable Transfer of Video-VAEs to Mobile Devices",
+      "summary": "There is a growing demand for deploying large generative AI models on mobile devices. For recent popular video generative models, however, the Variational AutoEncoder (VAE) represents one of the major computational bottlenecks. Both large parameter sizes and mismatched kernels cause out-of-memory errors or extremely slow inference on mobile devices. To address this, we propose a low-cost solution that efficiently transfers widely used video VAEs to mobile devices. (1) We analyze redundancy in existing VAE architectures and get empirical design insights. By integrating 3D depthwise separable convolutions into our model, we significantly reduce the number of parameters. (2) We observe that the upsampling techniques in mainstream video VAEs are poorly suited to mobile hardware and form the main bottleneck. In response, we propose a decoupled 3D pixel shuffle scheme that slashes end-to-end delay. Building upon these, we develop a universal mobile-oriented VAE decoder, Turbo-VAED. (3) We propose an efficient VAE decoder training method. Since only the decoder is used during deployment, we distill it to Turbo-VAED instead of retraining the full VAE, enabling fast mobile adaptation with m",
+      "url": "https://arxiv.org/abs/2508.09136v1",
+      "published": "2025-08-12",
+      "source": "arxiv",
+      "query": "abs:\"out of memory\" AND abs:\"mobile\" AND abs:\"bottleneck\"",
+      "score": 7.0,
+      "markers": [
+        "fracture:bottleneck",
+        "omega:mobile",
+        "omega:memory"
+      ],
+      "id": "028eb337220cf9a4"
+    },
+    {
+      "title": "AI-powered software testing tools: A systematic review and empirical assessment of their features and limitations",
+      "summary": "Context: The rise of Artificial Intelligence (AI) in software engineering has led to the development of AI-powered test automation tools, promising improved efficiency, reduced maintenance effort, and enhanced defect-detection. However, a systematic evaluation of these tools is needed to understand their capabilities, benefits, and limitations. Objective: This study has two objectives: (1) A systematic review of AI-assisted test automation tools, categorizing their key AI features; (2) an empirical study of two selected AI-powered tools on two software under test, to investigate the effectiveness and limitations of the tools. Method: A systematic review of 55 AI-based test automation tools was conducted, classifying them based on their AI-assisted capabilities such as self-healing tests, visual testing, and AI-powered test generation. In the second phase, two representative tools were selected for the empirical study, in which we applied them to test two open-source software systems. Their performance was compared with traditional test automation approaches to evaluate efficiency and adaptability. Results: The review provides a comprehensive taxonomy of AI-driven testing tools, hig",
+      "url": "https://arxiv.org/abs/2409.00411v3",
+      "published": "2024-08-31",
+      "source": "arxiv",
+      "query": "abs:\"self-healing\" AND abs:\"system\" AND abs:\"open\"",
+      "score": 7.0,
+      "markers": [
+        "fracture:limitation",
+        "omega:self-healing",
+        "omega:self-heal"
+      ],
+      "id": "554de1a3dbc87c6a"
+    },
+    {
+      "title": "perf: cloud chunk backfill runs at ~10% of provider rate limits (32-item sequential batches)",
+      "summary": "## Summary On a cloud provider, `/lcm embed backfill --corpus chunks --apply` runs far below the provider's rate limit. On a real ~184K-message store with `voyage-context-4`, it embedded about **1,100 chunks/minute** (~18 chunks/s, roughly 350K tokens/minute at ~320 tokens/chunk). The full corpus would take **about 4 hours**. Voyage Tier 1 allows **3M TPM / 2,000 RPM** for `voyage-context-4`, so we are using ~10% of the token budget and ~3% of the request budget. ## Likely cause (from source) - `command.py`: `_EMBEDDING_BACKFILL_BATCH_SIZE = 32` documents per outer batch. It is capped by `_VOYAGE_MAX_BATCH_ITEMS = 1000` and `_VOYAGE_MAX_BATCH_TOKENS = 80_000`, but the default stays at 32. - Batches appear to be dispatched sequentially under the single backfill lease, so throughput \u2248 32 \u00d7 (1 / request latency). - `LCM_EMBEDDING_BACKFILL_BATCH_SIZE` exists as an override, but nothing in `/lcm embed backfill` output or the docs suggests it for large cloud backfills. ## Ask 1. Size cloud batches by the token budget (up to the 80K-token / 1,000-item request limits) instead of a fixed 32 items, at least for `--corpus chunks`. 2. Optionally allow a small bounded number of in-flight reques",
+      "url": "https://github.com/electricsheephq/lcm-x/issues/2727",
+      "published": "2026-11-14",
+      "source": "github_issues",
+      "query": "label:\"performance\" bottleneck embedded is:issue",
+      "score": 7.0,
+      "markers": [
+        "omega:embedded",
+        "omega:throughput",
+        "omega:latency",
+        "recency:4d"
+      ],
+      "id": "b8286aa2219fbb5f"
+    },
+    {
+      "title": "Edge AI in Wearable Devices",
+      "summary": "Wearable technologies have progressed from basic fitness trackers and digital watches into smart systems that can check vital signs, alert for anomalies, and transmit personalized health data. Existing cloud-native structures used by wearable technology face drawbacks, including delays in communication, reliance on reliable internet connections, privacy concerns, and toomuchenergyusage.EdgeArtificialIntelligence(EdgeAI),the layer of AI processing where the computational and intelligent capabilities are at the data source itself, offers a compelling alternative. If a sensor provides its data to an Edge AI-enabled wearabledevice,thedevicecanuseitsonboardcomputingtohelp integratethedataandascribemeaningaswellasprovideinsights. Thisuseof processingdatawithinthe wearabledevice,allowsfor actionable insights and decision making with little latency, and relieves the concern of sensitive user information traversing the internet.Recentadvancementsinlow-powerhardwaresuchasmicrocontrollersandAIaccelerators,inconjunctionwithoptimized machinelearningframeworkslikeTensorFlowLiteandTinyML, has opened the door to power highly efficient delivery of AI algorithms onsmaller-wearable devices.This allow",
+      "url": "https://doi.org/10.26634/javr.4.1.1116",
+      "published": "2028-6-20",
+      "source": "crossref",
+      "query": "unresolved bottleneck edge computing",
+      "score": 7.0,
+      "markers": [
+        "omega:edge",
+        "omega:energy",
+        "omega:latency",
+        "recency:-580d"
+      ],
+      "id": "e4bf8dcf8988982b"
+    },
+    {
+      "title": "Difuzer: Uncovering Suspicious Hidden Sensitive Operations in Android Apps",
+      "summary": "One prominent tactic used to keep malicious behavior from being detected during dynamic test campaigns is logic bombs, where malicious operations are triggered only when specific conditions are satisfied. Defusing logic bombs remains an unsolved problem in the literature. In this work, we propose to investigate Suspicious Hidden Sensitive Operations (SHSOs) as a step towards triaging logic bombs. To that end, we develop a novel hybrid approach that combines static analysis and anomaly detection techniques to uncover SHSOs, which we predict as likely implementations of logic bombs. Concretely, Difuzer identifies SHSO entry-points using an instrumentation engine and an inter-procedural data-flow analysis. Then, it extracts trigger-specific features to characterize SHSOs and leverages One-Class SVM to implement an unsupervised learning model for detecting abnormal triggers. We evaluate our prototype and show that it yields a precision of 99.02% to detect SHSOs among which 29.7% are logic bombs. Difuzer outperforms the state-of-the-art in revealing more logic bombs while yielding less false positives in about one order of magnitude less time. All our artifacts are released to the commu",
+      "url": "https://arxiv.org/abs/2112.10470v2",
+      "published": "2021-12-20",
+      "source": "arxiv",
+      "query": "abs:\"static analysis\" AND abs:\"false positive\" AND abs:\"unsolved\"",
+      "score": 7.0,
+      "markers": [
+        "fracture:unsolved",
+        "omega:android",
+        "omega:static analysis"
+      ],
+      "id": "f25c4b80e1f87f1f"
+    },
+    {
+      "title": "A Survey of Smart Grid Emerging Use Cases and Relevant 5G and 6G Capabilities and Features",
+      "summary": "The growing complexity of modern energy systems has led to the adoption of Smart Grid (SG) that use advanced communication technologies to facilitate efficient, reliable, secure, and sustainable energy operation and management. Unlike existing surveys that often treat grid and communication domains separately, this work rigorously quantifies service requirements for high-complexity emerging scenarios. It provides a comprehensive overview of SG architecture that integrates digital communication infrastructure with distributed energy resources (DERs), microgrids, energy storage systems, and cybersecurity frameworks. Furthermore, emerging SG use cases such as smart distributed voltage control, real-time fault detection and self-healing, smart and autonomous monitoring, and predictive maintenance are identified, and more importantly, service performance requirements associated with these use cases have been quantified. Additionally, key capabilities and emerging SG enablers of fifth-generation (5G) and sixth-generation (6G) networks are described. These capabilities and enablers include network slicing, edge computing, spectrum management, artificial intelligence (AI) driven optimizati",
+      "url": "https://arxiv.org/abs/2606.04975v1",
+      "published": "2026-06-03",
+      "source": "arxiv",
+      "query": "abs:\"self-healing\" AND abs:\"system\" AND abs:\"open\"",
+      "score": 6.5,
+      "markers": [
+        "omega:edge",
+        "omega:energy",
+        "omega:self-healing",
+        "omega:self-heal",
+        "omega:autonom",
+        "exclude:survey"
+      ],
+      "id": "03ee9cfdc3215eec"
+    },
+    {
+      "title": "Scalable Levenberg-Marquardt Training Framework for Deep Learning",
+      "summary": "The Levenberg-Marquardt (LMA) algorithm is a widely used nonlinear least-squares solver known for its rapid convergence. For small-scale neural networks, LMA provides better convergence and architectural robustness than first-order optimizers like Adam. However, LMA imposes prohibitive memory and computational costs. These costs are primarily from the Jacobian matrix, whose dimensions scale with both the number of samples and parameters. This bottleneck prevents its use in large-scale neural networks. Recent efforts scale LMA using preconditioned conjugate gradient (PCG) solvers to avoid materializing the Jacobian. However, PCG only approximates the solution, requiring many network propagations and a task-specific preconditioner. Other studies optimize LMA to reduce costs, but they restrict their methods to specific tasks or network architectures. As a result, LMA remains impractical for training general large-scale neural networks. In this paper, we propose LeMA, a distributed LMA algorithm for large-scale neural network training on multi-GPU platforms. Our contributions are twofold: First, an exact dual formulation of LMA removes the memory dependence on the parameter dimension. ",
+      "url": "https://arxiv.org/abs/2610.22925v1",
+      "published": "2026-10-16",
+      "source": "arxiv",
+      "query": "abs:\"no known\" AND abs:\"efficient\" AND cat:cs.DC",
+      "score": 6.5,
+      "markers": [
+        "fracture:bottleneck",
+        "omega:memory",
+        "recency:33d"
+      ],
+      "id": "85e46ff926cb2e93"
+    },
+    {
+      "title": "HexIt: Learning Hexahedral Block Decomposition with Expert Iteration on Combinatorial Maps",
+      "summary": "Decomposing a polyhedral solid into a few well-shaped hexahedral blocks is a long-standing open problem in mesh generation. We cast it as a sequential decision problem on a 3-dimensional generalised map: an agent splits edges, faces and volumes with three insert operations until every cell is a hexahedron and the mesh passes a quality threshold, and a policy that convolves over the map's involutions chooses each insert. A successful decomposition takes over a hundred decisions, and a uniformly random policy never finds one. We clone a policy from constructed decompositions and improve it by expert iteration. On held-out chamfered solids that share no boundary topology with the cloning data, the final policy solves an expected $94.4\\%$ in $20$ samples, and expert iteration raises the best-of-20 solve rate on large chamfered solids from $0.203$ to $0.355$. At matched compute, PPO, GRPO and VinePPO updates all make the cloned policy worse.",
+      "url": "https://arxiv.org/abs/2611.10433v1",
+      "published": "2026-11-07",
+      "source": "arxiv",
+      "query": "cat:cs.LG AND abs:\"open problem\"",
+      "score": 6.5,
+      "markers": [
+        "fracture:open problem",
+        "omega:edge",
+        "recency:11d"
+      ],
+      "id": "b43962232222646a"
+    }
+  ]
+}
