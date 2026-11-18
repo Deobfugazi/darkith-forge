@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 39,
+  "count": 40,
   "files": [
     {
       "bytes": 39454,
@@ -49,6 +49,12 @@
       "path": "docs/DARKITH-OMEGA-repo.txt",
       "register": "B-knowledge",
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
+    },
+    {
+      "bytes": 70065,
+      "path": "docs/GITHUB-CICD-AGENTS-KB.md",
+      "register": "B-knowledge",
+      "sha256": "759522f608b42d9d4c12c136c3e3b3bc6df5150259870331be6d1b887398a54c"
     },
     {
       "bytes": 3960,
