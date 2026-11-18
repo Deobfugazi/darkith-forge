@@ -758,8 +758,8 @@ both reproduced before they were fixed:
   command. Fix: `_normalize_argv` folds a data-looking token (`-3`, `-1.5`, `-41.4,-8.1`)
   onto the option it follows (`--p0=-41.4,-8.1`); real flags are untouched, `--tau -1` works
   too, and `s` still validates to [0,1]. Regression checks live in `build/savf-cli-test.py`.
-- DEFECT (fixed): `savf freeze ghost.py` raised a bare `FileNotFoundError`. It now prints
-  `freeze: no such file: ghost.py` and exits 1, matching `scan`. No CLI path leaks a
+- DEFECT (fixed): freezing an ABSENT file raised a bare `FileNotFoundError`. It now
+  prints `freeze: no such file: <path>` and exits 1, matching `scan`. No CLI path leaks a
   traceback for ordinary misuse (checked verdict/ledger/manifest/sign/freeze/scan).
 
 Pre-run evidence this session (all through the REAL engines, not inferred):
