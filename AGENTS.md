@@ -576,3 +576,44 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   status (it is the LAST command's; a bare `return N` yields 127). Probe before you document.
   The developer register also carries the INVARIANT DEBUGGER (the fixture battery) and the
   FRACTURE CLOSURE (each Linux divergence, its closed form, why it is correct here).
+
+## §35 CLIENT-COUPLING UPDATE WATCHER (binding, 2026-11-18)
+- THE GAP THIS CLOSES: nothing tracked whether the installed copy was stale against the live
+  remote. The app could read its own version (`darkith.apkVersion()`) but never compared it to
+  anything, and no version manifest existed for a client to read. Now: `VERSION.json` is the
+  manifest of record; `build/updater.js` compares installed-vs-remote and alerts.
+- INJECTED AT BUILD TIME, IDEMPOTENT: into the fused page by `build/build-forge.py`
+  (markers `/* UPDATE-WATCHER:START|END */`) and into the app surface
+  `app/src/main/assets/homekeeper.html` by `build/inject_updater.py`. BOTH strip before
+  inject. TRAP (cost a debug cycle): `inject()` in build-forge.py ALREADY wraps the payload
+  in the markers — `updater_block()` must return the bare `<script>`, never the markers too,
+  or the block nests and the build grows ~25 bytes per run.
+- MIRRORS, NOT ONE URL: the repo is PRIVATE, so `raw.githubusercontent.com` and
+  `releases/.../download` 404 without auth, and the app's WebView has none. The check walks
+  `VERSION.json.manifest_urls` (sovereign runtime host FIRST) via `fetchFirst()`, first answer
+  wins; only when EVERY mirror is dead is the state `offline`. `manifest_url` MUST equal
+  `manifest_urls[0]` (gated).
+- NEVER LIE: offline -> `unknown` ("neither confirmed nor denied"), never a false `current`.
+  The alert fires ONCE per new versionCode. `decide()` is pure; only the transport is stubbed
+  in tests. Version algebra: versionCode is authoritative, else derived from a dotted name.
+- PRESENTATION: `present()` prefers the host `UI.dialog`, else a self-contained overlay
+  (`overlay()`, dark panel + gold Ω + one-shot link, fits 360px), else native `alert`. Every
+  string is `textContent` — a remote manifest is UNTRUSTED and must never inject markup.
+  (At runtime `window.UI` is undefined, so the overlay is the real surface, not the fallback.)
+- VERSION TRUTH: bump in ONE place — `VERSION.json` — then run `python3 build/inject_updater.py`
+  + `python3 build/build-forge.py`; `tools/update_gate.py` fails CI unless the `var LOCAL`
+  stamp in the fused page AND the app surface, the AndroidManifest versionName, and every
+  mirror URL in updater.js all agree.
+- GATES: `node tools/updater_test.mjs` (38 checks) and `python3 tools/update_gate.py`, both in
+  `tools/ci.sh`. Live-verified in headless chromium against the real public mirror (`current`)
+  and a bumped mirror (`update`, alert names both versions), 0 page errors.
+- GIT HYGIENE (cost two CI cycles): NEVER `git add -A` here. `tree_omega/`, `dist/`,
+  `.agent_tmp/` and `app-signed.apk` are deliberately untracked; `add -A` commits them and
+  then kb_index ("misfiled (no register)"), fork-singularity ("divergent copies") and the
+  convergence tree hash all FAIL. Stage surgically: `git add -u` for tracked edits, plus
+  explicit paths for new files.
+- DEPLOY ORDER for a release that the live app can actually see: `inject_updater.py` ->
+  `build-forge.py` -> `kb_index.py --write` -> one-shot/sync/bundle/repo/delivery to fixed
+  point -> commit -> PUSH (board_pulse needs HEAD==origin) -> CI -> GitHub Release with
+  `darkith-one-shot.sh` + `VERSION.json` as assets. The runtime host (port 12000) is a
+  moving sandbox: point the PRIMARY mirror at GitHub once the repo is public.
