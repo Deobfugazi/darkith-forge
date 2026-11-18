@@ -27,6 +27,7 @@ INDEX = DELIVERY / "index.html"
 # repo file -> name inside delivery/
 COPY = {
     ROOT / "savf.html": DELIVERY / "savf.html",
+    ROOT / "savf.py": DELIVERY / "savf.py",
     ROOT / "darkith forge.html": DELIVERY / "darkith-forge.html",
     ROOT / "omega.html": DELIVERY / "omega.html",
 }

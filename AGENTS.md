@@ -517,3 +517,39 @@ against the HWM), COSMETIC (autofixed; fatal only with `--fail-on-fixable`). The
 one scalar weighted 100:1:0.1. Commands: `trial` (calibrate + prove), `inspect` (verdict),
 `fix` (autofix reversible charges, idempotent), `ratchet` (advance the setpoint one
 delivery), `report`. Law: DARKITH.md §33 (NEVER #19, MUST #32/#33, SPI-27, W-048).
+
+## §34 SAVF UTILITY HARDENING + CROSS-SURFACE PROOF (2026-11-18)
+SAVF (`savf.py` CLI + `savf.html` offline webapp) is the utility this section governs: a
+zero-dependency Python source auditor whose verdict names the rule/fact/computation behind
+it. It is a TWO-SURFACE product — the CLI and the browser core must agree byte-for-byte, and
+its seals must be portable between them. Verified this session by PRE-RUN, not inference:
+
+- BROWSER BATTERY (real engines, `file://`, network blocked): `build/verify.py` [3/7] now
+  runs because playwright is installed (chromium + firefox + webkit). `savf.html` (and the
+  fused pages) load with **0 console errors, 0 page errors, net=0**. This was SKIP before —
+  install the browsers (`python3 -m playwright install chromium firefox webkit`) to arm it.
+- DIFFERENTIAL FUZZ (the strong parity proof): 1200 randomized sources (imports, stubs,
+  markers, phantom attrs, swallow, taut asserts, BOM, CRLF, latin-1 cookie, syntax error,
+  empty) scanned through the page's OWN contract — `SavfScan.scanBytes(path, bytes, opts)`
+  with `window.SAVF_STDLIB` / `SAVF_STDATTRIB` — matched `savf.py scan` **1200/1200**, no
+  divergence. Reproduce the surface: extract those two maps from `savf.html` and call
+  `scanBytes` exactly as `runAudit()` does. (Passing an empty stdlib map is a HARNESS BUG,
+  not a product bug — every stdlib import then reads as phantom.)
+- CPYTHON REFERENCE: deep nesting (parens, indentation) and long binop chains agree with
+  `compile()` on all three surfaces. CPython's real paren limit is 200 (201 -> SyntaxError);
+  the JS core's `bracketDepth > 200` cap is CALIBRATED to it, not arbitrary.
+- CRYPTO INTEROP (byte-identical): `SavfAudit.canonJson` == `json.dumps(sort_keys,separators)`;
+  `SavfAudit.sealOf` == `hashlib.sha256(canon)`; `SavfHash.sha256Text` and
+  `hmacSha256Text` == Python `hashlib`/`hmac`. A contract lock sealed in the browser verifies
+  in the CLI and vice versa. Do not change one hasher without the other.
+- FAIL-CLOSED VERDICT: garbage/missing phi states -> REVIEW (never PASS); `verdict` returns
+  PASS(0)/REVIEW(2)/BLOCKED(3). Ledger is strict (kinds D/N/R/W/C/A/U).
+- UI: 7 tabs (audit/gates/axis/ledger/freeze/self/help), no horizontal overflow at
+  320–1440px, keyboard-focusable, theme toggle persists. Contrast passes AA in light+dark
+  (the `.btn.pri` gradient is dark blue→purple with white text; a naive probe that ignores
+  `background-image` will falsely flag it).
+- RUNNING STATE: the tool writes its lock/manifest to the CWD (`.savf/`), by design —
+  `build/savf-cli-test.py` asserts the repo root stays clean. `.savf/` is now gitignored.
+  NEVER run `savf freeze`/`manifest create` with CWD = repo root, or CI's savf-cli test fails
+  on the leftover `.savf/`.
+- GATES: `build/verify.py` (7 checks incl. battery) and `tools/ci.sh` (45 gates) both PASS.
