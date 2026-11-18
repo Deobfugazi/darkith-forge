@@ -36,3 +36,6 @@ build/omega/*.png
 
 # ---- agent session memory (ephemeral, never tracked) ----
 .openhands/memory/
+
+# ---- savf runtime state (lock + manifest live in the CWD) ----
+.savf/
