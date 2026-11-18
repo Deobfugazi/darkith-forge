@@ -237,6 +237,10 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
         <dt>state</dt><dd id="m-state">—</dd>
       </dl>
     </section>
+
+    <section class="side" id="eq">
+      <h3>Equaliser</h3>
+    </section>
   </main>
 
   <div class="controls">
@@ -265,6 +269,8 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
       <button class="ic" id="repeat" title="Repeat mode">↻</button>
       <button class="ic" id="ab" title="A–B loop">A·B</button>
       <button class="ic" id="cc" title="Captions (C)" aria-pressed="false">CC</button>
+      <button class="ic" id="queuebtn" title="Queue" aria-pressed="false">≡</button>
+      <button class="ic" id="marksbtn" title="Bookmarks" aria-pressed="false">🔖</button>
       <button class="ic" id="eqbtn" title="Equaliser (E)" aria-pressed="false">EQ</button>
       <button class="ic" id="vizbtn" title="Visualiser (V)" aria-pressed="true">∿</button>
       <button class="ic" id="shot" title="Save frame">▣</button>
@@ -825,6 +831,8 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     on("shuffle", "click", toggleShuffle);
     on("ab", "click", cycleAB);
     on("cc", "click", toggleCC);
+    on("queuebtn", "click", function () { togglePanel("queue", "queuebtn"); });
+    on("marksbtn", "click", function () { togglePanel("marks", "marksbtn"); });
     on("eqbtn", "click", toggleEq);
     on("vizbtn", "click", toggleViz);
     on("clearlist", "click", function () { S.queue = []; S.index = -1; if (media) { media.removeAttribute("src"); media.load(); } render(); });
@@ -912,9 +920,15 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
   function toggleViz() { S.vizOn = !S.vizOn; var v = $id("vizbtn"); if (v) v.setAttribute("aria-pressed", S.vizOn ? "true" : "false"); if (S.vizOn) { audioGraph(); drawViz(); } }
   function toggleEq() {
     S.eqOn = !S.eqOn;
-    var p = $id("eq"); if (p) p.className = S.eqOn ? "on" : "";
+    var p = $id("eq"); if (p) p.className = S.eqOn ? "side on" : "side";
     var b = $id("eqbtn"); if (b) b.setAttribute("aria-pressed", S.eqOn ? "true" : "false");
     if (S.eqOn) { if (!audioGraph()) toast("web audio unavailable — eq inert"); }
+  }
+  function togglePanel(name, btnId) {
+    var p = $id(name); if (!p) return;
+    var open = !p.classList.contains("on");
+    p.className = open ? "side on" : "side";
+    var b = $id(btnId); if (b) b.setAttribute("aria-pressed", open ? "true" : "false");
   }
   function cycleAB() {
     if (!media) return;

@@ -129,6 +129,15 @@ ok("script evaluates without throwing", !threw, threw && threw.message);
 const API = sandbox.__API;
 ok("window.DarkithMedia is exported", !!API && typeof API === "object");
 
+/* ------------------------------------------------------------- DOM contract
+   The shim hands out an element for ANY id, so a control whose host element is
+   missing from the markup would still "work" in the shim and fail in a browser.
+   Assert the real file actually declares every id the script binds. */
+["media", "stage", "qlist", "mlist", "eq", "queue", "marks", "play", "seek", "vol", "rate",
+ "cc", "ccbox", "viz", "eqbtn", "queuebtn", "marksbtn", "ab", "repeat", "shuffle", "toast",
+ "tcur", "tdur", "m-name", "m-sha", "m-state", "drop", "file", "dir", "urlin", "urladd"]
+  .forEach((id) => ok('markup declares #' + id, html.includes('id="' + id + '"')));
+
 /* ------------------------------------------------------------- formatters */
 ok("fmtTime(0) = 0:00", API.fmtTime(0) === "0:00");
 ok("fmtTime(65) = 1:05", API.fmtTime(65) === "1:05");

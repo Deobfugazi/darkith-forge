@@ -48,7 +48,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith code studio.html` | 539,472 | `f706384c84db` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,318,719 | `cd298f710647` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 231,324 | `882eeb3e7d7b` | Darkith Inscriber — SAVF Lite Studio |
-| `darkith-omega-media-player.html` | 52,702 | `9cf42432303b` | DARKITH Ω — media player |
+| `darkith-omega-media-player.html` | 53,384 | `2f87fcb4d7ec` | DARKITH Ω — media player |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,568 | `622dc406953f` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
