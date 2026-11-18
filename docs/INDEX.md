@@ -46,7 +46,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `darkith code studio.html` | 543,124 | `693265849505` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,328,665 | `6747d959d65f` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith home forge.html` | 1,329,923 | `ae197050c0fc` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
@@ -57,7 +57,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `app/src/main/assets/darkith_ui.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
-| `app/src/main/assets/homekeeper.html` | 484,364 | `e1a70f9c9878` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `app/src/main/assets/homekeeper.html` | 485,622 | `d56216905cde` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,784 | `addc4f6d44b9` | SAVF-1 Universal Audit Engine |
 
 ## E-evidence — Machine-generated proof

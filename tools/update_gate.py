@@ -85,8 +85,12 @@ def main() -> int:
 
     # updater.js default URLs must point where VERSION.json says.
     js = UPDATER_JS.read_text(encoding="utf-8")
-    if man.get("manifest_url") and man["manifest_url"] not in js:
-        problems.append("updater.js does not carry VERSION.json manifest_url")
+    urls = man.get("manifest_urls") or ([man["manifest_url"]] if man.get("manifest_url") else [])
+    for u in urls:
+        if u not in js:
+            problems.append(f"updater.js does not carry VERSION.json manifest url {u}")
+    if man.get("manifest_url") and urls and urls[0] != man.get("manifest_url"):
+        problems.append("VERSION.json manifest_url is not the first mirror in manifest_urls")
     if man.get("oneshot_url") and man["oneshot_url"] not in js:
         problems.append("updater.js does not carry VERSION.json oneshot_url")
 

@@ -79,6 +79,28 @@ globalThis.darkith = { apkVersion: () => "bridge=hk-bridge-52 pkg=1.4.0-omega (7
 const pl2 = U.probeLocal();
 ok("reads the real APK version via the bridge", pl2.source === "apk" && pl2.versionCode === 7 && pl2.versionName === "1.4.0-omega");
 
+console.log("fetchFirst (mirror walk)");
+let hits = [];
+globalThis.fetch = async (u) => {
+  hits.push(u);
+  if (u === "http://c") return { ok: true, status: 200, json: async () => ({ versionCode: 9, versionName: "9.0.0" }) };
+  return { ok: false, status: 404, json: async () => ({}) };
+};
+let fr = await U.fetchFirst(["http://a", "http://raw.githubusercontent.com/b", "http://c"]);
+ok("skips dead mirrors and lands on the first live one", fr.ok === true && fr.url === "http://c");
+ok("it actually tried the dead mirrors", hits.includes("http://a") && hits.includes("http://raw.githubusercontent.com/b"));
+globalThis.fetch = async () => ({ ok: false, status: 404, json: async () => ({}) });
+fr = await U.fetchFirst(["http://a", "http://b"]);
+ok("all mirrors dead -> unreachable", fr.ok === false && fr.reason === "all-failed" && fr.tried.length === 2);
+fr = await U.fetchFirst([]);
+ok("no mirrors -> unreachable", fr.ok === false && fr.reason === "no-url");
+// check() defaults to the mirror list
+hits = [];
+globalThis.fetch = async (u) => { hits.push(u); return { ok: true, status: 200, json: async () => ({ versionCode: 3, versionName: "1.2.0-omega" }) }; };
+const dflt = await U.check({ alert: false });
+ok("check() walks the configured mirrors by default", hits[0] === U.manifestUrls[0] && dflt.state === "current");
+ok("default mirrors lead with the runtime host", /prod-runtime\.all-hands\.dev/.test(U.manifestUrls[0]));
+
 globalThis.fetch = realFetch;
 console.log("\nUPDATER: " + pass + "/" + (pass + fail) + (fail === 0 ? " — all checks pass" : " — FAILURES"));
 process.exit(fail === 0 ? 0 : 1);

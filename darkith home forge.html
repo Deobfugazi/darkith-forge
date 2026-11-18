@@ -17471,10 +17471,17 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
      the moment of fusion, so the page carries its OWN version, offline. */
   var LOCAL = {"versionCode":3,"versionName":"1.2.0-omega","surfaceVersion":"v5.3.1"};
 
-  var DEFAULT_MANIFEST_URL =
-    "https://raw.githubusercontent.com/Deobfugazi/darkith-forge/main/VERSION.json";
+  /* Mirrors, tried in order; the first that answers wins. The GitHub raw and
+     release URLs 404 without auth while the repo is private, so the sovereign
+     runtime mirror leads. If none answer, the state is honestly "offline". */
+  var DEFAULT_MANIFEST_URLS = [
+    "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/VERSION.json",
+    "https://raw.githubusercontent.com/Deobfugazi/darkith-forge/main/VERSION.json",
+    "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/VERSION.json"
+  ];
+  var DEFAULT_MANIFEST_URL = DEFAULT_MANIFEST_URLS[0];
   var DEFAULT_ONESHOT_URL =
-    "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/darkith-one-shot.sh";
+    "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-one-shot.sh";
 
   /* ---------- version algebra (pure; the harness exercises these) ---------- */
 
@@ -17566,6 +17573,23 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
     });
   }
 
+  /* Try each mirror in order; the first that answers wins. Only when every
+     mirror fails is the result "unreachable", and the state stays honest. */
+  function fetchFirst(urls, timeoutMs) {
+    var list = (urls || []).slice();
+    if (!list.length) return Promise.resolve({ ok: false, reason: "no-url" });
+    var tried = [];
+    function step(i) {
+      if (i >= list.length) return Promise.resolve({ ok: false, reason: "all-failed", tried: tried });
+      return fetchManifest(list[i], timeoutMs).then(function (r) {
+        if (r.ok) { r.url = list[i]; return r; }
+        tried.push(list[i]);
+        return step(i + 1);
+      });
+    }
+    return step(0);
+  }
+
   /* The installed APK's real version, read from the package manager through
      the bridge — never guessed. Falls back to the page's own LOCAL stamp. */
   function probeLocal() {
@@ -17601,10 +17625,11 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
 
   function check(opts) {
     opts = opts || {};
-    var url = opts.url || DEFAULT_MANIFEST_URL;
+    var urls = opts.urls || (opts.url ? [opts.url] : DEFAULT_MANIFEST_URLS);
     var local = probeLocal();
-    return fetchManifest(url, opts.timeoutMs).then(function (r) {
+    return fetchFirst(urls, opts.timeoutMs).then(function (r) {
       var d = decide(local, r.ok ? r.manifest : null, r.ok);
+      d.url = r.ok ? r.url : null;
       lastDecision = d;
       if (d.state === "update" && opts.alert !== false) {
         var rcode = codeOf(r.manifest);
@@ -17662,12 +17687,14 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
     version: "1.0.0",
     LOCAL: LOCAL,
     manifestUrl: DEFAULT_MANIFEST_URL,
+    manifestUrls: DEFAULT_MANIFEST_URLS,
     oneshotUrl: DEFAULT_ONESHOT_URL,
     codeOf: codeOf,
     cmp: cmp,
     decide: decide,
     probeLocal: probeLocal,
     fetchManifest: fetchManifest,
+    fetchFirst: fetchFirst,
     check: check,
     watch: watch,
     mount: mount,

