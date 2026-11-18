@@ -77,8 +77,9 @@ REGISTERS = [
     ("F-config", "Build configuration — dependency manifests"),
 ]
 
-# Build configuration: dependency manifests (the source of truth and its generated projection).
-CONFIG = {"tools/deps.txt", "requirements-dev.txt"}
+# Build configuration: dependency manifests + the fracture-scout query manifest (both are
+# hand-edited source-of-truth files that the tool reads; neither is generated).
+CONFIG = {"tools/deps.txt", "tools/fractures.txt", "requirements-dev.txt"}
 
 
 def tracked() -> list[str]:

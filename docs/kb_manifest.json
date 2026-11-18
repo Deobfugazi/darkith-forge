@@ -1,18 +1,18 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 33,
+  "count": 34,
   "files": [
     {
-      "bytes": 31923,
+      "bytes": 33209,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "6e733a39db154ad9d2aaae6136b9f565a7b9e90166ddad8b11f843290eb63809"
+      "sha256": "eaf129cbc527a2055c670869246e6c4a854bd663e300a30f30eca147426c457e"
     },
     {
-      "bytes": 52613,
+      "bytes": 53847,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "cb67b84dcaaf17a9a36728a27e39b2a61688965bb2e776c8b7e34c2bde2edd3e"
+      "sha256": "dfdc041df1512e8374472a48e9371811f146d5b3c9ba2b46d51c9cf1ad79260b"
     },
     {
       "bytes": 3356,
@@ -27,10 +27,10 @@
       "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
     },
     {
-      "bytes": 10268,
+      "bytes": 10597,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "73f93aa95f79d20c042d6cf79af24b0ac3290825304e2c44aabb7e411b98933d"
+      "sha256": "494eb452f1067a05d3825261ac939045c5927d87dc6955b52392fb3c96949bb1"
     },
     {
       "bytes": 9608,
@@ -199,6 +199,12 @@
       "path": "tools/deps.txt",
       "register": "F-config",
       "sha256": "c6cd897d22b1785f9d9c2ad5c5bf61eac75301162b0f7fec788cb89f9c5d9704"
+    },
+    {
+      "bytes": 2766,
+      "path": "tools/fractures.txt",
+      "register": "F-config",
+      "sha256": "ba75264a289742e8182bb756d9ce05d08981e46601f17a0391073e4c8530b2df"
     }
   ],
   "mirrors": [

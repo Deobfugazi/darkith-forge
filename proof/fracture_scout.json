@@ -1,0 +1,71 @@
+{
+  "_law": "fracture_scout: world fractures = real problems admitted-unresolved",
+  "sources": [
+    "arxiv",
+    "nvd",
+    "hn",
+    "github-issues",
+    "ietf"
+  ],
+  "queries": 9,
+  "found": 453,
+  "errors": [],
+  "fractures": [
+    {
+      "score": 28,
+      "source": "hn",
+      "title": "The Open Problem Garden, a collection of unsolved problems in mathematics",
+      "url": "http://www.openproblemgarden.org",
+      "when": "2017-11-28T21:10:08Z"
+    },
+    {
+      "score": 17,
+      "source": "hn",
+      "title": "Ask HN: Server-side web apps – is the database still a bottleneck?",
+      "url": "https://news.ycombinator.com/item?id=20123659",
+      "when": "2019-06-07T12:02:44Z"
+    },
+    {
+      "score": 17,
+      "source": "hn",
+      "title": "Ask HN: Why is open source vulnerability management still an unsolved problem?",
+      "url": "https://news.ycombinator.com/item?id=36898968",
+      "when": "2023-07-27T19:35:15Z"
+    },
+    {
+      "score": 17,
+      "source": "hn",
+      "title": "Ask HN: Why is open source vulnerability management still an unsolved problem?",
+      "url": "https://news.ycombinator.com/item?id=36979698",
+      "when": "2023-08-03T00:17:06Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "30 Years of Decompilation and the Unsolved Structuring Problem: Part 1",
+      "url": "https://mahaloz.re/dec-history-pt1",
+      "when": "2024-01-03T20:15:40Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "A transformer supply crisis bottlenecks energy projects",
+      "url": "https://spectrum.ieee.org/transformer-shortage",
+      "when": "2024-12-13T03:53:55Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "AI coding has made CI a bottleneck, so we reworked ours to keep up",
+      "url": "https://linear.app/now/ci-bottleneck-reworked",
+      "when": "2026-09-21T19:23:33Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "After 45 years, FBI closes investigation into unsolved 'DB Cooper' hijacking",
+      "url": "http://komonews.com/news/local/fbi-officially-closes-its-investigation-into-famous-db-cooper-hijacking",
+      "when": "2016-07-12T20:04:29Z"
+    }
+  ]
+}

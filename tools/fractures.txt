@@ -1,0 +1,41 @@
+# fractures.txt — the Fracture Scout manifest (the ONE place to configure the hunt).
+#
+# A "Fracture" (NT-V §XIX.15) is a real thing in the world, anchored to a real problem.
+# The scout seeks current world fractures and unresolved bottlenecks that the omega
+# formulation can work on. It is NOT a naive keyword search: a query here is a boolean
+# expression — OR between alternatives, AND within one, "quoted phrases" kept whole — so
+# it matches a gap ("no known fix", "open problem"), not a topic word in isolation.
+#
+# Format, one line per source query:
+#   <source>   <query expression>   [weight]
+#
+#   source   arxiv | nvd | hn | github-issues | ietf | rss
+#   query    boolean expression: term AND "quoted phrase" OR alternative ...
+#   weight   optional 1..5 importance multiplier (default 1)
+#
+# Blank lines and # comments are ignored. Whitespace-separated, so it survives a phone,
+# a diff, and any editor. This file, not a vendor's config, is the source of truth:
+# tools/fracture_scout.py reads it, fetches each source over HTTPS, and ranks what it
+# finds by novelty and unresolved-ness. It never executes anything it downloads.
+
+# ── research front: the unsolved, stated as unsolved ───────────────────────────────
+arxiv    "open problem" OR "unsolved" OR "remains an open challenge"    3
+arxiv    "no known" AND ("algorithm" OR "construction") OR "hardness"   2
+
+# ── security fractures: a named defect with a real blast radius ────────────────────
+nvd      severity:CRITICAL                                               3
+nvd      severity:HIGH                                                   2
+
+# ── practitioner bottlenecks: where the field says it is stuck ─────────────────────
+hn       "no known fix" OR "bottleneck" OR "unsolved" OR "why is this still"  2
+hn       "regression" OR "impossible" OR "blocker"                        1
+
+# ── real unresolved problems, admitted by the people who hold them ─────────────────
+github-issues  label:"good first issue" is:open                          1
+github-issues  "bug" OR "regression" is:open state:open                  1
+
+# ── protocol gaps: standards work that is not done ─────────────────────────────────
+ietf     "gap" OR "unresolved" OR "open issue"                           1
+
+# ── any feed you add by hand (one URL per line) ────────────────────────────────────
+# rss    https://example.org/feed.xml                                    1

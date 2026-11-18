@@ -37,6 +37,8 @@ if have python3; then
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
   run "savf cli contract"                 python3 build/savf-cli-test.py
   run "darkbot self-test"                 python3 tools/darkbot.py selftest
+  # Fracture Scout: offline proof its boolean parser, adapters, and ranker are correct.
+  run "fracture scout self-test"          python3 tools/fracture_scout.py selftest
   # Kotlin syntax gate: fail if any source tree has an unclosed block comment.
   # A scanner, not kotlinc (W-023), but exact about the defect that silently
   # swallows the rest of a file. Runs only when the app tree is present.

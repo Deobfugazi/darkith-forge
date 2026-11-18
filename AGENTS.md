@@ -133,6 +133,22 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
   `digest <eco> <name> [ver]` (registry sha256 per artifact), `verify <file> <sha256>`.
 - stdlib only: runs on the phone in Termux with no installs. Talks to PyPI/npm, never to a
   CI vendor, so changing code host does not touch it.
+
+  ## Novelty hunting (the Fracture Scout — MUST #30)
+  - `tools/fracture_scout.py` + `tools/fractures.txt` are the source of truth. No vendor
+    config. `tools/fractures.txt` holds one line per query: `<source> <boolean expr> [weight]`,
+    sources `arxiv|nvd|hn|github-issues|ietf|rss`. Edit that file to reconfigure the hunt.
+  - Commands: `scan` (query every source, rank by novelty x unresolved-ness, write
+    `proof/fracture_scout.json` + a markdown digest), `report` (read the last scan from disk,
+    no network), `selftest` (offline, no network — in ci.sh).
+  - "Non-naive" = a real boolean parser (parentheses, AND-before-OR, "quoted phrases") that
+    produces DNF and fans out per each source's own dialect. A naive topic grep drowns in noise.
+  - Scope is the DEEP web (APIs, defect registries, forums, standards trackers, feeds), never
+    the dark web: the scout must stay gateable, and a fracture must have a checkable referent.
+    A "fracture" is the corpus's own term (NT-V §XIX.15). The scout PROPOSES; the reality check
+    ADMITS a survivor to the board as a NOVELTY row.
+  - Cadence: `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); it opens
+    a PR with the digest. stdlib only — runs on the phone in Termux with no installs.
 - `.github/workflows/auto-merge.yml` is the thin GitHub adapter: tests (tools/ci.sh) then
   merges a dependency PR (Dependabot and darkbot authors). The bot's own bumps are tested
   and committed directly, because a PR opened with GITHUB_TOKEN never triggers a second

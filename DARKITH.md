@@ -855,3 +855,19 @@ defect. This is the prophylactic cure: the next app cannot be born without time.
   or a declared mirror has drifted. Deterministic (MUST #18): re-running yields byte-identical
   output. The corpus is the corrected, reality-coupled, self-scrutinizing, gate-checked
   knowledge base — it grows by adding a register-filed, indexed, deduplicated file.
+
+  ─── MUST #30 (THE FRACTURE SCOUT — NOVELTY FROM REAL WORLD FRACTURES) ───
+  GATE: tools/fracture_scout.py
+  Novelty tasks are HUNTED, not invented. tools/fracture_scout.py is a scheduled,
+  manually-configurable bot that queries the deep webspace with correct, non-naive boolean
+  querying (a real parser: parentheses, AND-before-OR, quoted phrases, fanned out per
+  source dialect) to find current world fractures and unresolved bottlenecks the omega
+  formulation can work on. Its manifest is tools/fractures.txt (one boolean expression per
+  source: arxiv, nvd, hn, github-issues, ietf, rss) — the ONE place to configure the hunt;
+  its cadence is the cron in .github/workflows/fracture-scout.yml. A "fracture" is the
+  corpus's own term (NT-V §XIX.15): a real thing in the world, anchored to a real problem.
+  Scope is the DEEP web (research APIs, defect registries, practitioner forums, standards
+  trackers, feeds), never the dark web: the scout must stay gateable, and a reality-coupled
+  unit must have a checkable referent. The scout PROPOSES; the reality check ADMITS a
+  fracture to the board as a NOVELTY row. `selftest` proves the parser/adapters/ranker
+  offline in CI; `scan` is the scheduled hunt.

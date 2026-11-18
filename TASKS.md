@@ -88,6 +88,7 @@ validation, contrast checks.
 | F10 | Edge-device time coupling + boot-aware session (§32 MUST #28) | done | `tools/synchrony_pulse.py` (`proof/synchrony_pulse.json`: boot, last activity, cycle phase, device zone) |
 | F11 | NT XI retention law as the omega progress-deficit indicator on the board | done | `tools/omega_deficit.py` (W_in=39 E=14 S=25 E/W_in=0.359; §H on this board; `proof/omega_deficit.json`); CI-gated; M6 SE non-extractive |
 | F12 | Universal KB index + dedup of the readable knowledge-skill base (MUST #29) | done | `tools/kb_index.py` (`docs/INDEX.md` + `docs/kb_manifest.json`; 33 files, 6 registers); removed orphan `homeforge.html`, moved blueprint to `docs/`; CI-gated |
+| F13 | Fracture Scout: scheduled, manually-configurable novelty hunter (MUST #30) | done | `tools/fracture_scout.py` + `tools/fractures.txt` (6 sources, non-naive boolean parser → DNF); `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); `selftest` CI-gated; live scan → `proof/fracture_scout.json` |
 
 ## G. INSTALL + RUNTIME GATES (the two failures a user feels)
 
@@ -107,10 +108,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 42 | named work = board 34 + deficits 8 |
+| W_in | 43 | named work = board 35 + deficits 8 |
 | E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 27 | returned = done 19 + closed 3 + descoped 5 |
-| E/W_in | 0.357 | the progress-deficit indicator; absolution at 0 |
+| S | 28 | returned = done 20 + closed 3 + descoped 5 |
+| E/W_in | 0.349 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.
