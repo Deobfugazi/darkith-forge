@@ -1,0 +1,23 @@
+{
+  "_law": "source_inspector homeokinesis ratchet: debt may only flux downward; stagnation is force-degraded (the Operator's correction of homeostasis)",
+  "deliveries_since_change": {
+    "nonnull_assert": 0,
+    "swallowed_exception": 0
+  },
+  "delivery": 1,
+  "history": [
+    {
+      "delivery": 1,
+      "escrow": {
+        "nonnull_assert": 5,
+        "swallowed_exception": 18
+      },
+      "score": 23.0
+    }
+  ],
+  "hwm": {
+    "nonnull_assert": 5,
+    "swallowed_exception": 18
+  },
+  "justified": {}
+}

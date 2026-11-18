@@ -222,7 +222,7 @@ class DarkithBridge(private val context: Context) {
     @JavascriptInterface fun pkgRegistryDir(): String =
         ShellBridge.pkgRegistryDir()
 
-    
+
 
     // ═══ DARKITH ABSORBED LAYERS ═══
     private val chainReader   by lazy { DarkithChainReader(context) }
@@ -598,7 +598,7 @@ class DarkithBridge(private val context: Context) {
 
             val outDir = File("/sdcard/Darkith/split_${System.currentTimeMillis()}")
             outDir.mkdirs()
-            
+
             val splitCmd = arrayOf("sh", "-c", "split -l $linesStr -d --additional-suffix=.txt \"$filePath\" \"$outDir/$prefix\"_")
             val p = Runtime.getRuntime().exec(splitCmd)
             p.waitFor()
@@ -613,7 +613,7 @@ class DarkithBridge(private val context: Context) {
             manifestJson.append("{\n  \"originalFile\": \"${inputFile.name}\",\n")
             manifestJson.append("  \"sha256\": \"$originalHash\",\n")
             manifestJson.append("  \"chunks\": [\n")
-            
+
             val chunks = outDir.listFiles { _, name -> name.endsWith(".txt") }
             if (chunks != null) {
                 java.util.Arrays.sort(chunks)
@@ -624,7 +624,7 @@ class DarkithBridge(private val context: Context) {
                 }
             }
             manifestJson.append("  ]\n}")
-            
+
             manifestPath.writeText(manifestJson.toString())
 
             val zipPath = "/sdcard/Download/${inputFile.name.replace(".txt", "")}_chunks.zip"

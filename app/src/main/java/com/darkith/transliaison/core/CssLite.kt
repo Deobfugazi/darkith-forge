@@ -110,7 +110,7 @@ class CssLite(styleTexts: List<String>) {
         return out
     }
 
-    // * Declared properties for [node] after cascade, inline style and var() substitution. // 
+    // * Declared properties for [node] after cascade, inline style and var() substitution. //
     fun resolve(node: DomNode): Map<String, String> {
         val matched = rules.filter { matches(it.sel, node) }
             .sortedWith(compareBy<Rule>({ it.sel.specificity }, { it.order }))
@@ -155,7 +155,7 @@ class CssLite(styleTexts: List<String>) {
     }
 }
 
-// * CSS property map -> StyleSpec. // 
+// * CSS property map -> StyleSpec. //
 object CssMap {
     private val INHERITED = setOf("color", "font-size", "font-weight", "font-style", "text-align")
     private val NUM = Regex("^(-?\\d+(?:\\.\\d+)?)(px|rem|em)?$")
@@ -219,7 +219,7 @@ object CssMap {
         return argb(a, r, g, b)
     }
 
-    // * Split on whitespace that is not inside parentheses. // 
+    // * Split on whitespace that is not inside parentheses. //
     fun splitTop(v: String): List<String> {
         val out = mutableListOf<String>()
         val sb = StringBuilder()
@@ -239,7 +239,7 @@ object CssMap {
         return out
     }
 
-    // * CSS box shorthand -> top, right, bottom, left. // 
+    // * CSS box shorthand -> top, right, bottom, left. //
     fun box(v: String): List<Double>? {
         val vals = splitTop(v).map { px(it) ?: return null }
         return when (vals.size) {

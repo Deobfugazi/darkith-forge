@@ -171,6 +171,17 @@ fi
     run "omega reader tests" node tools/test_omega_reader.js
   fi
 
+  # The source inspector — the logical trial examiner. It puts the source on trial: 10
+  # named charges, each calibrated (positive+negative), then autofixes the reversible ones
+  # and enforces the HOMEOKINESIS ratchet (debt may only flux downward; stasis degrades).
+  # `trial` proves every charge is calibrated AND the four ratchet laws hold, so a
+  # miscalibrated gate can never reach CI. `inspect` then fails on any open blocker or any
+  # net addition of escrow debt above the ratchet high-water mark.
+  if have python3 && [ -f tools/source_inspector.py ]; then
+    run "source inspector trial (charges + ratchet)" python3 tools/source_inspector.py trial
+    run "source inspector (loophole trial)"          python3 tools/source_inspector.py inspect --fail-on-fixable
+  fi
+
 # The inscriber studio: boots in jsdom, engines present, terminal + toolkits live. Needs
 # jsdom (an npm dev dep, not always installed), so it is skipped honestly when absent.
 if have node && [ -f tools/test_inscriber.js ]; then

@@ -22,7 +22,7 @@ class AegisReaper : Service() {
                 .setContentText("Autophagic Memory is running.")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .build()
-            
+
             // Android 14 Fix: Specify the foreground service type
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 startForeground(1, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
