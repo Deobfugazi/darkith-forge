@@ -352,10 +352,18 @@ def gather(cfg: dict, only: str | None, since_days: int, maxn: int,
     items: list[dict] = []
     skipped: list[str] = []
     if fixture is not None:  # offline mode: a JSON list of raw items
-        raw = json.loads(fixture.read_text(encoding="utf-8"))
+        try:
+            raw = json.loads(fixture.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as e:
+            raise SystemExit(f"novelty_scout: FAIL — cannot read fixture {fixture}: {e}")
+        if not isinstance(raw, list):
+            raise SystemExit(f"novelty_scout: FAIL — fixture must be a JSON list, got {type(raw).__name__}")
         for r in raw:
             items.append(score_item(r, cfg, r.get("source", "fixture"), r.get("query", "fixture")))
         return items, skipped
+    if only and only not in SOURCES:
+        raise SystemExit(f"novelty_scout: FAIL — unknown source '{only}' "
+                         f"(known: {', '.join(sorted(SOURCES))})")
     for source, queries in cfg.get("queries", {}).items():
         if only and source != only:
             continue
@@ -389,6 +397,15 @@ def dedup_rank(items: list[dict], seen: set[str], cfg: dict) -> list[dict]:
     return ranked[:cfg.get("max_findings", 40)]
 
 
+def load_prior_findings() -> list[dict]:
+    if FINDINGS.is_file():
+        try:
+            return json.loads(FINDINGS.read_text(encoding="utf-8")).get("findings", [])
+        except json.JSONDecodeError:
+            return []
+    return []
+
+
 def cmd_scan(a) -> int:
     cfg = load_config(a.config)
     if a.min_score is not None:
@@ -398,35 +415,45 @@ def cmd_scan(a) -> int:
     fixture = pathlib.Path(a.offline) if a.offline else None
     items, skipped = gather(cfg, a.only, a.since_days, a.max, fixture)
     seen = load_seen()
-    ranked = dedup_rank(items, seen, cfg)
+    fresh = dedup_rank(items, seen, cfg)
+    # The candidate set ACCUMULATES: a backlog is the union of the fresh (unseen) finds and
+    # the prior backlog, best-scored first. The ledger only drives "what is NEW this run";
+    # it must not silently shrink the backlog on a quiet day.
+    prior = load_prior_findings()
+    by_id: dict[str, dict] = {}
+    for it in prior + fresh:
+        if it["id"] not in by_id or it["score"] > by_id[it["id"]]["score"]:
+            by_id[it["id"]] = it
+    backlog = sorted(by_id.values(), key=lambda x: (-x["score"], x["id"]))[:cfg.get("max_findings", 40)]
     result = {
         "generated": _iso(),
         "config": str(a.config.relative_to(ROOT)) if a.config.is_relative_to(ROOT) else str(a.config),
         "since_days": a.since_days,
         "gathered": len(items),
-        "surfaced": len(ranked),
+        "new": len(fresh),
+        "surfaced": len(backlog),
         "skipped": skipped,
-        "findings": ranked,
+        "findings": backlog,
     }
-    for f in ranked:
-        tlog(f"{f['score']:5.1f}  [{f['source']}] {f['title'][:90]}")
+    for f in fresh:
+        tlog(f"NEW {f['score']:5.1f}  [{f['source']}] {f['title'][:90]}")
         tlog(f"        {f['url']}")
         tlog(f"        markers: {', '.join(f['markers']) or 'none'}")
+    tlog(f"novelty_scout: {len(fresh)} new of {len(backlog)} accumulated candidate(s)")
     if a.write:
-        # Fail safe: a network blip yields 0 findings and must NOT clobber the last good
-        # snapshot with an empty one (the committed findings are the gate's referent).
-        if len(ranked) < cfg.get("min_write", 1) and FINDINGS.is_file():
-            tlog(f"novelty_scout: {len(ranked)} finding(s) < min_write "
-                 f"{cfg.get('min_write',1)}; keeping the existing {FINDINGS.relative_to(ROOT)} "
-                 f"(likely a network blip)")
+        # Fail safe: a network blip yields 0 fresh finds and must NOT clobber the backlog
+        # with an empty one (the committed findings are the gate's referent).
+        if not fresh and prior:
+            tlog(f"novelty_scout: 0 new < min_write {cfg.get('min_write',1)}; keeping the "
+                 f"existing {FINDINGS.relative_to(ROOT)} (likely a network blip)")
             return 0
         FINDINGS.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
-        allseen = sorted(seen | {f["id"] for f in ranked})
+        allseen = sorted(seen | {f["id"] for f in fresh})
         SEEN.write_text(json.dumps({"ids": allseen}, indent=2) + "\n", encoding="utf-8")
-        tlog(f"novelty_scout: wrote {FINDINGS.relative_to(ROOT)} ({len(ranked)} finding(s)); "
+        tlog(f"novelty_scout: wrote {FINDINGS.relative_to(ROOT)} ({len(backlog)} candidate(s)); "
              f"ledger now {len(allseen)} id(s)")
     else:
-        tlog(f"novelty_scout: {len(ranked)} finding(s) (dry run; pass --write to record)")
+        tlog("novelty_scout: dry run; pass --write to record")
     return 0
 
 

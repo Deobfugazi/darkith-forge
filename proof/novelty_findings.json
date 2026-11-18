@@ -1,8 +1,9 @@
 {
-  "generated": "2026-11-18T09:23:48+08:00",
+  "generated": "2026-11-18T09:27:16+08:00",
   "config": "tools/novelty_scout.json",
   "since_days": 150,
   "gathered": 106,
+  "new": 40,
   "surfaced": 40,
   "skipped": [
     "github_issues:label:\"help wanted\" \"no known fix\" memor: no items",

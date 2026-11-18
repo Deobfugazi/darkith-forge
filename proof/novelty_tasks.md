@@ -1,6 +1,6 @@
 # novelty_scout — candidate tasks (PROPOSED, not on the board)
 
-> Generated 2026-11-18T09:23:48+08:00 from 106 gathered item(s).
+> Generated 2026-11-18T09:27:16+08:00 from 106 gathered item(s).
 > The operator promotes the rows worth doing into `TASKS.md`; this file is never
 > auto-merged into the board (the board stays human-owned).
 
