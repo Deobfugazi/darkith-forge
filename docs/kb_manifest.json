@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 37,
+  "count": 38,
   "files": [
     {
       "bytes": 34829,
@@ -21,10 +21,10 @@
       "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
     },
     {
-      "bytes": 61280,
+      "bytes": 63078,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "b75bd17a2b6e44297fc19878f70f789132286fa8a4607cc0dd54bad697aa794b"
+      "sha256": "3fda973c7d46de2b84e808b565d288387411ba7105bb3e5ba26fb7ce0bb14b11"
     },
     {
       "bytes": 4284,
@@ -33,10 +33,10 @@
       "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
     },
     {
-      "bytes": 13463,
+      "bytes": 13938,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "8921193c6e04e8755e847cdc8147f7d13ffbd1dfee6f86235f2892d666b9eff8"
+      "sha256": "bc380cbd5b3fdf4f5957c9e51073e9333ba866c049377c4cb17e91e4653a5746"
     },
     {
       "bytes": 9608,
@@ -133,6 +133,12 @@
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
       "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+    },
+    {
+      "bytes": 24568,
+      "path": "omega-reader.html",
+      "register": "C-skillbase",
+      "sha256": "622dc406953f3b86a680b9834e5ce09112666f94332ae2df4aa83288bd305f68"
     },
     {
       "bytes": 41959,
