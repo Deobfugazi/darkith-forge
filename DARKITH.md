@@ -841,3 +841,51 @@ The synchrony bylaw (§31) applies to ALL apps, bots, and machine-software/sourc
 automations — not only the user-facing ones. The clock is GENERATED and injected, so adding
 a surface adds the clock; a surface or automation that re-implements or omits the clock is a
 defect. This is the prophylactic cure: the next app cannot be born without time.
+
+  ─── MUST #29 (THE KNOWLEDGE BASE IS INDEXED, NOT SCATTERED) ───
+  GATE: tools/kb_index.py
+  The readable knowledge-skill base is a first-class, indexed register — not documents "all
+  over the place". tools/kb_index.py generates docs/INDEX.md (human) + docs/kb_manifest.json
+  (machine) from the tracked bytes and files every readable file in exactly one register:
+  A-apparatus (root governance), B-knowledge (docs/** corpus), C-skillbase (root web apps),
+  D-asset (app assets), E-evidence (proof/), F-config (dependency manifests). The registers are
+  the repo's own invariant A∧B∧C∧D applied to the filesystem: apparatus separate from content
+  (B), one retrieval surface (C), one canonical copy (D). The gate fails if the index is stale,
+  a readable file is unfiled, two files share a hash without a declared mirror (NEVER #11/#15/#16),
+  or a declared mirror has drifted. Deterministic (MUST #18): re-running yields byte-identical
+  output. The corpus is the corrected, reality-coupled, self-scrutinizing, gate-checked
+  knowledge base — it grows by adding a register-filed, indexed, deduplicated file.
+
+  ─── MUST #30 (THE FRACTURE SCOUT — NOVELTY FROM REAL WORLD FRACTURES) ───
+  GATE: tools/fracture_scout.py
+  Novelty tasks are HUNTED, not invented. tools/fracture_scout.py is a scheduled,
+  manually-configurable bot that queries the deep webspace with correct, non-naive boolean
+  querying (a real parser: parentheses, AND-before-OR, quoted phrases, fanned out per
+  source dialect) to find current world fractures and unresolved bottlenecks the omega
+  formulation can work on. Its manifest is tools/fractures.txt (one boolean expression per
+  source: arxiv, nvd, hn, github-issues, ietf, rss) — the ONE place to configure the hunt;
+  its cadence is the cron in .github/workflows/fracture-scout.yml. A "fracture" is the
+  corpus's own term (NT-V §XIX.15): a real thing in the world, anchored to a real problem.
+  Scope is the DEEP web (research APIs, defect registries, practitioner forums, standards
+  trackers, feeds), never the dark web: the scout must stay gateable, and a reality-coupled
+  unit must have a checkable referent. The scout PROPOSES; the reality check ADMITS a
+  fracture to the board as a NOVELTY row. `selftest` proves the parser/adapters/ranker
+  offline in CI; `scan` is the scheduled hunt.
+
+    ─── MUST #31 (NO COMMITTED CREDENTIALS — THE LEAK CLASS IS CLOSED AND PUSHED) ───
+    GATE: tools/secret_gate.py ; tools/security_alert.py
+    A credential must never live in the tracked tree or in any file git publishes. The leak
+    this closes is real and common: a token pasted into a remote URL or a script and then
+    committed. A private repo is not a safe — a token in the tree still works for anyone who
+    reads a fork, a backup, or a log, and git remembers it forever. tools/secret_gate.py is
+    fail-closed: it scans every tracked file (and, with `--staged`, every staged file) for the
+    shapes a real credential takes — provider tokens, cloud keys, private-key blocks,
+    URL-embedded user:pass, generic secret assignments — and exits non-zero on any hit; there
+    is no "warn and continue". A finding is either removed and ROTATED (a rewrite does not
+    un-leak a token) or recorded in the gate's ALLOW list with a written reason. The gate runs
+    in CI (tools/ci.sh), so the class cannot recur silently. The fix itself is not silent:
+    tools/security_alert.py raises ONE GitHub issue per distinct finding (labels `security`,
+    `critical`), de-duplicated by a content key, and GitHub pushes that issue to the Operator's
+    device app — the Operator works from a phone and must learn of a security fix at once,
+    not by re-reading git log. Autofix of a well-understood, reversible security gap needs no
+    permission; the push notice is how it is reported.

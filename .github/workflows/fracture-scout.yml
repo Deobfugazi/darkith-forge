@@ -1,0 +1,80 @@
+# Fracture Scout — the scheduled hunter of world fractures (NOVELTY tasks).
+#
+# Everything that decides anything lives in tools/ (fracture_scout.py, fractures.txt), which
+# are provider-neutral and phone-runnable. This file is only the GitHub-specific glue: when
+# to run, and how to publish what it found. Move to another host and you rewrite this file,
+# never the tool.
+#
+# It is manually configurable in two places:
+#   * the schedule below (cron) — change the cadence;
+#   * tools/fractures.txt — the queries, one boolean expression per source. Edit it in the
+#     repo (or on the phone) and the next run uses it. This file needs no edit for that.
+#
+# Security posture (mirrors the dependency workflow):
+#   * Actions pinned to full commit SHAs, not mutable tags.
+#   * Least privilege: contents:read by default; write only where the PR is opened.
+#   * The scout only READS public HTTPS JSON/XML/text. It never executes a download.
+#   * No secrets are used; the run needs nothing but the network.
+
+name: fracture scout
+
+on:
+  schedule:
+    - cron: "23 5 * * *"   # daily 05:23 UTC — hunt, then propose a NOVELTY digest
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: scan for fractures
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.x"
+
+      - name: Prove the scout's logic offline (no network, no vendor)
+        run: python3 tools/fracture_scout.py selftest
+
+      - name: Hunt (configured by tools/fractures.txt)
+        # The machine record (proof/fracture_scout.json) is committed; the human digest goes
+        # to the runner's temp dir and into the PR body, so no dated file accumulates in the
+        # tree and the knowledge-base index is unaffected.
+        run: python3 tools/fracture_scout.py scan --top 40 --summary "$RUNNER_TEMP/digest.md"
+
+      - name: Open or update a PR with the digest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain proof/)" ]; then
+            echo "no change in the record; nothing to propose"; exit 0
+          fi
+          branch="fracture-scout/$(date -u +%Y-%m-%d)"
+          git config user.name  "fracture-scout[bot]"
+          git config user.email "fracture-scout@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add proof/fracture_scout.json
+          git commit -m "fracture scout: candidate NOVELTY tasks $(date -u +%Y-%m-%d)"
+          git push -u origin "$branch"
+          {
+            echo "Candidate world fractures found by \`tools/fracture_scout.py\`. Each is a real"
+            echo "problem anchored to a real source (NT-V §XIX.15); the scout proposes, the"
+            echo "reality check admits. Review and promote survivors to the board as NOVELTY rows."
+            echo
+            cat "$RUNNER_TEMP/digest.md"
+            echo
+            echo "_This PR was created by an AI agent (OpenHands) on behalf of the repository Operator._"
+          } > "$RUNNER_TEMP/body.md"
+          gh pr create --base "${GITHUB_REF_NAME:-main}" \
+            --title "fracture scout: candidate NOVELTY tasks ($(date -u +%Y-%m-%d))" \
+            --body-file "$RUNNER_TEMP/body.md" \
+            || echo "a PR for this branch may already exist; the record was pushed"

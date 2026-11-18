@@ -37,6 +37,20 @@ if have python3; then
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
   run "savf cli contract"                 python3 build/savf-cli-test.py
   run "darkbot self-test"                 python3 tools/darkbot.py selftest
+  # Secret gate (fail-closed): no credential may ever be committed to the tracked tree.
+  # A hit is not just a red line: push the dedup'd device alert so the Operator learns
+  # at once (MUST #31). The gate stays the source of truth for pass/fail; the alert is
+  # best-effort and never masks the failure (the gate's own exit code still governs).
+  if ! python3 tools/secret_gate.py; then
+    python3 tools/security_alert.py push --severity critical \
+      --finding-id "committed-credential" \
+      --title "SECURITY: a credential-shaped string is committed to the tree" \
+      --body "tools/secret_gate.py failed in CI. See the run log for the exact path:line.\n\nA credential in the tree is already leaked (forks, backups, logs, git history): remove it\nAND rotate it. A rewrite does not un-leak it. This notice was created by an AI agent\n(OpenHands) on behalf of the Operator." || true
+    FAILED=1
+  fi
+  run "secret gate self-test"             python3 tools/secret_gate.py selftest
+  # Fracture Scout: offline proof its boolean parser, adapters, and ranker are correct.
+  run "fracture scout self-test"          python3 tools/fracture_scout.py selftest
   # Kotlin syntax gate: fail if any source tree has an unclosed block comment.
   # A scanner, not kotlinc (W-023), but exact about the defect that silently
   # swallows the rest of a file. Runs only when the app tree is present.
@@ -79,6 +93,13 @@ if have python3; then
       # its own corpus count true, and no unresolved mechanism smuggled as RESOLVED.
       if [ -f tools/absolution_admission.py ]; then
         run "absolution admission (NT XII)"  python3 tools/absolution_admission.py
+      fi
+      # NT hardware-coupled sensor: the Healer repair example must name a symbol the
+      # reference android.jar actually carries (raw android.*, not androidx.*). Reads the
+      # compiler's own ground truth; a silent skip is announced (SPI-2/SPI-13).
+      if [ -f tools/nt_sensor.py ]; then
+        run "nt sensor (Healer example vs android.jar)" python3 tools/nt_sensor.py
+        run "nt sensor self-test"           python3 tools/nt_sensor.py --selftest
       fi
       # NT XI progress-deficit indicator: the retention law W_in - E = S != 0 read off
       # the durable board + deficit ledger. Fails if the board's printed indicator is stale,
@@ -129,6 +150,13 @@ fi
 
 if have python3 && [ -f tools/doc_path_gate.py ]; then
   run "doc path gate" python3 tools/doc_path_gate.py
+fi
+
+if have python3 && [ -f tools/kb_index.py ]; then
+  # Universal index of the readable knowledge-skill base (SPI-15). Fails if the index is
+  # stale, if a readable file is unfiled, if two files share a hash without a declared
+  # mirror, or if a declared mirror has drifted (NEVER #11 / #15 / #16, §22).
+  run "knowledge-base index + dedup" python3 tools/kb_index.py
 fi
 
 if have node && [ -f tools/test_darktools.js ]; then

@@ -44,7 +44,7 @@ validation, contrast checks.
 | C3 | Icon pipeline that feeds the forge | done | `tools/make_icon.py` (pure stdlib, omega Ω gold on near-black, all densities + adaptive) + `tools/icon_gate.py`; CI-gated |
 | C4 | The specialist icon app (the developer vertical in §B) | todo | distinct from C3: this is the user-facing module, not the app's own icon |
 | C5 | Sensing core — only for a consumer that exists | todo | first consumer is the forge memory guard (C2); sensors built in the abstract are the scope trap |
-| C6 | Build the `darkith-omega-homekeeper` module (blueprint preserved at `DARKITH OMEGA repo.txt`, pushed fb85bcf) | todo | spec present, module not built; 8 membership rules + 9 admission conditions (A1-A9) unexecuted |
+| C6 | Build the `darkith-omega-homekeeper` module (blueprint preserved at `docs/DARKITH-OMEGA-repo.txt`, pushed fb85bcf) | todo | spec present, module not built; 8 membership rules + 9 admission conditions (A1-A9) unexecuted |
 
 ## D. SENSING-CORE GAPS (named in the forwarded dialogue — do not lose them again)
 
@@ -87,6 +87,9 @@ validation, contrast checks.
 | F9 | Parallel convergence proven, not asserted (§32 MUST #27) | done | `tools/convergence_gate.py` (clock py==js, phase py==js, tree git==independent blob hash) |
 | F10 | Edge-device time coupling + boot-aware session (§32 MUST #28) | done | `tools/synchrony_pulse.py` (`proof/synchrony_pulse.json`: boot, last activity, cycle phase, device zone) |
 | F11 | NT XI retention law as the omega progress-deficit indicator on the board | done | `tools/omega_deficit.py` (W_in=39 E=14 S=25 E/W_in=0.359; §H on this board; `proof/omega_deficit.json`); CI-gated; M6 SE non-extractive |
+| F12 | Universal KB index + dedup of the readable knowledge-skill base (MUST #29) | done | `tools/kb_index.py` (`docs/INDEX.md` + `docs/kb_manifest.json`; 33 files, 6 registers); removed orphan `homeforge.html`, moved blueprint to `docs/`; CI-gated |
+| F13 | Fracture Scout: scheduled, manually-configurable novelty hunter (MUST #30) | done | `tools/fracture_scout.py` + `tools/fractures.txt` (6 sources, non-naive boolean parser → DNF); `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); `selftest` CI-gated; live scan → `proof/fracture_scout.json` |
+| F14 | No committed credentials: fail-closed secret gate + device push alert (MUST #31) | done | `tools/secret_gate.py` (10 detectors, fail-closed, `--staged`, ALLOW with reasons; `selftest` CI-gated); `tools/security_alert.py` (dedup'd `security`+`critical` issue → GitHub app push to device); token purged from `.git/config`, remote made token-free (env credential helper); wired into `tools/ci.sh` |
 
 ## G. INSTALL + RUNTIME GATES (the two failures a user feels)
 
@@ -106,10 +109,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 41 | named work = board 33 + deficits 8 |
+| W_in | 44 | named work = board 36 + deficits 8 |
 | E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 26 | returned = done 18 + closed 3 + descoped 5 |
-| E/W_in | 0.366 | the progress-deficit indicator; absolution at 0 |
+| S | 29 | returned = done 21 + closed 3 + descoped 5 |
+| E/W_in | 0.341 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

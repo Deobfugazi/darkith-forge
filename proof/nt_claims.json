@@ -372,7 +372,7 @@
   {
     "id": "NT10-HEALER-ANDROIDX",
     "kind": "C",
-    "note": "CONTRADICTION (unresolved, MAJOR): NT X 4.4/5.4 Healer demonstrates repair to androidx.compose.material3.Button as verified truth, contradicting the repo law (fork_integrity_gate: zero import androidx; SPI-13/NEVER #12). Unresolved in the corpus."
+    "note": "CONTRADICTION (resolved): NT X 4.4/5.4 Healer example originally named import androidx.compose.material3.Button as verified truth, contradicting the repo law (fork_integrity_gate: zero import androidx; SPI-13/NEVER #12). The reference android.jar carries android/widget/Button.class and zero androidx symbols, so the raw import is the truthful one. The corpus example was re-pointed to import android.widget.Button in NT-X.txt and NT-XII.txt. Resolved."
   },
   {
     "id": "NT11-RETENTION-W",
@@ -421,6 +421,139 @@
     "id": "NT11-PRAXIS-ACTUALS",
     "kind": "C",
     "note": "CONTRADICTION (unresolved): NT XI Part 2 praxis actuals (Champlain Housing Trust, Mondragon, PODER Emma, BRED, Paris PB, UNCTAD 2026) are external referents not carried verbatim. Resolution target: EXPOSABLE."
+  },
+  {
+    "id": "NT12-BODY-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt (the carried terminal convergence)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'NOVELTREATISE XII' in s and 'terminal convergence' in s and 'the manufactory node' in s; print('NT12-CARRIED')\"",
+      "expect": "NT12-CARRIED",
+      "external": true
+    },
+    "note": "The NT XII body is carried and states its status (terminal convergence; the manufactory node)."
+  },
+  {
+    "id": "NT12-BOND-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert '\\u212c = (W_A / W_coh) \\u00b7 (\\u03b1_\\u221e / \\u03b1_gel) \\u00b7 \\u03b7' in s and '\\u212c \\u2265 1' in s and '\\u03b1_gel \\u2208 [0.17, 0.80]' in s and 'W_A/W_coh < 1/3' in s and 'W_A/W_coh > 1/2' in s; print('NT12-BOND-CARRIED')\"",
+      "expect": "NT12-BOND-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Bond Formation Number B, its universal condition B>=1, and the numerical signatures (alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2])."
+  },
+  {
+    "id": "NT12-TRIAD-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'r = ln x \\u2212 n ln b' in s and 'b^n = x' in s and '{0,1}' in s; print('NT12-TRIAD-CARRIED')\"",
+      "expect": "NT12-TRIAD-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Triadic Resolver (closed triple b^n=x; residual r=ln x - n ln b; anchor pair {0,1})."
+  },
+  {
+    "id": "NT12-SIGMA-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert '\\u03a3 = \\u03a3_S + \\u03a3_B = 0' in s and 'NEVER WRITE A STUB. EVER.' in s; print('NT12-SIGMA-CARRIED')\"",
+      "expect": "NT12-SIGMA-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Healer closure criterion Sigma = Sigma_S + Sigma_B = 0 and the Prime Directive (never write a stub)."
+  },
+  {
+    "id": "NT12-ASE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'W_in \\u2212 E = S \\u2260 0' in s and '(E / W_in) = 0' in s and 'The Retention Equation' in s; print('NT12-ASE-CARRIED')\"",
+      "expect": "NT12-ASE-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the Autophagic Sovereign Economy retention law (W_in - E = S != 0; lim E/W_in = 0)."
+  },
+  {
+    "id": "NT12-BUILD-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'aapt2 compile' in s and 'zipalign -p 4 base.apk aligned.apk' in s and 'apksigner sign' in s and 'NO-GRADLE' in s; print('NT12-BUILD-CARRIED')\"",
+      "expect": "NT12-BUILD-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the no-Gradle 7-step forced chain (aapt2 compile -> link -> kotlinc -> d8 -> zip -> zipalign -> apksigner; align before sign)."
+  },
+  {
+    "id": "NT12-TRACE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'Campitello Quarry' in s and 'Mauna Loa' in s and 'METR' in s; print('NT12-TRACE-CARRIED')\"",
+      "expect": "NT12-TRACE-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the diachronic trace (birch bark tar / Campitello) and the live demonstrations (Mauna Loa CO2; METR horizon)."
+  },
+  {
+    "id": "NT12-HONEST-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-XII.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-XII.txt',encoding='utf-8-sig').read(); assert 'honest boundary' in s.lower() and 'It does not ask to be believed' in s and 'STATUS SUMMARY' in s; print('NT12-HONEST-CARRIED')\"",
+      "expect": "NT12-HONEST-CARRIED",
+      "external": true
+    },
+    "note": "NT XII carries the honest-boundary discipline and the per-part status summary; the field-report rule (walk it, do not believe it)."
+  },
+  {
+    "id": "NT12-BOND",
+    "kind": "R",
+    "derived_from": [
+      "NT12-BOND-W"
+    ],
+    "note": "NT XII: B = (W_A/W_coh)(a_inf/a_gel)eta >= 1; B_c = 1; alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2]. The terminal statement of the bond criterion (NT VIII's number, closed across scales)."
+  },
+  {
+    "id": "NT12-TRIAD",
+    "kind": "R",
+    "derived_from": [
+      "NT12-TRIAD-W"
+    ],
+    "note": "NT XII: the Triadic Resolver closes the triple; r = ln x - n ln b = 0 on the relation; anchor pair {0,1}."
+  },
+  {
+    "id": "NT12-SIGMA0",
+    "kind": "R",
+    "derived_from": [
+      "NT12-SIGMA-W"
+    ],
+    "note": "NT XII: Sigma = Sigma_S + Sigma_B = 0 (the Healer closure), sibling of NT VIII's B>=1 and NT IX's r=0."
+  },
+  {
+    "id": "NT12-CROSS-SCALE",
+    "kind": "A",
+    "note": "NT XII Part 8/17: the identification of every prior NT's bond with B is the author's compression, self-marked INFERRED; the closure is complete in structure, the cross-scale identification is the synthesis."
+  },
+  {
+    "id": "NT12-DEMOS",
+    "kind": "A",
+    "note": "NT XII Part 12.3: the seven live demonstrations (AI productivity gap; junior-gap; token economics; technical debt; platform lock-in; METR horizon; CO2 anchor refusal) carry live source data; the arithmetic is re-walkable, the sources are external."
+  },
+  {
+    "id": "NT12-HARDWARE-COUPLED",
+    "kind": "W",
+    "referent": "the reference android.jar (the compiler's ground truth) + the carried corpus",
+    "evidence": {
+      "cmd": "python3 tools/nt_sensor.py",
+      "expect": "HEALER-RAW-IMPORT-HARDWARE-VERIFIED",
+      "external": true
+    },
+    "note": "NT XII 14.2's Healer example is checked against reality's reference: the corpus names the raw import (android.widget.Button), the repo law forbids 'import androidx' (SPI-13), and the reference android.jar carries android/widget/Button.class with zero androidx symbols. This is the hardware-coupled sensor: the compiler's own ground truth, not an assertion."
   },
   {
     "id": "XII-ONE-RULE-W",

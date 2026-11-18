@@ -50,4 +50,18 @@ NT11-AQP-W W->W  verified    output sha256:3078d2128437
 NT11-AQP-FORCED R->R  verified    
 NT11-AQP-FALSIFIER A->A  analysis    
 NT11-PRAXIS-ACTUALS C->C  unverified  
-52 claims, 0 problem(s)
+NT12-BODY-W W->W  verified    output sha256:60d73b701176
+NT12-BOND-W W->W  verified    output sha256:badabeb7b051
+NT12-TRIAD-W W->W  verified    output sha256:5bad91f989c0
+NT12-SIGMA-W W->W  verified    output sha256:168e5b60779e
+NT12-ASE-W W->W  verified    output sha256:4a7366363a5b
+NT12-BUILD-W W->W  verified    output sha256:c8f671b95c23
+NT12-TRACE-W W->W  verified    output sha256:408e0170acb8
+NT12-HONEST-W W->W  verified    output sha256:14b24219ea45
+NT12-BOND R->R  verified    
+NT12-TRIAD R->R  verified    
+NT12-SIGMA0 R->R  verified    
+NT12-CROSS-SCALE A->A  analysis    
+NT12-DEMOS A->A  analysis    
+NT12-HARDWARE-COUPLED W->W  verified    output sha256:a5b14d341daf
+66 claims, 0 problem(s)

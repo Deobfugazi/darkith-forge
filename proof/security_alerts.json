@@ -1,0 +1,10 @@
+{
+  "alerts": {
+    "6de251bca8d7f62c": {
+      "key": "6de251bca8d7f62c",
+      "severity": "critical",
+      "title": "SECURITY: committed-credential class closed + device push alert live (MUST #31)",
+      "url": "https://github.com/Deobfugazi/darkith-forge/issues/4"
+    }
+  }
+}

@@ -5,8 +5,8 @@ Status: executed. Every claim in the noveltreatise corpus was run through SAVF
 status and re-verified by a command that re-runs green. The gate `tools/nt_gate.py`
 enforces this in CI: a contradiction left unresolved stops the build.
 
-- Corpus carried: `docs/nt/` (9 files; NT I–XI complete — NT VI is now carried).
-- Claims ledger: `proof/nt_claims.json` (52 claims).
+- Corpus carried: `docs/nt/` (10 files; NT I–XII complete).
+- Claims ledger: `proof/nt_claims.json` (66 claims).
 - Reconciliation: `proof/nt_reconciliation.json` (8 resolutions).
 - Pre-reconcile SAVF output: `proof/nt_ledger_prereconcile.txt`.
 - Gate: `tools/nt_gate.py` (wired into `tools/ci.sh`).
@@ -29,13 +29,13 @@ Result of `savf.py ledger proof/nt_claims.json --run`:
 52 claims, 0 problem(s)
 ```
 
-Every one of the 15 witnesses re-ran green (its evidence command executed and
+Every one of the 27 witnesses re-ran green (its evidence command executed and
 printed its marker). Every derivation held. The corpus is internally clean.
 
-## The 15 witnesses (re-run against reality)
+## The 27 witnesses (re-run against reality)
 
 Each witness is a command that reads the carried corpus or the repo and asserts
-the exact bytes. The `--run` pass executed all 15; each printed its marker.
+the exact bytes. The `--run` pass executed all 27; each printed its marker.
 
 | claim | what it witnessed |
 |---|---|
@@ -54,6 +54,15 @@ the exact bytes. The `--run` pass executed all 15; each printed its marker.
 | NT10-SIGMA-W | NT X carries the Sigma=0 closure criterion |
 | NT11-RETENTION-W | NT XI carries the retention equation W_{in} − E = S ≠ 0 |
 | NT11-AQP-W | NT XI carries the forced derivation result (6 BUILD / 7 ADOPT) |
+| NT12-BODY-W | NT XII is carried (the terminal convergence; the manufactory node) |
+| NT12-BOND-W | NT XII carries ℬ, its universal condition ℬ ≥ 1, and the numerical signatures |
+| NT12-TRIAD-W | NT XII carries the Triadic Resolver (b^n=x; r = ln x − n ln b; anchor {0,1}) |
+| NT12-SIGMA-W | NT XII carries Σ = Σ_S + Σ_B = 0 and the Prime Directive |
+| NT12-ASE-W | NT XII carries the retention law W_in − E = S ≠ 0 |
+| NT12-BUILD-W | NT XII carries the no-Gradle 7-step chain (align before sign) |
+| NT12-TRACE-W | NT XII carries the diachronic trace and the live demonstrations |
+| NT12-HONEST-W | NT XII carries the honest-boundary discipline and the status summary |
+| NT12-HARDWARE-COUPLED | the Healer example resolves to a symbol the reference android.jar carries (raw android.*, zero androidx) |
 
 ## The 8 contradictions, resolved to absolution
 
@@ -67,7 +76,7 @@ resolved. Each is resolved to exactly one of three truthful states:
 
 | id | resolution | what it is |
 |---|---|---|
-| NT10-HEALER-ANDROIDX | RESOLVED (scoped) | NT X's Healer example repairs to `import androidx.compose.material3.Button`, which the repo law forbids (`fork_integrity_gate` SPI-13 / NEVER #12: zero `import androidx`). Compatible once scoped: the androidx symbol is an illustrative worked example of the Healer *mechanism*; it is not a claim about the delivered tree, which obeys the no-androidx law. Follow-up: re-point the corpus example to a raw `android.*` import. |
+| NT10-HEALER-ANDROIDX | RESOLVED (follow-up done) | NT X's Healer example named `import androidx.compose.material3.Button`. The reference `android.jar` carries `android/widget/Button.class` and ZERO `androidx` symbols — the androidx import does not resolve and the raw import does (the compiler is the sensor). The corpus example was re-pointed to `import android.widget.Button` in `NT-X.txt` and `NT-XII.txt`; the Healer mechanism is unchanged. Enforced by `tools/nt_sensor.py`. |
 | NT4-RABTSEVICH | EXPOSABLE | NT IV's live demonstration (Rabtsevich TESS pre-registration; VAAR; FAIA) is an external referent; the mechanism is RESOLVED in-document. |
 | NT7-PROCESS-ZERO | EXPOSABLE | NT VII Part 13 material-stream figures are carried without verbatim source, and NT VII itself flags this. |
 | NT9-DEMO-ECON | EXPOSABLE | NT IX Part 4 economic demonstrations carry live source data; the arithmetic is re-walkable, the sources are external. |

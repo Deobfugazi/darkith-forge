@@ -318,7 +318,7 @@ Falsifier: apksigner verify --verbose app-signed.apk returns clean on the Proces
 
 NT IX's bash wrapper detects fractures and stops. The Sovereign Forge's Healer (§5) intercepts the compiler/dexer failure, queries the Ingestor for the verified mechanism, patches the surgical chunk, and re-invokes the chain. The chain itself is unchanged; the driver is now the Healer loop rather than bash. What bash cannot do — repair a missing import — the Healer does, within the Prime Directive (it inserts a verified mechanism, never a stub).
 
-Falsifier: With Button unresolved in src/, the Healer loop terminates with a green app-signed.apk that contains import androidx.compose.material3.Button in the emitted source and zero compiler errors on the final pass.
+Falsifier: With Button unresolved in src/, the Healer loop terminates with a green app-signed.apk that contains import android.widget.Button in the emitted source and zero compiler errors on the final pass.
 
 4.5 What NT X Does Not Change in the NT IX Chain.
 
@@ -347,9 +347,9 @@ The local .gguf is not the compiler. It is the Healer. It never writes the whole
 1. The Architect (M1 Reduction): TransliaisonEngine parses HTML into LayoutNode IR. ViewEmitter emits the XML and Kotlin source.
 2. The Compiler (The Prover): SovereignCompiler.kt invokes libkotlinc.so and libd8.so via ProcessBuilder (NT IX Step 3 and Step 4 of the chain, staged per §4.2–§4.3). No Termux. No Gradle.
 3. The Deficit (M3 Negation): If the compiler fails (e.g., Unresolved reference: Button), the error is intercepted. It is not a failure; it is a signal.
-4. The Ingestor (M6 Memory): SubstrateIngestor.kt extracts the missing symbol (Button) and queries the web. It passes the result through the 9-movement protocol. It returns only the verified BoundaryRecord containing import androidx.compose.material3.Button.
+4. The Ingestor (M6 Memory): SubstrateIngestor.kt extracts the missing symbol (Button) and queries the web. It passes the result through the 9-movement protocol. It returns only the verified BoundaryRecord containing import android.widget.Button.
 5. The Healer (M7 Verification): SovereignCompiler builds a surgical prompt for libllama.so (the local .gguf):
-   "Error: Unresolved reference: Button. Code: [failing chunk]. Verified Import: import androidx.compose.material3.Button. Output ONLY the corrected code."
+   "Error: Unresolved reference: Button. Code: [failing chunk]. Verified Import: import android.widget.Button. Output ONLY the corrected code."
 6. The Resurrection (M9): The model applies the patch. The compiler runs again. It succeeds. libaapt2.so packages the APK (Step 2, Step 5). libzipalign.so aligns it (Step 6). The APK is signed with libapksigner.so (Step 7) and delivered.
 
 5.5 The Residual Criterion: Σ = 0.

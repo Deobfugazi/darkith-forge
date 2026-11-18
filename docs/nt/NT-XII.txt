@@ -1303,11 +1303,11 @@ The Workflow:
 
 3. The Deficit (M3 Negation): If the compiler fails (e.g., Unresolved reference: Button), the error is intercepted. It is not a failure; it is a signal.
 
-4. The Ingestor (M6 Memory): SubstrateIngestor.kt extracts the missing symbol (Button) and queries the web. It passes the result through the 9-movement protocol. It returns only the verified BoundaryRecord containing import androidx.compose.material3.Button.
+4. The Ingestor (M6 Memory): SubstrateIngestor.kt extracts the missing symbol (Button) and queries the web. It passes the result through the 9-movement protocol. It returns only the verified BoundaryRecord containing import android.widget.Button.
 
 5. The Healer (M7 Verification): SovereignCompiler builds a surgical prompt for libllama.so (the local .gguf):
 
-"Error: Unresolved reference: Button. Code: [failing chunk]. Verified Import: import androidx.compose.material3.Button. Output ONLY the corrected code."
+"Error: Unresolved reference: Button. Code: [failing chunk]. Verified Import: import android.widget.Button. Output ONLY the corrected code."
 
 6. The Resurrection (M9): The model applies the patch. The compiler runs again. It succeeds. libaapt2.so packages the APK (Step 2, Step 5). libzipalign.so aligns it (Step 6). The APK is signed with libapksigner.so (Step 7) and delivered.
 

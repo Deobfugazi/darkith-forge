@@ -133,6 +133,33 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
   `digest <eco> <name> [ver]` (registry sha256 per artifact), `verify <file> <sha256>`.
 - stdlib only: runs on the phone in Termux with no installs. Talks to PyPI/npm, never to a
   CI vendor, so changing code host does not touch it.
+
+  ## Novelty hunting (the Fracture Scout — MUST #30)
+  - `tools/fracture_scout.py` + `tools/fractures.txt` are the source of truth. No vendor
+    config. `tools/fractures.txt` holds one line per query: `<source> <boolean expr> [weight]`,
+    sources `arxiv|nvd|hn|github-issues|ietf|rss`. Edit that file to reconfigure the hunt.
+  - Commands: `scan` (query every source, rank by novelty x unresolved-ness, write
+    `proof/fracture_scout.json` + a markdown digest), `report` (read the last scan from disk,
+    no network), `selftest` (offline, no network — in ci.sh).
+  - "Non-naive" = a real boolean parser (parentheses, AND-before-OR, "quoted phrases") that
+    produces DNF and fans out per each source's own dialect. A naive topic grep drowns in noise.
+  - Scope is the DEEP web (APIs, defect registries, forums, standards trackers, feeds), never
+    the dark web: the scout must stay gateable, and a fracture must have a checkable referent.
+    A "fracture" is the corpus's own term (NT-V §XIX.15). The scout PROPOSES; the reality check
+    ADMITS a survivor to the board as a NOVELTY row.
+  - Cadence: `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); it opens
+    a PR with the digest. stdlib only — runs on the phone in Termux with no installs.
+- SECURITY (MUST #31): no credential in the tracked tree. `tools/secret_gate.py` is
+    fail-closed — it scans every tracked (and `--staged`) file for token/key/private-key/
+    URL-cred/generic-secret shapes and exits non-zero on any hit (no warn-and-continue). Run in
+    `tools/ci.sh`. A finding is removed and ROTATED (a rewrite does not un-leak a token) or
+    recorded in the gate's ALLOW with a reason. A security fix is never silent:
+    `tools/security_alert.py push` opens ONE dedup'd issue (labels `security`, `critical`) and
+    GitHub pushes it to the Operator's device app. Autofix of a reversible, well-understood
+    security gap needs no permission — the push notice is how it is reported.
+  - The git remote is TOKEN-FREE (`https://github.com/...`, no `user:token@`): the credential is
+    supplied at run time by a git credential helper that reads `$GITHUB_TOKEN`, so no secret is
+    written to `.git/config`. Never paste a token into a remote URL or a tracked file.
 - `.github/workflows/auto-merge.yml` is the thin GitHub adapter: tests (tools/ci.sh) then
   merges a dependency PR (Dependabot and darkbot authors). The bot's own bumps are tested
   and committed directly, because a PR opened with GITHUB_TOKEN never triggers a second
@@ -198,6 +225,13 @@ Toolchain got: aapt2/zipalign/apksigner via `apt install aapt android-sdk-build-
 d8 via R8 jar (`dl.google.com/dl/android/maven2/com/android/tools/r8/8.2.42/r8-8.2.42.jar`);
 kotlinc 1.9.24 (JetBrains zip); apksig 8.1.1 (Google maven). `tools/fetch_toolchain.sh`
 provisions all of it into `.tools/` (gitignored) so CI can run the real compile proof.
+  - CI FAILS (not skips) when `.tools/` is absent: `ci.sh` forces FAILED=1 so a skipped compile
+    proof can never look green. To run CI here, provision `.tools/` first — `bash
+    tools/fetch_toolchain.sh`, or symlink an existing cache (`kotlinc`, `jdk-17.0.12+7`,
+    `aapt2d`, `apksig.jar`, `android-all-14-robolectric-10818077.jar`). Then L-07/L-10 close.
+  - Do NOT run two `kotlinc` compile proofs at once: each takes `-J-Xmx2g`, and two concurrent
+    JVMs starve memory and emit spurious `unresolved reference` errors that look like real
+    defects. Serialize (let the background CI finish before a manual gate run).
 
 ## WHERE THE SCROLLBACK LIVES (recover any prompt the app won't scroll to)
 The GUI cannot always scroll back. The full event history is on disk:
@@ -235,6 +269,15 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   timestamps. Re-run -> byte-identical. Prove idempotency by running twice and diffing.
 - Consolidation (SPI-18): tools/consolidate_docs.sh merges overlapping docs; refuses to delete
   unless the canonical doc already holds every law. Idempotent (2nd run is a no-op).
+- UNIVERSAL KB INDEX (MUST #29): the readable knowledge-skill base is indexed, not scattered.
+  tools/kb_index.py generates docs/INDEX.md (human) + docs/kb_manifest.json (machine) from the
+  tracked bytes, in the repo's own registers — A-apparatus (root governance), B-knowledge
+  (docs/** corpus), C-skillbase (root web apps), D-asset (app assets), E-evidence (proof/),
+  F-config (dependency manifests). The registers are the repo's invariant A∧B∧C∧D applied to the
+  filesystem: apparatus separate from content (B), one retrieval surface (C), one canonical copy
+  (D). The gate (SPI-15) fails if the index is stale, a readable file is unfiled, two files share
+  a hash without a declared mirror (NEVER #11/#15/#16), or a declared mirror has drifted.
+  Deterministic: re-running yields byte-identical output (MUST #18).
 
 ## §23 NO STALLED DEFICIENCY (binding)
 - NEVER #17: a named deficiency may not survive two deliveries. Close it or descope it, in writing.
