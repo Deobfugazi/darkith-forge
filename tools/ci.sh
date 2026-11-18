@@ -181,6 +181,14 @@ fi
     run "icon forge tests" node tools/test_icon_forge.js
   fi
 
+  # The Ω media player (darkith-omega-media-player.html): dependency-free DOM-shim test
+  # that evaluates the REAL script. Proves the pure parsers (VTT/SRT/M3U/time/bytes),
+  # the speed ladder, shuffle, the equaliser definition, the queue/playlist logic, and
+  # that a hostile filename is HTML-escaped before it reaches the queue (no injection).
+  if have node && [ -f tools/test_media_player.js ]; then
+    run "media player tests" node tools/test_media_player.js
+  fi
+
   # The TermKit dual-register manual (help beginner / help dev). The invariant debugger
   # extracts the REAL shell core from the canonical page and executes every fixture the
   # manual prints, so documentation can never drift from the engine. No browser needed.

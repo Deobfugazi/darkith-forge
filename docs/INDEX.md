@@ -9,13 +9,13 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**42 readable files across 6 registers.**
+**43 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 41,600 | `0263f4013a36` | AGENTS.md — Darkith |
+| `AGENTS.md` | 42,508 | `c00f5348de95` | AGENTS.md — Darkith |
 | `DARKITH.md` | 65,141 | `a220f50aefe3` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `13453acc0410` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 64,277 | `750b199111d3` | DARKITH — README |
@@ -48,6 +48,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith code studio.html` | 539,472 | `f706384c84db` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,318,719 | `cd298f710647` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 231,324 | `882eeb3e7d7b` | Darkith Inscriber — SAVF Lite Studio |
+| `darkith-omega-media-player.html` | 52,702 | `9cf42432303b` | DARKITH Ω — media player |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,568 | `622dc406953f` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
@@ -69,7 +70,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `proof/FIELD_REPORT_THIS_TAB.md` | 11,203 | `bd7589bc3d93` | DARKITH — byte-measured field report (this tab) |
 | `proof/NT_RECONCILIATION.md` | 7,185 | `fa523afa5914` | NT CORPUS RECONCILIATION — the SAVF run and the absolution |
 | `proof/comment_19files_proof.txt` | 1,214 | `eb65d81efeb4` | file                       brief  open close  line-N bytes (SPI-2) |
-| `proof/comment_premise_check.txt` | 2,457 | `19e0779e4bf8` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
+| `proof/comment_premise_check.txt` | 2,819 | `473e39ef6a5b` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
 | `proof/kt_compile_proof.txt` | 1,003 | `ca98b4c82cb3` | === §19 FORK-INTEGRITY GATE — COMPILE PROOF (SPI-2/4/6) === |
 | `proof/nt_ledger_prereconcile.txt` | 2,924 | `800061c03912` | ENGINE-RULE A->A  analysis |
 | `proof/offline_oneshot_proof.txt` | 1,780 | `fce363ef10fd` | DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6) |

@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#050505">
+<title>DARKITH Ω — media player</title>
+<style>
+:root{
+  --bg:#050505; --panel:#0b0c0e; --line:#1e2126; --line2:#2a2e35;
+  --ink:#e8edf3; --dim:#8b949e; --accent:#ff8a3d; --accent-dim:rgba(255,138,61,.14);
+  --cyan:#56d4dd; --green:#7ee787; --red:#ff6b6b; --yellow:#e8c268;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+  --r:14px;
+}
+@media (prefers-color-scheme:light){
+  :root{--bg:#f6f7f9;--panel:#fff;--line:#e3e6ea;--line2:#d3d8de;--ink:#14181d;--dim:#5b6470;--accent:#c25a00;}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
+  overscroll-behavior:none;
+  background-image:radial-gradient(1200px 600px at 50% -10%,rgba(255,138,61,.06),transparent 60%);
+}
+#app{height:100dvh;display:flex;flex-direction:column;padding-top:var(--sat);padding-bottom:var(--sab)}
+
+header{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--line);
+  background:rgba(11,12,14,.72);backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  position:sticky;top:0;z-index:20;
+}
+@media (prefers-color-scheme:light){header{background:rgba(255,255,255,.78)}}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.logo{
+  width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--accent),#ff4d6d);color:#0b0b0b;font-weight:800;
+  font-family:var(--mono);font-size:16px;box-shadow:0 6px 18px rgba(255,138,61,.28)
+}
+.brand h1{margin:0;font-size:15px;font-weight:650;letter-spacing:-.02em;white-space:nowrap}
+.brand small{display:block;color:var(--dim);font-size:10.5px;font-weight:400;letter-spacing:.02em}
+.chips{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;font:11px/1 var(--mono);
+  padding:5px 9px;border:1px solid var(--line2);border-radius:999px;color:var(--dim);
+  background:rgba(255,255,255,.03);white-space:nowrap
+}
+.chip b{color:var(--ink);font-weight:600}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--dim);flex:0 0 auto}
+.dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.dot.off{background:var(--red)}
+
+main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.stage{
+  position:relative;flex:1 1 auto;min-height:0;background:#000;display:grid;place-items:center;overflow:hidden;
+}
+.stage.audio{background:radial-gradient(600px 300px at 50% 40%,rgba(255,138,61,.10),transparent 70%),#000}
+video#media{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain;background:#000;display:block}
+.stage.audio video#media{opacity:0;pointer-events:none;position:absolute;inset:0}
+#art{display:none;width:min(58vw,240px);height:min(58vw,240px);border-radius:20px;
+  background:linear-gradient(140deg,#16181c,#0b0c0e);border:1px solid var(--line2);
+  place-items:center;color:var(--accent);font:700 40px var(--mono)}
+.stage.audio #art{display:grid}
+#viz{position:absolute;left:0;right:0;bottom:0;height:34%;width:100%;pointer-events:none;opacity:.9}
+
+#ccbox{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);max-width:92%;
+  text-align:center;font:600 clamp(14px,3.4vw,22px)/1.35 var(--ui);color:#fff;
+  text-shadow:0 2px 10px rgba(0,0,0,.9),0 0 3px rgba(0,0,0,1);pointer-events:none;
+  padding:2px 10px;border-radius:8px;background:rgba(0,0,0,.28);display:none;white-space:pre-line}
+#ccbox.on{display:block}
+
+#drop{position:absolute;inset:0;display:none;place-items:center;z-index:12;
+  background:rgba(5,5,5,.72);backdrop-filter:blur(6px);border:2px dashed var(--accent);
+  border-radius:0;color:var(--ink);font:600 15px var(--ui)}
+#drop.on{display:grid}
+#drop b{color:var(--accent)}
+
+#hint{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center;padding:24px;color:var(--dim)}
+#hint .big{font:650 16px var(--ui);color:var(--ink)}
+#hint .keys{font:12px/1.9 var(--mono);color:var(--dim)}
+#hint kbd{background:rgba(255,255,255,.06);border:1px solid var(--line2);border-radius:6px;padding:1px 6px;font:11px var(--mono);color:var(--ink)}
+.stage.ready #hint{display:none}
+
+/* sidebar */
+.side{
+  flex:0 0 auto;display:none;border-top:1px solid var(--line);background:var(--panel);
+  max-height:42%;overflow:auto;scrollbar-width:thin
+}
+.side.on{display:block}
+.side h3{margin:0;padding:10px 14px 6px;font:11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--line);cursor:pointer}
+.row:hover{background:rgba(255,255,255,.03)}
+.row[aria-current="true"]{background:var(--accent-dim)}
+.row .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:13px var(--ui)}
+.row .mt{font:11px var(--mono);color:var(--dim);flex:0 0 auto}
+.row .x{color:var(--dim);font:14px var(--mono);padding:0 4px}
+.badge{font:10px/1 var(--mono);padding:3px 6px;border:1px solid var(--line2);border-radius:6px;color:var(--dim)}
+
+/* controls */
+.controls{flex:0 0 auto;border-top:1px solid var(--line);background:rgba(11,12,14,.86);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:8px 12px calc(10px + var(--sab))}
+@media (prefers-color-scheme:light){.controls{background:rgba(255,255,255,.9)}}
+.scrub{display:flex;align-items:center;gap:10px}
+.scrub .t{font:11px/1 var(--mono);color:var(--dim);min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;flex:1 1 auto;height:26px;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--line2)}
+input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--line2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+  background:var(--accent);margin-top:-5px;box-shadow:0 0 0 3px rgba(255,138,61,.18)}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border:0;border-radius:50%;background:var(--accent)}
+#seek{position:relative}
+.bar{display:flex;align-items:center;gap:6px;padding-top:4px;flex-wrap:wrap}
+button.ic{
+  flex:0 0 auto;display:grid;place-items:center;width:40px;height:40px;border-radius:11px;
+  border:1px solid var(--line2);background:rgba(255,255,255,.03);color:var(--ink);cursor:pointer;
+  transition:background .15s var(--ease),border-color .15s var(--ease),transform .08s var(--ease)
+}
+button.ic:hover{background:rgba(255,255,255,.07)}
+button.ic:active{transform:scale(.94)}
+button.ic[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+button.ic:disabled{opacity:.35;cursor:not-allowed}
+button.ic svg{width:19px;height:19px;fill:currentColor}
+#play{width:48px;height:48px;border-radius:14px;background:var(--accent);color:#0b0b0b;border-color:transparent}
+#play:hover{filter:brightness(1.06)}
+.spacer{flex:1 1 auto}
+select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.04);
+  border:1px solid var(--line2);border-radius:9px;padding:7px 8px}
+.vol{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.vol input[type=range]{width:96px;flex:0 0 auto}
+
+/* eq panel */
+#eq{display:none;padding:10px 12px 2px;border-top:1px solid var(--line)}
+#eq.on{display:block}
+.bands{display:flex;gap:8px;align-items:flex-end;justify-content:space-between}
+.band{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.band input[type=range]{width:100%;height:120px;writing-mode:vertical-lr;direction:rtl;-webkit-appearance:slider-vertical}
+.band input[type=range]::-webkit-slider-runnable-track{width:5px;height:100%}
+.band input[type=range]::-webkit-slider-thumb{margin:0 0 0 -5px}
+.band span{font:10px/1 var(--mono);color:var(--dim)}
+.band b{font:10px/1 var(--mono);color:var(--ink)}
+.eqrow{display:flex;gap:8px;align-items:center;padding:8px 0 4px;flex-wrap:wrap}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(96px + var(--sab));transform:translateX(-50%) translateY(12px);
+  background:#101215;color:var(--ink);border:1px solid var(--line2);border-radius:11px;
+  padding:9px 14px;font:12px var(--ui);opacity:0;pointer-events:none;transition:opacity .18s var(--ease),transform .18s var(--ease);z-index:40;max-width:88vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* queue adder */
+.urlbar{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
+.urlbar input{flex:1 1 auto;min-width:0;font:12px var(--mono);color:var(--ink);
+  background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:10px;padding:9px 10px}
+.urlbar button{font:12px var(--ui);border:1px solid var(--line2);background:rgba(255,255,255,.04);
+  color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer;white-space:nowrap}
+
+.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:10px 14px;font:11px/1.6 var(--mono)}
+.meta dt{color:var(--dim)}
+.meta dd{margin:0;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="logo">Ω</div>
+      <div><h1>Media Player</h1><small>DARKITH Ω · offline · agnostic</small></div>
+    </div>
+    <div class="chips" id="chips">
+      <span class="chip"><span class="dot" id="d-media"></span><b id="c-kind">idle</b></span>
+      <span class="chip">rate <b id="c-rate">1.0×</b></span>
+      <span class="chip">queue <b id="c-queue">0</b></span>
+      <span class="chip"><span class="dot" id="d-bridge"></span>bridge</span>
+      <span class="chip"><span class="dot" id="d-pip"></span>pip</span>
+      <span class="chip"><span class="dot" id="d-cast"></span>cast</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="stage" id="stage">
+      <video id="media" playsinline preload="metadata" crossorigin="anonymous"></video>
+      <div id="art">Ω</div>
+      <canvas id="viz" width="800" height="200"></canvas>
+      <div id="ccbox" aria-live="polite"></div>
+      <div id="hint">
+        <div class="big">Drop media here — or pick a file</div>
+        <div class="keys">
+          <kbd>space</kbd> play/pause · <kbd>←</kbd><kbd>→</kbd> ±5s · <kbd>j</kbd><kbd>l</kbd> ±10s<br>
+          <kbd>,</kbd><kbd>.</kbd> frame · <kbd>[</kbd><kbd>]</kbd> speed · <kbd>m</kbd> mute · <kbd>f</kbd> fullscreen<br>
+          <kbd>p</kbd> pip · <kbd>c</kbd> captions · <kbd>v</kbd> visualiser · <kbd>e</kbd> equaliser
+        </div>
+        <div class="urlbar" style="border:0;padding:6px 0">
+          <button id="pick" type="button">Open file(s)</button>
+          <button id="pickdir" type="button">Open folder</button>
+          <button id="browse" type="button">Browse device</button>
+        </div>
+      </div>
+      <div id="drop"><div>Release to add to the queue · <b>audio, video, images, subtitles</b></div></div>
+      <input id="file" class="visually-hidden" type="file" multiple accept="audio/*,video/*,image/*,.vtt,.srt,.m3u,.m3u8">
+      <input id="dir" class="visually-hidden" type="file" multiple webkitdirectory>
+    </div>
+
+    <section class="side" id="queue">
+      <h3>Queue</h3>
+      <div id="qlist"></div>
+      <div class="urlbar">
+        <input id="urlin" type="text" placeholder="paste a URL or /sdcard path" autocomplete="off">
+        <button id="urladd" type="button">Add</button>
+      </div>
+      <div class="eqrow" style="padding:8px 14px">
+        <button class="ic" id="shuffle" title="Shuffle" aria-pressed="false">⇄</button>
+        <button class="ic" id="clearlist" title="Clear queue">✕</button>
+        <span class="badge" id="repeatbadge">repeat off</span>
+      </div>
+    </section>
+
+    <section class="side" id="marks">
+      <h3>Bookmarks</h3>
+      <div id="mlist"></div>
+      <div class="eqrow" style="padding:8px 14px">
+        <button id="addmark" type="button" class="badge">＋ mark here</button>
+        <span class="badge" id="marknote">none</span>
+      </div>
+      <h3>Stream</h3>
+      <dl class="meta" id="meta">
+        <dt>name</dt><dd id="m-name">—</dd>
+        <dt>kind</dt><dd id="m-kind">—</dd>
+        <dt>size</dt><dd id="m-size">—</dd>
+        <dt>type</dt><dd id="m-type">—</dd>
+        <dt>sha256</dt><dd id="m-sha">—</dd>
+        <dt>state</dt><dd id="m-state">—</dd>
+      </dl>
+    </section>
+  </main>
+
+  <div class="controls">
+    <div class="scrub">
+      <span class="t" id="tcur">0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+      <span class="t" id="tdur">0:00</span>
+    </div>
+    <div class="bar">
+      <button class="ic" id="prev" title="Previous (P)">⏮</button>
+      <button class="ic" id="back" title="Back 5s">−5</button>
+      <button class="ic" id="play" title="Play/Pause (space)">▶</button>
+      <button class="ic" id="fwd" title="Forward 5s">+5</button>
+      <button class="ic" id="next" title="Next (N)">⏭</button>
+      <div class="vol">
+        <button class="ic" id="mute" title="Mute (M)" aria-pressed="false">🔊</button>
+        <input id="vol" type="range" min="0" max="100" value="100" aria-label="Volume">
+      </div>
+      <div class="spacer"></div>
+      <select class="mini" id="rate" aria-label="Speed">
+        <option value="0.25">0.25×</option><option value="0.5">0.5×</option>
+        <option value="0.75">0.75×</option><option value="1" selected>1×</option>
+        <option value="1.25">1.25×</option><option value="1.5">1.5×</option>
+        <option value="2">2×</option><option value="3">3×</option>
+      </select>
+      <button class="ic" id="repeat" title="Repeat mode">↻</button>
+      <button class="ic" id="ab" title="A–B loop">A·B</button>
+      <button class="ic" id="cc" title="Captions (C)" aria-pressed="false">CC</button>
+      <button class="ic" id="eqbtn" title="Equaliser (E)" aria-pressed="false">EQ</button>
+      <button class="ic" id="vizbtn" title="Visualiser (V)" aria-pressed="true">∿</button>
+      <button class="ic" id="shot" title="Save frame">▣</button>
+      <button class="ic" id="pip" title="Picture-in-picture (P)">▢</button>
+      <button class="ic" id="cast" title="Cast">📺</button>
+      <button class="ic" id="fs" title="Fullscreen (F)">⛶</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* DARKITH Ω media player — single file, no build, no network.
+   Ergonomics: drag/drop, paste, file, folder, URL, device bridge, keyboard, gestures.
+   Versatility: video/audio/image, playlists (m3u), subtitles (vtt/srt), A–B loop,
+   speed, frame-step, bookmarks, screenshot, cross-tab sync.
+   Agnosticism: whatever the engine can decode, plus a real device path via the
+   host bridge — no assumed codec, container or origin.
+   Coupling: Media Session (lockscreen), Picture-in-Picture, Remote Playback (cast),
+   Wake Lock, Web Audio (visualiser + EQ), BroadcastChannel, localStorage, Share.
+   Every capability is feature-detected; when absent it degrades honestly, never fakes. */
+(function () {
+  var D = (typeof document !== "undefined") ? document : null;
+  var W = (typeof window !== "undefined") ? window : (typeof globalThis !== "undefined" ? globalThis : {});
+
+  /* ---------------------------------------------------------------- pure API */
+  var MEDIA_EXT = {
+    mp4: "video/mp4", m4v: "video/mp4", webm: "video/webm", mkv: "video/x-matroska",
+    ogv: "video/ogg", mov: "video/quicktime", ts: "video/mp2t", m3u8: "application/vnd.apple.mpegurl",
+    mp3: "audio/mpeg", m4a: "audio/mp4", aac: "audio/aac", flac: "audio/flac",
+    wav: "audio/wav", ogg: "audio/ogg", oga: "audio/ogg", opus: "audio/ogg", weba: "audio/webm",
+    jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", gif: "image/gif",
+    webp: "image/webp", avif: "image/avif", bmp: "image/bmp", svg: "image/svg+xml"
+  };
+  var SUB_EXT = { vtt: 1, srt: 1, ssa: 1, ass: 1, sub: 1 };
+
+  function extOf(name) {
+    name = String(name || "");
+    var q = name.split(/[?#]/)[0];
+    var i = q.lastIndexOf(".");
+    return i >= 0 ? q.slice(i + 1).toLowerCase() : "";
+  }
+  function mimeFor(name, given) {
+    if (given && /^[\w.+-]+\/[\w.+-]+/.test(given)) return given;
+    var e = extOf(name);
+    if (SUB_EXT[e]) return "text/vtt";
+    return MEDIA_EXT[e] || "";
+  }
+  function kindOf(name, mime) {
+    var m = String(mime || mimeFor(name));
+    if (/^image\//.test(m)) return "image";
+    if (/^video\//.test(m)) return "video";
+    if (/^audio\//.test(m)) return "audio";
+    if (SUB_EXT[extOf(name)] || /vtt|caption|subtitle/.test(m)) return "subtitle";
+    if (extOf(name) === "m3u" || extOf(name) === "m3u8") return "playlist";
+    return "other";
+  }
+  function isPlayable(kind) { return kind === "video" || kind === "audio" || kind === "image"; }
+
+  function fmtTime(sec) {
+    if (sec == null || !isFinite(sec) || sec < 0) return "0:00";
+    sec = Math.floor(sec);
+    var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    function p(n) { return n < 10 ? "0" + n : "" + n; }
+    return h > 0 ? h + ":" + p(m) + ":" + p(s) : m + ":" + p(s);
+  }
+  function parseTime(str) {
+    str = String(str || "").trim();
+    if (!str) return NaN;
+    if (/^\d+(\.\d+)?$/.test(str)) return parseFloat(str);
+    var parts = str.split(":").map(function (x) { return parseFloat(x); });
+    if (parts.some(function (x) { return !isFinite(x); })) return NaN;
+    var s = 0;
+    for (var i = 0; i < parts.length; i++) s = s * 60 + parts[i];
+    return s;
+  }
+  function fmtBytes(n) {
+    if (n == null || !isFinite(n)) return "—";
+    var u = ["B", "KB", "MB", "GB", "TB"], i = 0;
+    while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+    return (i === 0 ? n : n.toFixed(n < 10 ? 2 : 1)) + " " + u[i];
+  }
+  function parseTimeStamp(s) {
+    // "00:00:01.000" or "00:01.000" or "1.5"
+    s = String(s).trim().replace(",", ".");
+    var m = s.match(/^(?:(\d+):)?(?:(\d+):)?(\d+(?:\.\d+)?)$/);
+    if (!m) return NaN;
+    var h = m[1] != null ? parseInt(m[1], 10) : null;
+    var mm = m[2] != null ? parseInt(m[2], 10) : null;
+    var ss = parseFloat(m[3]);
+    if (mm != null) return h * 3600 + mm * 60 + ss;  // h:mm:ss
+    if (h != null) return h * 60 + ss;               // mm:ss
+    return ss;                                        // ss
+  }
+  function parseVTT(text) {
+    var cues = [], blocks = String(text).replace(/\r/g, "").split("\n\n");
+    for (var i = 0; i < blocks.length; i++) {
+      var lines = blocks[i].split("\n").filter(function (l) { return l.trim() !== ""; });
+      if (!lines.length) continue;
+      if (/^WEBVTT/.test(lines[0])) { lines.shift(); if (!lines.length) continue; }
+      var ti = lines.findIndex(function (l) { return l.indexOf("-->") >= 0; });
+      if (ti < 0) continue;
+      var mm = lines[ti].split("-->");
+      var start = parseTimeStamp(mm[0]), end = parseTimeStamp(mm[1]);
+      var body = lines.slice(ti + 1).join("\n");
+      if (isFinite(start) && isFinite(end)) cues.push({ start: start, end: end, text: body });
+    }
+    return cues;
+  }
+  function parseSRT(text) {
+    var t = String(text).replace(/\r/g, "").replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, "$1.$2");
+    var cues = [], blocks = t.split("\n\n");
+    for (var i = 0; i < blocks.length; i++) {
+      var lines = blocks[i].split("\n").filter(function (l) { return l.trim() !== ""; });
+      var ti = lines.findIndex(function (l) { return l.indexOf("-->") >= 0; });
+      if (ti < 0) continue;
+      var mm = lines[ti].split("-->");
+      var start = parseTimeStamp(mm[0]), end = parseTimeStamp(mm[1]);
+      var body = lines.slice(ti + 1).join("\n");
+      if (isFinite(start) && isFinite(end)) cues.push({ start: start, end: end, text: body });
+    }
+    return cues;
+  }
+  function parseM3U(text) {
+    return String(text).replace(/\r/g, "").split("\n")
+      .map(function (l) { return l.trim(); })
+      .filter(function (l) { return l && l[0] !== "#"; });
+  }
+  function cueAt(cues, t) {
+    for (var i = 0; i < cues.length; i++) if (t >= cues[i].start && t < cues[i].end) return cues[i];
+    return null;
+  }
+  function stepSpeed(cur, dir) {
+    var ladder = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+    var i = 0, best = 0;
+    for (i = 1; i < ladder.length; i++) if (Math.abs(ladder[i] - cur) < Math.abs(ladder[best] - cur)) best = i;
+    best = Math.max(0, Math.min(ladder.length - 1, best + dir));
+    return ladder[best];
+  }
+  function shuffleOrder(n, rng) {
+    var a = [], i;
+    for (i = 0; i < n; i++) a.push(i);
+    rng = rng || Math.random;
+    for (i = n - 1; i > 0; i--) { var j = Math.floor(rng() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  var EQ_BANDS = [60, 170, 350, 1000, 3500, 10000];
+  var EQ_PRESETS = {
+    flat:     [0, 0, 0, 0, 0, 0],
+    bass:     [7, 5, 2, 0, -1, -2],
+    treble:   [-2, -1, 0, 1, 4, 6],
+    vocal:    [-2, 0, 3, 5, 3, 0],
+    loudness: [6, 4, 0, -2, 3, 5],
+    podcast:  [-4, -2, 2, 4, 3, 1]
+  };
+
+  /* ------------------------------------------------------------------ state */
+  var S = {
+    queue: [], index: -1, repeat: "off", shuffle: false, order: null,
+    cues: [], ccOn: false, ab: { a: null, b: null },
+    prefs: { volume: 1, rate: 1, theme: null, eq: "flat", gains: EQ_BANDS.map(function () { return 0; }) },
+    eqOn: false, vizOn: true, wake: null, chan: null, mediaSessionReady: false
+  };
+
+  function bridge() { return (W && W.darkith) ? W.darkith : null; }
+  function hasFn(n) { var b = bridge(); return !!(b && typeof b[n] === "function"); }
+  function $(sel) { try { return D ? D.querySelector(sel) : null; } catch (e) { return null; } }
+  function $id(id) { try { return D ? D.getElementById(id) : null; } catch (e) { return null; } }
+
+  var media = $id("media");
+  var stage = $id("stage");
+  var toastEl = $id("toast"), toastT = null;
+  function toast(msg) {
+    if (!toastEl) return;
+    toastEl.textContent = msg; toastEl.className = "on";
+    clearTimeout(toastT); toastT = setTimeout(function () { toastEl.className = ""; }, 2200);
+  }
+  function store(k, v) {
+    try {
+      if (W.localStorage) { if (v === undefined) { var r = W.localStorage.getItem(k); return r == null ? null : JSON.parse(r); } W.localStorage.setItem(k, JSON.stringify(v)); }
+    } catch (e) {}
+    return null;
+  }
+
+  /* ---------------------------------------------------------------- playlist */
+  function entryFromFile(file) {
+    var kind = kindOf(file.name, file.type);
+    return {
+      name: file.name, kind: kind, type: mimeFor(file.name, file.type), size: file.size,
+      file: file, url: null, src: null, added: Date.now()
+    };
+  }
+  function entryFromUrl(u, name) {
+    name = name || u.split(/[?#]/)[0].split("/").pop() || u;
+    return { name: name, kind: kindOf(name), type: mimeFor(name), size: null, file: null, url: u, src: null, added: Date.now() };
+  }
+  function ensureSrc(entry) {
+    if (entry.src) return entry.src;
+    if (entry.file) entry.src = URL.createObjectURL(entry.file);
+    else if (entry.url) entry.src = entry.url;
+    return entry.src;
+  }
+  function addEntries(list, autoplayFirst) {
+    var start = S.queue.length;
+    for (var i = 0; i < list.length; i++) {
+      var e = list[i];
+      if (e.kind === "subtitle") { loadSubtitleFromEntry(e); continue; }
+      if (e.kind === "playlist") { expandPlaylist(e); continue; }
+      S.queue.push(e);
+    }
+    render();
+    if (autoplayFirst && S.index < 0 && S.queue.length) playAt(0);
+    else if (S.index < 0 && S.queue.length) toast("added " + S.queue.length + " item(s)");
+    else toast("added " + (S.queue.length - start) + " item(s)");
+  }
+  function expandPlaylist(entry) {
+    if (!entry.file) { addEntries([entryFromUrl(entry.url, entry.name)]); return; }
+    var fr = new FileReader();
+    fr.onload = function () {
+      var urls = parseM3U(String(fr.result || ""));
+      var list = urls.map(function (u) { return entryFromUrl(u); });
+      if (list.length) addEntries(list); else toast("playlist empty");
+    };
+    fr.readAsText(entry.file);
+  }
+  function playAt(i) {
+    if (i < 0 || i >= S.queue.length) return;
+    S.index = i;
+    var e = S.queue[i];
+    if (!media) return;
+    media.src = ensureSrc(e);
+    media.load();
+    stage.className = stage.className.replace(/\bready\b/, "").trim() + " ready" + (e.kind === "audio" ? " audio" : "");
+    var p = media.play();
+    if (p && p.catch) p.catch(function (err) { toast("play blocked: " + (err && err.message ? err.message : err)); });
+    setSessionMeta(e);
+    render(); markMeta(e);
+  }
+  function next() {
+    if (!S.queue.length) return;
+    var order = S.shuffle && S.order ? S.order : null;
+    var pos = order ? order.indexOf(S.index) : S.index;
+    var np = pos + 1;
+    if (np >= S.queue.length) { if (S.repeat === "all") np = 0; else return; }
+    playAt(order ? order[np] : np);
+  }
+  function prev() {
+    if (!S.queue.length) return;
+    if (media && media.currentTime > 3) { media.currentTime = 0; return; }
+    var order = S.shuffle && S.order ? S.order : null;
+    var pos = order ? order.indexOf(S.index) : S.index;
+    var np = pos - 1;
+    if (np < 0) { if (S.repeat === "all") np = S.queue.length - 1; else np = 0; }
+    playAt(order ? order[np] : np);
+  }
+  function cycleRepeat() {
+    S.repeat = S.repeat === "off" ? "all" : (S.repeat === "all" ? "one" : "off");
+    var b = $id("repeatbadge"); if (b) b.textContent = "repeat " + S.repeat;
+    var r = $id("repeat"); if (r) r.setAttribute("aria-pressed", S.repeat !== "off" ? "true" : "false");
+    toast("repeat " + S.repeat);
+  }
+  function toggleShuffle() {
+    S.shuffle = !S.shuffle;
+    S.order = S.shuffle ? shuffleOrder(S.queue.length) : null;
+    var s = $id("shuffle"); if (s) s.setAttribute("aria-pressed", S.shuffle ? "true" : "false");
+    toast("shuffle " + (S.shuffle ? "on" : "off"));
+  }
+
+  /* -------------------------------------------------------------- subtitles */
+  function loadSubtitleFromEntry(entry) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      var txt = String(fr.result || "");
+      S.cues = /-->/.test(txt) && /^\s*WEBVTT/m.test(txt) ? parseVTT(txt) : (parseSRT(txt).length ? parseSRT(txt) : parseVTT(txt));
+      S.ccOn = true;
+      var cc = $id("cc"); if (cc) cc.setAttribute("aria-pressed", "true");
+      toast("captions loaded (" + S.cues.length + " cues)");
+      updateCC();
+    };
+    fr.readAsText(entry.file);
+  }
+  function updateCC() {
+    var box = $id("ccbox"); if (!box) return;
+    if (!S.ccOn || !media || !S.cues.length) { box.className = ""; box.textContent = ""; return; }
+    var cue = cueAt(S.cues, media.currentTime);
+    if (cue) { box.textContent = cue.text; box.className = "on"; } else { box.className = ""; box.textContent = ""; }
+  }
+
+  /* ------------------------------------------------------------- web audio */
+  var A = { ctx: null, src: null, analyser: null, filters: [], data: null, raf: 0 };
+  function audioGraph() {
+    if (A.ctx || !media) return A.ctx;
+    var AC = W.AudioContext || W.webkitAudioContext;
+    if (!AC) return null;
+    try {
+      A.ctx = new AC();
+      A.src = A.ctx.createMediaElementSource(media);
+      A.analyser = A.ctx.createAnalyser(); A.analyser.fftSize = 1024;
+      A.data = new Uint8Array(A.analyser.frequencyBinCount);
+      var node = A.src;
+      for (var i = 0; i < EQ_BANDS.length; i++) {
+        var f = A.ctx.createBiquadFilter();
+        f.type = i === 0 ? "lowshelf" : (i === EQ_BANDS.length - 1 ? "highshelf" : "peaking");
+        f.frequency.value = EQ_BANDS[i]; f.gain.value = S.prefs.gains[i] || 0; f.Q.value = 0.9;
+        node.connect(f); node = f; A.filters.push(f);
+      }
+      node.connect(A.analyser); A.analyser.connect(A.ctx.destination);
+    } catch (e) { A.ctx = null; return null; }
+    return A.ctx;
+  }
+  function applyGains() {
+    for (var i = 0; i < A.filters.length; i++) A.filters[i].gain.value = S.prefs.gains[i] || 0;
+  }
+  function drawViz() {
+    var cv = $id("viz");
+    if (!cv) { A.raf = 0; return; }
+    var g = cv.getContext("2d");
+    if (!g) { A.raf = 0; return; }
+    A.raf = 0;
+    function frame() {
+      if (!S.vizOn || !A.analyser) { g.clearRect(0, 0, cv.width, cv.height); return; }
+      A.analyser.getByteFrequencyData(A.data);
+      g.clearRect(0, 0, cv.width, cv.height);
+      var w = cv.width, h = cv.height, n = 64, bw = w / n;
+      for (var i = 0; i < n; i++) {
+        var v = A.data[Math.floor(i * A.data.length / n)] / 255;
+        var bh = Math.max(2, v * h);
+        var grd = g.createLinearGradient(0, h - bh, 0, h);
+        grd.addColorStop(0, "rgba(255,138,61,.95)"); grd.addColorStop(1, "rgba(255,77,109,.35)");
+        g.fillStyle = grd; g.fillRect(i * bw + 1, h - bh, bw - 2, bh);
+      }
+      A.raf = W.requestAnimationFrame ? W.requestAnimationFrame(frame) : 0;
+    }
+    if (W.requestAnimationFrame) A.raf = W.requestAnimationFrame(frame);
+  }
+  function setEqPreset(name) {
+    if (!EQ_PRESETS[name]) return;
+    S.prefs.eq = name; S.prefs.gains = EQ_PRESETS[name].slice();
+    var bands = document.querySelectorAll ? document.querySelectorAll(".band input") : [];
+    for (var i = 0; i < bands.length; i++) bands[i].value = S.prefs.gains[i];
+    audioGraph(); applyGains(); savePrefs();
+    toast("eq " + name);
+  }
+
+  /* ---------------------------------------------------------------- session */
+  function setSessionMeta(entry) {
+    if (!("mediaSession" in (W.navigator || {}))) return;
+    try {
+      var art = entry.kind === "audio" ? [{ src: "", sizes: "512x512", type: "image/png" }] : undefined;
+      W.navigator.mediaSession.metadata = new W.MediaMetadata({
+        title: entry.name, artist: "DARKITH Ω", album: entry.kind, artwork: art
+      });
+      S.mediaSessionReady = true;
+    } catch (e) {}
+  }
+  function bindSession() {
+    var ms = W.navigator && W.navigator.mediaSession;
+    if (!ms || !ms.setActionHandler) return;
+    try {
+      ms.setActionHandler("play", function () { media.play(); });
+      ms.setActionHandler("pause", function () { media.pause(); });
+      ms.setActionHandler("previoustrack", prev);
+      ms.setActionHandler("nexttrack", next);
+      ms.setActionHandler("seekbackward", function () { media.currentTime = Math.max(0, media.currentTime - 10); });
+      ms.setActionHandler("seekforward", function () { media.currentTime = Math.min(media.duration || 1e9, media.currentTime + 10); });
+      ms.setActionHandler("seekto", function (d) { if (d && d.seekTime != null) media.currentTime = d.seekTime; });
+      ms.setActionHandler("stop", function () { media.pause(); media.currentTime = 0; });
+    } catch (e) {}
+  }
+  function setSessionState(state) {
+    var ms = W.navigator && W.navigator.mediaSession;
+    if (ms && "playbackState" in ms) { try { ms.playbackState = state; } catch (e) {} }
+  }
+
+  /* ------------------------------------------------------------- wake lock */
+  function wakeOn() {
+    if (!(W.navigator && W.navigator.wakeLock) || S.wake) return;
+    try {
+      W.navigator.wakeLock.request("screen").then(function (s) {
+        S.wake = s;
+        s.addEventListener("release", function () { S.wake = null; });
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  function wakeOff() { if (S.wake) { try { S.wake.release(); } catch (e) {} S.wake = null; } }
+
+  /* ------------------------------------------------------------ cross-tab */
+  function chanInit() {
+    if (!("BroadcastChannel" in W)) return;
+    try {
+      S.chan = new W.BroadcastChannel("darkith-media");
+      S.chan.onmessage = function (ev) {
+        var m = ev.data || {};
+        if (m.t === "ping" && media && media.src) { S.chan.postMessage({ t: "pong", src: currentKey(), time: media.currentTime, playing: !media.paused }); }
+        if (m.t === "pong" && media && !media.src && m.src) { toast("another tab is playing " + (m.src.split("/").pop() || "media")); }
+      };
+    } catch (e) { S.chan = null; }
+  }
+  function currentKey() { var e = S.queue[S.index]; return e ? (e.name || e.url || "") : ""; }
+  function chanPing() { if (S.chan) { try { S.chan.postMessage({ t: "ping" }); } catch (e) {} } }
+
+  /* ------------------------------------------------------------------- pip */
+  function pipOn() {
+    if (!media || !media.requestPictureInPicture) { toast("picture-in-picture not supported"); return; }
+    if (D && D.pictureInPictureElement) { D.exitPictureInPicture(); return; }
+    media.requestPictureInPicture().catch(function () { toast("pip unavailable for this stream"); });
+  }
+  function castOn() {
+    var rp = media && media.remote;
+    if (!rp || !rp.prompt) { toast("no remote playback target"); return; }
+    rp.prompt().catch(function () { toast("cast cancelled or unsupported"); });
+  }
+
+  /* ------------------------------------------------------------------- ui */
+  function render() {
+    var q = $id("qlist");
+    if (q) {
+      var html = "";
+      for (var i = 0; i < S.queue.length; i++) {
+        var e = S.queue[i];
+        html += '<div class="row" data-i="' + i + '" aria-current="' + (i === S.index ? "true" : "false") + '">'
+          + '<span class="badge">' + e.kind.slice(0, 3) + '</span>'
+          + '<span class="nm">' + esc(e.name) + '</span>'
+          + '<span class="mt">' + (e.size ? fmtBytes(e.size) : (e.url ? "url" : "—")) + '</span>'
+          + '<span class="x" data-x="' + i + '">✕</span></div>';
+      }
+      q.innerHTML = html || '<div class="row" style="cursor:default;color:var(--dim)">queue empty — add media</div>';
+    }
+    var cq = $id("c-queue"); if (cq) cq.textContent = String(S.queue.length);
+    var ck = $id("c-kind"); if (ck) ck.textContent = S.index >= 0 && S.queue[S.index] ? S.queue[S.index].kind : "idle";
+    var cr = $id("c-rate"); if (cr) cr.textContent = (S.prefs.rate).toFixed(2).replace(/0$/, "") + "×";
+  }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; }); }
+  function markMeta(e) {
+    var set = function (id, v) { var n = $id(id); if (n) n.textContent = v == null || v === "" ? "—" : v; };
+    set("m-name", e.name); set("m-kind", e.kind); set("m-type", e.type || "(unknown)");
+    set("m-size", e.size ? fmtBytes(e.size) : (e.url ? "stream" : "—"));
+    set("m-state", "loading"); set("m-sha", "…");
+    if (e.file && W.crypto && W.crypto.subtle && W.FileReader) {
+      var fr = new FileReader();
+      fr.onload = function () {
+        W.crypto.subtle.digest("SHA-256", fr.result).then(function (buf) {
+          var b = new Uint8Array(buf), h = "";
+          for (var i = 0; i < b.length; i++) h += ("0" + b[i].toString(16)).slice(-2);
+          set("m-sha", h.slice(0, 24) + "…");
+        }).catch(function () { set("m-sha", "(unavailable)"); });
+      };
+      fr.readAsArrayBuffer(e.file.slice(0, 4 * 1024 * 1024));
+    } else set("m-sha", "(no file)");
+  }
+  function updateTime() {
+    if (!media) return;
+    var cur = $id("tcur"), dur = $id("tdur"), seek = $id("seek");
+    var t = media.currentTime || 0, d = media.duration;
+    if (cur) cur.textContent = fmtTime(t);
+    if (dur) dur.textContent = isFinite(d) ? fmtTime(d) : "live";
+    if (seek && isFinite(d) && d > 0 && !seek._dragging) seek.value = String(Math.round(t / d * 1000));
+    if (S.ab.a != null && S.ab.b != null && t >= S.ab.b) { media.currentTime = S.ab.a; }
+    updateCC();
+  }
+  function savePrefs() { store("darkith.media.prefs", S.prefs); }
+  function loadPrefs() {
+    var p = store("darkith.media.prefs");
+    if (p && typeof p === "object") {
+      if (typeof p.volume === "number") S.prefs.volume = p.volume;
+      if (typeof p.rate === "number") S.prefs.rate = p.rate;
+      if (p.eq) S.prefs.eq = p.eq;
+      if (Array.isArray(p.gains) && p.gains.length === EQ_BANDS.length) S.prefs.gains = p.gains;
+    }
+  }
+
+  function seekBy(d) { if (media) media.currentTime = Math.max(0, Math.min((media.duration || 1e9), media.currentTime + d)); }
+  function frameStep(dir) {
+    if (!media) return;
+    media.pause();
+    var fps = 30;
+    media.currentTime = Math.max(0, media.currentTime + dir / fps);
+    toast("frame " + (dir > 0 ? "→" : "←"));
+  }
+  function screenshot() {
+    if (!media || !media.videoWidth) { toast("no video frame to save"); return; }
+    try {
+      var c = document.createElement("canvas");
+      c.width = media.videoWidth; c.height = media.videoHeight;
+      c.getContext("2d").drawImage(media, 0, 0, c.width, c.height);
+      c.toBlob(function (b) {
+        if (!b) { toast("frame capture blocked (cross-origin)"); return; }
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(b);
+        a.download = (S.queue[S.index] ? S.queue[S.index].name.replace(/\.[^.]+$/, "") : "frame") + "@" + fmtTime(media.currentTime).replace(/:/g, "-") + ".png";
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        toast("frame saved");
+      }, "image/png");
+    } catch (e) { toast("frame capture blocked"); }
+  }
+  function fullscreen() {
+    var el = stage || (media || {});
+    if (D && D.fullscreenElement) { D.exitFullscreen(); return; }
+    var fn = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (fn) fn.call(el).catch(function () {});
+    else toast("fullscreen not supported");
+  }
+  function addMark() {
+    if (!media || !isFinite(media.duration)) { toast("nothing to mark yet"); return; }
+    var e = S.queue[S.index]; if (!e) return;
+    var key = "darkith.media.marks." + (e.name || e.url);
+    var marks = store(key) || [];
+    marks.push({ t: media.currentTime, label: "mark " + marks.length, at: Date.now() });
+    marks.sort(function (a, b) { return a.t - b.t; });
+    store(key, marks);
+    renderMarks();
+    toast("marked " + fmtTime(media.currentTime));
+  }
+  function renderMarks() {
+    var box = $id("mlist"); if (!box) return;
+    var e = S.queue[S.index];
+    var marks = e ? (store("darkith.media.marks." + (e.name || e.url)) || []) : [];
+    var html = "";
+    for (var i = 0; i < marks.length; i++) {
+      html += '<div class="row" data-mt="' + marks[i].t + '"><span class="mt">' + fmtTime(marks[i].t) + '</span>'
+        + '<span class="nm">' + esc(marks[i].label) + '</span><span class="x" data-mx="' + i + '">✕</span></div>';
+    }
+    box.innerHTML = html || '<div class="row" style="cursor:default;color:var(--dim)">no bookmarks</div>';
+    var n = $id("marknote"); if (n) n.textContent = marks.length ? marks.length + " mark(s)" : "none";
+  }
+
+  /* ------------------------------------------------------- device coupling */
+  function browseDevice() {
+    if (!hasFn("fileList")) { toast("no device bridge — install the host app"); return; }
+    try {
+      var raw = bridge().fileList("/sdcard");
+      var list = JSON.parse(raw || "[]");
+      if (list && list.length && typeof list[0] === "object") list = list.map(function (x) { return x.path || x.name || String(x); });
+      var media_ = list.filter(function (p) { return isPlayable(kindOf(p)); });
+      if (!media_.length) { toast("no media found under /sdcard"); return; }
+      addEntries(media_.map(function (p) { return entryFromUrl(p, String(p).split("/").pop()); }));
+      toast("queued " + media_.length + " file(s) from device");
+    } catch (e) { toast("device browse failed: " + e.message); }
+  }
+
+  /* --------------------------------------------------------------- wiring */
+  function bindControls() {
+    function on(id, ev, fn) { var n = $id(id); if (n) n.addEventListener(ev, fn); }
+    on("play", "click", togglePlay);
+    on("prev", "click", prev);
+    on("next", "click", next);
+    on("back", "click", function () { seekBy(-5); });
+    on("fwd", "click", function () { seekBy(5); });
+    on("mute", "click", toggleMute);
+    on("fs", "click", fullscreen);
+    on("pip", "click", pipOn);
+    on("cast", "click", castOn);
+    on("shot", "click", screenshot);
+    on("repeat", "click", cycleRepeat);
+    on("shuffle", "click", toggleShuffle);
+    on("ab", "click", cycleAB);
+    on("cc", "click", toggleCC);
+    on("eqbtn", "click", toggleEq);
+    on("vizbtn", "click", toggleViz);
+    on("clearlist", "click", function () { S.queue = []; S.index = -1; if (media) { media.removeAttribute("src"); media.load(); } render(); });
+    on("addmark", "click", addMark);
+    on("pick", "click", function () { var f = $id("file"); if (f) f.click(); });
+    on("pickdir", "click", function () { var f = $id("dir"); if (f) f.click(); });
+    on("browse", "click", browseDevice);
+
+    on("file", "change", function (ev) { addEntries(Array.prototype.map.call(ev.target.files || [], entryFromFile), true); ev.target.value = ""; });
+    on("dir", "change", function (ev) { addEntries(Array.prototype.map.call(ev.target.files || [], entryFromFile), true); ev.target.value = ""; });
+    on("urladd", "click", function () { var i = $id("urlin"); if (i && i.value.trim()) { addEntries([entryFromUrl(i.value.trim())], S.index < 0); i.value = ""; } });
+    on("urlin", "keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); var b = $id("urladd"); if (b) b.click(); } });
+
+    on("seek", "input", function (ev) { ev.target._dragging = true; if (media && isFinite(media.duration)) { var t = media.duration * ev.target.value / 1000; var c = $id("tcur"); if (c) c.textContent = fmtTime(t); } });
+    on("seek", "change", function (ev) { ev.target._dragging = false; if (media && isFinite(media.duration)) media.currentTime = media.duration * ev.target.value / 1000; });
+    on("vol", "input", function (ev) { setVolume(ev.target.value / 100); });
+    on("rate", "change", function (ev) { setRate(parseFloat(ev.target.value)); });
+
+    var ql = $id("qlist");
+    if (ql) ql.addEventListener("click", function (ev) {
+      var x = ev.target.getAttribute && ev.target.getAttribute("data-x");
+      if (x != null) { S.queue.splice(parseInt(x, 10), 1); if (S.index >= S.queue.length) S.index = S.queue.length - 1; render(); return; }
+      var row = ev.target.closest ? ev.target.closest(".row") : null;
+      if (row && row.getAttribute("data-i") != null) playAt(parseInt(row.getAttribute("data-i"), 10));
+    });
+    var ml = $id("mlist");
+    if (ml) ml.addEventListener("click", function (ev) {
+      var x = ev.target.getAttribute && ev.target.getAttribute("data-mx");
+      var e = S.queue[S.index];
+      if (x != null && e) {
+        var key = "darkith.media.marks." + (e.name || e.url);
+        var marks = store(key) || []; marks.splice(parseInt(x, 10), 1); store(key, marks); renderMarks(); return;
+      }
+      var row = ev.target.closest ? ev.target.closest(".row") : null;
+      if (row && row.getAttribute("data-mt") != null && media) media.currentTime = parseFloat(row.getAttribute("data-mt"));
+    });
+
+    if (D) {
+      D.addEventListener("dragover", function (e) { e.preventDefault(); var d = $id("drop"); if (d) d.className = "on"; });
+      D.addEventListener("dragleave", function (e) { if (e.target === D.body) { var d = $id("drop"); if (d) d.className = ""; } });
+      D.addEventListener("drop", function (e) {
+        e.preventDefault(); var d = $id("drop"); if (d) d.className = "";
+        var files = e.dataTransfer && e.dataTransfer.files ? Array.prototype.slice.call(e.dataTransfer.files) : [];
+        if (files.length) addEntries(files.map(entryFromFile), true);
+      });
+      D.addEventListener("paste", function (e) {
+        var items = (e.clipboardData && e.clipboardData.items) || [];
+        var files = [];
+        for (var i = 0; i < items.length; i++) if (items[i].kind === "file") { var f = items[i].getAsFile(); if (f) files.push(f); }
+        if (files.length) { addEntries(files.map(entryFromFile), true); toast("pasted " + files.length + " file(s)"); }
+      });
+      D.addEventListener("keydown", onKey);
+      D.addEventListener("fullscreenchange", function () {});
+    }
+    if (W) W.addEventListener("resize", function () {});
+  }
+  function onKey(e) {
+    var t = e.target, tag = (t && t.tagName) || "";
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    switch (e.key) {
+      case " ": e.preventDefault(); togglePlay(); break;
+      case "ArrowLeft": seekBy(-5); break;
+      case "ArrowRight": seekBy(5); break;
+      case "j": case "J": seekBy(-10); break;
+      case "l": case "L": seekBy(10); break;
+      case ",": frameStep(-1); break;
+      case ".": frameStep(1); break;
+      case "[": setRate(stepSpeed(S.prefs.rate, -1)); break;
+      case "]": setRate(stepSpeed(S.prefs.rate, 1)); break;
+      case "m": case "M": toggleMute(); break;
+      case "f": case "F": fullscreen(); break;
+      case "p": case "P": pipOn(); break;
+      case "c": case "C": toggleCC(); break;
+      case "v": case "V": toggleViz(); break;
+      case "e": case "E": toggleEq(); break;
+      case "n": case "N": next(); break;
+      case "b": case "B": prev(); break;
+    }
+  }
+  function togglePlay() { if (!media) return; if (media.paused) { media.play().catch(function () {}); } else media.pause(); }
+  function toggleMute() { if (!media) return; media.muted = !media.muted; var m = $id("mute"); if (m) m.setAttribute("aria-pressed", media.muted ? "true" : "false"); }
+  function setVolume(v) { if (!media) return; media.volume = Math.max(0, Math.min(1, v)); S.prefs.volume = media.volume; var s = $id("vol"); if (s) s.value = String(Math.round(media.volume * 100)); savePrefs(); }
+  function setRate(r) { S.prefs.rate = r; if (media) media.playbackRate = r; var s = $id("rate"); if (s) s.value = String(r); render(); savePrefs(); }
+  function toggleCC() { S.ccOn = !S.ccOn; var c = $id("cc"); if (c) c.setAttribute("aria-pressed", S.ccOn ? "true" : "false"); updateCC(); if (!S.cues.length && S.ccOn) toast("no captions loaded — drop a .vtt/.srt"); }
+  function toggleViz() { S.vizOn = !S.vizOn; var v = $id("vizbtn"); if (v) v.setAttribute("aria-pressed", S.vizOn ? "true" : "false"); if (S.vizOn) { audioGraph(); drawViz(); } }
+  function toggleEq() {
+    S.eqOn = !S.eqOn;
+    var p = $id("eq"); if (p) p.className = S.eqOn ? "on" : "";
+    var b = $id("eqbtn"); if (b) b.setAttribute("aria-pressed", S.eqOn ? "true" : "false");
+    if (S.eqOn) { if (!audioGraph()) toast("web audio unavailable — eq inert"); }
+  }
+  function cycleAB() {
+    if (!media) return;
+    if (S.ab.a == null) { S.ab.a = media.currentTime; toast("A = " + fmtTime(S.ab.a)); }
+    else if (S.ab.b == null) { S.ab.b = media.currentTime; if (S.ab.b <= S.ab.a) { S.ab.b = null; toast("B must follow A"); } else toast("A–B loop " + fmtTime(S.ab.a) + "→" + fmtTime(S.ab.b)); }
+    else { S.ab.a = S.ab.b = null; toast("A–B cleared"); }
+    var ab = $id("ab"); if (ab) ab.setAttribute("aria-pressed", (S.ab.a != null) ? "true" : "false");
+  }
+
+  function buildEq() {
+    var p = $id("eq");
+    if (!p) return;
+    var html = '<div class="eqrow">preset';
+    html += '<select class="mini" id="eqpreset">' + Object.keys(EQ_PRESETS).map(function (k) { return '<option value="' + k + '">' + k + '</option>'; }).join("") + '</select>';
+    html += '<button class="ic" id="eqreset" title="Reset">↺</button></div><div class="bands">';
+    for (var i = 0; i < EQ_BANDS.length; i++) {
+      var hz = EQ_BANDS[i] >= 1000 ? (EQ_BANDS[i] / 1000) + "k" : EQ_BANDS[i];
+      html += '<div class="band"><b id="eqv' + i + '">' + (S.prefs.gains[i] > 0 ? "+" : "") + S.prefs.gains[i] + '</b>'
+        + '<input type="range" min="-12" max="12" step="1" value="' + S.prefs.gains[i] + '" data-b="' + i + '" aria-label="' + hz + ' Hz">'
+        + '<span>' + hz + '</span></div>';
+    }
+    html += '</div>';
+    p.innerHTML = html;
+    var inputs = p.querySelectorAll("input[data-b]");
+    for (var j = 0; j < inputs.length; j++) {
+      inputs[j].addEventListener("input", function (ev) {
+        var b = parseInt(ev.target.getAttribute("data-b"), 10);
+        S.prefs.gains[b] = parseFloat(ev.target.value);
+        var lbl = $id("eqv" + b); if (lbl) lbl.textContent = (S.prefs.gains[b] > 0 ? "+" : "") + S.prefs.gains[b];
+        audioGraph(); applyGains(); savePrefs();
+      });
+    }
+    var sel = p.querySelector("#eqpreset");
+    if (sel) { sel.value = S.prefs.eq; sel.addEventListener("change", function (ev) { setEqPreset(ev.target.value); }); }
+    var rst = p.querySelector("#eqreset");
+    if (rst) rst.addEventListener("click", function () { setEqPreset("flat"); });
+  }
+
+  function bindMediaEvents() {
+    if (!media) return;
+    media.addEventListener("timeupdate", updateTime);
+    media.addEventListener("durationchange", updateTime);
+    media.addEventListener("loadedmetadata", function () {
+      updateTime();
+      var st = $id("m-state"); if (st) st.textContent = "ready";
+      if (media.videoWidth && stage) stage.className = stage.className.replace(/\baudio\b/, "").trim();
+      renderMarks();
+    });
+    media.addEventListener("play", function () { var p = $id("play"); if (p) p.textContent = "❚❚"; setSessionState("playing"); wakeOn(); audioGraph(); if (S.vizOn) drawViz(); });
+    media.addEventListener("pause", function () { var p = $id("play"); if (p) p.textContent = "▶"; setSessionState("paused"); wakeOff(); });
+    media.addEventListener("ended", function () {
+      setSessionState("none");
+      if (S.repeat === "one") { media.currentTime = 0; media.play().catch(function () {}); return; }
+      next();
+    });
+    media.addEventListener("waiting", function () { var st = $id("m-state"); if (st) st.textContent = "buffering"; });
+    media.addEventListener("playing", function () { var st = $id("m-state"); if (st) st.textContent = "playing"; });
+    media.addEventListener("error", function () {
+      var st = $id("m-state"); if (st) st.textContent = "error";
+      var e = media.error;
+      toast("cannot decode: " + (e && e.code ? "code " + e.code : "unknown") + " — try another container");
+    });
+    media.addEventListener("volumechange", function () { var s = $id("vol"); if (s && !s._dragging) s.value = String(Math.round(media.volume * 100)); });
+    media.addEventListener("ratechange", function () { var s = $id("rate"); if (s) s.value = String(media.playbackRate); });
+  }
+
+  function updateChips() {
+    var b = bridge();
+    var d = $id("d-bridge"); if (d) d.className = "dot " + (b ? "on" : "off");
+    var p = $id("d-pip"); if (p) p.className = "dot " + ((media && media.requestPictureInPicture) ? "on" : "off");
+    var c = $id("d-cast"); if (c) c.className = "dot " + ((media && media.remote && media.remote.prompt) ? "on" : "off");
+    var m = $id("d-media"); if (m) m.className = "dot " + (S.queue.length ? "on" : "");
+  }
+
+  function boot() {
+    loadPrefs();
+    buildEq();
+    bindControls();
+    bindMediaEvents();
+    bindSession();
+    chanInit();
+    if (media) { media.volume = S.prefs.volume; media.playbackRate = S.prefs.rate; }
+    var vs = $id("vol"); if (vs) vs.value = String(Math.round(S.prefs.volume * 100));
+    var rs = $id("rate"); if (rs) rs.value = String(S.prefs.rate);
+    render(); renderMarks(); updateChips(); updateTime();
+    chanPing();
+    if (W.setInterval) W.setInterval(updateChips, 4000);
+  }
+
+  /* ----------------------------------------------------------------- export */
+  var API = {
+    version: "1.0",
+    fmtTime: fmtTime, parseTime: parseTime, fmtBytes: fmtBytes, parseTimeStamp: parseTimeStamp,
+    parseVTT: parseVTT, parseSRT: parseSRT, parseM3U: parseM3U, cueAt: cueAt,
+    kindOf: kindOf, mimeFor: mimeFor, extOf: extOf, isPlayable: isPlayable,
+    stepSpeed: stepSpeed, shuffleOrder: shuffleOrder, EQ_BANDS: EQ_BANDS, EQ_PRESETS: EQ_PRESETS,
+    state: S, addEntries: addEntries, playAt: playAt, next: next, prev: prev,
+    seekBy: seekBy, setRate: setRate, setVolume: setVolume, screenshot: screenshot,
+    browseDevice: browseDevice, toast: toast, render: render,
+    _boot: boot
+  };
+  W.DarkithMedia = API;
+
+  try { if (D && D.readyState === "loading") D.addEventListener("DOMContentLoaded", boot); else boot(); }
+  catch (e) { try { console.error("media boot failed", e); } catch (_) {} }
+})();
+</script>
+</body>
+</html>

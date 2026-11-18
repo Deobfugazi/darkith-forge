@@ -1,12 +1,12 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 42,
+  "count": 43,
   "files": [
     {
-      "bytes": 41600,
+      "bytes": 42508,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "0263f4013a36190faad3b015dfcb0d345af9a63eaa42a0fc9e0cd43f5510e401"
+      "sha256": "c00f5348de958833e618470918885fa401cc82df391e3e5ebd0732ef2b8324bb"
     },
     {
       "bytes": 65141,
@@ -141,6 +141,12 @@
       "sha256": "882eeb3e7d7ba67dd07497169f5519ad8246ecf8e262989c4ec15d3296f7f806"
     },
     {
+      "bytes": 52702,
+      "path": "darkith-omega-media-player.html",
+      "register": "C-skillbase",
+      "sha256": "9cf42432303b06c0d537c1d56d66f8e32245bfcca955576670bb55ed38f7f6ea"
+    },
+    {
       "bytes": 64437,
       "path": "icon_forge.html",
       "register": "C-skillbase",
@@ -207,10 +213,10 @@
       "sha256": "eb65d81efeb4c4b24e0ca38bd23dcf6e3260ecac0d21fadf8cea0a991365d1e0"
     },
     {
-      "bytes": 2457,
+      "bytes": 2819,
       "path": "proof/comment_premise_check.txt",
       "register": "E-evidence",
-      "sha256": "19e0779e4bf847ca1a505514afe14e6e3ec21c8ac12d0d1ea5aa5806ed6548a7"
+      "sha256": "473e39ef6a5b588dc9a9463352395bb7772d4d20926e59a1b1ff18723adfa250"
     },
     {
       "bytes": 1003,
