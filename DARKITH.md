@@ -51,8 +51,8 @@ unknowable. This build declares its version and can report it.
 
 Delta in **1.1.0-omega (code 2)**:
 
-- **Reconciled singularity tree** — 54 `.kt` from the `delivery` superset; 6 divergent files
-  resolved; 3 delivery-only files included. (See `RECONCILIATION.md`.)
+- **Reconciled singularity tree** — 55 `.kt`: the 54-file fork union (6 divergent files
+  resolved, 3 delivery-only files included) plus the authored `core/IRAuditor.kt`. (See Part 2.)
 - **W-034 Phantom Activity fixed** — `MainActivity`/`HomekeeperActivity` now `import android.app.Activity`
   (this alone closed ~90 compile errors).
 - **All AndroidX stripped** — `registerForActivityResult`/`ContextCompat`/`ActivityCompat`/`FileProvider`
@@ -70,7 +70,7 @@ Delta in **1.1.0-omega (code 2)**:
 ## The gates (why this cannot silently recur)
 
 - `tools/fork_integrity_gate.sh` — §19 laws (one tree, no foreign symbol, inputs versioned, compile clean).
-- `tools/delivery_gate.sh` — 14 named loophole checks; refuses to say DELIVERED while any is open.
+- `tools/delivery_gate.sh` — 19 named loophole checks; refuses to say DELIVERED while any is open.
 - `tools/bridge_contract_audit.py` — UI↔bridge method contract.
 
 Run before every delivery:
@@ -90,7 +90,7 @@ in the repository. It compiles clean (proven below). This is the copy that was m
 ## Proof of compilation (real compiler, real android.jar — not a grep)
 
 ```
-kotlinc 1.9.24  -cp android-all-14.jar:apksig-8.1.1.jar:R-classes  -d out  <54 .kt files>
+kotlinc 1.9.24  -cp android-all-14.jar:apksig-8.1.1.jar:R-classes  -d out  <55 .kt files>
 KOTLINC EXIT=0   errors=0   classes=166
 ```
 
@@ -102,7 +102,12 @@ KOTLINC EXIT=0   errors=0   classes=166
 
 ## The fork matrix (what was reconciled)
 
-54 Kotlin files exist across 6 forks. Only 6 files diverged:
+54 Kotlin files existed across 6 forks (the authored `core/IRAuditor.kt` brings the tree to 55).
+Only 6 files diverged in that 6-fork union:
+
+> This is the union reconciliation (6 forks). A later, separate measurement of `tree` vs
+> `tree_omega` (3 trees) found 11 divergent files of 50 common — see AGENTS.md §24 and
+> `proof/FIELD_REPORT_THIS_TAB.md`. The two counts measure different fork sets.
 
 | file | broken forks | fixed forks |
 |---|---|---|
@@ -152,7 +157,7 @@ lacked. This tree = delivery ∪ (the parts of working_tree that were strictly n
 
 ## What is real vs. what is authored
 
-- **Real (from the repo, byte-for-byte):** all 54 `.kt` files, `libaapt2.so` / `libzipalign.so`,
+- **Real (from the repo, byte-for-byte):** all 55 `.kt` files, `libaapt2.so` / `libzipalign.so`,
   the HTML/JS studio (`homekeeper.html`, `darkith_ui.html`, `savf.html`, `darkterm.js`,
   `darktools.js`), and `build.sh`.
 - **Authored here (was missing everywhere):** `AndroidManifest.xml`, `res/`, the asset layout,
@@ -175,7 +180,7 @@ bash build.sh . Darkith com.darkith.transliaison
   repo (and `release_key` must never be committed — keep it on `/sdcard/Darkith/`).
 - `IRAuditor` is a minimal, correct structural auditor; extend it as the pathologies are named.
 
-## The laws this tree obeys (§19 of the continuum)
+## The laws this tree obeys (§19 — the anti-divergence laws)
 
 This reconciliation is the executable form of the anti-divergence laws:
 
@@ -226,7 +231,7 @@ It held 5 items; the first was `in_progress`, the rest `todo`. It was never carr
 | A4 | Verify: Kotlin-aware parse + brace/string balance | **DONE** | real kotlinc 1.9.24, 0 errors |
 | A5 | Close the contract + log proof (audit until MISSING==NONE; fix dashboard `ms[]`) | **DONE** | MISSING=NONE; dashboard 39/39; proofs logged |
 
-## B. OPEN DEFICITS (named in RECONCILIATION.md)
+## B. OPEN DEFICITS (from the reconciliation; see Part 3)
 
 | # | deficit | status |
 |---|---|---|
@@ -268,9 +273,9 @@ legitimately headless: `version`, `apkVersion`, `storageGranted`, `browserClose`
 
 | # | mechanism | what it stops |
 |---|---|---|
-| F1 | `tools/delivery_gate.sh` — 11 named loophole checks; refuses "delivered" while any is open | blind delivery (W-041) |
+| F1 | `tools/delivery_gate.sh` — 19 named loophole checks; refuses "delivered" while any is open | blind delivery (W-041) |
 | F2 | `tools/fork_integrity_gate.sh` — §19 laws | decoupled silos / stale forks (W-036/37) |
-| F3 | `singularity_progressive_continuum.md` §19–§20 | laws as gates, not notes |
+| F3 | `DARKITH.md` §19–§20 (the laws, merged from the continuum) | laws as gates, not notes |
 | F4 | `AGENTS.md` §19/§20 | carried into every future session |
 | F5 | **this ledger + the live task tracker** | task discard / amnesia (the thing you are angry about) |
 
@@ -551,6 +556,14 @@ L-08 bridge-contract        UI<->bridge contract complete (W-023 tool, corrected
 L-09 asset-parity           every tree asset ships inside the APK (W-039)
 L-10 currency               the tree compiles clean vs a real android.jar (W-024)
 L-11 registry-nonempty      the gate itself has checks (a gate with none gates nothing)
+L-12 one-surface            ONE hub page lists every artifact as a forced download (NEVER #15)
+L-13 no-doc-dup             the docs DARKITH.md replaces do not exist anywhere (NEVER #16)
+L-14 family-whole           the shell* method family is whole in the dex, not partial (SPI-19)
+L-15 signer-identity        the APK is signed by the expected identity, not a debug key
+L-16 arsc-stored            resources.arsc is STORED, not DEFLATED (install blocker)
+L-17 native-tools           the staged native tools close their shared-lib deps
+L-18 install-gate           the package installer accepts the APK (no "App not installed")
+L-19 runtime-render         the launcher surface actually PAINTS (0 JS errors)
 
 ─── NEVER #14 (ENUMERATE BEFORE DELIVERING) ───
 GATE: tools/delivery_gate.sh

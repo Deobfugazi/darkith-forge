@@ -226,8 +226,10 @@ if [ -n "$UI_ASSET" ] && [ -f "$RG" ] && python3 -c 'import playwright' >/dev/nu
   rm -f /tmp/rg.$$
 else rec L-19-runtime-render N/A "no launcher asset or playwright (render not proven here)"; fi
 
-# L-11 self-check: the registry is non-empty (a gate with no checks gates nothing)
-[ "${#NAME[@]}" -ge 18 ] && rec L-11-registry-nonempty CLOSED "${#NAME[@]} loophole checks" || rec L-11-registry-nonempty OPEN "registry empty"
+# L-11 self-check: the registry is non-empty (a gate with no checks gates nothing).
+# NAME holds the 18 checks recorded so far; this row makes the 19th.
+TOTAL=$(( ${#NAME[@]} + 1 ))
+[ "$TOTAL" -ge 19 ] && rec L-11-registry-nonempty CLOSED "$TOTAL loophole checks" || rec L-11-registry-nonempty OPEN "registry empty"
 
 echo "  #  loophole                      status  note"
 for i in "${!NAME[@]}"; do printf '  %-2s %-28s %-7s %s\n' "$((i+1))" "${NAME[$i]}" "${STATUS[$i]}" "${NOTE[$i]}"; done

@@ -16,9 +16,11 @@ darkith forge.html
 # ---- regenerated delivery output (rebuild with build/*.py) --------------
 delivery/
 dl/
+dist/
 darkith-forge-bundle.zip
 darkith_source_fixed.zip
 darkith_source_*.zip
+darkith_omega_source.zip
 savf1-bundle.zip
 darkith-inscriber.zip
 

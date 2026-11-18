@@ -63,8 +63,9 @@ catches that. An uncommitted edit is invisible to the other tab, so commit often
 - **Secrets never enter git.** The APK signing key (`release_key`/`release_cert`)
   lives only inside the built APK and in your offline backup. `.gitignore` blocks
   it; `tools/continuity.sh` re-checks before every push.
-- **Regenerable output stays out.** `delivery/`, `dl/`, `*.zip`, screenshots are
-  rebuilt by the `build/*.py` packagers — they are not committed.
+- **Regenerable output stays out.** `delivery/`, `dl/`, `dist/`, `*.zip`
+  (including `darkith_omega_source.zip`), screenshots are rebuilt by the
+  `build/*.py` / `tools/pack_delivery.py` packagers — they are not committed.
 
 ## 5. If a session is lost mid-work
 
@@ -97,5 +98,6 @@ curl -sL -o /tmp/apksig.jar \
   https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/8.1.1/apksig-8.1.1.jar
 ```
 
-`dist/` and `tools/` are committed; `dist/` holds built artifacts when a session
-produces one.
+`tools/` is committed. `dist/` is **generated and ignored** — it holds built
+artifacts when a session produces one (`tools/pack_delivery.py` rebuilds it),
+so it is never tracked (see §4).
