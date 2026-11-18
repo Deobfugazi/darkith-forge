@@ -49,6 +49,11 @@ The original defect was **not** a stripped `/*` opener. It was a mangled **close
 Kotlin lexer; `tools/fix_unclosed_comments.py` repairs only proven-unclosed lines.
 The working tree scans **0 defects**. Verify with `python3 tools/comment_audit.py`.
 
+CI now **enforces** this class (D-2c in `tools/ci.sh`): `kt_comment_scan.py --selftest`
+is the calibration, then the same lexer scans every tracked `.kt` and fails on any
+`UNCLOSED` or `ORPHAN_CLOSE` defect. A stripped opener (`sed` removing `/*`) is exactly
+an `ORPHAN_CLOSE`, so that failure mode can no longer reach the raw chain.
+
 ## Web studio (offline, no build step)
 - `savf.html` — SAVF universal audit engine (`window.SAVF`).
 - `app/src/main/assets/vendor/darkterm.js` — **DarkTerm**, a real POSIX-style shell in one

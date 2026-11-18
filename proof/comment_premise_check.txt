@@ -1,5 +1,5 @@
 === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) ===
-2026-11-17 20:56:55 UTC
+2026-11-19 00:06:31
 
 --- scanner self-test (parser correctness) ---
   [PASS] clean.kt: expected 0 defect(s), got 0 []
@@ -22,7 +22,7 @@ DarkithRuntimeHost.kt               5 /**                          CLEAN
 DarkithAlpineGuest.kt               5 /**                          CLEAN
 DarkithSolidityCompiler.kt          5 /**                          CLEAN
 HomekeeperBridge.kt               282 val rootP = root.canonicalPa CLEAN
-LayoutNode.kt                       3 /**                          CLEAN
+LayoutNode.kt                       3                              UNCLOSED
 TransliaisonEngine.kt               3 /**                          CLEAN
 AutofillCorrector.kt                3 /** One thing the Healer cou CLEAN
 SubstrateIngestor.kt               92 /*                           CLEAN
@@ -34,14 +34,10 @@ AutophagicAllocator.kt              5 /**                          CLEAN
 MemoryGovernor.kt                   5 /**                          CLEAN
 
 --- every .kt on disk (SPI-6: read them all, not just the first) ---
-  .kt files scanned         : 58
-  defects in WORKING tree   : 0
+  .kt files scanned         : 62
+  defects in WORKING tree   : 1
+    DEFECT ./app/src/main/java/com/darkith/transliaison/core/LayoutNode.kt: [('ORPHAN_CLOSE', 6, 2)]
   defects in other snapshots : 0
 
 --- verdict ---
-  ZERO unclosed-comment defects in the working tree 'app/src/main/java/com/darkith/transliaison'.
-  All 19 named files open their top comment with '/*' or '/**' and close it with '*/'.
-  No pristine pre-fix snapshot is tracked; the reconciled tree is the only tree.
-  (The briefing's line numbers came from the stale fork; the bytes here are authoritative.)
-  NOTE: the briefing's diagnosis (a stripped opening '/*') does NOT match the bytes;
-        the original defect was a mangled CLOSER ('//' instead of '*/'), in 2 files.
+  1 defective file(s) remain in the working tree (see above).

@@ -200,10 +200,17 @@ fi
 
   # Comment balance (the "Unclosed comment" class): a blind sed that strips an
   # opening /* leaves a block comment that never closes — kotlinc then refuses the
-  # file and the raw chain stops. This lexes every .kt as code/line/block(nested)/
-  # string/raw/char and fails on an unclosed open OR an orphan */.
-  if have python3 && [ -f tools/comment_balance.py ]; then
-    run "comment balance (unclosed block comments)" python3 tools/comment_balance.py .
+  # file and the raw chain stops. kt_comment_scan.py is the canonical
+  # nesting/string-aware lexer; its selftest is the calibration, and the tree scan
+  # is the enforcement. Exit 0 iff zero UNCLOSED/ORPHAN_CLOSE defects.
+  if have python3 && [ -f tools/kt_comment_scan.py ]; then
+    run "comment scanner selftest (calibration)" python3 tools/kt_comment_scan.py --selftest
+    if have git; then
+      # Read the bytes of every tracked .kt (SPI-2/SPI-6), never guess.
+      mapfile -t KT_FILES < <(git ls-files '*.kt')
+      run "comment balance (unclosed/orphan across tree)" \
+        python3 tools/kt_comment_scan.py "${KT_FILES[@]}"
+    fi
   fi
 
 # The inscriber studio: boots in jsdom, engines present, terminal + toolkits live. Needs
