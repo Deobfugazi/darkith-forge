@@ -122,7 +122,8 @@ def check() -> int:
     same2 = got_savf == cur_savf
     print(f"  {'OK  ' if same2 else 'STALE'} repo webapp/savf.html  {sha256(got_savf)[:16]}")
     got_hk = z.read(PREFIX + "app/src/main/assets/homekeeper.html")
-    same3 = got_hk == cur
+    cur_asset = (ROOT / "app/src/main/assets/homekeeper.html").read_bytes()
+    same3 = got_hk == cur_asset
     print(f"  {'OK  ' if same3 else 'STALE'} repo app/.../homekeeper.html  {sha256(got_hk)[:16]}")
     cur_omega = (ROOT / "omega.html").read_bytes()
     got_omega = z.read(PREFIX + "webapp/omega.html")

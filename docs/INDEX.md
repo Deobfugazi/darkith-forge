@@ -54,7 +54,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `app/src/main/assets/darkith_ui.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
-| `app/src/main/assets/homekeeper.html` | 1,298,731 | `bbdbb1de42da` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `app/src/main/assets/homekeeper.html` | 473,721 | `e12c993c179c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,784 | `addc4f6d44b9` | SAVF-1 Universal Audit Engine |
 
 ## E-evidence — Machine-generated proof

@@ -147,10 +147,10 @@
       "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
     },
     {
-      "bytes": 1298731,
+      "bytes": 473721,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "bbdbb1de42da683156469e8302d9a70e0443ba28573ca328ec1e773dac56c768"
+      "sha256": "e12c993c179cd290030c0fda7da7942b0debe70c40bb924b534f2564c7f58816"
     },
     {
       "bytes": 96784,

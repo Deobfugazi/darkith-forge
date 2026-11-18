@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Refresh the host APK and the Termux one-shot with the current webapp.
+"""Refresh the host APK and the Termux one-shot with the current app UI surface.
 
-The host app ships its UI as `assets/homekeeper.html`, a byte-for-byte copy of
-the fused webapp. When that webapp is rebuilt the APK and the one-shot payload
-must be refreshed too, or they ship a stale UI (exactly the drift this tool
-exists to end).
+The host app ships its UI as `assets/homekeeper.html`, a byte-for-byte copy of the
+app surface `app/src/main/assets/homekeeper.html` (loaded by HomekeeperActivity).
+When that surface is rebuilt the APK and the one-shot payload must be refreshed
+too, or they ship a stale UI (exactly the drift this tool exists to end).
 
 Both artifacts are re-signed with the SAME key that already signs the host APK
 (`assets/engine/release_key` / `release_cert`, CN=Darkith Release), so the
@@ -32,9 +32,10 @@ import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DELIVERY = ROOT / "delivery"
-WEBAPP = ROOT / "darkith home forge.html"     # the canonical shell (source of truth)
-# The fused `darkith forge.html` is GENERATED from WEBAPP by build/build-forge.py; never
-# treat it as source (that inversion is what made the two build scripts disagree).
+WEBAPP = ROOT / "app/src/main/assets/homekeeper.html"   # the app UI surface (source of truth)
+# The fused `darkith forge.html` is GENERATED from `darkith home forge.html` by
+# build/build-forge.py and is a separate deliverable; it is NOT the APK's UI asset
+# (`homekeeper.html` is a synchrony-injected surface loaded by HomekeeperActivity).
 APK = DELIVERY / "darkith-homekeeper-debug.apk"
 ONESHOT = DELIVERY / "darkith-one-shot.sh"
 

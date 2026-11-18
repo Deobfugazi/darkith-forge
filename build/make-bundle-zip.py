@@ -117,10 +117,14 @@ def check() -> int:
         print("  legacy zips: absent (regenerable, not committed) — skip")
         return 0
     cur = (ROOT / "darkith forge.html").read_bytes()
+    # `app/src/main/assets/homekeeper.html` is the app UI surface (a synchrony
+    # surface loaded by HomekeeperActivity), not the fused webapp; compare the
+    # archive's copy against that source of truth.
+    cur_asset = (ROOT / "app/src/main/assets/homekeeper.html").read_bytes()
     ok = True
-    for label, path, member in [
-        ("source_fixed", SOURCE_ZIP, "app/src/main/assets/homekeeper.html"),
-        ("bundle", BUNDLE_ZIP, "darkith-forge.html"),
+    for label, path, member, want in [
+        ("source_fixed", SOURCE_ZIP, "app/src/main/assets/homekeeper.html", cur_asset),
+        ("bundle", BUNDLE_ZIP, "darkith-forge.html", cur),
     ]:
         if not path.exists():
             print(f"  MISSING {label}", file=sys.stderr)
@@ -132,7 +136,7 @@ def check() -> int:
             print(f"  STALE {label} {member}  (archive lacks it: {e})", file=sys.stderr)
             ok = False
             continue
-        same = data == cur
+        same = data == want
         ok &= same
         print(f"  {'OK  ' if same else 'STALE'} {label} {member}  {sha256(data)[:16]}")
     # bundle's nested source zip must also carry the current webapp
@@ -145,7 +149,7 @@ def check() -> int:
         ok = False
         hk = None
     if hk is not None:
-        same = hk == cur
+        same = hk == cur_asset
         ok &= same
         print(f"  {'OK  ' if same else 'STALE'} bundle source webapp  {sha256(hk)[:16]}")
     print("LEGACY ZIPS: " + ("in sync" if ok else "STALE -- run without --check"))
