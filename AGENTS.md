@@ -71,16 +71,19 @@ that failure mode can no longer reach the raw chain.
 - `darkith-inscriber.html` — the studio app. 4 inline `<script>` blocks:
   0 SAVF, 1 DarkTerm engine, 2 DarkTools, 3 studio layer. **The engine block must stay
   byte-identical to `app/src/main/assets/vendor/darkterm.js`**; re-embed after editing either.
-  - `darkith-omega-media-player.html` — the Ω **media player** (`window.DarkithMedia`).
-    Single file, offline, no build. Agnostic: plays whatever the engine can decode and
-    takes any source (file, folder, drag/drop, paste, URL, playlist, or a device path via
-    the `darkith` bridge). Ergonomic: keyboard (space/←→/j/l/`,`/`.`/`[`/`]`/m/f/p/c/v/e/n/b),
-    gestures, drag-drop, paste-to-add, fullscreen, speed ladder, frame-step, screenshot,
-    A–B loop, bookmarks, subtitles (VTT/SRT), queue + m3u. Coupled: Media Session
-    (lockscreen/headset), Picture-in-Picture, Remote Playback (cast), Wake Lock, Web Audio
-    (visualiser + 6-band EQ), BroadcastChannel (cross-tab), localStorage (prefs/marks),
-    `crypto.subtle` (sha256 provenance). Every capability is feature-detected and degrades
-    honestly (a missing bridge is reported, never faked). Tested by `tools/test_media_player.js`.
+- `darkith-omega-media-player.html` — the Ω **media player** (`window.DarkithMedia`, v1.1).
+  Single file, offline, no build. Agnostic: plays whatever the engine decodes and takes any
+  source — file, folder, drag/drop, paste, URL, m3u playlist, or a real device path via the
+  `darkith` bridge (`fileRoots`/`fileList`/`fileRead`; the wire shapes in `DarkithBridge.kt`
+  are the contract, honoured exactly). Ergonomic: keyboard (space/←→/j/l/`,`/`.`/`[`/`]`/`0-9`/
+  m/f/p/c/v/e/n/b/s), tap + double-tap gestures, drag-drop, paste-to-add, fullscreen, fit modes
+  (contain/cover/fill), speed ladder, frame-step, screenshot, A–B loop, bookmarks, subtitles
+  (VTT/SRT, including device subtitles), queue with dedupe + sort, resume-where-you-left-off.
+  Coupled: Media Session (lockscreen/headset, incl. position state), Picture-in-Picture, Remote
+  Playback (cast), Wake Lock, Web Audio (visualiser + 6-band EQ), BroadcastChannel (cross-tab),
+  localStorage (prefs/marks/history), `crypto.subtle` (sha256 provenance). Every capability is
+  feature-detected and degrades honestly; a broken item is skipped, never a silent stall.
+  Tested by `tools/test_media_player.js` (real script, DOM shim + bridge-contract stub).
 
 ## Multi-session gotcha
 DarkTerm has one global command table, so app commands resolve their context **per

@@ -63,6 +63,14 @@ main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
 .stage.audio{background:radial-gradient(600px 300px at 50% 40%,rgba(255,138,61,.10),transparent 70%),#000}
 video#media{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain;background:#000;display:block}
 .stage.audio video#media{opacity:0;pointer-events:none;position:absolute;inset:0}
+#seekflash{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:11;
+  font:600 13px var(--mono);color:#fff;background:rgba(0,0,0,.55);border:1px solid var(--line2);
+  border-radius:999px;padding:6px 14px;opacity:0;transition:opacity .2s var(--ease);pointer-events:none}
+#seekflash.on{opacity:1}
+/* fit modes */
+.stage.fit-contain video#media{object-fit:contain}
+.stage.fit-cover video#media{object-fit:cover}
+.stage.fit-fill video#media{object-fit:fill}
 #art{display:none;width:min(58vw,240px);height:min(58vw,240px);border-radius:20px;
   background:linear-gradient(140deg,#16181c,#0b0c0e);border:1px solid var(--line2);
   place-items:center;color:var(--accent);font:700 40px var(--mono)}
@@ -184,16 +192,17 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
 
   <main>
     <div class="stage" id="stage">
-      <video id="media" playsinline preload="metadata" crossorigin="anonymous"></video>
+      <video id="media" playsinline preload="metadata"></video>
       <div id="art">Ω</div>
       <canvas id="viz" width="800" height="200"></canvas>
       <div id="ccbox" aria-live="polite"></div>
+      <div id="seekflash" aria-hidden="true"></div>
       <div id="hint">
         <div class="big">Drop media here — or pick a file</div>
         <div class="keys">
-          <kbd>space</kbd> play/pause · <kbd>←</kbd><kbd>→</kbd> ±5s · <kbd>j</kbd><kbd>l</kbd> ±10s<br>
-          <kbd>,</kbd><kbd>.</kbd> frame · <kbd>[</kbd><kbd>]</kbd> speed · <kbd>m</kbd> mute · <kbd>f</kbd> fullscreen<br>
-          <kbd>p</kbd> pip · <kbd>c</kbd> captions · <kbd>v</kbd> visualiser · <kbd>e</kbd> equaliser
+          <kbd>space</kbd> play/pause · <kbd>←</kbd><kbd>→</kbd> ±5s · <kbd>j</kbd><kbd>l</kbd> ±10s · <kbd>0</kbd>–<kbd>9</kbd> jump<br>
+          <kbd>,</kbd><kbd>.</kbd> frame · <kbd>[</kbd><kbd>]</kbd> speed · <kbd>m</kbd> mute · <kbd>f</kbd> fullscreen · <kbd>s</kbd> fit<br>
+          <kbd>p</kbd> pip · <kbd>c</kbd> captions · <kbd>v</kbd> visualiser · <kbd>e</kbd> equaliser · tap / double-tap to seek
         </div>
         <div class="urlbar" style="border:0;padding:6px 0">
           <button id="pick" type="button">Open file(s)</button>
@@ -215,6 +224,11 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
       </div>
       <div class="eqrow" style="padding:8px 14px">
         <button class="ic" id="shuffle" title="Shuffle" aria-pressed="false">⇄</button>
+        <select class="mini" id="sortby" aria-label="Sort queue">
+          <option value="added">added</option>
+          <option value="name">name</option>
+          <option value="size">size</option>
+        </select>
         <button class="ic" id="clearlist" title="Clear queue">✕</button>
         <span class="badge" id="repeatbadge">repeat off</span>
       </div>
@@ -274,6 +288,7 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
       <button class="ic" id="eqbtn" title="Equaliser (E)" aria-pressed="false">EQ</button>
       <button class="ic" id="vizbtn" title="Visualiser (V)" aria-pressed="true">∿</button>
       <button class="ic" id="shot" title="Save frame">▣</button>
+      <button class="ic" id="fit" title="Fit mode">⤢</button>
       <button class="ic" id="pip" title="Picture-in-picture (P)">▢</button>
       <button class="ic" id="cast" title="Cast">📺</button>
       <button class="ic" id="fs" title="Fullscreen (F)">⛶</button>
@@ -432,9 +447,10 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
   /* ------------------------------------------------------------------ state */
   var S = {
     queue: [], index: -1, repeat: "off", shuffle: false, order: null,
-    cues: [], ccOn: false, ab: { a: null, b: null },
+    cues: [], subs: [], ccOn: false, ab: { a: null, b: null },
     prefs: { volume: 1, rate: 1, theme: null, eq: "flat", gains: EQ_BANDS.map(function () { return 0; }) },
-    eqOn: false, vizOn: true, wake: null, chan: null, mediaSessionReady: false
+    eqOn: false, vizOn: true, wake: null, chan: null, mediaSessionReady: false,
+    fit: "contain", skip: 0, sortBy: "added"
   };
 
   function bridge() { return (W && W.darkith) ? W.darkith : null; }
@@ -462,31 +478,53 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     var kind = kindOf(file.name, file.type);
     return {
       name: file.name, kind: kind, type: mimeFor(file.name, file.type), size: file.size,
-      file: file, url: null, src: null, added: Date.now()
+      file: file, url: null, src: null, rel: file.webkitRelativePath || "", added: Date.now()
     };
   }
   function entryFromUrl(u, name) {
     name = name || u.split(/[?#]/)[0].split("/").pop() || u;
     return { name: name, kind: kindOf(name), type: mimeFor(name), size: null, file: null, url: u, src: null, added: Date.now() };
   }
+  function isDevicePath(u) { return typeof u === "string" && u.charAt(0) === "/"; }
+  function fileUrlFor(path) {
+    // A device path (/sdcard/...) plays through the file:// origin the host WebView
+    // already trusts (allowUniversalAccessFromFileURLs). encodeURI keeps the slashes.
+    return "file://" + encodeURI(path);
+  }
   function ensureSrc(entry) {
     if (entry.src) return entry.src;
     if (entry.file) entry.src = URL.createObjectURL(entry.file);
-    else if (entry.url) entry.src = entry.url;
+    else if (entry.url) entry.src = isDevicePath(entry.url) ? fileUrlFor(entry.url) : entry.url;
     return entry.src;
   }
   function addEntries(list, autoplayFirst) {
-    var start = S.queue.length;
+    var added = 0, sub = false;
     for (var i = 0; i < list.length; i++) {
       var e = list[i];
-      if (e.kind === "subtitle") { loadSubtitleFromEntry(e); continue; }
+      if (e.kind === "subtitle") { loadSubtitleFromEntry(e); sub = true; continue; }
       if (e.kind === "playlist") { expandPlaylist(e); continue; }
-      S.queue.push(e);
+      if (dupEntry(e)) continue;
+      S.queue.push(e); added++;
     }
+    sortQueue();
     render();
     if (autoplayFirst && S.index < 0 && S.queue.length) playAt(0);
-    else if (S.index < 0 && S.queue.length) toast("added " + S.queue.length + " item(s)");
-    else toast("added " + (S.queue.length - start) + " item(s)");
+    else if (added) toast("added " + added + " item(s)" + (sub ? " + captions" : ""));
+    else if (sub) { /* captions only */ }
+    else toast("already in the queue");
+  }
+  function dupEntry(e) {
+    for (var i = 0; i < S.queue.length; i++) {
+      var q = S.queue[i];
+      if (e.file && q.file && q.file.name === e.file.name && q.file.size === e.file.size) return true;
+      if (e.url && q.url && q.url === e.url) return true;
+    }
+    return false;
+  }
+  function sortQueue() {
+    if (S.sortBy === "name") S.queue.sort(function (a, b) { return a.name.localeCompare(b.name, undefined, { numeric: true }); });
+    else if (S.sortBy === "size") S.queue.sort(function (a, b) { return (b.size || 0) - (a.size || 0); });
+    else S.queue.sort(function (a, b) { return (a.added || 0) - (b.added || 0); });
   }
   function expandPlaylist(entry) {
     if (!entry.file) { addEntries([entryFromUrl(entry.url, entry.name)]); return; }
@@ -505,28 +543,25 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     if (!media) return;
     media.src = ensureSrc(e);
     media.load();
-    stage.className = stage.className.replace(/\bready\b/, "").trim() + " ready" + (e.kind === "audio" ? " audio" : "");
+    stage.className = stage.className.replace(/\bready\b/, "").trim() + " ready" + (e.kind === "audio" ? " audio" : "") + " fit-" + S.fit;
     var p = media.play();
     if (p && p.catch) p.catch(function (err) { toast("play blocked: " + (err && err.message ? err.message : err)); });
     setSessionMeta(e);
-    render(); markMeta(e);
+    render(); markMeta(e); renderMarks();
   }
-  function next() {
+  function advance(dir) {
     if (!S.queue.length) return;
     var order = S.shuffle && S.order ? S.order : null;
     var pos = order ? order.indexOf(S.index) : S.index;
-    var np = pos + 1;
-    if (np >= S.queue.length) { if (S.repeat === "all") np = 0; else return; }
-    playAt(order ? order[np] : np);
-  }
-  function prev() {
-    if (!S.queue.length) return;
-    if (media && media.currentTime > 3) { media.currentTime = 0; return; }
-    var order = S.shuffle && S.order ? S.order : null;
-    var pos = order ? order.indexOf(S.index) : S.index;
-    var np = pos - 1;
+    var np = pos + dir;
+    if (np >= S.queue.length) { if (S.repeat === "all") np = 0; else { S.skip = 0; return; } }
     if (np < 0) { if (S.repeat === "all") np = S.queue.length - 1; else np = 0; }
     playAt(order ? order[np] : np);
+  }
+  function next() { advance(1); }
+  function prev() {
+    if (media && media.currentTime > 3) { media.currentTime = 0; return; }
+    advance(-1);
   }
   function cycleRepeat() {
     S.repeat = S.repeat === "off" ? "all" : (S.repeat === "all" ? "one" : "off");
@@ -540,18 +575,51 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     var s = $id("shuffle"); if (s) s.setAttribute("aria-pressed", S.shuffle ? "true" : "false");
     toast("shuffle " + (S.shuffle ? "on" : "off"));
   }
+  function cycleFit() {
+    var modes = ["contain", "cover", "fill"];
+    S.fit = modes[(modes.indexOf(S.fit) + 1) % modes.length];
+    if (stage) { stage.className = stage.className.replace(/\bfit-\w+/g, "").trim() + " fit-" + S.fit; }
+    store("darkith.media.fit", S.fit);
+    toast("fit " + S.fit);
+  }
+  function recordHistory(entry) {
+    if (!entry) return;
+    var key = "darkith.media.recent";
+    var list = store(key) || [];
+    list = list.filter(function (x) { return x.name !== entry.name; });
+    list.unshift({ name: entry.name, t: media ? media.currentTime : 0, at: Date.now() });
+    store(key, list.slice(0, 20));
+  }
+  function resumePos(entry) {
+    var list = store("darkith.media.recent") || [];
+    for (var i = 0; i < list.length; i++) if (list[i].name === entry.name) return list[i].t || 0;
+    return 0;
+  }
 
   /* -------------------------------------------------------------- subtitles */
+  function applySubtitleText(txt) {
+    txt = String(txt || "");
+    if (!/-->/.test(txt)) { toast("no cues found in subtitle file"); return; }
+    S.cues = (/^\s*WEBVTT/m.test(txt) ? parseVTT(txt) : (parseSRT(txt).length ? parseSRT(txt) : parseVTT(txt)));
+    S.ccOn = true;
+    var cc = $id("cc"); if (cc) cc.setAttribute("aria-pressed", "true");
+    toast("captions loaded (" + S.cues.length + " cues)");
+    updateCC();
+  }
   function loadSubtitleFromEntry(entry) {
+    if (entry.url && isDevicePath(entry.url)) {
+      // The host bridge can read text from a real device path; subtitles are text.
+      if (hasFn("fileRead")) {
+        var r = "";
+        try { r = bridge().fileRead(entry.url); } catch (e) { r = ""; }
+        if (!/^ERROR:/.test(r)) { applySubtitleText(r); return; }
+      }
+      toast("cannot read that subtitle path");
+      return;
+    }
+    if (!entry.file) return;
     var fr = new FileReader();
-    fr.onload = function () {
-      var txt = String(fr.result || "");
-      S.cues = /-->/.test(txt) && /^\s*WEBVTT/m.test(txt) ? parseVTT(txt) : (parseSRT(txt).length ? parseSRT(txt) : parseVTT(txt));
-      S.ccOn = true;
-      var cc = $id("cc"); if (cc) cc.setAttribute("aria-pressed", "true");
-      toast("captions loaded (" + S.cues.length + " cues)");
-      updateCC();
-    };
+    fr.onload = function () { applySubtitleText(fr.result); };
     fr.readAsText(entry.file);
   }
   function updateCC() {
@@ -646,6 +714,13 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     var ms = W.navigator && W.navigator.mediaSession;
     if (ms && "playbackState" in ms) { try { ms.playbackState = state; } catch (e) {} }
   }
+  function setSessionPosition(dur, pos, rate) {
+    var ms = W.navigator && W.navigator.mediaSession;
+    if (!ms || typeof ms.setPositionState !== "function") return;
+    if (!isFinite(dur) || dur <= 0 || !isFinite(pos)) return;
+    try { ms.setPositionState({ duration: dur, playbackRate: rate || 1, position: Math.max(0, Math.min(pos, dur)) }); }
+    catch (e) {}
+  }
 
   /* ------------------------------------------------------------- wake lock */
   function wakeOn() {
@@ -731,6 +806,8 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     if (dur) dur.textContent = isFinite(d) ? fmtTime(d) : "live";
     if (seek && isFinite(d) && d > 0 && !seek._dragging) seek.value = String(Math.round(t / d * 1000));
     if (S.ab.a != null && S.ab.b != null && t >= S.ab.b) { media.currentTime = S.ab.a; }
+    setSessionPosition(d, t, media.playbackRate || 1);
+    if (t - (S._lastSave || 0) > 5) { S._lastSave = t; recordHistory(S.queue[S.index]); }
     updateCC();
   }
   function savePrefs() { store("darkith.media.prefs", S.prefs); }
@@ -744,7 +821,18 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     }
   }
 
-  function seekBy(d) { if (media) media.currentTime = Math.max(0, Math.min((media.duration || 1e9), media.currentTime + d)); }
+  function flashSeek(label) {
+    var f = $id("seekflash"); if (!f) return;
+    f.textContent = label; f.className = "on";
+    clearTimeout(S._flashT); S._flashT = setTimeout(function () { f.className = ""; }, 700);
+  }
+  function seekBy(d) {
+    if (!media) return;
+    var before = media.currentTime;
+    media.currentTime = Math.max(0, Math.min((media.duration || 1e9), media.currentTime + d));
+    var delta = media.currentTime - before;
+    if (Math.abs(delta) >= 1) flashSeek((delta > 0 ? "+" : "−") + fmtTime(Math.abs(delta)).replace(/^0:/, "") + "  " + fmtTime(media.currentTime));
+  }
   function frameStep(dir) {
     if (!media) return;
     media.pause();
@@ -800,18 +888,48 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     var n = $id("marknote"); if (n) n.textContent = marks.length ? marks.length + " mark(s)" : "none";
   }
 
-  /* ------------------------------------------------------- device coupling */
+  /* ------------------------------------------------------- device coupling
+     The host bridge (DarkithBridge.kt) is the real contract:
+       fileRoots() -> paths joined by \u0001
+       fileList(dir) -> JSON [{name, dir, size}]
+     We honour exactly that; a directory is listed in place, a file is queued. */
+  function deviceRoots() {
+    if (!hasFn("fileRoots")) return [];
+    try {
+      var raw = bridge().fileRoots();
+      return String(raw || "").split("\u0001").filter(function (p) { return p; });
+    } catch (e) { return []; }
+  }
+  function listDir(path) {
+    var out = [];
+    if (!hasFn("fileList")) return out;
+    try {
+      var arr = JSON.parse(bridge().fileList(path) || "[]");
+      for (var i = 0; i < arr.length; i++) {
+        var it = arr[i];
+        var nm = (it && it.name != null) ? String(it.name) : String(it);
+        var p = path.replace(/\/$/, "") + "/" + nm;
+        out.push({ name: nm, path: p, dir: !!(it && it.dir), size: (it && it.size) || 0 });
+      }
+    } catch (e) {}
+    return out;
+  }
   function browseDevice() {
     if (!hasFn("fileList")) { toast("no device bridge — install the host app"); return; }
-    try {
-      var raw = bridge().fileList("/sdcard");
-      var list = JSON.parse(raw || "[]");
-      if (list && list.length && typeof list[0] === "object") list = list.map(function (x) { return x.path || x.name || String(x); });
-      var media_ = list.filter(function (p) { return isPlayable(kindOf(p)); });
-      if (!media_.length) { toast("no media found under /sdcard"); return; }
-      addEntries(media_.map(function (p) { return entryFromUrl(p, String(p).split("/").pop()); }));
-      toast("queued " + media_.length + " file(s) from device");
-    } catch (e) { toast("device browse failed: " + e.message); }
+    var roots = deviceRoots();
+    var dir = roots[0] || "/sdcard";
+    var items = listDir(dir);
+    if (!items.length) { toast("cannot list " + dir); return; }
+    var playable = [], subCount = 0;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].dir) continue;
+      var k = kindOf(items[i].name);
+      if (isPlayable(k)) playable.push(entryFromUrl(items[i].path, items[i].name));
+      else if (k === "subtitle") { subCount++; loadSubtitleFromEntry(entryFromUrl(items[i].path, items[i].name)); }
+    }
+    if (!playable.length) { toast("no media in " + dir + (subCount ? " (" + subCount + " subtitle(s) loaded)" : "")); return; }
+    addEntries(playable, S.index < 0);
+    toast("queued " + playable.length + " from " + dir);
   }
 
   /* --------------------------------------------------------------- wiring */
@@ -827,6 +945,7 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     on("pip", "click", pipOn);
     on("cast", "click", castOn);
     on("shot", "click", screenshot);
+    on("fit", "click", cycleFit);
     on("repeat", "click", cycleRepeat);
     on("shuffle", "click", toggleShuffle);
     on("ab", "click", cycleAB);
@@ -850,6 +969,7 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     on("seek", "change", function (ev) { ev.target._dragging = false; if (media && isFinite(media.duration)) media.currentTime = media.duration * ev.target.value / 1000; });
     on("vol", "input", function (ev) { setVolume(ev.target.value / 100); });
     on("rate", "change", function (ev) { setRate(parseFloat(ev.target.value)); });
+    on("sortby", "change", function (ev) { S.sortBy = ev.target.value; sortQueue(); render(); });
 
     var ql = $id("qlist");
     if (ql) ql.addEventListener("click", function (ev) {
@@ -873,6 +993,7 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     if (D) {
       D.addEventListener("dragover", function (e) { e.preventDefault(); var d = $id("drop"); if (d) d.className = "on"; });
       D.addEventListener("dragleave", function (e) { if (e.target === D.body) { var d = $id("drop"); if (d) d.className = ""; } });
+      bindGestures();
       D.addEventListener("drop", function (e) {
         e.preventDefault(); var d = $id("drop"); if (d) d.className = "";
         var files = e.dataTransfer && e.dataTransfer.files ? Array.prototype.slice.call(e.dataTransfer.files) : [];
@@ -889,8 +1010,29 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     }
     if (W) W.addEventListener("resize", function () {});
   }
-  function onKey(e) {
-    var t = e.target, tag = (t && t.tagName) || "";
+      function bindGestures() {
+      if (!stage) return;
+      var last = 0, lastX = 0, timer = null;
+      stage.addEventListener("click", function (ev) {
+        var now = Date.now();
+        var rect = stage.getBoundingClientRect ? stage.getBoundingClientRect() : { width: 0, left: 0 };
+        var x = ev.clientX != null ? ev.clientX : 0;
+        if (now - last < 300) {                       // double tap
+          clearTimeout(timer); timer = null;
+          var third = rect.width ? rect.width / 3 : 0;
+          var rel = x - (rect.left || 0);
+          if (rel < third) { seekBy(-10); }
+          else if (rel > third * 2) { seekBy(10); }
+          last = 0;
+          return;
+        }
+        last = now; lastX = x;
+        timer = setTimeout(function () { togglePlay(); timer = null; }, 300);   // single tap
+      });
+    }
+
+    function onKey(e) {
+      var t = e.target, tag = (t && t.tagName) || "";
     if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
     switch (e.key) {
       case " ": e.preventDefault(); togglePlay(); break;
@@ -910,6 +1052,13 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
       case "e": case "E": toggleEq(); break;
       case "n": case "N": next(); break;
       case "b": case "B": prev(); break;
+      case "s": case "S": cycleFit(); break;
+      default:
+        if (/^[0-9]$/.test(e.key) && media && isFinite(media.duration)) {
+          media.currentTime = media.duration * (parseInt(e.key, 10) / 10);
+          flashSeek("\u2192 " + (parseInt(e.key, 10) * 10) + "%");
+        }
+        break;
     }
   }
   function togglePlay() { if (!media) return; if (media.paused) { media.play().catch(function () {}); } else media.pause(); }
@@ -975,21 +1124,29 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
       updateTime();
       var st = $id("m-state"); if (st) st.textContent = "ready";
       if (media.videoWidth && stage) stage.className = stage.className.replace(/\baudio\b/, "").trim();
+      var e = S.queue[S.index];
+      if (e) {
+        var r = resumePos(e);
+        if (r > 5 && isFinite(media.duration) && r < media.duration - 10) { media.currentTime = r; flashSeek("resumed " + fmtTime(r)); }
+      }
       renderMarks();
     });
     media.addEventListener("play", function () { var p = $id("play"); if (p) p.textContent = "❚❚"; setSessionState("playing"); wakeOn(); audioGraph(); if (S.vizOn) drawViz(); });
-    media.addEventListener("pause", function () { var p = $id("play"); if (p) p.textContent = "▶"; setSessionState("paused"); wakeOff(); });
+    media.addEventListener("pause", function () { var p = $id("play"); if (p) p.textContent = "▶"; setSessionState("paused"); wakeOff(); recordHistory(S.queue[S.index]); });
     media.addEventListener("ended", function () {
       setSessionState("none");
       if (S.repeat === "one") { media.currentTime = 0; media.play().catch(function () {}); return; }
       next();
     });
     media.addEventListener("waiting", function () { var st = $id("m-state"); if (st) st.textContent = "buffering"; });
-    media.addEventListener("playing", function () { var st = $id("m-state"); if (st) st.textContent = "playing"; });
+    media.addEventListener("playing", function () { var st = $id("m-state"); if (st) st.textContent = "playing"; S.skip = 0; });
     media.addEventListener("error", function () {
       var st = $id("m-state"); if (st) st.textContent = "error";
       var e = media.error;
       toast("cannot decode: " + (e && e.code ? "code " + e.code : "unknown") + " — try another container");
+      // A broken item must not stall the queue: skip past it, bounded, so a run of
+      // undecodable files can't spin forever.
+      if (S.skip < 3 && S.queue.length > 1) { S.skip++; setTimeout(next, 400); }
     });
     media.addEventListener("volumechange", function () { var s = $id("vol"); if (s && !s._dragging) s.value = String(Math.round(media.volume * 100)); });
     media.addEventListener("ratechange", function () { var s = $id("rate"); if (s) s.value = String(media.playbackRate); });
@@ -1005,6 +1162,8 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
 
   function boot() {
     loadPrefs();
+    var f = store("darkith.media.fit"); if (f === "cover" || f === "fill" || f === "contain") S.fit = f;
+    if (stage) stage.className = (stage.className + " fit-" + S.fit).trim();
     buildEq();
     bindControls();
     bindMediaEvents();
@@ -1013,6 +1172,7 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
     if (media) { media.volume = S.prefs.volume; media.playbackRate = S.prefs.rate; }
     var vs = $id("vol"); if (vs) vs.value = String(Math.round(S.prefs.volume * 100));
     var rs = $id("rate"); if (rs) rs.value = String(S.prefs.rate);
+    var sb = $id("sortby"); if (sb) sb.value = S.sortBy;
     render(); renderMarks(); updateChips(); updateTime();
     chanPing();
     if (W.setInterval) W.setInterval(updateChips, 4000);
@@ -1020,14 +1180,16 @@ select.mini{font:12px var(--mono);color:var(--ink);background:rgba(255,255,255,.
 
   /* ----------------------------------------------------------------- export */
   var API = {
-    version: "1.0",
+    version: "1.1",
     fmtTime: fmtTime, parseTime: parseTime, fmtBytes: fmtBytes, parseTimeStamp: parseTimeStamp,
     parseVTT: parseVTT, parseSRT: parseSRT, parseM3U: parseM3U, cueAt: cueAt,
     kindOf: kindOf, mimeFor: mimeFor, extOf: extOf, isPlayable: isPlayable,
-    stepSpeed: stepSpeed, shuffleOrder: shuffleOrder, EQ_BANDS: EQ_BANDS, EQ_PRESETS: EQ_PRESETS,
+    isDevicePath: isDevicePath, fileUrlFor: fileUrlFor, stepSpeed: stepSpeed,
+    shuffleOrder: shuffleOrder, EQ_BANDS: EQ_BANDS, EQ_PRESETS: EQ_PRESETS,
     state: S, addEntries: addEntries, playAt: playAt, next: next, prev: prev,
     seekBy: seekBy, setRate: setRate, setVolume: setVolume, screenshot: screenshot,
-    browseDevice: browseDevice, toast: toast, render: render,
+    cycleFit: cycleFit, browseDevice: browseDevice, deviceRoots: deviceRoots, listDir: listDir,
+    applySubtitleText: applySubtitleText, toast: toast, render: render,
     _boot: boot
   };
   W.DarkithMedia = API;

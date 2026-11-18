@@ -135,7 +135,8 @@ ok("window.DarkithMedia is exported", !!API && typeof API === "object");
    Assert the real file actually declares every id the script binds. */
 ["media", "stage", "qlist", "mlist", "eq", "queue", "marks", "play", "seek", "vol", "rate",
  "cc", "ccbox", "viz", "eqbtn", "queuebtn", "marksbtn", "ab", "repeat", "shuffle", "toast",
- "tcur", "tdur", "m-name", "m-sha", "m-state", "drop", "file", "dir", "urlin", "urladd"]
+ "tcur", "tdur", "m-name", "m-sha", "m-state", "drop", "file", "dir", "urlin", "urladd",
+ "fit", "sortby", "seekflash", "shuffle", "clearlist", "eqpreset"]
   .forEach((id) => ok('markup declares #' + id, html.includes('id="' + id + '"')));
 
 /* ------------------------------------------------------------- formatters */
@@ -185,6 +186,46 @@ ok("mimeFor .webm = video/webm", API.mimeFor("a.webm") === "video/webm");
 ok("mimeFor given type wins", API.mimeFor("a.bin", "video/mp4") === "video/mp4");
 ok("isPlayable(video|audio|image)", API.isPlayable("video") && API.isPlayable("audio") && API.isPlayable("image"));
 ok("!isPlayable(subtitle)", !API.isPlayable("subtitle"));
+
+/* ------------------------------------------------------------- device coupling */
+ok("isDevicePath(/sdcard/x.mp4)", API.isDevicePath("/sdcard/x.mp4"));
+ok("!isDevicePath(https://x/y.mp4)", !API.isDevicePath("https://x/y.mp4"));
+ok("!isDevicePath(blob:...)", !API.isDevicePath("blob:http://x"));
+ok("fileUrlFor keeps slashes", API.fileUrlFor("/sdcard/a b/c.mp4") === "file:///sdcard/a%20b/c.mp4", API.fileUrlFor("/sdcard/a b/c.mp4"));
+ok("fileUrlFor encodes unicode", API.fileUrlFor("/sdcard/曲.mp4") === "file:///sdcard/%E6%9B%B2.mp4", API.fileUrlFor("/sdcard/曲.mp4"));
+
+/* ------------------------------------------------------------- dedupe + sort */
+API.state.queue.length = 0;
+API.addEntries([{ name: "a.mp3", kind: "audio", size: 10, added: 1, url: "/sdcard/a.mp3" },
+                { name: "a.mp3", kind: "audio", size: 10, added: 2, url: "/sdcard/a.mp3" }], false);
+ok("duplicate entries are not queued twice", API.state.queue.length === 1, API.state.queue.length);
+API.addEntries([{ name: "b.mp3", kind: "audio", size: 30, added: 3, url: "/sdcard/b.mp3" },
+                { name: "c.mp3", kind: "audio", size: 20, added: 4, url: "/sdcard/c.mp3" }], false);
+API.state.sortBy = "size";
+API.state.queue.sort((x, y) => (y.size || 0) - (x.size || 0));
+ok("size sort is descending", API.state.queue.map((e) => e.name).join(",") === "b.mp3,c.mp3,a.mp3", API.state.queue.map((e) => e.name).join(","));
+API.state.sortBy = "added";
+API.state.queue.length = 0;
+
+/* ------------------------------------------------------------- real bridge contract
+   Drive the player against a stub of DarkithBridge.kt's exact wire shapes:
+   fileRoots() -> paths joined by \u0001, fileList(dir) -> [{name,dir,size}],
+   fileRead(path) -> text. Proves device browse + device subtitles, not just guesses. */
+windowShim.darkith = {
+  fileRoots: () => "/sdcard\u0001/storage/emulated/0",
+  fileList: () => JSON.stringify([{ name: "Movies", dir: true, size: 0 }, { name: "a.mp4", dir: false, size: 100 }, { name: "b.vtt", dir: false, size: 10 }]),
+  fileRead: () => "WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHi\n",
+};
+ok("deviceRoots splits on \\u0001", JSON.stringify(API.deviceRoots()) === JSON.stringify(["/sdcard", "/storage/emulated/0"]), JSON.stringify(API.deviceRoots()));
+const dir = API.listDir("/sdcard");
+ok("listDir builds full paths from name", dir[1] && dir[1].path === "/sdcard/a.mp4", dir[1] && dir[1].path);
+ok("listDir marks directories", dir[0] && dir[0].dir === true);
+API.state.queue.length = 0; API.state.cues = [];
+API.browseDevice();
+ok("browseDevice queues playable files only", API.state.queue.length === 1 && API.state.queue[0].name === "a.mp4", API.state.queue.map((e) => e.name).join(","));
+ok("browseDevice loads a device subtitle through fileRead", API.state.cues.length === 1, API.state.cues.length);
+delete windowShim.darkith;
+API.state.queue.length = 0;
 
 /* ------------------------------------------------------------- speed ladder */
 ok("stepSpeed(1,+1) = 1.25", API.stepSpeed(1, 1) === 1.25);
