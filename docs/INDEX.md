@@ -15,7 +15,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 34,829 | `d60430478647` | AGENTS.md — Darkith |
+| `AGENTS.md` | 35,456 | `686f3d2d526d` | AGENTS.md — Darkith |
 | `DARKITH.md` | 55,361 | `7c4698d8800d` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `55898aae4fe6` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 63,661 | `2e007815fc7b` | DARKITH — README |

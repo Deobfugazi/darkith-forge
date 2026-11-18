@@ -325,6 +325,14 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   its frame. `savf.py selftest` -> ok; in-page SAVF self-test -> 9/9, 0 errors.
 - TWO-TAB CONVERGENCE (§0b): `tools/sync.sh` + `tools/converge.sh` proven by a
   real divergence (two tabs, both commits survived, linear history).
+- SOURCE ENCODING (fixed): `savf.py` used to read every file as strict UTF-8, so a
+  file CPython runs fine — a UTF-8 BOM, or a PEP 263 `coding:` cookie for any
+  non-UTF-8 codec — drew a false PARSE finding and flipped the verdict to LIED.
+  Both surfaces now decode as CPython does: `savf.py` via `tokenize.open`; the
+  browser core via a PEP 263 decoder (BOM, cookie on line 1 or 2 with line 2 only
+  when line 1 is blank or a comment, name normalization, a strict ASCII path, and
+  `TextDecoder` otherwise). Gate `7/7 encoding` in `build/verify.py` holds
+  `savf.py` + the JS core to `ast.parse` over a 12-file corpus.
 
 ## §26 DELIVERY RECORD — forensic remediation + hub-generation rule (2026-11-17)
 - FORENSIC REMEDIATION (P1–P5). The "vacuous green" family is closed by making each law an
