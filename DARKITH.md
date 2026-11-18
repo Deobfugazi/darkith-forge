@@ -51,8 +51,8 @@ unknowable. This build declares its version and can report it.
 
 Delta in **1.1.0-omega (code 2)**:
 
-- **Reconciled singularity tree** — 54 `.kt` from the `delivery` superset; 6 divergent files
-  resolved; 3 delivery-only files included. (See `RECONCILIATION.md`.)
+- **Reconciled singularity tree** — 55 `.kt`: the 54-file fork union (6 divergent files
+  resolved, 3 delivery-only files included) plus the authored `core/IRAuditor.kt`. (See Part 2.)
 - **W-034 Phantom Activity fixed** — `MainActivity`/`HomekeeperActivity` now `import android.app.Activity`
   (this alone closed ~90 compile errors).
 - **All AndroidX stripped** — `registerForActivityResult`/`ContextCompat`/`ActivityCompat`/`FileProvider`
@@ -70,7 +70,7 @@ Delta in **1.1.0-omega (code 2)**:
 ## The gates (why this cannot silently recur)
 
 - `tools/fork_integrity_gate.sh` — §19 laws (one tree, no foreign symbol, inputs versioned, compile clean).
-- `tools/delivery_gate.sh` — 14 named loophole checks; refuses to say DELIVERED while any is open.
+- `tools/delivery_gate.sh` — 19 named loophole checks; refuses to say DELIVERED while any is open.
 - `tools/bridge_contract_audit.py` — UI↔bridge method contract.
 
 Run before every delivery:
@@ -90,7 +90,7 @@ in the repository. It compiles clean (proven below). This is the copy that was m
 ## Proof of compilation (real compiler, real android.jar — not a grep)
 
 ```
-kotlinc 1.9.24  -cp android-all-14.jar:apksig-8.1.1.jar:R-classes  -d out  <54 .kt files>
+kotlinc 1.9.24  -cp android-all-14.jar:apksig-8.1.1.jar:R-classes  -d out  <55 .kt files>
 KOTLINC EXIT=0   errors=0   classes=166
 ```
 
@@ -102,7 +102,12 @@ KOTLINC EXIT=0   errors=0   classes=166
 
 ## The fork matrix (what was reconciled)
 
-54 Kotlin files exist across 6 forks. Only 6 files diverged:
+54 Kotlin files existed across 6 forks (the authored `core/IRAuditor.kt` brings the tree to 55).
+Only 6 files diverged in that 6-fork union:
+
+> This is the union reconciliation (6 forks). A later, separate measurement of `tree` vs
+> `tree_omega` (3 trees) found 11 divergent files of 50 common — see AGENTS.md §24 and
+> `proof/FIELD_REPORT_THIS_TAB.md`. The two counts measure different fork sets.
 
 | file | broken forks | fixed forks |
 |---|---|---|
@@ -152,7 +157,7 @@ lacked. This tree = delivery ∪ (the parts of working_tree that were strictly n
 
 ## What is real vs. what is authored
 
-- **Real (from the repo, byte-for-byte):** all 54 `.kt` files, `libaapt2.so` / `libzipalign.so`,
+- **Real (from the repo, byte-for-byte):** all 55 `.kt` files, `libaapt2.so` / `libzipalign.so`,
   the HTML/JS studio (`homekeeper.html`, `darkith_ui.html`, `savf.html`, `darkterm.js`,
   `darktools.js`), and `build.sh`.
 - **Authored here (was missing everywhere):** `AndroidManifest.xml`, `res/`, the asset layout,
@@ -175,7 +180,7 @@ bash build.sh . Darkith com.darkith.transliaison
   repo (and `release_key` must never be committed — keep it on `/sdcard/Darkith/`).
 - `IRAuditor` is a minimal, correct structural auditor; extend it as the pathologies are named.
 
-## The laws this tree obeys (§19 of the continuum)
+## The laws this tree obeys (§19 — the anti-divergence laws)
 
 This reconciliation is the executable form of the anti-divergence laws:
 
@@ -226,7 +231,7 @@ It held 5 items; the first was `in_progress`, the rest `todo`. It was never carr
 | A4 | Verify: Kotlin-aware parse + brace/string balance | **DONE** | real kotlinc 1.9.24, 0 errors |
 | A5 | Close the contract + log proof (audit until MISSING==NONE; fix dashboard `ms[]`) | **DONE** | MISSING=NONE; dashboard 39/39; proofs logged |
 
-## B. OPEN DEFICITS (named in RECONCILIATION.md)
+## B. OPEN DEFICITS (from the reconciliation; see Part 3)
 
 | # | deficit | status |
 |---|---|---|
@@ -268,9 +273,9 @@ legitimately headless: `version`, `apkVersion`, `storageGranted`, `browserClose`
 
 | # | mechanism | what it stops |
 |---|---|---|
-| F1 | `tools/delivery_gate.sh` — 11 named loophole checks; refuses "delivered" while any is open | blind delivery (W-041) |
+| F1 | `tools/delivery_gate.sh` — 19 named loophole checks; refuses "delivered" while any is open | blind delivery (W-041) |
 | F2 | `tools/fork_integrity_gate.sh` — §19 laws | decoupled silos / stale forks (W-036/37) |
-| F3 | `singularity_progressive_continuum.md` §19–§20 | laws as gates, not notes |
+| F3 | `DARKITH.md` §19–§20 (the laws, merged from the continuum) | laws as gates, not notes |
 | F4 | `AGENTS.md` §19/§20 | carried into every future session |
 | F5 | **this ledger + the live task tracker** | task discard / amnesia (the thing you are angry about) |
 
@@ -551,6 +556,14 @@ L-08 bridge-contract        UI<->bridge contract complete (W-023 tool, corrected
 L-09 asset-parity           every tree asset ships inside the APK (W-039)
 L-10 currency               the tree compiles clean vs a real android.jar (W-024)
 L-11 registry-nonempty      the gate itself has checks (a gate with none gates nothing)
+L-12 one-surface            ONE hub page lists every artifact as a forced download (NEVER #15)
+L-13 no-doc-dup             the docs DARKITH.md replaces do not exist anywhere (NEVER #16)
+L-14 family-whole           the shell* method family is whole in the dex, not partial (SPI-19)
+L-15 signer-identity        the APK is signed by the expected identity, not a debug key
+L-16 arsc-stored            resources.arsc is STORED, not DEFLATED (install blocker)
+L-17 native-tools           the staged native tools close their shared-lib deps
+L-18 install-gate           the package installer accepts the APK (no "App not installed")
+L-19 runtime-render         the launcher surface actually PAINTS (0 JS errors)
 
 ─── NEVER #14 (ENUMERATE BEFORE DELIVERING) ───
 GATE: tools/delivery_gate.sh
@@ -966,3 +979,58 @@ nullable, a cleanup catch — counted and gated as a REGRESSION against the ratc
 HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 `--fail-on-fixable`). The bounty is a single scalar, weighted 100:1:0.1, so
 "how bad is the tree" is a number, not a feeling.
+
+§34 — THE VISUAL-AFFORDANCE SPECIALIST & THE COUPLING LAW (2026-11-10)
+  ════════════════════════════════════════════════════════════════════════════
+  Source: Operator directive — "in my launcher userspace I need to build a software
+  specialist for every kind of app developers already develop. Like for visual
+  affordance, the ICONS, LOGOS and THUMBNAILS, one omega app for it." And, binding:
+  the app must "instantly couple to whatever limited preconditions and state" of
+  the APK build — it must work whether or not the native bridge is present, and it
+  must never claim health it cannot measure.
+
+  ─── W-049 (THE SPECIALIST THAT CANNOT COUPLE) ───
+  A domain specialist that assumes a rich environment lies about what it did. The
+  forge must emit an INSTALLABLE pack (a foreground drawable, the adaptive XML the
+  manifest names, the background colour) or it has produced art, not an asset. It
+  must write through the REAL bridge (`window.darkith.fileWrite`) when one exists,
+  and when none exists it must say so — a green gate computed from a missing
+  sensor is the exact bug the four-states rule (measured / unavailable /
+  not-sampled / inferred) exists to prevent. And every artefact it emits must be
+  BYTE-DETERMINISTIC, so a rebuild is diffable and a hash is meaningful.
+
+  Insight: one specialist is a thin module on the same kernel and the same forge.
+  It takes a typed spec in, and gives a deterministic artefact plus an audit
+  record out. The icon/logo/thumbnail app is the first vertical because it is pure
+  algorithms with no network: adaptive layers with the 66/108 dp safe zone, palette
+  and contrast, saliency-aware crops, a size budget chosen by search.
+
+  ─── NEVER #20 (NO FOREIGN GEOMETRY IN AN EMITTED DRAWABLE) ───
+  GATE: tools/test_icon_forge.js
+  Every `android:pathData` the forge emits is absolute `M/L/C/Z` only — no SVG
+  arcs. The normaliser converts arcs to cubics before emission. An emitted
+  VectorDrawable that aapt2 must reject is a delivery defect; the test asserts the
+  alphabet of every emitted path.
+
+  ─── MUST #34 (THE PACK IS INSTALLABLE OR IT IS NOT A BUILD) ───
+  GATE: tools/test_icon_forge.js
+  A build is only a build if it carries the resources the manifest names:
+  `res/mipmap-anydpi-v26/ic_launcher.xml` and `ic_launcher_round.xml`, a foreground
+  drawable (`@drawable/ic_launcher_foreground`), and `res/values/ic_launcher_background.xml`.
+  The test asserts the pack's file set, and that legacy mipmaps are emitted when
+  requested. This is the same rule `tools/icon_gate.py` applies to the app's own
+  icon, pointed at the forge's output.
+
+  ─── SPI-28 (THE ZIP IS STORED AND DETERMINISTIC) ───
+  GATE: tools/test_icon_forge.js
+  The pack travels as a ZIP with STORED entries and a fixed timestamp, so the same
+  spec yields the same bytes. The reader verifies every entry's CRC. Determinism is
+  what makes `buildKey()` (a sha256 of the spec) a truthful identity for a build.
+
+  ─── THE COUPLING CLAUSE (WINDOW.DARKITH, OR NOTHING) ───
+  The Couple tab probes the real bridge and reports each method as MEASURED, or the
+  whole coupling as UNAVAILABLE when `window.darkith` is absent. A build with a
+  bridge writes every file to `/sdcard/Darkith/icon-pack/` through `fileWrite` and
+  records the device directory in the ledger; a build without one downloads the ZIP
+  and says "local mode". The four-state gate is the honest sensor: absence is a
+  state, never a pass.

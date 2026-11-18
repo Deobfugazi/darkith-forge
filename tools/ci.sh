@@ -211,6 +211,22 @@ fi
     run "omega reader tests" node tools/test_omega_reader.js
   fi
 
+  # The Icon Forge (icon_forge.html): the visual-affordance specialist. Dependency-free
+  # DOM/canvas-shim test that evaluates the REAL script. Proves sha256, the deterministic
+  # ZIP (CRC-verified), absolute-only pathData for VectorDrawable, safe-zone geometry, the
+  # four-state gates (a missing bridge is UNAVAILABLE, never PASS) and device coupling.
+  if have node && [ -f tools/test_icon_forge.js ]; then
+    run "icon forge tests" node tools/test_icon_forge.js
+  fi
+
+  # The TermKit dual-register manual (help beginner / help dev). The invariant debugger
+  # extracts the REAL shell core from the canonical page and executes every fixture the
+  # manual prints, so documentation can never drift from the engine. No browser needed.
+  if have node && [ -f tools/termkit_help_audit.mjs ]; then
+    run "termkit help audit (dual register)" node tools/termkit_help_audit.mjs
+  fi
+
+
   # The source inspector — the logical trial examiner. It puts the source on trial: 10
   # named charges, each calibrated (positive+negative), then autofixes the reversible ones
   # and enforces the HOMEOKINESIS ratchet (debt may only flux downward; stasis degrades).
@@ -309,6 +325,12 @@ if have python3 && command -v aapt2 >/dev/null 2>&1 && command -v apksigner >/de
   fi
 else
   printf -- '--- install gate: SKIP (no APK, or aapt2/apksigner absent; build an APK and stage tools with: bash tools/fetch_toolchain.sh)\n'
+fi
+
+# I-03's v2 detector is a regex against apksigner's stdout; a wrong regex silently reads
+# OPEN, or worse PASSes a v1-only APK. Guard it directly, independent of any APK.
+if have python3 && [ -f tools/install_gate.py ]; then
+  run "install gate selftest (I-03 v2 detector)" python3 tools/install_gate.py --selftest
 fi
 
 printf '\n=== runtime render gate (the UI the OS hands to Zygote) ===\n'

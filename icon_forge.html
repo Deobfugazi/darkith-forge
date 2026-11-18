@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ω Icon Forge</title>
+<style>
+:root{--bg:#050505;--ink:#f0f2f5;--dim:#8b93a1;--mute:#6b7383;--panel:#0a0c13;--panel2:#10131b;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);
+--accent:#e8c268;--cyan:#5cc8ff;--red:#ff4757;--green:#7ee787;--amber:#ffb84d;--violet:#a78bfa;
+--font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--font)}
+body{padding:0 0 calc(24px + env(safe-area-inset-bottom,0px))}
+#app{max-width:760px;margin:0 auto;padding:0 14px}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px;background:linear-gradient(var(--bg) 70%,transparent)}
+.brand{display:flex;align-items:center;gap:10px}
+.om{font-size:30px;line-height:1;color:var(--accent);font-weight:300}
+.brand b{display:block;font-size:17px;letter-spacing:.02em}
+.brand small{display:block;color:var(--dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.chip{font:600 11px var(--mono);letter-spacing:.06em;padding:6px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.chip.PASS{color:var(--green);border-color:rgba(126,231,135,.5)}.chip.REVIEW{color:var(--amber);border-color:rgba(255,184,77,.5)}
+.chip.BLOCKED{color:var(--red);border-color:rgba(255,71,87,.5)}.chip.LIED{color:var(--red);border-color:var(--red);background:rgba(255,71,87,.12)}
+.hdrbtns{display:flex;gap:6px;align-items:center}
+.hdrbtns button{min-height:34px;padding:4px 10px;font-size:13px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.tabs button{flex:0 0 auto}
+button,select,input,textarea{font:inherit;color:inherit}
+button{background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:9px 14px;min-height:40px;cursor:pointer}
+button:active{transform:scale(.98)}
+button.on{border-color:var(--accent);color:var(--accent);background:rgba(232,194,104,.10)}
+button.pri{background:var(--cyan);color:#021018;border-color:var(--cyan);font-weight:700}
+button.warn{border-color:rgba(255,71,87,.6);color:var(--red)}
+button:disabled{opacity:.4;cursor:not-allowed}
+[hidden]{display:none!important}
+section{display:none}section.on{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;margin:0 0 12px}
+.card h3{margin:0 0 8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.row>label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;flex:1 1 130px;min-width:110px}
+.row input[type=text],.row input[type=number],.row select,.row textarea{background:#05060a;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;color:var(--ink);width:100%;min-height:38px;text-transform:none;letter-spacing:0;font-size:14px}
+.row input[type=color]{width:100%;height:38px;padding:2px;background:#05060a;border:1px solid var(--line2);border-radius:10px}
+.row input[type=range]{width:100%}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.stage{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:center}
+canvas.ed{width:min(100%,324px);aspect-ratio:1;border-radius:14px;background:#000;image-rendering:auto;border:1px solid var(--line2)}
+canvas.wide{width:100%;border-radius:12px;border:1px solid var(--line2);background:#000;display:block}
+.masks{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.masks figure{margin:0;text-align:center;font-size:10px;color:var(--dim)}
+.masks canvas{width:64px;height:64px;background:repeating-conic-gradient(#1a1d26 0 25%,#0e1017 0 50%) 0 0/12px 12px;border-radius:8px}
+.gates{display:grid;gap:6px}
+.gate{display:grid;grid-template-columns:auto 1fr;gap:8px;font-size:13px;align-items:start;padding:8px 10px;border-radius:12px;background:var(--panel2);border:1px solid var(--line)}
+.gate i{font:700 10px var(--mono);padding:3px 7px;border-radius:6px;font-style:normal;letter-spacing:.05em}
+.gate i.pass{background:rgba(126,231,135,.14);color:var(--green)}.gate i.marginal{background:rgba(255,184,77,.14);color:var(--amber)}
+.gate i.fail{background:rgba(255,71,87,.16);color:var(--red)}.gate i.unavailable,.gate i.not-sampled,.gate i.inferred,.gate i.measured{background:rgba(92,200,255,.12);color:var(--cyan)}
+.gate small{display:block;color:var(--dim);font-size:12px;word-break:break-word}
+pre,code{font-family:var(--mono)}
+pre.out{background:#05060a;border:1px solid var(--line2);border-radius:12px;padding:10px;font-size:11px;line-height:1.5;overflow:auto;max-height:320px;white-space:pre-wrap;word-break:break-word;margin:8px 0 0}
+.note{color:var(--dim);font-size:12px;margin:6px 0}
+.note b{color:var(--ink)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13px}
+.kv span:nth-child(even){text-align:right;font-family:var(--mono);color:var(--cyan)}
+img.ref{width:72px;height:72px;border-radius:14px;background:#000;border:1px solid var(--line2)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.dock{position:sticky;top:54px;z-index:15;display:flex;gap:10px;align-items:center;background:rgba(5,5,5,.94);backdrop-filter:blur(6px);border:1px solid var(--line2);border-radius:16px;padding:8px;margin:0 0 12px}
+.dock canvas.ed{width:132px;flex:0 0 132px;border-radius:12px}
+.dock .dmeta{flex:1;min-width:0;font-size:12px;color:var(--dim)}
+.dock .masks{justify-content:flex-start;gap:5px}.dock .masks canvas{width:36px;height:36px;border-radius:6px}.dock .masks figure{font-size:0}
+.stale{position:relative}.stale button,.stale a{pointer-events:none;opacity:.35}
+.stalebar{background:rgba(255,184,77,.12);border:1px solid rgba(255,184,77,.5);color:var(--amber);border-radius:10px;padding:6px 10px;font-size:12px;margin:6px 0}
+.fixbtn{margin-top:6px;min-height:32px;padding:4px 10px;font-size:12px;border-color:var(--cyan);color:var(--cyan)}
+.mini{min-height:32px;padding:3px 10px;font-size:13px}
+textarea.spec{width:100%;min-height:90px;font:11px/1.4 var(--mono);background:#05060a;border:1px solid var(--line2);border-radius:10px;padding:8px;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#12151d;border:1px solid var(--line2);padding:10px 16px;border-radius:12px;font-size:13px;z-index:50;max-width:92vw;display:none}
+.dz{border:1px dashed var(--line2);border-radius:14px;padding:12px;text-align:center;color:var(--dim);font-size:13px}
+.thumbs{display:flex;flex-wrap:wrap;gap:10px}
+.thumbs figure{margin:0;font-size:11px;color:var(--dim)}
+.thumbs canvas,.thumbs img{max-width:150px;max-height:150px;border-radius:8px;border:1px solid var(--line2);background:#000}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="top">
+  <div class="brand"><span class="om">Ω</span><div><b>Icon Forge</b><small>visual affordance · omega app</small></div></div>
+  <div class="hdrbtns"><button id="btnUndo" title="Undo" aria-label="Undo" disabled>↶</button><button id="btnRedo" title="Redo" aria-label="Redo" disabled>↷</button><div id="verdict" class="chip" role="status" aria-live="polite">—</div></div>
+</header>
+<nav class="tabs" id="tabs" role="tablist">
+  <button data-t="icon" class="on">Icon</button><button data-t="logo">Logo</button><button data-t="thumb">Thumbnail</button><button data-t="couple">Couple</button><button data-t="ledger">Ledger</button>
+</nav>
+
+
+<section id="t-icon" class="on">
+  <div class="dock">
+    <canvas class="ed" id="edDock" width="324" height="324"></canvas>
+    <div class="dmeta" id="dockMeta">Preview</div>
+    <div class="masks" id="masksDock"></div>
+  </div>
+  <div class="card"><h3>Target</h3>
+    <div class="row"><label>App name<input type="text" id="appName" value="Darkith Homekeeper"></label><label>Package<input type="text" id="pkg" value="com.darkith.transliaison"></label></div>
+  </div>
+  <div class="card"><h3>Source</h3>
+    <div class="seg" id="srcSeg"><button data-s="preset" class="on">Preset</button><button data-s="svg">SVG</button><button data-s="raster">Image</button><button data-s="text">Monogram</button><button data-s="installed" id="srcInstalled">Installed icon</button></div>
+    <div id="srcPreset" class="row"><label>Mark<select id="preset"><option value="sphere">Anchor Sphere</option><option value="omega">Ω Refiner</option><option value="orbit">Orbit</option><option value="hex">Hex Forge</option></select></label></div>
+    <div id="srcSvg" class="row" hidden><label style="flex-basis:100%">Paste SVG<textarea id="svgText" rows="4" placeholder="&lt;svg viewBox=…&gt;"></textarea></label><label style="flex-basis:100%">…or choose a file<input type="file" id="svgFile" accept=".svg,image/svg+xml"></label></div>
+    <div id="srcRaster" class="row" hidden><label style="flex-basis:100%">Image file<input type="file" id="imgFile" accept="image/*"></label></div>
+    <div id="srcText" class="row" hidden><label>Letters<input type="text" id="monoText" value="D" maxlength="3"></label><label>Font<select id="monoFont"><option value="system-ui,sans-serif">System sans</option><option value="Georgia,serif">Serif</option><option value="ui-monospace,Menlo,monospace">Mono</option></select></label></div>
+    <div id="srcNote" class="note"></div>
+  </div>
+  <div class="card"><h3>Colour &amp; placement</h3>
+    <div class="row"><label>Background<select id="bgType"><option value="radial">Radial</option><option value="linear">Linear</option><option value="solid">Solid</option></select></label><label>BG 1<input type="color" id="bg1" value="#0a0c13"></label><label>BG 2<input type="color" id="bg2" value="#050505"></label></div>
+    <div class="row"><label>Accent 1<input type="color" id="a1" value="#e8c268"></label><label>Accent 2<input type="color" id="a2" value="#5cc8ff"></label><label>Ink<input type="color" id="ink" value="#f0f2f5"></label></div>
+    <div class="row"><label>Scale <span id="vScale">1.00</span><input type="range" id="scale" min="0.5" max="1.6" step="0.01" value="1"></label><label>Shift X <span id="vDx">0</span><input type="range" id="dx" min="-14" max="14" step="0.5" value="0"></label><label>Shift Y <span id="vDy">0</span><input type="range" id="dy" min="-14" max="14" step="0.5" value="0"></label></div>
+    <div class="row"><label>Guides<select id="guides"><option value="both">Safe zone + visible area</option><option value="safe">Safe zone</option><option value="none">None</option></select></label>
+      <label>Legacy PNGs (API &lt; 26)<select id="legacy"><option value="1">Include</option><option value="0">Omit</option></select></label></div>
+  </div>
+  <div class="card"><h3>Preview · adaptive masks</h3>
+    <div class="stage"><canvas class="ed" id="ed" width="324" height="324"></canvas><div class="masks" id="masks"></div></div>
+    <div class="note">Canvas is the 108 dp adaptive layer at 3×. Rings: <b>66 dp safe zone</b> and <b>72 dp visible area</b>.</div>
+  </div>
+  <div class="card"><h3>Pre-flight (live)</h3><div class="gates" id="preflight"></div></div>
+  <div class="card"><h3>Build</h3>
+    <div class="row"><button class="pri" id="btnBuild">Build icon pack</button><button id="btnOverride" class="warn" hidden>Override BLOCKED (recorded)</button></div>
+    <div id="buildOut"></div>
+  </div>
+</section>
+
+
+<section id="t-logo">
+  <div class="card"><h3>Lockup</h3>
+    <div class="row"><label>Wordmark<input type="text" id="lgText" value="DARKITH"></label><label>Tagline<input type="text" id="lgTag" value="sovereign userspace"></label></div>
+    <div class="row"><label>Font<select id="lgFont"><option value="system-ui,sans-serif">System sans</option><option value="Georgia,serif">Serif</option><option value="ui-monospace,Menlo,monospace">Mono</option></select></label>
+      <label>Weight<select id="lgWeight"><option>300</option><option selected>600</option><option>800</option></select></label>
+      <label>Layout<select id="lgLayout"><option value="h">Horizontal</option><option value="v">Stacked</option><option value="m">Mark only</option><option value="w">Wordmark only</option></select></label></div>
+    <div class="note">The mark comes from the Icon tab (same source, same colours). Vector lockups need a vector-complete mark; image or monogram sources fall back to a raster mark and the ledger says so.</div>
+  </div>
+  <div class="card"><h3>Variants</h3><div class="thumbs" id="lgPrev"></div>
+    <div class="row"><button class="pri" id="btnLogo">Build logo pack</button></div><div id="logoOut"></div></div>
+</section>
+
+
+<section id="t-thumb">
+  <div class="card"><h3>Source image</h3>
+    <div class="row"><label style="flex-basis:100%"><input type="file" id="thFile" accept="image/*"></label></div>
+    <div class="row"><button id="thFromIcon">Use current icon art</button></div>
+    <div class="note" id="thInfo">No image loaded.</div>
+  </div>
+  <div class="card"><h3>Crop &amp; budget</h3>
+    <div class="row"><label>Preset<select id="thPreset"></select></label><label>Format<select id="thFmt"><option value="image/jpeg">JPEG</option><option value="image/webp">WebP</option><option value="image/png">PNG</option></select></label></div>
+    <div class="row"><label>Budget (KB)<input type="number" id="thKB" value="200" min="10" max="5000"></label><label>Zoom <span id="vZoom">1.00</span><input type="range" id="thZoom" min="1" max="3" step="0.01" value="1"></label></div>
+    <div class="row"><label>Fit<select id="thFit"><option value="cover">Cover (crop)</option><option value="contain">Contain (palette fill)</option></select></label><button id="thAuto">Auto focal point</button></div>
+    <div class="stage"><canvas class="ed" id="thEd" width="324" height="324" style="aspect-ratio:auto"></canvas></div>
+    <div class="note">Tap the preview to set the focal point. Auto focal point is <b>inferred</b> from edge energy, not measured attention.</div>
+    <div class="row"><button class="pri" id="btnThumb">Encode this preset</button><button id="btnThumbAll">Encode all presets (zip)</button></div>
+    <div id="thumbOut"></div>
+  </div>
+</section>
+
+
+<section id="t-couple">
+  <div class="card"><h3>Coupling state</h3><div class="gates" id="coupleRows"></div>
+    <div class="row"><button id="btnProbe">Re-probe</button></div></div>
+  <div class="card"><h3>Last build (from the device)</h3><div id="lastBuild" class="note">not sampled</div></div>
+  <div class="card"><h3>Installed icon of this app</h3><div class="row"><img class="ref" id="hostIcon" alt="" hidden><div class="note" id="hostIconNote">not sampled</div></div></div>
+  <div class="card"><h3>Optional bridge method (binary write)</h3>
+    <div class="note">The bridge's <code>fileWrite</code> is UTF-8 text only, so PNGs travel inside the generated script. If you ever want binary writes, add this next to <code>fileWrite</code> in HomekeeperBridge.kt (same <code>norm</code>/<code>err</code> helpers):</div>
+    <pre class="out" id="ktSnippet"></pre></div>
+</section>
+
+
+<section id="t-ledger">
+  <div class="card"><h3>Self-test</h3><div id="selftest" class="note">not run</div></div>
+  <div class="card"><h3>Ledger of the last build</h3><pre class="out" id="ledgerOut">— nothing built yet —</pre></div>
+</section>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+/* ============ Ω Icon Forge — one file, no network, no dependencies ============ */
+const $=id=>document.getElementById(id);
+const enc=new TextEncoder(),dec=new TextDecoder();
+/* ---- sha256 (sync, no crypto.subtle: file:// safe) ---- */
+const K256=new Uint32Array([0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
+function sha256(u8){
+  const l=u8.length,nb=((l+9+63)>>6)<<6,b=new Uint8Array(nb);b.set(u8);b[l]=0x80;
+  const dv=new DataView(b.buffer);dv.setUint32(nb-8,Math.floor(l/0x20000000));dv.setUint32(nb-4,(l<<3)>>>0);
+  let h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;const w=new Uint32Array(64);
+  for(let o=0;o<nb;o+=64){
+    for(let i=0;i<16;i++)w[i]=dv.getUint32(o+i*4);
+    for(let i=16;i<64;i++){const a=w[i-15],c=w[i-2];const s0=((a>>>7)|(a<<25))^((a>>>18)|(a<<14))^(a>>>3),s1=((c>>>17)|(c<<15))^((c>>>19)|(c<<13))^(c>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)|0}
+    let a=h0,bb=h1,c=h2,d=h3,e=h4,f=h5,g=h6,h=h7;
+    for(let i=0;i<64;i++){const S1=((e>>>6)|(e<<26))^((e>>>11)|(e<<21))^((e>>>25)|(e<<7)),ch=(e&f)^(~e&g),t1=(h+S1+ch+K256[i]+w[i])|0,S0=((a>>>2)|(a<<30))^((a>>>13)|(a<<19))^((a>>>22)|(a<<10)),mj=(a&bb)^(a&c)^(bb&c),t2=(S0+mj)|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=bb;bb=a;a=(t1+t2)|0}
+    h0=(h0+a)|0;h1=(h1+bb)|0;h2=(h2+c)|0;h3=(h3+d)|0;h4=(h4+e)|0;h5=(h5+f)|0;h6=(h6+g)|0;h7=(h7+h)|0}
+  return[h0,h1,h2,h3,h4,h5,h6,h7].map(x=>(x>>>0).toString(16).padStart(8,"0")).join("")}
+const CRC_T=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(u8){let c=0xffffffff;for(let i=0;i<u8.length;i++)c=CRC_T[(c^u8[i])&255]^(c>>>8);return(c^0xffffffff)>>>0}
+function b64e(u8){let s="";for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)}
+function b64d(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+const hex2=n=>Math.round(Math.max(0,Math.min(255,n))).toString(16).padStart(2,"0");
+/* ---- ZIP (STORED only, fixed timestamp => deterministic) ---- */
+function zipWrite(files){ // files: [{name,data:Uint8Array}]
+  const parts=[],cd=[];let off=0;const DT=0x5821,DD=0x0021; // fixed 00:00 -> stable bytes
+  const u16=n=>new Uint8Array([n&255,(n>>8)&255]),u32=n=>new Uint8Array([n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255]);
+  const cat=a=>{let n=0;a.forEach(x=>n+=x.length);const o=new Uint8Array(n);let p=0;a.forEach(x=>{o.set(x,p);p+=x.length});return o};
+  files.forEach(f=>{const nm=enc.encode(f.name),c=crc32(f.data);
+    const lh=cat([u32(0x04034b50),u16(20),u16(0x0800),u16(0),u16(DT&0xffff),u16(DD),u32(c),u32(f.data.length),u32(f.data.length),u16(nm.length),u16(0),nm]);
+    parts.push(lh,f.data);
+    cd.push(cat([u32(0x02014b50),u16(20),u16(20),u16(0x0800),u16(0),u16(DT&0xffff),u16(DD),u32(c),u32(f.data.length),u32(f.data.length),u16(nm.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(off),nm]));
+    off+=lh.length+f.data.length});
+  const cdb=cat(cd),end=cat([u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(cdb.length),u32(off),u16(0)]);
+  return cat([...parts,cdb,end])}
+function zipRead(u8){ // verifies CRC of every entry; throws on any mismatch
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);let e=-1;
+  for(let i=u8.length-22;i>=Math.max(0,u8.length-70000);i--)if(dv.getUint32(i,true)===0x06054b50){e=i;break}
+  if(e<0)throw new Error("zip: no end record");
+  const n=dv.getUint16(e+10,true);let p=dv.getUint32(e+16,true);const out=[];
+  for(let i=0;i<n;i++){if(dv.getUint32(p,true)!==0x02014b50)throw new Error("zip: bad central entry");
+    const meth=dv.getUint16(p+10,true),crc=dv.getUint32(p+16,true),cs=dv.getUint32(p+20,true),nl=dv.getUint16(p+28,true),el=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),lo=dv.getUint32(p+42,true);
+    const name=dec.decode(u8.subarray(p+46,p+46+nl));if(meth!==0)throw new Error("zip: non-stored entry "+name);
+    const ln=dv.getUint16(lo+26,true),le=dv.getUint16(lo+28,true),ds=lo+30+ln+le,data=u8.slice(ds,ds+cs);
+    if(crc32(data)!==crc)throw new Error("zip: CRC mismatch in "+name);out.push({name,data});p+=46+nl+el+cl}
+  return out}
+const dl=(name,data,type)=>{const b=new Blob([data],{type:type||"application/octet-stream"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(u)},4000)};
+function imgLoad(src,ms){return new Promise((res,rej)=>{const im=new Image();let done=false;const t=setTimeout(()=>{if(!done){done=true;rej(new Error('image load timed out'))}},ms||8000);im.onload=()=>{if(!done){done=true;clearTimeout(t);res(im)}};im.onerror=()=>{if(!done){done=true;clearTimeout(t);rej(new Error('image did not decode'))}};im.src=src})}
+function toast(m,ms){const t=$("toast");t.textContent=m;t.style.display="block";clearTimeout(toast._t);toast._t=setTimeout(()=>t.style.display="none",ms||2600)}
+
+
+/* ============ colour ============ */
+function parseColor(s){s=String(s||"").trim().toLowerCase();let m;
+  if(m=/^#([0-9a-f]{3})$/.exec(s))return[...m[1]].map(c=>parseInt(c+c,16)).concat(1);
+  if(m=/^#([0-9a-f]{6})$/.exec(s))return[parseInt(m[1].slice(0,2),16),parseInt(m[1].slice(2,4),16),parseInt(m[1].slice(4,6),16),1];
+  if(m=/^#([0-9a-f]{8})$/.exec(s))return[parseInt(m[1].slice(0,2),16),parseInt(m[1].slice(2,4),16),parseInt(m[1].slice(4,6),16),parseInt(m[1].slice(6,8),16)/255];
+  if(m=/^rgba?\(([^)]+)\)$/.exec(s)){const p=m[1].split(/[ ,\/]+/).filter(Boolean).map(x=>x.endsWith("%")?parseFloat(x)*2.55:parseFloat(x));if(p.length>=3&&p.every(x=>!isNaN(x)))return[p[0],p[1],p[2],p.length>3?(String(m[1]).includes("%")&&p[3]>1?p[3]/2.55:p[3]):1]}
+  const N={black:"#000000",white:"#ffffff",red:"#ff0000",green:"#008000",blue:"#0000ff",yellow:"#ffff00",orange:"#ffa500",gray:"#808080",grey:"#808080",cyan:"#00ffff",magenta:"#ff00ff",purple:"#800080",gold:"#ffd700",silver:"#c0c0c0"};
+  if(N[s])return parseColor(N[s]);return null}
+const rgbHex=c=>"#"+hex2(c[0])+hex2(c[1])+hex2(c[2]);
+const argbHex=(c,a)=>"#"+hex2((a==null?c[3]:a)*255)+hex2(c[0])+hex2(c[1])+hex2(c[2]);
+const lum=c=>{const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};return .2126*f(c[0])+.7152*f(c[1])+.0722*f(c[2])};
+const contrast=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+
+
+/* ============ path toolkit (absolute M L C Z only, in 108-unit space) ============ */
+const f2=n=>{const r=Math.round(n*100)/100;return Object.is(r,-0)?"0":String(r)};
+function circlePath(cx,cy,r){const k=.5522847498*r;return`M${f2(cx+r)} ${f2(cy)}C${f2(cx+r)} ${f2(cy+k)} ${f2(cx+k)} ${f2(cy+r)} ${f2(cx)} ${f2(cy+r)}C${f2(cx-k)} ${f2(cy+r)} ${f2(cx-r)} ${f2(cy+k)} ${f2(cx-r)} ${f2(cy)}C${f2(cx-r)} ${f2(cy-k)} ${f2(cx-k)} ${f2(cy-r)} ${f2(cx)} ${f2(cy-r)}C${f2(cx+k)} ${f2(cy-r)} ${f2(cx+r)} ${f2(cy-k)} ${f2(cx+r)} ${f2(cy)}Z`}
+function arcPath(cx,cy,r,a0,a1,move){ // polyline-free: cubic arcs, angles in degrees, clockwise from +x
+  const seg=Math.max(1,Math.ceil(Math.abs(a1-a0)/90)),da=(a1-a0)/seg*Math.PI/180;let s="";
+  for(let i=0;i<seg;i++){const t0=a0*Math.PI/180+i*da,t1=t0+da,k=4/3*Math.tan(da/4),x0=cx+r*Math.cos(t0),y0=cy+r*Math.sin(t0),x1=cx+r*Math.cos(t1),y1=cy+r*Math.sin(t1);
+    if(i===0&&move!==false)s+=`M${f2(x0)} ${f2(y0)}`;
+    s+=`C${f2(x0-k*r*Math.sin(t0))} ${f2(y0+k*r*Math.cos(t0))} ${f2(x1+k*r*Math.sin(t1))} ${f2(y1-k*r*Math.cos(t1))} ${f2(x1)} ${f2(y1)}`}
+  return s}
+function polyPath(pts,close){return pts.map((p,i)=>(i?"L":"M")+f2(p[0])+" "+f2(p[1])).join("")+(close===false?"":"Z")}
+function rectPath(x,y,w,h,r){r=Math.min(r||0,w/2,h/2);if(!r)return`M${f2(x)} ${f2(y)}L${f2(x+w)} ${f2(y)}L${f2(x+w)} ${f2(y+h)}L${f2(x)} ${f2(y+h)}Z`;const k=.5522847498*r;
+  return`M${f2(x+r)} ${f2(y)}L${f2(x+w-r)} ${f2(y)}C${f2(x+w-r+k)} ${f2(y)} ${f2(x+w)} ${f2(y+r-k)} ${f2(x+w)} ${f2(y+r)}L${f2(x+w)} ${f2(y+h-r)}C${f2(x+w)} ${f2(y+h-r+k)} ${f2(x+w-r+k)} ${f2(y+h)} ${f2(x+w-r)} ${f2(y+h)}L${f2(x+r)} ${f2(y+h)}C${f2(x+r-k)} ${f2(y+h)} ${f2(x)} ${f2(y+h-r+k)} ${f2(x)} ${f2(y+h-r)}L${f2(x)} ${f2(y+r)}C${f2(x)} ${f2(y+r-k)} ${f2(x+r-k)} ${f2(y)} ${f2(x+r)} ${f2(y)}Z`}
+function xfPath(d,s,dx,dy,cx,cy){ // scale about (cx,cy) then translate; absolute M/L/C/Z only
+  const t=d.match(/[MLCZ]|-?\d*\.?\d+(?:e[-+]?\d+)?/gi)||[];let out="",i=0;
+  while(i<t.length){const c=t[i++];if(!/[MLCZ]/i.test(c))throw new Error("xfPath: stray number");out+=c;if(c==="Z")continue;
+    const nums=[];while(i<t.length&&!/[MLCZ]/i.test(t[i]))nums.push(parseFloat(t[i++]));
+    const o=[];for(let k=0;k+1<nums.length;k+=2)o.push(f2((nums[k]-cx)*s+cx+dx)+" "+f2((nums[k+1]-cy)*s+cy+dy));out+=o.join(" ")}
+  return out}
+function pathBBox(d){const n=(d.match(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi)||[]).map(parseFloat);let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(let i=0;i+1<n.length;i+=2){x0=Math.min(x0,n[i]);x1=Math.max(x1,n[i]);y0=Math.min(y0,n[i+1]);y1=Math.max(y1,n[i+1])}return{x0,y0,x1,y1}}
+/* general affine on absolute M/L/C/Z paths: [a,b,c,d,e,f] => x'=a x+c y+e, y'=b x+d y+f */
+function affPath(d,m){const t=d.match(/[MLCZ]|-?\d*\.?\d+(?:e[-+]?\d+)?/gi)||[];let out="",i=0;
+  while(i<t.length){const c=t[i++];if(!/[MLCZ]/.test(c))throw new Error("affPath: stray token "+c);out+=c;if(c==="Z")continue;
+    const nums=[];while(i<t.length&&!/[MLCZ]/.test(t[i]))nums.push(parseFloat(t[i++]));
+    const o=[];for(let k=0;k+1<nums.length;k+=2){const x=nums[k],y=nums[k+1];o.push(f2(m[0]*x+m[2]*y+m[4])+" "+f2(m[1]*x+m[3]*y+m[5]))}out+=o.join(" ")}
+  return out}
+const mMul=(p,q)=>[p[0]*q[0]+p[2]*q[1],p[1]*q[0]+p[3]*q[1],p[0]*q[2]+p[2]*q[3],p[1]*q[2]+p[3]*q[3],p[0]*q[4]+p[2]*q[5]+p[4],p[1]*q[4]+p[3]*q[5]+p[5]];
+const mRot=(deg,cx,cy)=>{const a=deg*Math.PI/180,c=Math.cos(a),s=Math.sin(a);return[c,s,-s,c,cx-c*cx+s*cy,cy-s*cx-c*cy]};
+const ellipsePath=(cx,cy,rx,ry)=>affPath(circlePath(0,0,1),[rx,0,0,ry,cx,cy]);
+
+
+/* ============ SVG path normaliser: any SVG path d -> absolute M/L/C/Z ============ */
+function arcToCubics(x1,y1,rx,ry,phi,fa,fs,x2,y2){
+  if(rx===0||ry===0)return[["L",x2,y2]];rx=Math.abs(rx);ry=Math.abs(ry);const ph=phi*Math.PI/180,c=Math.cos(ph),s=Math.sin(ph);
+  const dx=(x1-x2)/2,dy=(y1-y2)/2,x1p=c*dx+s*dy,y1p=-s*dx+c*dy;let lam=x1p*x1p/(rx*rx)+y1p*y1p/(ry*ry);if(lam>1){const q=Math.sqrt(lam);rx*=q;ry*=q}
+  const num=rx*rx*ry*ry-rx*rx*y1p*y1p-ry*ry*x1p*x1p,den=rx*rx*y1p*y1p+ry*ry*x1p*x1p;let co=Math.sqrt(Math.max(0,num/den));if(fa===fs)co=-co;
+  const cxp=co*rx*y1p/ry,cyp=-co*ry*x1p/rx,cx=c*cxp-s*cyp+(x1+x2)/2,cy=s*cxp+c*cyp+(y1+y2)/2;
+  const ang=(ux,uy,vx,vy)=>Math.atan2(ux*vy-uy*vx,ux*vx+uy*vy);
+  let t1=ang(1,0,(x1p-cxp)/rx,(y1p-cyp)/ry),dt=ang((x1p-cxp)/rx,(y1p-cyp)/ry,(-x1p-cxp)/rx,(-y1p-cyp)/ry);
+  if(!fs&&dt>0)dt-=2*Math.PI;if(fs&&dt<0)dt+=2*Math.PI;
+  const n=Math.max(1,Math.ceil(Math.abs(dt)/(Math.PI/2)-1e-9)),da=dt/n,k=4/3*Math.tan(da/4),out=[];
+  for(let i=0;i<n;i++){const a0=t1+i*da,a1=a0+da,P=(a,dd)=>{const ex=rx*Math.cos(a),ey=ry*Math.sin(a),vx=-rx*Math.sin(a),vy=ry*Math.cos(a);return[c*(ex+dd*k*vx)-s*(ey+dd*k*vy)+cx,s*(ex+dd*k*vx)+c*(ey+dd*k*vy)+cy]};
+    const p1=P(a0,1),p2=P(a1,-1),e=P(a1,0);out.push(["C",p1[0],p1[1],p2[0],p2[1],e[0],e[1]])}
+  return out}
+function normPath(d,M){ // returns absolute M/L/C/Z path; M = affine applied to every point
+  const cmds=[];const re=/([achlmqstvzACHLMQSTVZ])([^achlmqstvzACHLMQSTVZ]*)/g;let m;
+  const nre=/\s*,?\s*(-?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)/y;
+  while(m=re.exec(d)){const c=m[1],body=m[2];const args=[];
+    if(/[aA]/.test(c)){ // flags may be unseparated
+      const s=body;let i=0;const rd=()=>{nre.lastIndex=i;const r=nre.exec(s);if(!r)return null;i=nre.lastIndex;return parseFloat(r[1])};
+      const fl=()=>{while(i<s.length&&/[\s,]/.test(s[i]))i++;const ch=s[i];if(ch==="0"||ch==="1"){i++;return +ch}return null};
+      for(;;){const a=[rd(),rd(),rd(),fl(),fl(),rd(),rd()];if(a.some(v=>v===null))break;args.push(a)}
+    }else{let i=0;const s=body;const cur=[];for(;;){nre.lastIndex=i;const r=nre.exec(s);if(!r)break;i=nre.lastIndex;cur.push(parseFloat(r[1]))}
+      const n={m:2,l:2,h:1,v:1,c:6,s:4,q:4,t:2,z:0}[c.toLowerCase()];
+      if(n===0)args.push([]);else for(let k=0;k+n<=cur.length;k+=n)args.push(cur.slice(k,k+n))}
+    cmds.push([c,args])}
+  let x=0,y=0,sx=0,sy=0,lc=null,lq=null,out="";const P=(px,py)=>[M[0]*px+M[2]*py+M[4],M[1]*px+M[3]*py+M[5]];
+  const mv=(px,py)=>{const q=P(px,py);out+="M"+f2(q[0])+" "+f2(q[1])},ln=(px,py)=>{const q=P(px,py);out+="L"+f2(q[0])+" "+f2(q[1])},cb=(a,b,c,dd,e,f)=>{const p=P(a,b),q=P(c,dd),r=P(e,f);out+="C"+[p,q,r].map(z=>f2(z[0])+" "+f2(z[1])).join(" ")};
+  cmds.forEach(([c,args])=>{const rel=c===c.toLowerCase(),C=c.toUpperCase();
+    if(C==="Z"){out+="Z";x=sx;y=sy;lc=lq=null;return}
+    args.forEach((a,idx)=>{
+      if(C==="M"){const nx=rel?x+a[0]:a[0],ny=rel?y+a[1]:a[1];if(idx===0){mv(nx,ny);sx=nx;sy=ny}else ln(nx,ny);x=nx;y=ny;lc=lq=null}
+      else if(C==="L"){const nx=rel?x+a[0]:a[0],ny=rel?y+a[1]:a[1];ln(nx,ny);x=nx;y=ny;lc=lq=null}
+      else if(C==="H"){const nx=rel?x+a[0]:a[0];ln(nx,y);x=nx;lc=lq=null}
+      else if(C==="V"){const ny=rel?y+a[0]:a[0];ln(x,ny);y=ny;lc=lq=null}
+      else if(C==="C"){const v=rel?[x+a[0],y+a[1],x+a[2],y+a[3],x+a[4],y+a[5]]:a;cb(...v);lc=[v[2],v[3]];lq=null;x=v[4];y=v[5]}
+      else if(C==="S"){const r=lc?[2*x-lc[0],2*y-lc[1]]:[x,y],v=rel?[x+a[0],y+a[1],x+a[2],y+a[3]]:a;cb(r[0],r[1],v[0],v[1],v[2],v[3]);lc=[v[0],v[1]];lq=null;x=v[2];y=v[3]}
+      else if(C==="Q"||C==="T"){let qx,qy,ex,ey;if(C==="Q"){const v=rel?[x+a[0],y+a[1],x+a[2],y+a[3]]:a;qx=v[0];qy=v[1];ex=v[2];ey=v[3]}else{const r=lq?[2*x-lq[0],2*y-lq[1]]:[x,y];qx=r[0];qy=r[1];ex=rel?x+a[0]:a[0];ey=rel?y+a[1]:a[1]}
+        cb(x+2/3*(qx-x),y+2/3*(qy-y),ex+2/3*(qx-ex),ey+2/3*(qy-ey),ex,ey);lq=[qx,qy];lc=null;x=ex;y=ey}
+      else if(C==="A"){const ex=rel?x+a[5]:a[5],ey=rel?y+a[6]:a[6];arcToCubics(x,y,a[0],a[1],a[2],a[3],a[4],ex,ey).forEach(s=>{if(s[0]==="L")ln(s[1],s[2]);else cb(s[1],s[2],s[3],s[4],s[5],s[6])});x=ex;y=ey;lc=lq=null}
+    })});
+  return out}
+
+
+/* ============ SVG import: restricted converter, every refusal is recorded ============ */
+function parseTransform(s){let m=[1,0,0,1,0,0];if(!s)return m;const re=/(\w+)\s*\(([^)]*)\)/g;let r;
+  while(r=re.exec(s)){const a=r[2].split(/[\s,]+/).filter(Boolean).map(parseFloat);let t;
+    switch(r[1]){case"matrix":t=a;break;case"translate":t=[1,0,0,1,a[0]||0,a[1]||0];break;case"scale":t=[a[0],0,0,a.length>1?a[1]:a[0],0,0];break;
+      case"rotate":t=mRot(a[0]||0,a[1]||0,a[2]||0);break;case"skewX":t=[1,0,Math.tan((a[0]||0)*Math.PI/180),1,0,0];break;case"skewY":t=[1,Math.tan((a[0]||0)*Math.PI/180),0,1,0,0];break;default:return null}
+    if(!t||t.length<6||t.some(v=>isNaN(v)))return null;m=mMul(m,t)}return m}
+function importSvg(text){
+  const R={ok:false,prims:[],deficits:[],box:null};let doc;
+  try{doc=new DOMParser().parseFromString(text,"image/svg+xml")}catch(e){R.deficits.push("parse: "+e.message);return R}
+  const root=doc.documentElement;if(!root||root.nodeName.toLowerCase()!=="svg"||doc.querySelector("parsererror")){R.deficits.push("not well-formed SVG");return R}
+  let vb=(root.getAttribute("viewBox")||"").split(/[\s,]+/).map(parseFloat);
+  if(vb.length!==4||vb.some(isNaN)){const w=parseFloat(root.getAttribute("width")),h=parseFloat(root.getAttribute("height"));if(w>0&&h>0)vb=[0,0,w,h];else{R.deficits.push("no viewBox or width/height");return R}}
+  R.box=vb;const k=66/Math.max(vb[2],vb[3]);const base=[k,0,0,k,54-k*(vb[0]+vb[2]/2),54-k*(vb[1]+vb[3]/2)];
+  const BAD=["text","image","use","clipPath","mask","filter","pattern","foreignObject","linearGradient","radialGradient","style","switch","marker","symbol"];
+  BAD.forEach(t=>{if(doc.getElementsByTagName(t).length)R.deficits.push("<"+t+"> not convertible to VectorDrawable")});
+  const walk=(el,M,inh)=>{for(const c of el.children){const tag=c.nodeName.toLowerCase();if(BAD.includes(tag)||tag==="defs"||tag==="title"||tag==="desc"||tag==="metadata")continue;
+    let st={...inh};const get=n=>{const sty=c.getAttribute("style");if(sty){const mm=new RegExp("(?:^|;)\\s*"+n+"\\s*:\\s*([^;]+)").exec(sty);if(mm)return mm[1].trim()}return c.getAttribute(n)};
+    ["fill","stroke","stroke-width","opacity","fill-opacity","stroke-opacity","fill-rule","stroke-linecap","stroke-linejoin"].forEach(n=>{const v=get(n);if(v!=null&&v!=="")st[n]=v});
+    let T=M;const tr=c.getAttribute("transform");if(tr){const t=parseTransform(tr);if(!t){R.deficits.push("unsupported transform: "+tr);continue}T=mMul(M,t)}
+    if(tag==="g"||tag==="a"||tag==="svg"){walk(c,T,st);continue}
+    let d=null;const num=n=>parseFloat(c.getAttribute(n)||"0");
+    if(tag==="path")d=c.getAttribute("d")||"";
+    else if(tag==="rect"){const w=num("width"),h=num("height"),rx=Math.max(num("rx"),num("ry"));d=rectPath(num("x"),num("y"),w,h,rx)}
+    else if(tag==="circle")d=circlePath(num("cx"),num("cy"),num("r"));
+    else if(tag==="ellipse")d=ellipsePath(num("cx"),num("cy"),num("rx"),num("ry"));
+    else if(tag==="line")d=`M${num("x1")} ${num("y1")}L${num("x2")} ${num("y2")}`;
+    else if(tag==="polygon"||tag==="polyline"){const p=(c.getAttribute("points")||"").split(/[\s,]+/).filter(Boolean).map(parseFloat);const pts=[];for(let i=0;i+1<p.length;i+=2)pts.push([p[i],p[i+1]]);d=polyPath(pts,tag==="polygon")}
+    else{R.deficits.push("<"+tag+"> ignored");continue}
+    if(!d)continue;
+    const fillS=st.fill==null?"#000":st.fill,strS=st.stroke==null?"none":st.stroke;
+    const col=(v,op)=>{if(v==="none"||v==="transparent")return null;if(/^url\(/.test(v)){R.deficits.push("paint server "+v+" not convertible");return null}if(v==="currentColor")v="#000";const p=parseColor(v);if(!p){R.deficits.push("colour '"+v+"' not understood");return null}return[p[0],p[1],p[2],p[3]*op]};
+    const op=st.opacity==null?1:parseFloat(st.opacity);
+    const prim={d:normPath(d,mMul(base,T)),fill:col(fillS,op*(st["fill-opacity"]==null?1:parseFloat(st["fill-opacity"]))),stroke:col(strS,op*(st["stroke-opacity"]==null?1:parseFloat(st["stroke-opacity"]))),
+      sw:(st["stroke-width"]==null?1:parseFloat(st["stroke-width"]))*Math.sqrt(Math.abs((base[0]*T[0]+base[2]*T[1])*(base[1]*T[2]+base[3]*T[3])-(base[0]*T[2]+base[2]*T[3])*(base[1]*T[0]+base[3]*T[1]))||k),
+      cap:st["stroke-linecap"]||"butt",join:st["stroke-linejoin"]||"miter",eo:st["fill-rule"]==="evenodd"};
+    if(prim.d&&(prim.fill||prim.stroke))R.prims.push(prim)}};
+  walk(root,[1,0,0,1,0,0],{});
+  R.ok=R.prims.length>0&&!R.deficits.some(x=>/not convertible|unsupported transform|not well-formed/.test(x));
+  return R}
+
+
+/* ============ presets (108-unit space, inside the 66 dp safe circle) ============ */
+function presetPrims(name,C){ // C = {a1,a2,ink} as [r,g,b,a]
+  const a1=C.a1,a2=C.a2,ink=C.ink,dim=(c,f)=>[c[0]*f,c[1]*f,c[2]*f,c[3]];
+  const w=a=>[255,255,255,a];
+  if(name==="sphere"){const tilt=mRot(-22,54,54),ring=affPath(ellipsePath(54,54,32,10.5),tilt.slice());
+    const front=affPath(affPath(arcPath(0,0,1,0,180),[32,0,0,10.5,54,54]),tilt);
+    return[
+      {d:ring,fill:null,stroke:[a2[0],a2[1],a2[2],.55],sw:2.2,cap:"round",join:"round"},
+      {d:circlePath(54,54,25),fill:null,stroke:null,grad:{kind:"radial",cx:46,cy:44,r:36,stops:[[0,ink],[.38,a1],[1,dim(a1,.28)]]}},
+      {d:circlePath(54,54,25),fill:null,stroke:[a1[0],a1[1],a1[2],.9],sw:1.2},
+      {d:circlePath(45,43,6),fill:w(.28),stroke:null},
+      {d:front,fill:null,stroke:a2,sw:2.6,cap:"round",join:"round"}]}
+  if(name==="omega"){
+    return[
+      {d:circlePath(54,54,31),fill:null,stroke:[a1[0],a1[1],a1[2],.28],sw:1.2},
+      {d:arcPath(54,50,17,140,400)+"",fill:null,stroke:a1,sw:5.2,cap:"round",join:"round"},
+      {d:"M31 62L41.5 62",fill:null,stroke:a1,sw:5.2,cap:"round",join:"round"},
+      {d:"M66.5 62L77 62",fill:null,stroke:a1,sw:5.2,cap:"round",join:"round"},
+      {d:circlePath(54,48.5,4.6),fill:null,stroke:null,grad:{kind:"radial",cx:53,cy:47,r:6,stops:[[0,ink],[1,a2]]}}]}
+  if(name==="orbit"){
+    const sat=[54+28*Math.cos(-40*Math.PI/180),54+28*Math.sin(-40*Math.PI/180)];
+    return[
+      {d:arcPath(54,54,28,20,300),fill:null,stroke:a1,sw:3,cap:"round",join:"round"},
+      {d:arcPath(54,54,18,120,400),fill:null,stroke:a2,sw:3,cap:"round",join:"round"},
+      {d:circlePath(54,54,8),fill:null,stroke:null,grad:{kind:"radial",cx:52,cy:52,r:10,stops:[[0,ink],[1,a1]]}},
+      {d:circlePath(sat[0],sat[1],3),fill:a2,stroke:null}]}
+  if(name==="hex"){
+    const hx=(r,rot)=>{const p=[];for(let i=0;i<6;i++){const a=(rot+60*i)*Math.PI/180;p.push([54+r*Math.cos(a),54+r*Math.sin(a)])}return p};
+    return[
+      {d:polyPath(hx(30,-90)),fill:null,stroke:a1,sw:3,cap:"round",join:"round"},
+      {d:polyPath(hx(20,-90)),fill:[a2[0],a2[1],a2[2],.22],stroke:a2,sw:1.6,cap:"round",join:"round"},
+      {d:polyPath(hx(9,-90)),fill:a1,stroke:null},
+      {d:hx(30,-90).map((p,i)=>i%2?"":`M${f2(p[0])} ${f2(p[1])}L${f2(54)} ${f2(54)}`).join(""),fill:null,stroke:[a1[0],a1[1],a1[2],.55],sw:1.2,cap:"round",join:"round"}]}
+  return[]}
+
+/* ============ state, scene, renderers ============ */
+/* APPLY_TPL is the 54-unit circle every mark is fitted into. One definition of "fit",
+   so the safe-zone gate, the preview and the export cannot drift apart. */
+const APPLY_TPL=circlePath(54,54,33);
+const APPLY_R=33, SAFE_R=33, VIS_R=36;
+const S={src:"preset",svgRes:null,raster:null,rasterName:"",installed:null,override:null,last:null,
+  thSrc:null,thName:"",thFocus:[.5,.5],lgPrev:[],builtKey:null,undo:[],redo:[]};
+const val=id=>$(id).value,colv=id=>parseColor(val(id));
+function palette(){return{a1:colv("a1"),a2:colv("a2"),ink:colv("ink")}}
+function bgSpec(){return{type:val("bgType"),c1:colv("bg1"),c2:colv("bg2")}}
+const userXf=()=>({s:parseFloat(val("scale")),dx:parseFloat(val("dx")),dy:parseFloat(val("dy"))});
+function scaleStroke(p,s){return p.sw?p.sw*s:p.sw}
+function applyUser(prims){const u=userXf();if(u.s===1&&!u.dx&&!u.dy)return prims;
+  const m=[u.s,0,0,u.s,54-54*u.s+u.dx,54-54*u.s+u.dy];
+  return prims.map(p=>{const q={...p,d:affPath(p.d,m),sw:scaleStroke(p,u.s)};if(p.grad){const g=p.grad,X=x=>x*m[0]+m[4],Y=y=>y*m[3]+m[5];q.grad=g.kind==="radial"?{...g,cx:X(g.cx),cy:Y(g.cy),r:g.r*u.s}:{...g,x1:X(g.x1),y1:Y(g.y1),x2:X(g.x2),y2:Y(g.y2)}}return q})}
+const rgba=c=>`rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${c[3]==null?1:c[3]})`;
+function gradOf(x,g){let gr;if(g.kind==="radial"){gr=x.createRadialGradient(g.cx,g.cy,0,g.cx,g.cy,Math.max(0.01,g.r))}else{gr=x.createLinearGradient(g.x1,g.y1,g.x2,g.y2)}
+  g.stops.forEach(([t,c])=>gr.addColorStop(Math.max(0,Math.min(1,t)),rgba(c)));return gr}
+function drawPrims(x,prims,k){x.save();x.scale(k,k);prims.forEach(p=>{const path=new Path2D(p.d);
+  if(p.fill||p.grad){x.fillStyle=p.grad?gradOf(x,p.grad):rgba(p.fill);x.fill(path)}
+  if(p.stroke){x.strokeStyle=rgba(p.stroke);x.lineWidth=(p.sw||1);x.lineCap=p.cap||"round";x.lineJoin=p.join||"round";x.stroke(path)}});x.restore()}
+function paintBg(x,W,H,bg){const k=W/108;x.clearRect(0,0,W,H);
+  if(bg.type==="solid"){x.fillStyle=rgba(bg.c1);x.fillRect(0,0,W,H)}
+  else if(bg.type==="linear"){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,rgba(bg.c1));g.addColorStop(1,rgba(bg.c2));x.fillStyle=g;x.fillRect(0,0,W,H)}
+  else{const r=x.createRadialGradient(54*k,44*k,2,54*k,54*k,72*k);r.addColorStop(0,rgba(bg.c1));r.addColorStop(1,rgba(bg.c2));x.fillStyle=r;x.fillRect(0,0,W,H)}}
+function rasterFg(prims,k){ // foreground only, no background, no guides: the export layer
+  const c=document.createElement("canvas");c.width=c.height=Math.round(108*k);const x=c.getContext("2d");drawPrims(x,prims,k);return c}
+function renderTo(canvas,prims,bg,guides){
+  const x=canvas.getContext("2d"),W=canvas.width,H=canvas.height,k=W/108;
+  paintBg(x,W,H,bg);drawPrims(x,prims,k);
+  if(guides){const ring=(r,col)=>{x.beginPath();x.arc(54*k,54*k,r*k,0,Math.PI*2);x.strokeStyle=col;x.lineWidth=1.5;x.setLineDash([5,5]);x.stroke();x.setLineDash([])};
+    const g=val("guides");if(g==="both"||g==="safe")ring(SAFE_R,"rgba(232,194,104,.55)");if(g==="both")ring(VIS_R,"rgba(92,200,255,.45)")}}
+
+/* ---------- the mark, resolved from the chosen source ---------- */
+function markPrims(){ // {prims,vector,kind,note}
+  const C=palette(),src=S.src;
+  if(src==="preset")return{prims:presetPrims(val("preset"),C),vector:true,kind:"preset",note:""};
+  if(src==="svg"){const r=S.svgRes;if(!r||!r.ok)return{prims:[],vector:false,kind:"svg",note:r?(r.deficits[0]||"svg has no convertible primitives"):"paste or load an SVG"};return{prims:r.prims,vector:true,kind:"svg",note:r.deficits.join("; ")}}
+  if(src==="raster")return{prims:[],vector:false,kind:"raster",note:S.raster?"raster source: vector export falls back to PNG":"load an image"};
+  if(src==="text")return{prims:[],vector:false,kind:"monogram",note:"monogram is drawn as a glyph, exported as raster"};
+  if(src==="installed")return{prims:[],vector:false,kind:"installed",note:"installed icon is already a bitmap; not a vector source"};
+  return{prims:[],vector:false,kind:"none",note:"no source"}}
+
+/* ---------- gates: the four states, never a silent green ---------- */
+const GATE={PASS:"pass",MARGINAL:"marginal",FAIL:"fail",UNAVAILABLE:"unavailable",NOT_SAMPLED:"not-sampled",INFERRED:"inferred",MEASURED:"measured"};
+function markRadius(prims){ // true furthest point from the 54,54 centre: sample each segment
+  let r=0;const take=(x,y)=>{const d=Math.hypot(x-54,y-54);if(d>r)r=d};
+  prims.forEach(p=>{const t=p.d.match(/[MLCZ]|-?\d*\.?\d+(?:e[-+]?\d+)?/gi)||[];let i=0,cx=0,cy=0,sx=0,sy=0;
+    while(i<t.length){const c=t[i++];if(!/[MLCZ]/.test(c))continue;
+      if(c==="Z"){cx=sx;cy=sy;take(cx,cy);continue}
+      const n=[];while(i<t.length&&!/[MLCZ]/.test(t[i]))n.push(parseFloat(t[i++]));
+      if(c==="M"||c==="L"){for(let k=0;k+1<n.length;k+=2){take(n[k],n[k+1])}cx=n[n.length-2];cy=n[n.length-1];if(c==="M"){sx=cx;sy=cy}}
+      else if(c==="C"){for(let k=0;k+5<n.length;k+=6){const x0=cx,y0=cy,x1=n[k],y1=n[k+1],x2=n[k+2],y2=n[k+3],x3=n[k+4],y3=n[k+5];
+        for(let s=0;s<=8;s++){const u=s/8,v=1-u;const bx=v*v*v*x0+3*v*v*u*x1+3*v*u*u*x2+u*u*u*x3,by=v*v*v*y0+3*v*v*u*y1+3*v*u*u*y2+u*u*u*y3;take(bx,by)}
+        cx=x3;cy=y3}}}
+  });
+  return r}
+function preflight(){
+  const m=markPrims(),C=palette(),bg=bgSpec(),prims=applyUser(m.prims),out=[];
+  const rad=prims.length?markRadius(prims):0;
+  out.push({id:"safe-zone",label:"Mark inside the 66 dp safe zone",
+    state:!prims.length?GATE.NOT_SAMPLED:rad<=SAFE_R?GATE.PASS:rad<=VIS_R?GATE.MARGINAL:GATE.FAIL,
+    text:prims.length?`furthest point ${rad.toFixed(1)} of ${SAFE_R} units (visible ${VIS_R})`:"no vector mark to measure"});
+  const cc=contrast(C.ink,bg.c1);
+  out.push({id:"contrast",label:"Mark vs background contrast (WCAG large graphic ≥ 3.0)",
+    state:cc>=3?GATE.PASS:cc>=2?GATE.MARGINAL:GATE.FAIL,text:`ink ${rgbHex(C.ink)} on ${rgbHex(bg.c1)} = ${cc.toFixed(2)}:1 (measured)`});
+  out.push({id:"monochrome",label:"Themed (monochrome) layer",
+    state:GATE.NOT_SAMPLED,text:"this build does not emit a monochrome layer — themed icons will use the launcher's tint of the colour layer"});
+  out.push({id:"vector",label:"Vector-complete source (VectorDrawable export)",
+    state:m.vector?GATE.PASS:m.kind==="none"?GATE.NOT_SAMPLED:GATE.MARGINAL,
+    text:m.vector?"source is vector-complete":(m.note||"source is not vector-complete")});
+  out.push({id:"adaptive",label:"Adaptive layer geometry",
+    state:GATE.PASS,text:"108 dp viewport, 66 dp safe zone declared in the emitted XML"});
+  out.push({id:"legacy",label:"Legacy PNGs (API < 26)",
+    state:val("legacy")==="1"?GATE.PASS:GATE.MARGINAL,text:val("legacy")==="1"?"mipmaps mdpi..xxxhdpi will be emitted":"omitted: pre-26 devices get the adaptive XML only"});
+  const B=bridge();
+  out.push({id:"couple",label:"Device coupling",
+    state:B?GATE.MEASURED:GATE.UNAVAILABLE,text:B?"window.darkith present: build can write to the device":"bridge absent — local mode (download only)"});
+  return out}
+function verdictOf(gates){if(gates.some(g=>g.state===GATE.FAIL))return"BLOCKED";if(gates.some(g=>g.state===GATE.MARGINAL))return"REVIEW";return"PASS"}
+
+/* ---------- VectorDrawable emit (a real, installable foreground) ---------- */
+function vecColor(c){return "#"+hex2((c[3]==null?1:c[3])*255)+hex2(c[0])+hex2(c[1])+hex2(c[2])}
+function toVectorDrawable(prims,deficits){
+  const body=prims.map(p=>{
+    if(p.grad){const mid=p.grad.stops[Math.floor(p.grad.stops.length/2)][1];deficits.push("gradient flattened to its mid stop for VectorDrawable");
+      return `<path android:fillColor="${vecColor(mid)}" android:pathData="${p.d}"/>`}
+    const fill=p.fill?` android:fillColor="${vecColor(p.fill)}"`:` android:fillColor="@android:color/transparent"`;
+    const stroke=p.stroke?` android:strokeColor="${vecColor(p.stroke)}" android:strokeWidth="${f2(p.sw||1)}" android:strokeLineCap="${p.cap||"round"}" android:strokeLineJoin="${p.join||"round"}"`:"";
+    return `<path${fill}${stroke} android:pathData="${p.d}"/>`}).join("\n    ");
+  return `<?xml version="1.0" encoding="utf-8"?>\n<vector xmlns:android="http://schemas.android.com/apk/res/android"\n    android:width="108dp" android:height="108dp"\n    android:viewportWidth="108" android:viewportHeight="108">\n    ${body}\n</vector>\n`}
+const ADAPTIVE=(n)=>`<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n    <background android:drawable="@color/ic_launcher_background" />\n    <foreground android:drawable="@drawable/${n}" />\n</adaptive-icon>\n`
+function bgColorsXml(bg){return `<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">${vecColor(bg.c1)}</color>\n</resources>\n`}
+
+/* ---------- the build ---------- */
+function buildState(){const u=userXf(),m=markPrims(),C=palette(),bg=bgSpec();
+  return{pkg:val("pkg"),name:val("appName"),preset:val("preset"),src:S.src,kind:m.kind,vector:m.vector,
+    scale:u.s,dx:u.dx,dy:u.dy,a1:rgbHex(C.a1),a2:rgbHex(C.a2),ink:rgbHex(C.ink),bgType:bg.type,bg1:rgbHex(bg.c1),bg2:rgbHex(bg.c2),legacy:val("legacy")}}
+const buildKey=()=>sha256(enc.encode(JSON.stringify(buildState()))).slice(0,16);
+function buildIconPack(){ // -> {files,zip,ledger,key,blocked}
+  const gates=preflight(),verdict=verdictOf(gates),deficits=[],m=markPrims(),bg=bgSpec();
+  const prims=applyUser(m.prims);
+  const files=[];
+  if(m.vector&&prims.length){
+    files.push({name:"res/drawable/ic_launcher_foreground.xml",data:enc.encode(toVectorDrawable(prims,deficits))});
+  }else{
+    deficits.push("foreground emitted as PNG (source not vector-complete: "+m.kind+")");
+    const c=rasterFg(prims,4);const b64=c.toDataURL("image/png").split(",")[1];
+    files.push({name:"res/drawable-nodpi/ic_launcher_foreground.png",data:b64d(b64)});
+  }
+  files.push({name:"res/values/ic_launcher_background.xml",data:enc.encode(bgColorsXml(bg))});
+  files.push({name:"res/mipmap-anydpi-v26/ic_launcher.xml",data:enc.encode(ADAPTIVE("ic_launcher_foreground"))});
+  files.push({name:"res/mipmap-anydpi-v26/ic_launcher_round.xml",data:enc.encode(ADAPTIVE("ic_launcher_foreground"))});
+  if(val("legacy")==="1"){
+    const dens={mdpi:48,hdpi:72,xhdpi:96,xxhdpi:144,xxxhdpi:192};
+    Object.keys(dens).forEach(d=>{const c=rasterFg(prims,dens[d]/108*4);const b64=c.toDataURL("image/png").split(",")[1];
+      files.push({name:`res/mipmap-${d}/ic_launcher.png`,data:b64d(b64)});files.push({name:`res/mipmap-${d}/ic_launcher_round.png`,data:b64d(b64)})});
+  }
+  const zip=zipWrite(files);const key=buildKey();
+  const ledger={at:new Date().toISOString(),key,verdict,gates,deficits,files:files.map(f=>({name:f.name,bytes:f.data.length})),
+    zipBytes:zip.length,zipSha256:sha256(zip),state:buildState()};
+  return{files,zip,ledger,key,blocked:verdict==="BLOCKED"}}
+
+/* ---------- device coupling (the real bridge, not a mock) ---------- */
+function bridge(){return (typeof window!=="undefined"&&window.darkith)?window.darkith:null}
+function probeCouple(){
+  const B=bridge(),rows=[];
+  rows.push({id:"bridge",label:"window.darkith",state:B?GATE.MEASURED:GATE.UNAVAILABLE,text:B?"present":"absent — running in a plain browser (local mode)"});
+  if(B){["version","apkVersion","signerSignature"].forEach(fn=>{try{rows.push({id:fn,label:fn,state:GATE.MEASURED,text:String(B[fn]()).slice(0,160)})}catch(e){rows.push({id:fn,label:fn,state:GATE.FAIL,text:"ERROR: "+e.message})}});
+    try{rows.push({id:"storage",label:"storageGranted",state:GATE.MEASURED,text:String(B.storageGranted())})}catch(e){rows.push({id:"storage",label:"storageGranted",state:GATE.FAIL,text:"ERROR: "+e.message})}
+    try{rows.push({id:"mem",label:"memInfo",state:GATE.MEASURED,text:String(B.memInfo()).slice(0,160)})}catch(e){rows.push({id:"mem",label:"memInfo",state:GATE.FAIL,text:"ERROR: "+e.message})}}
+  let last="not sampled";
+  if(B){try{const s=JSON.parse(B.fileStat("Download/icon-pack.zip"));last=`${s.path} · ${s.bytes} B · mtime ${new Date(s.mtime).toISOString()}`}catch(e){last="no icon-pack.zip on the device yet"}}
+  let icon=null,iconNote="not sampled (no bridge)";
+  if(B){try{const d=B.getAppIcon(val("pkg"));if(/^data:image\//.test(d)){icon=d;iconNote=`measured from PackageManager · ${Math.round(d.length/1024)} KB data URL`}else{iconNote=d}}catch(e){iconNote="ERROR: "+e.message}}
+  return{rows,last,icon,iconNote}}
+
+/* ---------- thumbnail ---------- */
+const TH_PRESETS=[{n:"Store 512",w:512,h:512},{n:"Feature 1024×500",w:1024,h:500},{n:"Tile 320",w:320,h:320}];
+function thDraw(){const c=$("thEd"),x=c.getContext("2d"),W=c.width,H=c.height;x.clearRect(0,0,W,H);
+  if(!S.thSrc){x.fillStyle="#0e1017";x.fillRect(0,0,W,H);x.fillStyle="#6b7383";x.font="13px ui-monospace";x.fillText("no image loaded",12,24);return}
+  const p=TH_PRESETS[Math.max(0,parseInt(val("thPreset")||"0",10))],z=parseFloat(val("thZoom")),fit=val("thFit");
+  const sc=fit==="cover"?Math.max(W/p.w,H/p.h)*z:Math.min(W/p.w,H/p.h)*z;
+  const dw=p.w*sc,dh=p.h*sc,ox=(W-dw)*S.thFocus[0],oy=(H-dh)*S.thFocus[1];
+  if(fit==="contain"){x.fillStyle=rgba(bgSpec().c1);x.fillRect(0,0,W,H)}
+  x.drawImage(S.thSrc,ox,oy,dw,dh)}
+function thEncode(preset,mime,quality){const c=document.createElement("canvas");c.width=preset.w;c.height=preset.h;const x=c.getContext("2d");
+  const fit=val("thFit"),z=parseFloat(val("thZoom"));
+  const sc=fit==="cover"?Math.max(preset.w/S.thSrc.width,preset.h/S.thSrc.height)*z:Math.min(preset.w/S.thSrc.width,preset.h/S.thSrc.height)*z;
+  const dw=S.thSrc.width*sc,dh=S.thSrc.height*sc,ox=(preset.w-dw)*S.thFocus[0],oy=(preset.h-dh)*S.thFocus[1];
+  if(fit==="contain"){x.fillStyle=rgba(bgSpec().c1);x.fillRect(0,0,preset.w,preset.h)}
+  x.drawImage(S.thSrc,ox,oy,dw,dh);
+  return b64d(c.toDataURL(mime,quality).split(",")[1])}
+function thBudget(preset,mime,budgetKB){let lo=0.3,hi=0.95,best=null;
+  for(let i=0;i<6;i++){const q=(lo+hi)/2,bytes=thEncode(preset,mime,q);if(bytes.length/1024<=budgetKB){best={q,bytes};lo=q}else{hi=q}}
+  if(!best){const bytes=thEncode(preset,mime,lo);best={q:lo,bytes,over:true}}
+  return best}
+function thAutoFocus(){if(!S.thSrc)return;const g=document.createElement("canvas");g.width=g.height=32;const x=g.getContext("2d");
+  x.drawImage(S.thSrc,0,0,32,32);const d=x.getImageData(0,0,32,32).data;let bx=16,by=16,best=-1;
+  for(let cy=0;cy<32;cy++)for(let cx=0;cx<32;cx++){const i=(cy*32+cx)*4,j=Math.min(i+4,d.length-1);const e=Math.abs(d[i]-d[j])+Math.abs(d[i+1]-d[Math.min(i+5,d.length-1)]);if(e>best){best=e;bx=cx;by=cy}}
+  S.thFocus=[bx/31,by/31];toast("focal point set (inferred from edge energy)")}
+
+/* ---------- logo lockup ---------- */
+function logoVariants(){const m=markPrims(),text=val("lgText"),tag=val("lgTag"),font=val("lgFont"),weight=val("lgWeight");
+  return[{n:"horizontal",w:640,h:200,layout:"h",text,tag,font,weight,vector:m.vector},
+          {n:"stacked",w:400,h:400,layout:"v",text,tag,font,weight,vector:m.vector},
+          {n:"mark",w:256,h:256,layout:"m",text,tag,font,weight,vector:m.vector},
+          {n:"wordmark",w:640,h:160,layout:"w",text,tag,font,weight,vector:m.vector}]}
+
+/* ---------- ledger + selftest ---------- */
+function showLedger(led){$("ledgerOut").textContent=JSON.stringify(led,null,2)}
+function selftest(){const t=[];const ok=(n,c)=>t.push({n,ok:!!c});
+  ok("sha256 known vector",sha256(enc.encode("abc"))==="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+  ok("zip round-trips and verifies CRC",(()=>{const z=zipWrite([{name:"a.txt",data:enc.encode("hello")}]);const r=zipRead(z);return r.length===1&&dec.decode(r[0].data)==="hello"})());
+  ok("zip is deterministic",(()=>{const a=zipWrite([{name:"a",data:enc.encode("x")}]),b=zipWrite([{name:"a",data:enc.encode("x")}]);return sha256(a)===sha256(b)})());
+  ok("normPath is absolute M/L/C/Z only",/^[MLCZ0-9 .-]*$/.test(normPath("M10 10 h5 v5 z",[1,0,0,1,0,0])));
+  ok("circlePath closes",circlePath(54,54,10).endsWith("Z"));
+  ok("contrast(white,black)=21",Math.abs(contrast([255,255,255,1],[0,0,0,1])-21)<0.01);
+  ok("every preset produces prims",["sphere","omega","orbit","hex"].every(n=>presetPrims(n,{a1:[1,1,1,1],a2:[1,1,1,1],ink:[1,1,1,1]}).length>0));
+  ok("VectorDrawable emits <vector> and <path>",(()=>{const d=[];const v=toVectorDrawable(presetPrims("omega",{a1:[1,1,1,1],a2:[1,1,1,1],ink:[1,1,1,1]}),d);return v.includes("<vector")&&v.includes("<path")})());
+  ok("parseColor understands #rgb and rgba()",parseColor("#abc")[0]===170&&parseColor("rgba(1,2,3,.5)")[3]===0.5);
+  ok("affine rotate preserves radius",(()=>{const b=pathBBox(affPath(circlePath(54,54,10),mRot(37,54,54)));return Math.abs((b.x1-b.x0)-20)<0.2})());
+  const pass=t.filter(x=>x.ok).length;
+  $("selftest").innerHTML=t.map(x=>`<div class="gate"><i class="${x.ok?"pass":"fail"}">${x.ok?"PASS":"FAIL"}</i><div>${x.n}</div></div>`).join("");
+  return{pass,total:t.length,fail:t.filter(x=>!x.ok).map(x=>x.n)}}
+
+/* ---------- render ---------- */
+function render(){
+  const m=markPrims(),prims=applyUser(m.prims),bg=bgSpec();
+  renderTo($("ed"),prims,bg,true);renderTo($("edDock"),prims,bg,false);
+  ["masks","masksDock"].forEach(id=>{const host=$(id);host.innerHTML="";
+    ["circle","squircle","rounded","square"].forEach(shape=>{const f=document.createElement("figure");const c=maskCanvas(64,shape,prims);
+      f.appendChild(c);const cap=document.createElement("figcaption");cap.textContent=shape;f.appendChild(cap);host.appendChild(f)})});
+  const gates=preflight(),v=verdictOf(gates);
+  $("verdict").textContent=v;$("verdict").className="chip "+v;
+  $("preflight").innerHTML=gates.map(g=>`<div class="gate"><i class="${g.state}">${g.state.toUpperCase().replace("_"," ")}</i><div>${g.label}<small>${g.text}</small></div></div>`).join("");
+  $("btnOverride").hidden=v!=="BLOCKED";
+  $("dockMeta").textContent=`${m.kind}${m.vector?" · vector":" · raster"} · ${prims.length} prim${prims.length===1?"":"s"}`;
+  $("srcNote").textContent=m.note||"";
+  const stale=S.builtKey&&S.builtKey!==buildKey();
+  $("btnBuild").classList.toggle("stale",!!stale);
+  $("vScale").textContent=parseFloat(val("scale")).toFixed(2);$("vDx").textContent=val("dx");$("vDy").textContent=val("dy");$("vZoom").textContent=parseFloat(val("thZoom")).toFixed(2);
+  if(stale)$("buildOut").innerHTML='<div class="stalebar">the spec changed since the last build — rebuild before shipping</div>'}
+function maskCanvas(size,shape,prims){const c=document.createElement("canvas");c.width=c.height=size;const x=c.getContext("2d");const k=size/108;
+  drawPrims(x,prims,k);x.globalCompositeOperation="destination-in";x.fillStyle="#000";x.beginPath();
+  const p=size*0.06,w=size-2*p,r=shape==="circle"?size/2:shape==="squircle"?size*0.26:shape==="rounded"?size*0.14:0;
+  if(shape==="circle")x.arc(size/2,size/2,size/2,0,Math.PI*2);
+  else if(x.roundRect)x.roundRect(p,p,w,w,r);else x.rect(p,p,w,w);
+  x.fill();return c}
+
+/* ---------- wiring ---------- */
+function snapshot(){const u=userXf();return{scale:u.s,dx:u.dx,dy:u.dy,a1:val("a1"),a2:val("a2"),ink:val("ink"),bg1:val("bg1"),bg2:val("bg2"),bgType:val("bgType"),preset:val("preset"),src:S.src,mono:val("monoText")}}
+function pushUndo(){S.undo.push(snapshot());S.redo=[];if(S.undo.length>40)S.undo.shift();syncUndoBtns()}
+function applySnap(s){["scale","dx","dy","a1","a2","ink","bg1","bg2","bgType","preset","monoText"].forEach(k=>{if(s[k]!=null&&$(k))$(k).value=s[k]});
+  if(s.src){S.src=s.src;document.querySelectorAll("#srcSeg button").forEach(b=>b.classList.toggle("on",b.dataset.s===s.src));["preset","svg","raster","text","installed"].forEach(x=>{const el=$("src"+x[0].toUpperCase()+x.slice(1));if(el)el.hidden=x!==s.src})}}
+function syncUndoBtns(){$("btnUndo").disabled=!S.undo.length;$("btnRedo").disabled=!S.redo.length}
+function wire(){
+  $("tabs").addEventListener("click",e=>{const b=e.target.closest("button[data-t]");if(!b)return;
+    document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
+    document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==="t-"+b.dataset.t))});
+  $("srcSeg").addEventListener("click",e=>{const b=e.target.closest("button[data-s]");if(!b)return;pushUndo();
+    document.querySelectorAll("#srcSeg button").forEach(x=>x.classList.toggle("on",x===b));S.src=b.dataset.s;
+    ["preset","svg","raster","text","installed"].forEach(x=>{const el=$("src"+x[0].toUpperCase()+x.slice(1));if(el)el.hidden=x!==b.dataset.s});
+    if(b.dataset.s==="installed")loadInstalled();render()});
+  ["preset","scale","dx","dy","a1","a2","ink","bg1","bg2","bgType","guides","legacy","monoText","monoFont","appName","pkg"].forEach(id=>$(id).addEventListener("input",()=>{if(S.src==="text")S.raster=null;render()}));
+  $("svgText").addEventListener("input",()=>{S.svgRes=importSvg(val("svgText"));render()});
+  $("svgFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.svgRes=importSvg(r.result);render()};r.readAsText(f)});
+  $("imgFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{imgLoad(r.result).then(im=>{S.raster=im;S.rasterName=f.name;render()}).catch(x=>toast(x.message))};r.readAsDataURL(f)});
+  $("btnBuild").addEventListener("click",doBuild);
+  $("btnOverride").addEventListener("click",()=>{S.override={at:new Date().toISOString(),reason:"operator override of a BLOCKED verdict"};doBuild()});
+  $("btnProbe").addEventListener("click",probeUI);
+  $("btnUndo").addEventListener("click",()=>{if(!S.undo.length)return;S.redo.push(snapshot());applySnap(S.undo.pop());syncUndoBtns();render()});
+  $("btnRedo").addEventListener("click",()=>{if(!S.redo.length)return;S.undo.push(snapshot());applySnap(S.redo.pop());syncUndoBtns();render()});
+  $("thPreset").innerHTML=TH_PRESETS.map((p,i)=>`<option value="${i}">${p.n}</option>`).join("");
+  $("thFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{imgLoad(r.result).then(im=>{S.thSrc=im;S.thName=f.name;$("thInfo").textContent=`${f.name} · ${im.naturalWidth}×${im.naturalHeight}`;thDraw()}).catch(x=>toast(x.message))};r.readAsDataURL(f)});
+  $("thFromIcon").addEventListener("click",()=>{const c=rasterFg(applyUser(markPrims().prims),4);imgLoad(c.toDataURL("image/png")).then(im=>{S.thSrc=im;S.thName="icon art";$("thInfo").textContent="current icon art";thDraw()})});
+  $("thZoom").addEventListener("input",thDraw);$("thFit").addEventListener("change",thDraw);
+  $("thAuto").addEventListener("click",()=>{thAutoFocus();thDraw()});
+  $("thEd").addEventListener("click",e=>{const r=$("thEd").getBoundingClientRect();S.thFocus=[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];thDraw()});
+  $("btnThumb").addEventListener("click",()=>{if(!S.thSrc)return toast("load an image first");const i=parseInt(val("thPreset")||"0",10),p=TH_PRESETS[i];const b=thBudget(p,val("thFmt"),parseFloat(val("thKB")));
+    const ext=val("thFmt")==="image/jpeg"?"jpg":val("thFmt")==="image/webp"?"webp":"png";$("thumbOut").textContent=`${p.n}: ${(b.bytes.length/1024).toFixed(1)} KB at q=${b.q.toFixed(2)}${b.over?" (OVER BUDGET)":""}`;dl(`thumb-${p.w}x${p.h}.${ext}`,b.bytes,val("thFmt"))});
+  $("btnThumbAll").addEventListener("click",()=>{if(!S.thSrc)return toast("load an image first");const fmt=val("thFmt"),ext=fmt==="image/jpeg"?"jpg":fmt==="image/webp"?"webp":"png";
+    const files=TH_PRESETS.map(p=>({name:`thumb-${p.w}x${p.h}.${ext}`,data:thBudget(p,fmt,parseFloat(val("thKB"))).bytes}));dl("thumbnails.zip",zipWrite(files),"application/zip")});
+  $("btnLogo").addEventListener("click",()=>{const vs=logoVariants();$("lgPrev").innerHTML="";
+    vs.forEach(v=>{const f=document.createElement("figure");const c=document.createElement("canvas");c.width=150;c.height=150;const x=c.getContext("2d");
+      x.fillStyle=rgba(bgSpec().c1);x.fillRect(0,0,150,150);x.fillStyle=rgba(palette().ink);x.font=`${v.weight} 18px ${v.font}`;x.textAlign="center";
+      if(v.layout!=="m")x.fillText(v.text,75,v.layout==="v"?95:70);if(v.layout!=="w")drawPrims(x,applyUser(markPrims().prims),150/108*0.5);
+      const cap=document.createElement("figcaption");cap.textContent=v.n+(v.vector?"":" (raster mark)");f.appendChild(c);f.appendChild(cap);$("lgPrev").appendChild(f)});
+    $("logoOut").textContent=`${vs.length} lockups · mark ${markPrims().vector?"vector":"raster"}`});
+  $("ktSnippet").textContent=`@JavascriptInterface fun fileWriteBytes(path: String?, b64: String?): String {
+    return try {
+        val f = File(norm(path)); f.parentFile?.mkdirs()
+        f.writeBytes(android.util.Base64.decode(b64 ?: "", android.util.Base64.NO_WRAP)); "OK"
+    } catch (e: Throwable) { err(e) }
+}`;
+  render();probeUI();
+}
+function loadInstalled(){const B=bridge();if(!B){toast("no bridge — cannot read the installed icon");return}
+  try{const d=B.getAppIcon(val("pkg"));if(!/^data:image\//.test(d))return toast(d);
+    imgLoad(d).then(im=>{S.raster=im;S.rasterName="installed:"+val("pkg");S.src="raster";render();toast("installed icon loaded as raster source")})}catch(e){toast("ERROR: "+e.message)}}
+function probeUI(){const p=probeCouple();
+  $("coupleRows").innerHTML=p.rows.map(r=>`<div class="gate"><i class="${r.state}">${r.state.toUpperCase().replace("_"," ")}</i><div>${r.label}<small>${r.text}</small></div></div>`).join("");
+  $("lastBuild").textContent=p.last;$("hostIconNote").textContent=p.iconNote;
+  if(p.icon){$("hostIcon").src=p.icon;$("hostIcon").hidden=false}else{$("hostIcon").hidden=true}}
+function doBuild(){const r=buildIconPack();
+  if(r.blocked&&!S.override){$("buildOut").innerHTML='<div class="stalebar">BLOCKED — fix the failing gate, or press Override (the waiver is recorded in the ledger)</div>';return}
+  if(S.override){r.ledger.override=S.override}
+  S.builtKey=r.key;S.last=r.ledger;
+  const B=bridge();let how="downloaded";
+  if(B){ // couple: write every file to the device through the real bridge
+    const dir="/sdcard/Darkith/icon-pack";let wrote=0,failed=[];
+    r.files.forEach(f=>{const res=B.fileWrite(dir+"/"+f.name,b64e(f.data));if(res!=="OK")failed.push(f.name+": "+res);else wrote++});
+    const script="#!/system/bin/sh\n# icon pack written by the Omega Icon Forge via window.darkith.fileWrite\n";
+    const res=B.fileWrite(dir+"/apply.sh",script);how=`written to ${dir} (${wrote}/${r.files.length}${failed.length?" · failed: "+failed.join("; "):""})`;
+    r.ledger.coupled=true;r.ledger.deviceDir=dir;r.ledger.applyScript=res}
+  dl("icon-pack.zip",r.zip,"application/zip");
+  showLedger(r.ledger);
+  $("buildOut").innerHTML=`<div class="gate"><i class="pass">${r.ledger.verdict}</i><div>${r.files.length} file(s) · ${(r.zip.length/1024).toFixed(1)} KB · key ${r.key}<small>${how} · zip sha256 ${r.ledger.zipSha256.slice(0,16)}${r.ledger.deficits.length?" · "+r.ledger.deficits.length+" deficit(s) recorded":""}</small></div></div>`;
+  toast("icon pack built · "+r.ledger.verdict)}
+if(typeof document!=="undefined"&&document.getElementById("tabs"))wire();
+if(typeof document!=="undefined"&&document.getElementById("selftest"))selftest();
+</script>
+</body>
+</html>

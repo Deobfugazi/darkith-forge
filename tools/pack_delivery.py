@@ -5,25 +5,33 @@ One source of truth per artifact; every copy is GENERATED here, never hand-edite
 Running this twice with the same inputs yields byte-identical outputs (idempotent).
 
 Inputs (hand-authored, at the repo root):
+  app/          the ONE authoritative source tree (build.sh layout: 55 .kt + res/ + assets/)
   DARKITH.md    the single source of truth (version + reconciliation + deficits + laws)
   AGENTS.md     session memory
+  RESUME.md     the continuity protocol
   build.sh      the 7-step chain
-  tree_omega/   the authoritative source tree
-  dist/Darkith-1.1.0-omega.apk   the built+signed APK
+  app-signed.apk   the built+signed APK (when a build has run)
 
 Outputs (all generated):
-  tree_omega/DARKITH.md, AGENTS.md, build.sh   (synced copies)
-  darkith_omega_source.zip, dist/darkith_omega_source.zip
+  darkith_omega_source.zip, dist/darkith_omega_source.zip   (source tree + canonical docs)
   dist/USER_PROMPTS_FULL.md, dist/SHA256SUMS.txt, dist/_meta.json, dist/index.html
+  dist/DARKITH.md                               (the served copy of the canonical doc)
+
+The packager never mutates the tree it packs: it reads app/ and writes only into
+dist/ (plus the root source zip), so re-running is a pure function of its inputs.
 """
 import os, re, sys, json, glob, zipfile, hashlib, shutil
 from datetime import datetime, timezone, timedelta
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TREE = os.path.join(ROOT, "tree_omega")
+SOURCE = os.path.join(ROOT, "app")           # the ONE authoritative tree
+SOURCE_ZIP = "darkith_omega_source.zip"      # the generated source archive
 DIST = os.path.join(ROOT, "dist")
 MN   = timezone(timedelta(hours=8))          # Operator's zone: Asia/Manila
 FIXED = (1980, 1, 1, 0, 0, 0)                # deterministic zip timestamps
+
+# canonical docs shipped alongside the tree (copied into the archive, never edited)
+DOCS = ("DARKITH.md", "AGENTS.md", "RESUME.md", "build.sh")
 
 def sha256(p):
     return hashlib.sha256(open(p, "rb").read()).hexdigest()
@@ -31,14 +39,11 @@ def sha256(p):
 def log(m):
     print(m)
 
-# ── 1. sync the canonical docs into the tree (the tree is a derived copy) ──────
-for f in ("DARKITH.md", "AGENTS.md", "build.sh"):
-    src = os.path.join(ROOT, f)
-    if os.path.exists(src):
-        shutil.copy(src, os.path.join(TREE, f))
-log("1/5 synced canonical docs -> tree_omega/")
+if not os.path.isdir(SOURCE):
+    sys.exit("pack_delivery: no source tree at app/ — nothing to pack")
+os.makedirs(DIST, exist_ok=True)
 
-# ── 2. deterministic source zip (sorted, fixed timestamps) ─────────────────────
+# ── 1. deterministic source zip (sorted, fixed timestamps) ─────────────────────
 SECRET_NAME = re.compile(r"(release_key|release_cert|android\.jar|\.keystore$|\.jks$|\.p12$|\.pfx$|\.pem$|id_rsa|id_ed25519)", re.I)
 SECRET_BODY = (b"BEGIN RSA PRIVATE KEY", b"BEGIN PRIVATE KEY", b"BEGIN OPENSSH PRIVATE KEY", b"BEGIN ENCRYPTED PRIVATE KEY")
 
@@ -51,30 +56,39 @@ def is_secret(path):
         return False
     return any(sig in head for sig in SECRET_BODY)
 
-def write_zip(dest, base):
+def entries():
+    """Yield (arcname, abspath) for the source tree plus the canonical docs."""
+    for b, dirs, fs in os.walk(SOURCE):
+        dirs[:] = sorted(d for d in dirs if d not in (".forge_work", "__pycache__"))
+        for f in sorted(fs):
+            p = os.path.join(b, f)
+            yield os.path.relpath(p, ROOT), p
+    for f in DOCS:
+        p = os.path.join(ROOT, f)
+        if os.path.exists(p):
+            yield f, p
+
+def write_zip(dest):
     skipped = 0
     with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
-        for b, dirs, fs in os.walk(base):
-            dirs[:] = sorted(d for d in dirs if d != ".forge_work")
-            for f in sorted(fs):
-                p = os.path.join(b, f)
-                if is_secret(p):
-                    skipped += 1
-                    continue
-                zi = zipfile.ZipInfo(os.path.relpath(p, base), date_time=FIXED)
-                zi.compress_type = zipfile.ZIP_DEFLATED
-                zi.external_attr = 0o644 << 16
-                z.writestr(zi, open(p, "rb").read())
+        for arcname, p in sorted(entries()):
+            if is_secret(p):
+                skipped += 1
+                continue
+            zi = zipfile.ZipInfo(arcname, date_time=FIXED)
+            zi.compress_type = zipfile.ZIP_DEFLATED
+            zi.external_attr = 0o644 << 16
+            z.writestr(zi, open(p, "rb").read())
     return dest, skipped
 
-root_zip = os.path.join(ROOT, "darkith_omega_source.zip")
-_, skipped = write_zip(root_zip, TREE)
+root_zip = os.path.join(ROOT, SOURCE_ZIP)
+_, skipped = write_zip(root_zip)
 if skipped:
     log(f"   [secret filter] excluded {skipped} signing/key material from the source zip")
-shutil.copy(root_zip, os.path.join(DIST, "darkith_omega_source.zip"))
-log(f"2/5 source zip -> {os.path.relpath(root_zip, ROOT)} ({len(zipfile.ZipFile(root_zip).namelist())} files)")
+shutil.copy(root_zip, os.path.join(DIST, SOURCE_ZIP))
+log(f"1/5 source zip -> {os.path.relpath(root_zip, ROOT)} ({len(zipfile.ZipFile(root_zip).namelist())} files)")
 
-# ── 3. regenerate the transcript from the event store (deterministic) ──────────
+# ── 2. regenerate the transcript from the event store (deterministic) ──────────
 def build_transcript():
     evdirs = sorted(glob.glob("/var/openhands/conversations/*/events"))
     if not evdirs:
@@ -98,11 +112,11 @@ def build_transcript():
     return dest, n
 
 tr = build_transcript()
-log(f"3/5 transcript -> dist/USER_PROMPTS_FULL.md ({tr[1]} prompts)" if tr else "3/5 transcript: no event store")
+log(f"2/5 transcript -> dist/USER_PROMPTS_FULL.md ({tr[1]} prompts)" if tr else "2/5 transcript: no event store")
 
-# ── 4. gather dist artifacts + checksums ───────────────────────────────────────
+# ── 3. gather dist artifacts + checksums ───────────────────────────────────────
 def newest_apk():
-    cands = glob.glob(os.path.join(TREE, "app-signed.apk")) + glob.glob(os.path.join(DIST, "Darkith-*.apk"))
+    cands = glob.glob(os.path.join(ROOT, "app-signed.apk")) + glob.glob(os.path.join(DIST, "Darkith-*.apk"))
     return max(cands, key=os.path.getmtime) if cands else None
 
 apk = newest_apk()
@@ -114,18 +128,18 @@ if apk and os.path.basename(apk) != apk_name:
 if os.path.exists(os.path.join(ROOT, "DARKITH.md")):
     shutil.copy(os.path.join(ROOT, "DARKITH.md"), os.path.join(DIST, "DARKITH.md"))
 
-files = [apk_name, "darkith_omega_source.zip", "DARKITH.md",
+files = [apk_name, SOURCE_ZIP, "DARKITH.md",
          "USER_PROMPTS_FULL.md"]  # never include SHA256SUMS.txt itself
 present = [f for f in files if os.path.exists(os.path.join(DIST, f))]
 sums = "".join(f"{sha256(os.path.join(DIST, f))}  {f}\n" for f in present)
 open(os.path.join(DIST, "SHA256SUMS.txt"), "w").write(sums)
 meta = [{"name": f, "size": os.path.getsize(os.path.join(DIST, f)), "sha": sha256(os.path.join(DIST, f))[:16]} for f in present]
 json.dump(meta, open(os.path.join(DIST, "_meta.json"), "w"))
-log(f"4/5 checksums -> dist/SHA256SUMS.txt ({len(present)} files)")
+log(f"3/5 checksums -> dist/SHA256SUMS.txt ({len(present)} files)")
 
-# ── 5. the hub — ONE surface (omega: one Activity, one process, one surface) ───
+# ── 4. the hub — ONE surface (omega: one Activity, one process, one surface) ───
 labels = {"Darkith-1.1.0-omega.apk": "the app — install this",
-          "darkith_omega_source.zip": "full source tree",
+          SOURCE_ZIP: "full source tree",
           "DARKITH.md": "the single source of truth (version + reconciliation + deficits + laws)",
           "USER_PROMPTS_FULL.md": "your full scrollback",
           "SHA256SUMS.txt": "checksums"}
@@ -152,5 +166,5 @@ a.dl{{color:var(--accent);text-decoration:none;font-weight:600}}a.dl:hover{{text
 <div class="meta">one Activity, one process, one surface · tap any file to download</div>
 <table>{rows}</table></body></html>'''
 open(os.path.join(DIST, "index.html"), "w").write(html)
-log("5/5 hub -> dist/index.html (one surface)")
-log("DONE — idempotent. Re-run to verify byte-identical output.")
+log("4/5 hub -> dist/index.html (one surface)")
+log("5/5 DONE — idempotent. Re-run to verify byte-identical output.")

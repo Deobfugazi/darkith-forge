@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import io
+import os
 import pathlib
 import stat
 import sys
@@ -91,20 +92,38 @@ trap 'rm -rf "$WORK"' EXIT
 # ── 1. extract the payload (ZIP after the marker line) ──────────────────────────
 tail -n +"$LINE" "$SELF" > "$WORK/payload.zip"
 python3 - "$WORK/payload.zip" "$EXPECT_SHA256" <<'PY' || die M1 "payload extract/verify failed"
-import hashlib, io, sys, zipfile
+import hashlib, io, os, sys, zipfile
 path, want = sys.argv[1], sys.argv[2]
 data = open(path, "rb").read()
 got = hashlib.sha256(data).hexdigest()
 if want and want != got:
     print("payload sha256 mismatch: want %s got %s" % (want[:16], got[:16]))
     sys.exit(1)
-zipfile.ZipFile(io.BytesIO(data)).extractall(path + ".d")
+root = path + ".d"
+with zipfile.ZipFile(io.BytesIO(data)) as z:
+    z.extractall(root)
+    # extractall() drops permission bits; the embedded toolchain needs its exec bits.
+    for zi in z.infolist():
+        m = (zi.external_attr >> 16) & 0o777
+        if m:
+            os.chmod(os.path.join(root, zi.filename), m)
 PY
 SRC="$WORK/payload.zip.d/darkith-forge"
 [ -d "$SRC" ] || die M1 "payload has no $PREFIX root"
 
-# ── 2. provision the raw chain (idempotent; skips anything already present) ─────
-if [ -x "$SRC/tools/fetch_toolchain.sh" ]; then
+# ── 2. toolchain: use the EMBEDDED aarch64 chain when present (fully offline),
+#       otherwise provision it over the network (idempotent, cached under .tools/).
+if [ -x "$SRC/.tools/jdk/bin/java" ]; then
+  say "toolchain: embedded aarch64 chain (offline — no network)"
+  export JAVA_HOME="$SRC/.tools/jdk"
+  export PATH="$SRC/.tools:$JAVA_HOME/bin:$PATH"
+  export LD_LIBRARY_PATH="$SRC/.tools/jdk/lib:$SRC/.tools/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+  [ -x "$SRC/.tools/kotlinc/bin/kotlinc" ] && export KOTLINC="$SRC/.tools/kotlinc/bin/kotlinc"
+  [ -r "$SRC/.tools/android.jar" ] && export ANDROID_JAR="$SRC/.tools/android.jar"
+  [ -r "$SRC/.tools/r8.jar" ] && export R8_JAR="$SRC/.tools/r8.jar"
+  [ -x "$SRC/.tools/aapt2" ] && export AAPT2="$SRC/.tools/aapt2"
+  [ -x "$SRC/.tools/apksigner" ] && export APKSIGNER="$SRC/.tools/apksigner"
+elif [ -x "$SRC/tools/fetch_toolchain.sh" ]; then
   say "toolchain: provisioning (cached under .tools/)"
   ( cd "$SRC" && bash tools/fetch_toolchain.sh ) || die M2 "toolchain provisioning failed"
   export JAVA_HOME="${JAVA_HOME:-$SRC/.tools/jdk}"
@@ -166,8 +185,13 @@ def included(rel: pathlib.Path) -> bool:
     return True
 
 
-def collect() -> list[tuple[str, bytes]]:
-    members: list[tuple[str, bytes]] = []
+def collect(embed_tools: pathlib.Path | None = None) -> list[tuple[str, bytes, int]]:
+    members: list[tuple[str, bytes, int]] = []
+
+    def add(rel: str, p: pathlib.Path, mode: int) -> None:
+        # read_bytes() follows symlinks: a symlinked lib ships as its real content.
+        members.append((rel, p.read_bytes(), mode))
+
     for d in INCLUDE_DIRS:
         base = ROOT / d
         if not base.is_dir():
@@ -178,50 +202,64 @@ def collect() -> list[tuple[str, bytes]]:
             rel = p.relative_to(ROOT)
             if not included(rel):
                 continue
-            members.append((rel.as_posix(), p.read_bytes()))
+            add(rel.as_posix(), p, 0o755 if os.access(p, os.X_OK) else 0o644)
     for f in INCLUDE_FILES + WEBAPPS:
         p = ROOT / f
         if p.is_file():
-            members.append((f, p.read_bytes()))
+            add(f, p, 0o755 if os.access(p, os.X_OK) else 0o644)
+
+    # Embedded aarch64 toolchain: makes the one-shot fully offline. .tools/ is
+    # gitignored, so it rides only inside the payload, never in the repo.
+    if embed_tools is not None:
+        if not embed_tools.is_dir():
+            raise SystemExit(f"--embed-tools: {embed_tools} is not a directory")
+        for p in sorted(embed_tools.rglob("*")):
+            if not p.is_file():
+                continue
+            rel = p.relative_to(embed_tools)
+            add(".tools/" + rel.as_posix(), p,
+                0o755 if os.access(p, os.X_OK) else 0o644)
     return members
 
 
-def build_payload(members: list[tuple[str, bytes]]) -> bytes:
+def build_payload(members: list[tuple[str, bytes, int]]) -> bytes:
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
-        for rel, data in members:
+        for rel, data, mode in members:
             zi = zipfile.ZipInfo(PREFIX + rel, date_time=(1980, 1, 1, 0, 0, 0))
             zi.compress_type = zipfile.ZIP_DEFLATED
-            zi.external_attr = 0o100644 << 16
+            zi.external_attr = (stat.S_IFREG | mode) << 16
             z.writestr(zi, data)
     return buf.getvalue()
 
 
-def write(members: list[tuple[str, bytes]]) -> dict:
+def write(members: list[tuple[str, bytes, int]], out: pathlib.Path | None = None) -> dict:
     payload = build_payload(members)
     digest = sha256(payload)
     head = HEADER.replace("__EXPECT_SHA256__", digest).encode()
-    ONESHOT.parent.mkdir(parents=True, exist_ok=True)
-    ONESHOT.write_bytes(head + MARKER + payload)
-    ONESHOT.chmod(ONESHOT.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    return {"bytes": ONESHOT.stat().st_size, "payload": len(payload), "sha256": digest}
+    dest = out or ONESHOT
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(head + MARKER + payload)
+    dest.chmod(dest.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    return {"bytes": dest.stat().st_size, "payload": len(payload), "sha256": digest, "path": dest}
 
 
-def check() -> int:
+def check(embed_tools: pathlib.Path | None = None, out: pathlib.Path | None = None) -> int:
     # `delivery/` is regenerable output that .gitignore forbids committing, so a clean
     # checkout has no one-shot. Absent is a skip, not a failure (the same rule
     # verify.py check_sync applies): the generator IS tracked, so it is producible.
     # Drift in a one-shot that IS present is a real defect and still fails.
-    if not ONESHOT.exists():
-        print("one-shot: absent (regenerable, not committed) — skip")
+    target = out or ONESHOT
+    if not target.exists():
+        print(f"one-shot: absent ({target}) — skip")
         return 0
-    data = ONESHOT.read_bytes()
+    data = target.read_bytes()
     i = data.find(MARKER)
     if i < 0:
         print("one-shot: no payload marker", file=sys.stderr)
         return 1
     payload = data[i + len(MARKER):]
-    want = sha256(build_payload(collect()))
+    want = sha256(build_payload(collect(embed_tools)))
     got = sha256(payload)
     ok = want == got
     print(f"  {'OK  ' if ok else 'STALE'} one-shot payload  {got[:16]}  (tree {want[:16]})")
@@ -231,13 +269,17 @@ def check() -> int:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--embed-tools", type=pathlib.Path, default=None, metavar="DIR",
+                    help="embed a prebuilt .tools/ tree (e.g. the aarch64 chain) for an offline one-shot")
+    ap.add_argument("--out", type=pathlib.Path, default=None, metavar="PATH",
+                    help="write to PATH instead of delivery/darkith-one-shot.sh")
     args = ap.parse_args()
     if args.check:
-        return check()
-    members = collect()
-    info = write(members)
+        return check(args.embed_tools, args.out)
+    members = collect(args.embed_tools)
+    info = write(members, args.out)
     print(f"one-shot {info['bytes']:,} B  payload {info['payload']:,} B  members {len(members)}")
-    print(f"  sha256 {info['sha256'][:16]}  -> {ONESHOT.relative_to(ROOT)}")
+    print(f"  sha256 {info['sha256'][:16]}  -> {info['path'].relative_to(ROOT) if str(info['path']).startswith(str(ROOT)) else info['path']}")
     return 0
 
 

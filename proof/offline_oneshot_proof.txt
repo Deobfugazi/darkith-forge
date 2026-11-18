@@ -1,0 +1,40 @@
+DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6)
+date: 2026-11-18T13:09:27Z
+
+== artifact ==
+  one-shot: 198221580 B
+  script sha256: c2b65e0625fc747153ad33de21eb2dd747131660ea52d4761c79cd16181fa146  /tmp/darkith-one-shot-offline.sh
+  payload sha256: ce355c5405075ed4466cbeb28fd75e9fc086ed60244b917199c79045580329f8
+  members: 725
+
+== staged toolchain (each sha256-verified against the Termux index) ==
+  openjdk-17 17.0.21.1 (aarch64) | aapt2 16.0.0.4-4 | kotlinc 1.9.24 (arch-independent)
+  android.jar platform-34 | r8.jar | apksig.jar
+  42/42 debs verified -> /tmp/deb_manifest.json
+
+== offline 7-step chain (network blocked: dead-proxy env) ==
+  1/7 aapt2 compile  ok
+  2/7 aapt2 link     ok -> base.apk
+  3/7 kotlinc        ok -> classes/
+  4/7 d8             ok -> classes.dex
+  5/7 package        ok -> base.apk (classes.dex + assets; arsc/so kept STORED)
+  6/7 zipalign       ok -> aligned.apk (python fallback)
+  signed: ./app-signed.apk
+  7/7 apksigner      ok -> ./app-signed.apk
+  Verifies: true
+  Verified using v2 scheme (APK Signature Scheme v2): true
+  Verified using v3 scheme (APK Signature Scheme v3): true
+  zipalign verify    ok
+  api30 gate         ok (arsc + lib/*.so STORED)
+  DONE: ./app-signed.apk
+     build.sh exit: 0
+
+== APK ==
+  8018094 B  /tmp/verify_offline/payload.zip.d/darkith-forge/app-signed.apk
+  package com.darkith.transliaison v1.1.0-omega targetSdk 34 MainActivity arm64-v8a
+
+== published + download-verified ==
+  release: oneshot-offline-20261118-1310
+  asset:   darkith-one-shot-offline.sh  198221580 B  (id 763456661)
+  url:     https://api.github.com/repos/Deobfugazi/darkith-forge/releases/assets/763456661
+  downloaded back -> byte-identical (cmp), sha256 c2b65e0625fc747153ad33de21eb2dd747131660ea52d4761c79cd16181fa146

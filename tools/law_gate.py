@@ -26,8 +26,8 @@ DOC = ROOT / "DARKITH.md"
 
 # A law heading, e.g. "─── NEVER #18 (NO LOCAL-ONLY RESOLUTION) ───"
 LAW = re.compile(r"───\s*((?:NEVER|MUST|SPI)-?\s*#?\d+)\s*(?:\(([^)]*)\))?\s*───")
-# A gate citation inside a law body: tools/foo.py or tools/foo.sh
-GATE = re.compile(r"tools/[\w.-]+\.(?:py|sh)")
+# A gate citation inside a law body: tools/foo.py, tools/foo.sh or tools/foo.js
+GATE = re.compile(r"tools/[\w.-]+\.(?:py|sh|js)")
 NOTE = "[NOTE: not yet gated]"
 
 

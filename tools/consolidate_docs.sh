@@ -22,7 +22,7 @@ if [ "$CHECK" = 1 ]; then
   [ -f "$CANON" ] || { echo "DEFICIT: $CANON missing"; exit 1; }
   DUP=""
   for f in $OLD; do
-    for p in "$ROOT/$f" "$ROOT/tree_omega/$f" "$ROOT/dist/$f" "$ROOT/proof/$f"; do
+    for p in "$ROOT/$f" "$ROOT/app/$f" "$ROOT/dist/$f" "$ROOT/proof/$f"; do
       [ -f "$p" ] && DUP="$DUP $p"
     done
   done
@@ -42,9 +42,9 @@ for L in "NEVER #11" "NEVER #15" "SPI-17" "W-042" "one surface"; do
   grep -q "$L" "$CANON" || { echo "DEFICIT: $CANON lacks '$L' — refusing to delete"; exit 1; }
 done
 
-# remove every copy in root, tree_omega/, and dist/ (dist copies are regenerated)
+# remove every copy in root, app/, and dist/ (dist copies are regenerated)
 for f in $OLD; do
-  for p in "$ROOT/$f" "$ROOT/tree_omega/$f" "$ROOT/dist/$f" "$ROOT/proof/$f"; do
+  for p in "$ROOT/$f" "$ROOT/app/$f" "$ROOT/dist/$f" "$ROOT/proof/$f"; do
     [ -f "$p" ] && rm -f "$p" && echo "  removed $p"
   done
 done

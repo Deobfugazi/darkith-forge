@@ -26,6 +26,11 @@ Checks (I-nn):
 """
 import os, re, sys, zipfile, subprocess
 
+# I-03: apksigner's canonical line is
+#   "Verified using v2 scheme (APK Signature Scheme v2): true"
+# so the label and the value are separated by the scheme's own parenthetical.
+V2_RE = re.compile(r"v2 scheme[^\n]*:\s*true", re.I)
+
 def find_aapt2():
     for c in (os.environ.get("AAPT2"), "aapt2", "/tmp/darkith-toolchain/aapt2"):
         if not c:
@@ -83,9 +88,27 @@ def badging(aapt2, apk):
     except Exception:
         return ""
 
+def selftest():
+    """Guard I-03: the v2 detector must match apksigner's real output, not a guess."""
+    cases = [
+        ("Verified using v2 scheme (APK Signature Scheme v2): true", True),
+        ("Verified using v2 scheme (APK Signature Scheme v2): false", False),
+        ("Verifies: true\nVerified using v1 scheme (JAR signing): false", False),
+    ]
+    bad = 0
+    for line, want in cases:
+        got = bool(V2_RE.search(line))
+        tag = "ok  " if got == want else "FAIL"
+        print(f"  {tag} v2 detect -> {got} (want {want}): {line.splitlines()[0][:48]}")
+        bad += got != want
+    print(f"  install_gate selftest: {'PASS' if not bad else 'FAIL'} ({len(cases) - bad}/{len(cases)})")
+    sys.exit(1 if bad else 0)
+
 def main():
+    if len(sys.argv) == 2 and sys.argv[1] == "--selftest":
+        selftest()
     if len(sys.argv) < 2:
-        sys.exit("usage: install_gate.py <apk> [project_root]")
+        sys.exit("usage: install_gate.py <apk> [project_root] | --selftest")
     apk = os.path.abspath(sys.argv[1])
     root = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else os.getcwd()
 
@@ -123,9 +146,7 @@ def main():
     apksigner = find_apksigner()
     if apksigner:
         r = subprocess.run([apksigner, "verify", "--verbose", apk], capture_output=True, text=True)
-        # apksigner prints e.g. "Verified using v2 scheme (APK Signature Scheme v2): true",
-        # so the scheme name and its boolean are not adjacent — match across the label.
-        v2 = re.search(r"v2 scheme[^\n]*:\s*true", r.stdout, re.I)
+        v2 = V2_RE.search(r.stdout)
         if r.returncode == 0 and v2:
             rec("I-03-signature-v2", "CLOSED", "v2 signature verifies")
         else:

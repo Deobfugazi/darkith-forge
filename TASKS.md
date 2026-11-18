@@ -71,7 +71,7 @@ validation, contrast checks.
 | C1 | Finish the APK (install + launch on device) | done | `delivery/darkith-homekeeper-debug.apk` 8,013,998 B; apksigner v2+v3; zipalign ok; launch-crash fix + icon; see AGENTS.md §28 |
 | C2 | Fix the native forge end to end (`forgeNative` → real builder) | todo | `BuildEngine` defects named: no `LD_LIBRARY_PATH`, recompresses `resources.arsc`, no zipalign step — all predicted, not yet run |
 | C3 | Icon pipeline that feeds the forge | done | `tools/make_icon.py` (pure stdlib, omega Ω gold on near-black, all densities + adaptive) + `tools/icon_gate.py`; CI-gated |
-| C4 | The specialist icon app (the developer vertical in §B) | todo | distinct from C3: this is the user-facing module, not the app's own icon |
+| C4 | The specialist icon app (the developer vertical in §B) | done | `icon_forge.html` — the Ω Icon Forge (§I, H1-H7); distinct from C3: the user-facing module, not the app's own icon |
 | C5 | Sensing core — only for a consumer that exists | todo | first consumer is the forge memory guard (C2); sensors built in the abstract are the scope trap |
 | C6 | Build the `darkith-omega-homekeeper` module (blueprint preserved at `docs/DARKITH-OMEGA-repo.txt`, pushed fb85bcf) | todo | spec present, module not built; 8 membership rules + 9 admission conditions (A1-A9) unexecuted |
 
@@ -146,3 +146,15 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.
+
+## I. THE VISUAL-AFFORDANCE SPECIALIST (the first domain app)
+
+| # | task | status | evidence |
+|---|---|---|---|
+| H1 | Reconstruct the truncated `Ω Icon Forge` and place it in the tree (Operator: "ICONS, LOGOS and THUMBNAILS, one omega app for it") | done | `icon_forge.html` (one file, offline, zero-dependency; five tabs — Icon, Logo, Thumbnail, Couple, Ledger); the delivered file was truncated mid-`rasterFg`, so the tail is reconstructed and every defect closed |
+| H2 | Emit an INSTALLABLE adaptive-icon pack, not just art (MUST #34) | done | `icon_forge.html` build → `res/drawable/ic_launcher_foreground.xml` (or PNG fallback), `res/values/ic_launcher_background.xml`, `res/mipmap-anydpi-v26/{ic_launcher,ic_launcher_round}.xml`, legacy mipmaps; asserted by `tools/test_icon_forge.js` T-11 |
+| H3 | Couple to the REAL bridge, never a mock; absence is a state, not a pass | done | `icon_forge.html` writes each file through `window.darkith.fileWrite` to `/sdcard/Darkith/icon-pack/` and records the device dir; `tools/test_icon_forge.js` T-8c/T-9b (UNAVAILABLE with no bridge, MEASURED with one) |
+| H4 | Deterministic, CRC-verified ZIP so a rebuild is diffable (SPI-28) | done | `icon_forge.html` `zipWrite`/`zipRead`; `tools/test_icon_forge.js` T-2/T-3 |
+| H5 | Every emitted `pathData` is absolute `M/L/C/Z` only — aapt2/VectorDrawable law (NEVER #20) | done | `icon_forge.html` arc→cubic normaliser; `tools/test_icon_forge.js` T-4 |
+| H6 | The safe-zone gate is truthful (no crying wolf) | done | `markRadius` samples each segment (a bbox-corner test over-estimated and is gone); the test proves all four presets sit inside the 66 dp safe zone — `tools/test_icon_forge.js` T-6 |
+| H7 | Wire the specialist into CI and the doctrine | done | `tools/ci.sh` ("icon forge tests"); `DARKITH.md` §34 (NEVER #20, MUST #34, SPI-28, W-049); `README.md` §5.7; `tools/law_gate.py` now recognises `.js` gates |
