@@ -31,7 +31,7 @@ MARKER = b"\n__DARKITH_PAYLOAD_BELOW__\n"
 PREFIX = "darkith-forge/"
 
 # The tree the payload carries: everything build.sh reads, nothing it does not.
-INCLUDE_DIRS = ("app", "tools", "libs")
+INCLUDE_DIRS = ("app", "omega-app", "tools", "libs")
 INCLUDE_FILES = (
     "build.sh",
     "build&install.sh",
@@ -136,32 +136,49 @@ if [ -x "$SRC/tools/stage_engine_inputs.sh" ]; then
   ( cd "$SRC" && bash tools/stage_engine_inputs.sh ) || say "engine staging: skipped"
 fi
 
-# ── 4. build with the raw 7-step chain ──────────────────────────────────────────
-say "build: running the 7-step raw chain"
+# ── 4. build with the raw 7-step chain (both apps: the forge + the Ω standalone) ─
+say "build: running the 7-step raw chain (forge)"
 ( cd "$SRC" && bash build.sh . Darkith com.darkith.transliaison ) || die M3 "build failed"
 APK="$SRC/app-signed.apk"
 [ -f "$APK" ] || die M3 "no APK produced at $APK"
 say "build: $(wc -c <"$APK") B -> $APK"
-
-# The work dir is removed on exit, so publish the APK to the caller's CWD first.
 OUT_APK="$PWD/darkith-forge-signed.apk"
 cp "$APK" "$OUT_APK" 2>/dev/null && APK="$OUT_APK" && say "apk: $APK"
 
-# ── 5. install (skip for --build/--verify) ──────────────────────────────────────
+APK2=""
+if [ -d "$SRC/omega-app" ]; then
+  say "build: running the 7-step raw chain (omega standalone)"
+  if ( cd "$SRC" && bash build.sh omega-app "Darkith Omega" com.darkith.omega ); then
+    O="$SRC/omega-app/app-signed.apk"
+    if [ -f "$O" ]; then
+      if cp "$O" "$PWD/darkith-omega-signed.apk" 2>/dev/null; then APK2="$PWD/darkith-omega-signed.apk"; else APK2="$O"; fi
+      say "apk: $APK2  ($(wc -c <"$APK2") B)"
+    fi
+  else
+    say "build: omega standalone FAILED (forge APK unaffected)"
+  fi
+fi
+
+# ── 5. install (skip for --build/--verify) ─────────────────────────────────────────────────────
 if [ "$MODE" = "install" ]; then
   if command -v termux-open >/dev/null 2>&1; then
     termux-open --content-type application/vnd.android.package-archive "$APK" \
       || die M4 "termux-open failed"
-    say "install: handed to the package installer"
+    say "install: handed to the package installer (forge)"
+    if [ -n "$APK2" ]; then
+      termux-open --content-type application/vnd.android.package-archive "$APK2" \
+        && say "install: handed to the package installer (omega)"
+    fi
   elif command -v pm >/dev/null 2>&1; then
     pm install -r "$APK" || die M4 "pm install failed"
-    say "install: installed via pm"
+    say "install: installed via pm (forge)"
+    if [ -n "$APK2" ]; then pm install -r "$APK2" && say "install: installed via pm (omega)"; fi
   else
-    say "install: no termux-open/pm — APK left at $APK"
-    say "         open it in the forge app's terminal, or: termux-open $APK"
+    say "install: no termux-open/pm — APKs left at $APK ${APK2:+and $APK2}"
+    say "         open them in the forge app's terminal, or: termux-open <apk>"
   fi
 else
-  say "mode=$MODE: APK left at $APK"
+  say "mode=$MODE: APK left at $APK ${APK2:+and $APK2}"
 fi
 
 say "done. The forge terminal inside the app can now build on-device."

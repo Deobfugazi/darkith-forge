@@ -9,15 +9,15 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**40 readable files across 6 registers.**
+**41 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 41,212 | `e345c37dc5c9` | AGENTS.md — Darkith |
-| `DARKITH.md` | 65,141 | `9ff246d90a38` | DARKITH — THE SINGLE SOURCE OF TRUTH |
-| `DEFICITS.json` | 3,356 | `55898aae4fe6` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
+| `AGENTS.md` | 41,214 | `b2ffb448c23a` | AGENTS.md — Darkith |
+| `DARKITH.md` | 65,141 | `a220f50aefe3` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DEFICITS.json` | 3,356 | `13453acc0410` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 64,277 | `750b199111d3` | DARKITH — README |
 | `RESUME.md` | 4,457 | `52ce56a89a58` | RESUME — read this first in any new session |
 | `TASKS.md` | 16,772 | `4e7c3002349f` | TASKS — the durable board |
@@ -47,7 +47,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 |---|---|---|---|
 | `darkith code studio.html` | 539,472 | `f706384c84db` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,318,719 | `cd298f710647` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
-| `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
+| `darkith-inscriber.html` | 231,324 | `882eeb3e7d7b` | Darkith Inscriber — SAVF Lite Studio |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,568 | `622dc406953f` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
@@ -57,7 +57,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `app/src/main/assets/darkith_ui.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
+| `app/src/main/assets/darkith_ui.html` | 231,324 | `882eeb3e7d7b` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 473,721 | `e12c993c179c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,784 | `addc4f6d44b9` | SAVF-1 Universal Audit Engine |
 
@@ -71,6 +71,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `proof/comment_premise_check.txt` | 2,823 | `5713322369ba` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
 | `proof/kt_compile_proof.txt` | 1,003 | `ca98b4c82cb3` | === §19 FORK-INTEGRITY GATE — COMPILE PROOF (SPI-2/4/6) === |
 | `proof/nt_ledger_prereconcile.txt` | 2,924 | `800061c03912` | ENGINE-RULE A->A  analysis |
+| `proof/offline_oneshot_proof.txt` | 1,780 | `fce363ef10fd` | DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6) |
 | `proof/oneshot_proof.txt` | 1,556 | `dcda10db485e` | PROOF — one-shot installer + native-lib packaging (SPI-2/4/6) |
 
 ## F-config — Build configuration — dependency manifests

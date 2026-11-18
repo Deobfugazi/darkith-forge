@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- the omega: ONE surface, the end of the continuum. Gold on the near-black plate. -->
+    <path
+        android:pathData="M 68.78,70.62 A 23.00,23.00 0 1 0 39.22,70.62 M 68.78,70.62 L 81.28,73.50 M 39.22,70.62 L 26.72,73.50"
+        android:strokeColor="#FFE8C268"
+        android:strokeWidth="9.00"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

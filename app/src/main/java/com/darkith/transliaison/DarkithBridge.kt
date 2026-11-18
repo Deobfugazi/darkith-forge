@@ -643,4 +643,37 @@ class DarkithBridge(private val context: Context) {
     fun forgeChimera(donorsJson: String, launcherHtml: String, appName: String, pkgName: String): String {
         return ChimeraBuilder(context).forgeChimera(donorsJson, launcherHtml, appName, pkgName)
     }
+
+    @android.webkit.JavascriptInterface
+    fun ggufStatus(): String = try {
+        val dir = File("/sdcard/Darkith/models")
+        val models = com.darkith.transliaison.core.GgufReader.scan(dir)
+        val arr = org.json.JSONArray()
+        for (m in models) {
+            arr.put(org.json.JSONObject()
+                .put("path", m.path)
+                .put("name", m.name ?: m.path.substringAfterLast('/'))
+                .put("arch", m.architecture ?: "unknown")
+                .put("quant", m.quant)
+                .put("bytes", m.sizeBytes)
+                .put("contextLength", m.contextLength ?: org.json.JSONObject.NULL)
+                .put("embeddingLength", m.embeddingLength ?: org.json.JSONObject.NULL)
+                .put("tensors", m.tensorCount)
+                .put("runtimeBytes", m.estimatedRuntimeBytes())
+                .put("version", m.version))
+        }
+        org.json.JSONObject()
+            .put("modelsDir", dir.absolutePath)
+            .put("modelCount", models.size)
+            .put("models", arr)
+            .put("inference", "backend-missing")
+            .put("backend", "llama.cpp-android (JNI)")
+            .put("readable", true)
+            .toString()
+    } catch (e: Exception) {
+        org.json.JSONObject().put("readable", false).put("error", e.message).toString()
+    }
+
+    @android.webkit.JavascriptInterface
+    fun lastCrash(): String = CrashGuard.lastCrash(context) ?: ""
 }

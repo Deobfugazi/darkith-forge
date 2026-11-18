@@ -4492,5 +4492,34 @@
 <script>(function(){function tick(){var e=document.getElementById('omega-clock');if(e&&window.omegaTime)e.textContent=window.omegaTime.stamp();}tick();setInterval(tick,1000);})();</script>
 <span id="omega-clock" title="Operator time (Asia/Manila, UTC+8)" style="position:fixed;right:6px;bottom:6px;z-index:2147483647;font:11px/1.2 ui-monospace,monospace;color:#E8C268;background:rgba(5,5,5,.82);border:1px solid rgba(232,194,104,.35);border-radius:6px;padding:3px 7px;pointer-events:none">--</span>
 <!-- END GENERATED synchrony -->
+
+<!-- OMEGA-GGUF-PANEL:START -->
+<div id="omega-gguf-panel" style="position:fixed;left:8px;bottom:8px;z-index:2147483000;font:12px ui-monospace,monospace;background:#0f0f12;color:#e8c268;border:1px solid #33333d;border-radius:8px;padding:6px 9px;max-width:88vw;opacity:.94">
+  <span id="omega-gguf-text">GGUF: probing…</span>
+</div>
+<script>
+(function(){
+  "use strict";
+  function setText(s){var e=document.getElementById("omega-gguf-text"); if(e) e.textContent=s;}
+  function bridge(){ return window.darkith || window.darkithNative; }
+  function probe(){
+    var b=bridge();
+    if(!b||typeof b.ggufStatus!=="function"){ setText("GGUF: bridge absent (browser)"); return; }
+    var st; try{ st=JSON.parse(b.ggufStatus()); }catch(e){ setText("GGUF: bridge error"); return; }
+    if(!st.readable){ setText("GGUF: unreadable ("+(st.error||"?")+")"); return; }
+    var n=st.modelCount||0;
+    setText("GGUF: "+n+" model"+(n===1?"":"s")+" · inference "+st.inference+" · "+st.modelsDir);
+    window.__omegaGguf=st;
+  }
+  function crash(){
+    var b=bridge();
+    if(!b||typeof b.lastCrash!=="function")return;
+    try{ var c=b.lastCrash(); if(c&&c.length){ window.__darkithLastCrash=c; setText("prior crash captured → /sdcard/Darkith/logs"); } }catch(e){}
+  }
+  function boot(){ crash(); probe(); }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",boot); else boot();
+})();
+</script>
+<!-- OMEGA-GGUF-PANEL:END -->
 </body>
 </html>

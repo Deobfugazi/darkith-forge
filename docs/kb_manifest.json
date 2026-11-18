@@ -1,24 +1,24 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 40,
+  "count": 41,
   "files": [
     {
-      "bytes": 41212,
+      "bytes": 41214,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "e345c37dc5c990627f482dd44c65bff2f7bcb5f65ee94043bbb2965a61d53b41"
+      "sha256": "b2ffb448c23ac50f6953b4df58c8c96757b84c13cd26358969efa4d99152a88b"
     },
     {
       "bytes": 65141,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "9ff246d90a385848d1da95f683c15c46c3f8c90eec278b86d201aafd25ff5018"
+      "sha256": "a220f50aefe33efaffd342bcd9b028f9c104b59b1fcd70af1f9f5f24bab81aca"
     },
     {
       "bytes": 3356,
       "path": "DEFICITS.json",
       "register": "A-apparatus",
-      "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
+      "sha256": "13453acc041093f506a9167706e041027da34870ae06e94fd23817bcb1e5adac"
     },
     {
       "bytes": 64277,
@@ -135,10 +135,10 @@
       "sha256": "cd298f7106472b08b5fba514229a993e2c42a9bc28692ad540c413deaae73cce"
     },
     {
-      "bytes": 229875,
+      "bytes": 231324,
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
-      "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+      "sha256": "882eeb3e7d7ba67dd07497169f5519ad8246ecf8e262989c4ec15d3296f7f806"
     },
     {
       "bytes": 64437,
@@ -165,10 +165,10 @@
       "sha256": "5030bd163189924db9bd07346fff827a846fc16f7edd77c65fa61427f8902632"
     },
     {
-      "bytes": 229875,
+      "bytes": 231324,
       "path": "app/src/main/assets/darkith_ui.html",
       "register": "D-asset",
-      "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+      "sha256": "882eeb3e7d7ba67dd07497169f5519ad8246ecf8e262989c4ec15d3296f7f806"
     },
     {
       "bytes": 473721,
@@ -217,6 +217,12 @@
       "path": "proof/nt_ledger_prereconcile.txt",
       "register": "E-evidence",
       "sha256": "800061c03912d4ff0b3c3fad4ab977180d9369e2b0d3abdbd3a780d8b24a76c7"
+    },
+    {
+      "bytes": 1780,
+      "path": "proof/offline_oneshot_proof.txt",
+      "register": "E-evidence",
+      "sha256": "fce363ef10fd0e56ea814cb70fb79e2e892e96ff483dcabb9bdbeeb34d75f1ea"
     },
     {
       "bytes": 1556,

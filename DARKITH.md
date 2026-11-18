@@ -15,11 +15,11 @@
 | field | value | source of truth |
 |---|---|---|
 | package | `com.darkith.transliaison` | AndroidManifest.xml |
-| versionCode | **2** | AndroidManifest.xml |
-| versionName | **1.1.0-omega** | AndroidManifest.xml |
+| versionCode | **4** | AndroidManifest.xml |
+| versionName | **2.1.0-omega** | AndroidManifest.xml |
 | bridge VERSION | **hk-bridge-52** | HomekeeperBridge.kt |
 | minSdk / targetSdk | 24 / 34 | build.sh (NT IX ceiling = 34) |
-| apk | `Darkith-1.1.0-omega.apk` | this delivery |
+| apk | `Darkith-2.1.0-omega.apk` | this delivery |
 | sha256 | (see `dist/SHA256SUMS.txt`) | this delivery |
 
 ## How to read your INSTALLED version (the question that was unanswerable)
@@ -27,7 +27,7 @@
 Any one of these returns the real installed version — no guessing:
 
 1. **In the app (new in this build):** the Homekeeper dashboard shows the engine version.
-   The bridge now exposes `darkith.apkVersion()` → `"bridge=hk-bridge-52 pkg=1.1.0-omega (2)"`.
+   The bridge now exposes `darkith.apkVersion()` → `"bridge=hk-bridge-52 pkg=2.1.0-omega (4)"`.
    Open the browser console on the Homekeeper screen and run `darkith.apkVersion()`.
 2. **Termux (on the phone):**
    ```
@@ -35,7 +35,7 @@ Any one of these returns the real installed version — no guessing:
    ```
 3. **The APK file itself:**
    ```
-   aapt dump badging Darkith-1.1.0-omega.apk | grep -E '^package'
+   aapt dump badging Darkith-2.1.0-omega.apk | grep -E '^package'
    ```
 4. **adb (from a PC, if you ever have one):**
    ```
@@ -49,7 +49,7 @@ fork carried an `AndroidManifest.xml` — it had **no declared versionName**, so
 the platform default (`1.0`) or the on-device forge's `1.0.<unix-seconds>`. That is why it was
 unknowable. This build declares its version and can report it.
 
-Delta in **1.1.0-omega (code 2)**:
+Delta in **2.1.0-omega (code 4)**:
 
 - **Reconciled singularity tree** — 55 `.kt`: the 54-file fork union (6 divergent files
   resolved, 3 delivery-only files included) plus the authored `core/IRAuditor.kt`. (See Part 2.)
@@ -61,7 +61,7 @@ Delta in **1.1.0-omega (code 2)**:
 - **`NativeForgeBuilder` fork reconciled** — `forgeNative` now matches the class contract.
 - **Manifest + `res/` + `assets/` authored** (absent from every fork) — the APK is now reproducible.
 - **`apkVersion()`** added so the app reports its own installed version.
-- **Version declared**: versionCode 2, versionName 1.1.0-omega, bridge `hk-bridge-52`.
+- **Version declared**: versionCode 4, versionName 2.1.0-omega, bridge `hk-bridge-52`.
 - **`shell*` family implemented whole** (`shell`/`shellExec`/`shellSetCwd`/`shellSetEnv`/`shellEnv`/`shellHistory`) over one persistent session; terminal `cd`/`export`/`history` wired to it.
 - **Signer-coupled identity**: `signerSignature()` returns `{signer, device, nonce(ns), sig}` where `sig=HMAC-SHA256(signerDigest, …)`; `verifySignerSignature()` recomputes and compares. The signature is keyed by the APK's signing certificate (the user's build identity) plus a fresh nanosecond nonce per call — unique and unreplayable.
 - **Build chain hardened**: `build.sh` finds a JDK `kotlinc`, honours a pre-set `KOTLINC`, and
@@ -75,7 +75,7 @@ Delta in **1.1.0-omega (code 2)**:
 
 Run before every delivery:
 ```
-KOTLINC=/path/to/kotlinc tools/delivery_gate.sh . dist/Darkith-1.1.0-omega.apk \
+KOTLINC=/path/to/kotlinc tools/delivery_gate.sh . dist/Darkith-2.1.0-omega.apk \
   /path/to/android.jar  /path/to/apksig.jar
 # DELIVERED — every known loophole is closed or gated.
 ```
@@ -214,7 +214,7 @@ its real status.
 
 Baseline for the delta: **your currently installed APK** — `com.darkith.transliaison`, built from
 the stale pre-C7 fork, with **no declared versionName** (reports `1.0`/forge-stamped). This
-delivery is **1.1.0-omega (versionCode 2)**.
+delivery is **2.1.0-omega (versionCode 4)**.
 
 ---
 

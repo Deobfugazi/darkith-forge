@@ -77,7 +77,7 @@ const document = {
 const writes = [];
 const darkith = {
   version: () => "hk-bridge-52",
-  apkVersion: () => "bridge=hk-bridge-52 pkg=1.1.0-omega (2)",
+  apkVersion: () => "bridge=hk-bridge-52 pkg=2.1.0-omega (4)",
   signerSignature: () => "sig:deadbeef",
   storageGranted: () => true,
   memInfo: () => '{"avail":1234567}',
@@ -187,7 +187,7 @@ ok("T-1 sha256(abc) known vector", S.sha256(new TextEncoder().encode("abc")) ===
   useBridge = true;
   const p2 = S.probeCouple();
   ok("T-9b with a bridge the coupling gate is MEASURED and reads real methods",
-    p2.rows.find((r) => r.id === "bridge").state === "measured" && p2.rows.some((r) => r.id === "apkVersion" && /1\.1\.0/.test(r.text)));
+    p2.rows.find((r) => r.id === "bridge").state === "measured" && p2.rows.some((r) => r.id === "apkVersion" && /2\.1\.0/.test(r.text)));
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

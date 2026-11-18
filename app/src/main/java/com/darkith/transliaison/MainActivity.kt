@@ -44,16 +44,30 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AegisCircuitBreaker.checkAndRollback(this)
+        // Install crash capture BEFORE anything that can throw, so a boot
+        // failure is written to disk instead of vanishing (SPI-4).
+        CrashGuard.install(this)
         setContentView(R.layout.activity_main)
-        checkPermissions()
         webView = findViewById(R.id.webView)
         setupHardenedWebView()
         val bridge = DarkithBridge(this)
+        bridge.attachWebView(webView)
         webView.addJavascriptInterface(bridge, "darkithNative")
+        webView.addJavascriptInterface(bridge, "darkith")
+        val priorCrash = CrashGuard.lastCrash(this)
         webView.loadUrl("file:///android_asset/darkith_ui.html")
-
-        ProgressLedger.start(this)
+        // Post-UI subsystems are best-effort: a failure here must not take the
+        // launcher down after the surface is already up.
+        try { AegisCircuitBreaker.checkAndRollback(this) } catch (_: Throwable) {}
+        try { ProgressLedger.start(this) } catch (_: Throwable) {}
+        try { checkPermissions() } catch (_: Throwable) {}
+        try {
+            if (priorCrash != null) {
+                val js = "window.__darkithLastCrash = " +
+                    org.json.JSONObject.quote(priorCrash) + ";"
+                webView.post { webView.evaluateJavascript(js, null) }
+            }
+        } catch (_: Throwable) {}
     }
 
     private fun setupHardenedWebView() {

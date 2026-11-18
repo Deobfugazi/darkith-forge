@@ -120,7 +120,7 @@ def newest_apk():
     return max(cands, key=os.path.getmtime) if cands else None
 
 apk = newest_apk()
-apk_name = "Darkith-1.1.0-omega.apk"
+apk_name = "Darkith-2.1.0-omega.apk"
 if apk and os.path.basename(apk) != apk_name:
     shutil.copy(apk, os.path.join(DIST, apk_name))
 
@@ -138,7 +138,7 @@ json.dump(meta, open(os.path.join(DIST, "_meta.json"), "w"))
 log(f"3/5 checksums -> dist/SHA256SUMS.txt ({len(present)} files)")
 
 # ── 4. the hub — ONE surface (omega: one Activity, one process, one surface) ───
-labels = {"Darkith-1.1.0-omega.apk": "the app — install this",
+labels = {"Darkith-2.1.0-omega.apk": "the app — install this",
           SOURCE_ZIP: "full source tree",
           "DARKITH.md": "the single source of truth (version + reconciliation + deficits + laws)",
           "USER_PROMPTS_FULL.md": "your full scrollback",
@@ -162,7 +162,7 @@ a.dl{{color:var(--accent);text-decoration:none;font-weight:600}}a.dl:hover{{text
 .sha{{color:#6b6b78;font:12px ui-monospace,monospace;white-space:nowrap}}
 .pill{{display:inline-block;background:rgba(52,211,153,.12);color:var(--pass);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600}}
 @media(max-width:560px){{.lbl,.sha{{display:none}}}}</style></head><body>
-<h1>Darkith <span>· one surface</span> <span class="pill">1.1.0-omega</span></h1>
+<h1>Darkith <span>· one surface</span> <span class="pill">2.1.0-omega</span></h1>
 <div class="meta">one Activity, one process, one surface · tap any file to download</div>
 <table>{rows}</table></body></html>'''
 open(os.path.join(DIST, "index.html"), "w").write(html)
