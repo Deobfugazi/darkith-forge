@@ -14,7 +14,7 @@
 (function (root) {
   "use strict";
 
-  var VERSION = "1.0.0";
+  var VERSION = "1.3.0-omega";
 
   /* ================= VFS ================= */
   function VFS() { this.root = { t: "d", c: {}, m: 493, ts: 0 }; }   // 0755

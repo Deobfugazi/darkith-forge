@@ -3,10 +3,10 @@
   "count": 39,
   "files": [
     {
-      "bytes": 46710,
+      "bytes": 46901,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "8214250da7d2967b9fae7352c98c5c83139de21fbe503679b0ea18c484699f36"
+      "sha256": "fc9bf6af49ba5c341eb4935c8f86dd01e35dfd20702c77e8faf5e76b7db7491b"
     },
     {
       "bytes": 60564,
@@ -123,22 +123,22 @@
       "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
     },
     {
-      "bytes": 543124,
+      "bytes": 543130,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "69326584950566f1d26672c77957f506f65621d4da975369b7567dd1c5da33c4"
+      "sha256": "e07f766b4387080ff236ff19a41afd38806e2418ac971234271eac3899da4e7d"
     },
     {
-      "bytes": 1334381,
+      "bytes": 1334393,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "7f4cd120e4c78865da14edb45b91d59a22a6b9765ee81818b5b2fbbe2cc5a7ee"
+      "sha256": "f3ee2eb318a769d2cdbaeedec028e5e969a2f5b9a387cc376aef4db6d7ed72d7"
     },
     {
-      "bytes": 229875,
+      "bytes": 229893,
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
-      "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+      "sha256": "fbc16526ea46bed2fd7cc6fa8a8198b184d7d65aedb18e58e663c891c98c2524"
     },
     {
       "bytes": 24606,
@@ -159,22 +159,22 @@
       "sha256": "9893a3eb7019598864b74692b7bfff20af763702d0e94f54662aede279feb250"
     },
     {
-      "bytes": 229875,
+      "bytes": 229893,
       "path": "app/src/main/assets/darkith_ui.html",
       "register": "D-asset",
-      "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+      "sha256": "fbc16526ea46bed2fd7cc6fa8a8198b184d7d65aedb18e58e663c891c98c2524"
     },
     {
       "bytes": 490080,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "54eb6bb96df9658f5cde6d23079e84bc404c2add364e5fbdce600309be7c52ff"
+      "sha256": "f2d2ab18a562bf165354e11898eb07395f20de1717c150bf251fa0b6f637666d"
     },
     {
-      "bytes": 96784,
+      "bytes": 96790,
       "path": "app/src/main/assets/savf_core.html",
       "register": "D-asset",
-      "sha256": "addc4f6d44b94ed4f26f21dffd88b9c1d4334753da4a454fa11c0d013d9812d2"
+      "sha256": "c688b31320a262d9fc9d5e762fa1066b5e8ed1c6fce2631b788f67fa204d519d"
     },
     {
       "bytes": 11203,

@@ -15,7 +15,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 46,710 | `8214250da7d2` | AGENTS.md — Darkith |
+| `AGENTS.md` | 46,901 | `fc9bf6af49ba` | AGENTS.md — Darkith |
 | `DARKITH.md` | 60,564 | `5c15916533ee` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 64,239 | `7bd8873e65e5` | DARKITH — README |
@@ -45,9 +45,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `darkith code studio.html` | 543,124 | `693265849505` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,334,381 | `7f4cd120e4c7` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
-| `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
+| `darkith code studio.html` | 543,130 | `e07f766b4387` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,334,393 | `f3ee2eb318a7` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith-inscriber.html` | 229,893 | `fbc16526ea46` | Darkith Inscriber — SAVF Lite Studio |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
 | `savf.html` | 402,921 | `9893a3eb7019` | SAVF-1 Universal Audit Engine |
@@ -56,9 +56,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `app/src/main/assets/darkith_ui.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
-| `app/src/main/assets/homekeeper.html` | 490,080 | `54eb6bb96df9` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
-| `app/src/main/assets/savf_core.html` | 96,784 | `addc4f6d44b9` | SAVF-1 Universal Audit Engine |
+| `app/src/main/assets/darkith_ui.html` | 229,893 | `fbc16526ea46` | Darkith Inscriber — SAVF Lite Studio |
+| `app/src/main/assets/homekeeper.html` | 490,080 | `f2d2ab18a562` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `app/src/main/assets/savf_core.html` | 96,790 | `c688b31320a2` | SAVF-1 Universal Audit Engine |
 
 ## E-evidence — Machine-generated proof
 

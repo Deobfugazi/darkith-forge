@@ -23,7 +23,7 @@
   if (typeof window !== "undefined") window.DarkTools = api;
 })(typeof window !== "undefined" ? window : this, function (root) {
 
-  var VERSION = "2.0.0";
+  var VERSION = "1.3.0-omega";
   var HOME = "/home/inscriber";
   var TASKDIR = HOME + "/tasks";
   var TOOLDIR = HOME + "/tools";

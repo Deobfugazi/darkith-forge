@@ -142,6 +142,29 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
 
   run "delivery gate (source laws)" \
     bash tools/delivery_gate.sh . --source-only
+  # THE GATE THAT WOULD HAVE CAUGHT THE LAUNCH CRASH. classes.dex referenced
+  # kotlin-stdlib + apksig but defined neither, so the app died at runtime init
+  # while every other test stayed green. If a built APK is present, link it.
+  if [ -f "$ROOT/tools/dex_link_gate.py" ]; then
+    APKS=""
+    [ -f "$ROOT/app-signed.apk" ] && APKS="$ROOT/app-signed.apk"
+    [ -f "$ROOT/build/termkit_omega/app-signed.apk" ] && APKS="$APKS $ROOT/build/termkit_omega/app-signed.apk"
+    if [ -n "$APKS" ]; then
+      run "dex link gate (no unresolved classes)" python3 tools/dex_link_gate.py $APKS
+      run "apk gate (icon + store laws)"        python3 tools/apk_gate.py $APKS
+    else
+      echo "SKIP: no built APK on disk — dex link gate not run (build.sh produces one)"
+    fi
+  fi
+  # The terminal must never lie about its version (darkterm/darktools/termkit/savf
+  # each carried their own hardcoded string). This fails the moment one drifts.
+  if [ -f "$ROOT/tools/stamp_versions.py" ]; then
+    run "version surface gate (one version of record)" python3 tools/stamp_versions.py --check
+  fi
+  # savf.py and savf.html are two ports of ONE formulary; they must agree.
+  if [ -f "$ROOT/tools/savf_parity_gate.py" ]; then
+    run "savf py/js parity gate" python3 tools/savf_parity_gate.py
+  fi
   run "bridge contract audit" \
     python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
   run "doc consolidation check" \

@@ -206,7 +206,9 @@ W-041: the recurring defect was the ABSENCE of a delivery gate — shipping with
   APK-dependent checks as named SKIPs on a box with no APK, never a silent pass.
 
 ## Version truth (never guess again)
-- Truth is AndroidManifest.xml: versionCode=3, versionName=1.2.0-omega. Bridge VERSION=hk-bridge-52.
+- Truth is AndroidManifest.xml: versionCode=4, versionName=1.3.0-omega. Bridge VERSION=hk-bridge-52.
+- One version of record: VERSION.json. `python3 tools/stamp_versions.py` stamps it into every
+  terminal surface (darkterm/darktools/termkit/savf/fused pages); `--check` fails if any drifts.
 - The app self-reports: `darkith.apkVersion()` -> "bridge=... pkg=... (code)".
 - On device: `pm dump com.darkith.transliaison | grep -E 'versionName|versionCode'`.
 - From the APK: `aapt dump badging <apk> | grep ^package`.
