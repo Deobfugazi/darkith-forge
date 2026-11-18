@@ -776,6 +776,11 @@ Pre-run evidence this session (all through the REAL engines, not inferred):
 - UI: no horizontal overflow on any of the 7 tabs at 360px; contrast 17.6:1 (dark) / 17.2:1
   (light); every button and tab >= 44px; FAB drags, theme + tab persist across reload.
 - CI: `tools/ci.sh` exit 0 (CI: PASS). `board pulse` passes once the branch is pushed.
+- INSTALL GATE ARMED: the install gate skipped even on a provisioned runner because
+  `apksigner` (which ships in the build-tools tree that the host-artifact refresh
+  stages under the toolchain dir) was never staged, though `tools/ci.sh` already put `aapt2` on PATH. Staging `apksigner`
+  (and `APKSIGNER`) runs the gate for real: all four delivery APKs report INSTALLABLE
+  (14/14 checks closed). A bare runner still skips by name, never fakes a pass.
 
 NOTE — `tools/sync.sh` defaults `BRANCH=main` but the working branch is
 `absolution/admission`; a bare `tools/sync.sh` therefore rebases against the WRONG branch and
