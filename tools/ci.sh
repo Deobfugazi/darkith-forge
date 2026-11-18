@@ -274,6 +274,12 @@ else
   printf -- '--- install gate: SKIP (no APK, or aapt2/apksigner absent; build an APK and stage tools with: bash tools/fetch_toolchain.sh)\n'
 fi
 
+# I-03's v2 detector is a regex against apksigner's stdout; a wrong regex silently reads
+# OPEN, or worse PASSes a v1-only APK. Guard it directly, independent of any APK.
+if have python3 && [ -f tools/install_gate.py ]; then
+  run "install gate selftest (I-03 v2 detector)" python3 tools/install_gate.py --selftest
+fi
+
 printf '\n=== runtime render gate (the UI the OS hands to Zygote) ===\n'
 # Loads the real launcher asset at 360x800 with and without the native bridge and fails on
 # any console/page error, blank body, empty DOM, or overflow. Self-skips (exit 0) when
