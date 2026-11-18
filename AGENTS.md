@@ -564,3 +564,15 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   `__DARKITH_PAYLOAD_BELOW__` line. It is NOT valid bash end-to-end (`bash -n` fails on the
   binary tail by design); the header `tail`s the payload out and checks its sha256. On a host
   without the Android toolchain it fails HONESTLY (`apksigner missing`), never fakes a build.
+- DUAL-REGISTER HELP: `help` (and `help beginner|novice|novices`) prints the beginner
+  register; `help dev|developer|expert|ai|full` prints the developer register; `help CMD`
+  stays the one-line `HELP` table; unknown args print an honest error (exit 1). Both
+  registers are defined ONCE in `build/build-forge.py` (`HELP_BEGINNER` / `HELP_DEV`) and
+  injected between `/* DUAL-HELP:START|END */` over the pristine `HELP_ANCHOR`. Rebuild
+  restores `HELP_ANCHOR` first (`restore_dual_help`), so the injection is idempotent.
+  LAW: every sample command + expected output in the help is PROBED from the live shell,
+  never invented — a first draft claimed `test` runs the battery (it is the POSIX predicate;
+  the battery is the `test` CHIP / `TermKit.selftest()`) and that `f(){ return N; }` sets the
+  status (it is the LAST command's; a bare `return N` yields 127). Probe before you document.
+  The developer register also carries the INVARIANT DEBUGGER (the fixture battery) and the
+  FRACTURE CLOSURE (each Linux divergence, its closed form, why it is correct here).
