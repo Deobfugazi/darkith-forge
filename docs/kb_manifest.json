@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 43,
+  "count": 38,
   "files": [
     {
       "bytes": 34829,
@@ -27,34 +27,10 @@
       "sha256": "2e007815fc7b3db9bb036358546257844c304613b25e8eab15c17625f66f45a4"
     },
     {
-      "bytes": 63661,
-      "path": "README.md",
-      "register": "A-apparatus",
-      "sha256": "2e007815fc7b3db9bb036358546257844c304613b25e8eab15c17625f66f45a4"
-    },
-    {
-      "bytes": 63661,
-      "path": "README.md",
-      "register": "A-apparatus",
-      "sha256": "2e007815fc7b3db9bb036358546257844c304613b25e8eab15c17625f66f45a4"
-    },
-    {
       "bytes": 4284,
       "path": "RESUME.md",
       "register": "A-apparatus",
       "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
-    },
-    {
-      "bytes": 13938,
-      "path": "TASKS.md",
-      "register": "A-apparatus",
-      "sha256": "bc380cbd5b3fdf4f5957c9e51073e9333ba866c049377c4cb17e91e4653a5746"
-    },
-    {
-      "bytes": 13938,
-      "path": "TASKS.md",
-      "register": "A-apparatus",
-      "sha256": "bc380cbd5b3fdf4f5957c9e51073e9333ba866c049377c4cb17e91e4653a5746"
     },
     {
       "bytes": 13938,
@@ -169,12 +145,6 @@
       "path": "omega.html",
       "register": "C-skillbase",
       "sha256": "a11d595c79b96dbf94a7b14ef82de5d5d8831e64b287232632c2f91b6e557edf"
-    },
-    {
-      "bytes": 16604,
-      "path": "repository.html",
-      "register": "C-skillbase",
-      "sha256": "234f50f1b827c38bd92fd233c03a016a5403828cad31c6a5a3d0d99b233d9b23"
     },
     {
       "bytes": 399831,
