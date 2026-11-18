@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 38,
+  "count": 39,
   "files": [
     {
       "bytes": 42427,
@@ -55,6 +55,12 @@
       "path": "docs/SECURITY_REMEDIATION.md",
       "register": "B-knowledge",
       "sha256": "714045540aa609926a3f1fed7c94d7282296016db34f73a4e1e824d2f635fddf"
+    },
+    {
+      "bytes": 2729,
+      "path": "docs/UPDATES.md",
+      "register": "B-knowledge",
+      "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
     },
     {
       "bytes": 146183,

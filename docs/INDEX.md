@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**38 readable files across 6 registers.**
+**39 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -29,6 +29,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
+| `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
 | `docs/nt/NT-INDEX.md` | 4,329 | `c244fba77d05` | NT INDEX — the noveltreatise corpus, carried and reconciled |
 | `docs/nt/NT-IX.txt` | 47,852 | `148373385f60` | NOVELTREATISE IX — OMEGA FINAL EDITION (REVISED: DEVICE-BOUND, ALIGNME |
