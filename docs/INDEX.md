@@ -43,11 +43,11 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `darkith code studio.html` | 539,472 | `f706384c84db` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,297,607 | `0a6c54dd8816` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith code studio.html` | 540,034 | `04bd19b59d51` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,298,731 | `bbdbb1de42da` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 398,245 | `5030bd163189` | SAVF-1 Universal Audit Engine |
+| `savf.html` | 399,305 | `b3e62d520896` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 

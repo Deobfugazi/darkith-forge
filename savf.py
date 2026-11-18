@@ -917,10 +917,14 @@ def main(argv=None):
             print(f"{len(F)} finding(s)")
         return 1 if any(x["sev"] == "high" for x in F) else 0
     elif A.cmd == "reach":
+        if not os.path.isdir(A.root):
+            raise SystemExit(f"reach: no such root directory: {A.root}")
         out = reach(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test)
         print(json.dumps(out, indent=2))
         return 0 if not out["missed"] and out["tests_exit"] == 0 else 1
     elif A.cmd == "mutate":
+        if not os.path.isdir(A.root):
+            raise SystemExit(f"mutate: no such root directory: {A.root}")
         out = mutate(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test_cmd, A.max, A.seed)
         print(json.dumps(out, indent=2))
     elif A.cmd == "freeze":
@@ -964,4 +968,15 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # The tool promises bad input yields a clean, non-zero error, never a raw
+    # traceback. SystemExit (argparse usage, deliberate messages) passes through;
+    # every other operational failure is reported as one line on stderr.
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except KeyboardInterrupt:
+        sys.exit(130)
+    except Exception as e:
+        sys.stderr.write(f"savf: {type(e).__name__}: {e}\n")
+        sys.exit(2)

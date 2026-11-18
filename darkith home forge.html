@@ -12369,9 +12369,17 @@ function dict(seed) {
       return [finding("PARSE", 1, file, ln, "cannot parse: " + named(text, ln), "high")];
     }
     /* Module and attribute lookups are keyed by names taken from the source,
-       so the option maps must not inherit Object.prototype. */
+       so the option maps must not inherit Object.prototype.  `installed` mirrors
+       the CLI's --installed: a caller may name third-party roots it knows are
+       importable, and it is accepted as an array, a Set, or a plain object. */
+    var installed = dict();
+    var ins = opts.installed;
+    if (ins) {
+      if (typeof ins.forEach === "function") ins.forEach(function (k) { installed[k] = 1; });
+      else Object.keys(ins).forEach(function (k) { installed[k] = 1; });
+    }
     opts = { stdlib: dict(opts.stdlib), local: dict(opts.local),
-             stdattrs: opts.stdattrs || {}, installed: opts.installed };
+             stdattrs: opts.stdattrs || {}, installed: installed };
     var testFile = isTestFile(file);
 
     /* markers: comments and identifiers only, never string literals */
@@ -12391,7 +12399,7 @@ function dict(seed) {
       names.forEach(function (row) {
         var full = row[0], bound = row[1], line = row[2];
         var root = full.split(".")[0];
-        if (opts.stdlib[root] || opts.local[root] || root === "__future__") {
+        if (opts.stdlib[root] || opts.installed[root] || opts.local[root] || root === "__future__") {
           if (opts.stdlib[root] && bound && full.indexOf(".") < 0) modAlias[bound] = root;
           return;
         }
@@ -13066,7 +13074,9 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
     var opts = {
       stdlib: stdlibDict(),
       stdattrs: global.SAVF_STDATTRIB || {},
-      local: localDict(entries)
+      local: localDict(entries),
+      /* mirrors the CLI's --installed: third-party roots the caller vouches for */
+      installed: options.installed
     };
 
     var findings = [], parsed = 0, skipped = 0;
@@ -16440,9 +16450,17 @@ function dict(seed) {
       return [finding("PARSE", 1, file, ln, "cannot parse: " + named(text, ln), "high")];
     }
     /* Module and attribute lookups are keyed by names taken from the source,
-       so the option maps must not inherit Object.prototype. */
+       so the option maps must not inherit Object.prototype.  `installed` mirrors
+       the CLI's --installed: a caller may name third-party roots it knows are
+       importable, and it is accepted as an array, a Set, or a plain object. */
+    var installed = dict();
+    var ins = opts.installed;
+    if (ins) {
+      if (typeof ins.forEach === "function") ins.forEach(function (k) { installed[k] = 1; });
+      else Object.keys(ins).forEach(function (k) { installed[k] = 1; });
+    }
     opts = { stdlib: dict(opts.stdlib), local: dict(opts.local),
-             stdattrs: opts.stdattrs || {}, installed: opts.installed };
+             stdattrs: opts.stdattrs || {}, installed: installed };
     var testFile = isTestFile(file);
 
     /* markers: comments and identifiers only, never string literals */
@@ -16462,7 +16480,7 @@ function dict(seed) {
       names.forEach(function (row) {
         var full = row[0], bound = row[1], line = row[2];
         var root = full.split(".")[0];
-        if (opts.stdlib[root] || opts.local[root] || root === "__future__") {
+        if (opts.stdlib[root] || opts.installed[root] || opts.local[root] || root === "__future__") {
           if (opts.stdlib[root] && bound && full.indexOf(".") < 0) modAlias[bound] = root;
           return;
         }
@@ -17137,7 +17155,9 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
     var opts = {
       stdlib: stdlibDict(),
       stdattrs: global.SAVF_STDATTRIB || {},
-      local: localDict(entries)
+      local: localDict(entries),
+      /* mirrors the CLI's --installed: third-party roots the caller vouches for */
+      installed: options.installed
     };
 
     var findings = [], parsed = 0, skipped = 0;
