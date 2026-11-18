@@ -139,10 +139,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 54 | named work = board 46 + deficits 8 |
-| E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 39 | returned = done 31 + closed 3 + descoped 5 |
-| E/W_in | 0.278 | the progress-deficit indicator; absolution at 0 |
+| W_in | 61 | named work = board 53 + deficits 8 |
+| E | 14 | un-returned = todo 14 + in_progress 0 + blocked 0 + open 0 |
+| S | 47 | returned = done 39 + closed 3 + descoped 5 |
+| E/W_in | 0.230 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

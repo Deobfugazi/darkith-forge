@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """pre-runner gate — the node driver and its engine must honour one contract.
 
-`tools/prerunner.js` (CLI) drives `app/src/main/assets/vendor/prerunner.js` (engine)
+`tools/prerunner-cli.js` (CLI) drives `app/src/main/assets/vendor/prerunner.js` (engine)
 through a real headless Chromium. This gate locks the things that must never drift:
 
   1. the engine module exposes the documented surface (run/register/transpile/adapters);
@@ -23,7 +23,7 @@ import sys
 import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CLI = ROOT / "tools" / "prerunner.js"
+CLI = ROOT / "tools" / "prerunner-cli.js"
 ENGINE = ROOT / "app" / "src" / "main" / "assets" / "vendor" / "prerunner.js"
 
 CLEAN = "<!doctype html><body><h1>ok</h1><script>document.title='ok'</script></body>"
@@ -59,7 +59,7 @@ def run_cli(node: str, args: list[str], env: dict) -> tuple[int, dict | None]:
 
 def main() -> int:
     if not CLI.is_file() or not ENGINE.is_file():
-        print("prerunner_gate: SKIP — tools/prerunner.js or vendor/prerunner.js missing")
+        print("prerunner_gate: SKIP — tools/prerunner-cli.js or vendor/prerunner.js missing")
         return 0
     node = shutil.which("node")
     if not node:

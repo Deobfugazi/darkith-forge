@@ -654,7 +654,7 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
 - WHAT SHIPPED: two offline engines, injected into EVERY surface as one integration step.
   (a) PRE-RUNNER — `app/src/main/assets/vendor/prerunner.js` (canonical). One report contract,
   two engines: a sandboxed offscreen iframe for in-app/WebView, a real headless Chromium for
-  node (`tools/prerunner.js`, playwright-core + system `/usr/bin/chromium`, no browser download).
+  node (`tools/prerunner-cli.js`, playwright-core + system `/usr/bin/chromium`, no browser download).
   (b) CLEARANCELOOP — `app/src/main/assets/vendor/clearanceloop.js`. The homeokinetic debt
   ratchet of §33 (`tools/source_inspector.py`) carried into the runtime: per-class friction HWM
   may only flux DOWN, a rise is a regression = FAIL, stasis over `WINDOW`=5 deliveries is
@@ -684,8 +684,8 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   to degrade to a toast. Re-apply if the carrier is ever regenerated from a stale source.
 - GATES: `python3 tools/prerunner_gate.py` (engine surface + CLI exit contract + honest verdicts),
   `python3 tools/clearanceloop_gate.py` (the four ratchet laws + engines wired into every surface),
-  and `node tools/prerunner.js --selftest` (8/8). All three in `tools/ci.sh`. Dogfood proof: all six
-  surfaces PASS with 0 page errors at 360×800 (`node tools/prerunner.js <surface> --stress 15
+  and `node tools/prerunner-cli.js --selftest` (8/8). All three in `tools/ci.sh`. Dogfood proof: all six
+  surfaces PASS with 0 page errors at 360×800 (`node tools/prerunner-cli.js <surface> --stress 15
   --expect DarkithPreRunner,ClearanceLoop`).
 
 ## §37 THE VISUAL-AFFORDANCE SPECIALIST — the Ω Icon Forge (binding, 2026-11-10)

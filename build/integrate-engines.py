@@ -42,8 +42,15 @@ ENGINES = [
     ROOT / "app/src/main/assets/vendor/clearanceloop.js",
 ]
 
-# HTML surfaces that are plain documents.
-SHELLS = [ROOT / "omega.html", ROOT / "savf.html", ROOT / "darkith-inscriber.html"]
+# HTML surfaces that are plain documents. `darkith_ui.html` is the app-shipped
+# mirror of `darkith-inscriber.html` and must stay byte-identical to it (ci.sh D-2b),
+# so both are injected here or the pair forks.
+SHELLS = [
+    ROOT / "omega.html",
+    ROOT / "savf.html",
+    ROOT / "darkith-inscriber.html",
+    ROOT / "app/src/main/assets/darkith_ui.html",
+]
 # The forge shell carries an embedded studio; both need the engine.
 FORGE = ROOT / "darkith home forge.html"
 

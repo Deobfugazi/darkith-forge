@@ -9,18 +9,18 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**39 readable files across 6 registers.**
+**42 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 47,981 | `3eedd27b9ef3` | AGENTS.md — Darkith |
-| `DARKITH.md` | 60,564 | `5c15916533ee` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `AGENTS.md` | 55,621 | `cef864b7835b` | AGENTS.md — Darkith |
+| `DARKITH.md` | 65,331 | `d07c51867f52` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 64,239 | `7bd8873e65e5` | DARKITH — README |
-| `RESUME.md` | 4,284 | `8a7dd377f4e1` | RESUME — read this first in any new session |
-| `TASKS.md` | 15,433 | `4efc36cbb816` | TASKS — the durable board |
+| `README.md` | 64,860 | `6708b9ada18d` | DARKITH — README |
+| `RESUME.md` | 4,457 | `52ce56a89a58` | RESUME — read this first in any new session |
+| `TASKS.md` | 17,404 | `b45dc72f9dd8` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -28,6 +28,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 |---|---|---|---|
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
+| `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
@@ -45,18 +46,19 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `darkith code studio.html` | 543,130 | `e07f766b4387` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,334,393 | `f3ee2eb318a7` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
-| `darkith-inscriber.html` | 229,893 | `fbc16526ea46` | Darkith Inscriber — SAVF Lite Studio |
+| `darkith code studio.html` | 579,483 | `b484b949f1cd` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,427,722 | `25eff8317f07` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith-inscriber.html` | 265,754 | `a4fb38df74e3` | Darkith Inscriber — SAVF Lite Studio |
+| `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
-| `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 402,921 | `9893a3eb7019` | SAVF-1 Universal Audit Engine |
+| `omega.html` | 77,820 | `00a3e207a5c8` | DARKITH Ω — terminal + local assistant |
+| `savf.html` | 438,782 | `ddb5f037c7ea` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `app/src/main/assets/darkith_ui.html` | 229,893 | `fbc16526ea46` | Darkith Inscriber — SAVF Lite Studio |
+| `app/src/main/assets/darkith_ui.html` | 265,754 | `a4fb38df74e3` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 490,080 | `f2d2ab18a562` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,790 | `c688b31320a2` | SAVF-1 Universal Audit Engine |
 
@@ -70,6 +72,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `proof/comment_premise_check.txt` | 2,823 | `5713322369ba` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
 | `proof/kt_compile_proof.txt` | 1,003 | `ca98b4c82cb3` | === §19 FORK-INTEGRITY GATE — COMPILE PROOF (SPI-2/4/6) === |
 | `proof/nt_ledger_prereconcile.txt` | 2,924 | `800061c03912` | ENGINE-RULE A->A  analysis |
+| `proof/offline_oneshot_proof.txt` | 1,780 | `fce363ef10fd` | DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6) |
 | `proof/oneshot_proof.txt` | 1,556 | `dcda10db485e` | PROOF — one-shot installer + native-lib packaging (SPI-2/4/6) |
 
 ## F-config — Build configuration — dependency manifests

@@ -20,10 +20,10 @@
  * exactly — same seed, same report (screenshots and timings aside).
  *
  * Usage:
- *   node tools/prerunner.js <file...> [--entry NAME] [--shots 5] [--ms 800]
+ *   node tools/prerunner-cli.js <file...> [--entry NAME] [--shots 5] [--ms 800]
  *        [--stress 40] [--seed 1] [--width 390] [--height 780]
  *        [--lib playwright|puppeteer] [--out ./prerun-out] [--quiet]
- *   node tools/prerunner.js --selftest [--lib playwright]
+ *   node tools/prerunner-cli.js --selftest [--lib playwright]
  */
 'use strict';
 
@@ -40,8 +40,8 @@ function usage(code) {
     'darkith · pre-runner CLI — real headless Chromium via Playwright or Puppeteer.',
     '',
     'Usage:',
-    '  node tools/prerunner.js <file...> [options]',
-    '  node tools/prerunner.js --selftest [--lib playwright]',
+    '  node tools/prerunner-cli.js <file...> [options]',
+    '  node tools/prerunner-cli.js --selftest [--lib playwright]',
     '',
     'Options:',
     '  --entry NAME     entry file (default: first file)',

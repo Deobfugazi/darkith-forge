@@ -1,18 +1,18 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 39,
+  "count": 42,
   "files": [
     {
-      "bytes": 47981,
+      "bytes": 55621,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "3eedd27b9ef3204b4cf985693ba5558ad04c479466c22bcc38f83c225b8c8e32"
+      "sha256": "cef864b7835b7b528cc574c5f5db5b80ffc6bc32b0df5802f3c140bce476cb73"
     },
     {
-      "bytes": 60564,
+      "bytes": 65331,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "5c15916533eecd9d660146e8447784cd08ecd5b276aec72532c162263c78c107"
+      "sha256": "d07c51867f52106d98902232a7711687e2c45c9170805d4d5db9835213b293b3"
     },
     {
       "bytes": 3356,
@@ -21,22 +21,22 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 64239,
+      "bytes": 64860,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "7bd8873e65e509fb8e4642aa447e614d80702d88f2114ce80679bf2de9899fc0"
+      "sha256": "6708b9ada18d1cf2fd6341bafb3c17f937f71d3abde6a537d6873a75d12fbf55"
     },
     {
-      "bytes": 4284,
+      "bytes": 4457,
       "path": "RESUME.md",
       "register": "A-apparatus",
-      "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
+      "sha256": "52ce56a89a58b9883ca4dfb868417104dbb3a92f203eb7f42adc27c3b1634a0d"
     },
     {
-      "bytes": 15433,
+      "bytes": 17404,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "4efc36cbb816dd06d41c2eb62b537d3cd896f804cb1fa729e12884a08045f746"
+      "sha256": "b45dc72f9dd827361e485b0e64efaad5a92d10b9944bdd6488e1857f986aa486"
     },
     {
       "bytes": 9608,
@@ -49,6 +49,12 @@
       "path": "docs/DARKITH-OMEGA-repo.txt",
       "register": "B-knowledge",
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
+    },
+    {
+      "bytes": 70065,
+      "path": "docs/GITHUB-CICD-AGENTS-KB.md",
+      "register": "B-knowledge",
+      "sha256": "759522f608b42d9d4c12c136c3e3b3bc6df5150259870331be6d1b887398a54c"
     },
     {
       "bytes": 3960,
@@ -123,22 +129,28 @@
       "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
     },
     {
-      "bytes": 543130,
+      "bytes": 579483,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "e07f766b4387080ff236ff19a41afd38806e2418ac971234271eac3899da4e7d"
+      "sha256": "b484b949f1cd8d4708d83019dec188b1329688300cee4a8723e30b5df9d9fdeb"
     },
     {
-      "bytes": 1334393,
+      "bytes": 1427722,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "f3ee2eb318a769d2cdbaeedec028e5e969a2f5b9a387cc376aef4db6d7ed72d7"
+      "sha256": "25eff8317f07c41253e60b13bcde2a8bdeb52a30e5d5d7958bfa9eb0d1381560"
     },
     {
-      "bytes": 229893,
+      "bytes": 265754,
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
-      "sha256": "fbc16526ea46bed2fd7cc6fa8a8198b184d7d65aedb18e58e663c891c98c2524"
+      "sha256": "a4fb38df74e349347c4ea945a474c18c8b6fee38e7489a9d8bf016d19e72ed88"
+    },
+    {
+      "bytes": 64437,
+      "path": "icon_forge.html",
+      "register": "C-skillbase",
+      "sha256": "9cf24b11b3ee803c53ea96db7b480e291a519c800bf1a04e37f7fc7c85595e42"
     },
     {
       "bytes": 24606,
@@ -147,22 +159,22 @@
       "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     },
     {
-      "bytes": 41959,
+      "bytes": 77820,
       "path": "omega.html",
       "register": "C-skillbase",
-      "sha256": "a11d595c79b96dbf94a7b14ef82de5d5d8831e64b287232632c2f91b6e557edf"
+      "sha256": "00a3e207a5c8bfc4ea36c7b3e43d3cbc8926ff0360ed5665cd88ff4dfce8e276"
     },
     {
-      "bytes": 402921,
+      "bytes": 438782,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "9893a3eb7019598864b74692b7bfff20af763702d0e94f54662aede279feb250"
+      "sha256": "ddb5f037c7ea5261158d9ec40a147a3df5bf37b067fa972020fcd0a60372c20a"
     },
     {
-      "bytes": 229893,
+      "bytes": 265754,
       "path": "app/src/main/assets/darkith_ui.html",
       "register": "D-asset",
-      "sha256": "fbc16526ea46bed2fd7cc6fa8a8198b184d7d65aedb18e58e663c891c98c2524"
+      "sha256": "a4fb38df74e349347c4ea945a474c18c8b6fee38e7489a9d8bf016d19e72ed88"
     },
     {
       "bytes": 490080,
@@ -211,6 +223,12 @@
       "path": "proof/nt_ledger_prereconcile.txt",
       "register": "E-evidence",
       "sha256": "800061c03912d4ff0b3c3fad4ab977180d9369e2b0d3abdbd3a780d8b24a76c7"
+    },
+    {
+      "bytes": 1780,
+      "path": "proof/offline_oneshot_proof.txt",
+      "register": "E-evidence",
+      "sha256": "fce363ef10fd0e56ea814cb70fb79e2e892e96ff483dcabb9bdbeeb34d75f1ea"
     },
     {
       "bytes": 1556,
