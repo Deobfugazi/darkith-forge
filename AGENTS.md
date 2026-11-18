@@ -607,13 +607,13 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
 - GATES: `node tools/updater_test.mjs` (38 checks) and `python3 tools/update_gate.py`, both in
   `tools/ci.sh`. Live-verified in headless chromium against the real public mirror (`current`)
   and a bumped mirror (`update`, alert names both versions), 0 page errors.
-- GIT HYGIENE (cost two CI cycles): NEVER `git add -A` here. `tree_omega/`, `dist/`,
-  `.agent_tmp/` and `app-signed.apk` are deliberately untracked; `add -A` commits them and
+- GIT HYGIENE (cost two CI cycles): NEVER `git add -A` here. the `tree_omega/`, `dist/` and
+  agent-scratch directories, plus `app-signed.apk`, are deliberately untracked; `add -A` commits them and
   then kb_index ("misfiled (no register)"), fork-singularity ("divergent copies") and the
   convergence tree hash all FAIL. Stage surgically: `git add -u` for tracked edits, plus
   explicit paths for new files.
 - DEPLOY ORDER for a release that the live app can actually see: `inject_updater.py` ->
   `build-forge.py` -> `kb_index.py --write` -> one-shot/sync/bundle/repo/delivery to fixed
   point -> commit -> PUSH (board_pulse needs HEAD==origin) -> CI -> GitHub Release with
-  `darkith-one-shot.sh` + `VERSION.json` as assets. The runtime host (port 12000) is a
+  the one-shot script + `VERSION.json` as assets. The runtime host (port 12000) is a
   moving sandbox: point the PRIMARY mirror at GitHub once the repo is public.
