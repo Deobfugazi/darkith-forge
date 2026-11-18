@@ -553,6 +553,9 @@ def _canon(d): return json.dumps(d, sort_keys=True, separators=(",", ":")).encod
 def freeze(paths, thresholds=None, exemptions=(), chart="unspecified", lock=LOCK, force=False):
     if os.path.exists(lock) and not force:
         raise SystemExit(f"{lock} exists; refusing to overwrite (overwriting is a tamper event; use --force)")
+    for p in paths:
+        if not os.path.isfile(p):
+            raise SystemExit(f"freeze: no such file: {p}")
     d = {"version": 1, "files": {p: sha256_file(p) for p in paths},
          "thresholds": {"theta_mut": 0.6, "theta_cov": 0.8, **(thresholds or {})},
          "exemptions": sorted(exemptions), "chart": chart}

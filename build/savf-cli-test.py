@@ -65,6 +65,12 @@ r = run("scan", "/tmp/savf-does-not-exist-xyz.py")
 check("scan: missing path exits non-zero", r.returncode != 0, r.stdout.strip())
 check("scan: missing path says so", "no such file" in (r.stdout + r.stderr), r.stdout + r.stderr)
 
+r = run("freeze", "definitely-not-here.py")
+check("freeze: a missing file exits non-zero", r.returncode != 0, r.stdout.strip())
+check("freeze: a missing file names the path, no traceback",
+      "no such file" in (r.stdout + r.stderr) and "Traceback" not in r.stderr,
+      (r.stdout + r.stderr)[-160:])
+
 # 7. scan on a real file with a phantom import flags it as high
 with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
     f.write("import zzz_not_a_real_module\ndef g():\n    return zzz_not_a_real_module.x\n")
