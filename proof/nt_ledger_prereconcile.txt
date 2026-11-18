@@ -12,7 +12,14 @@ NT4-GATE R->R  verified
 NT4-RABTSEVICH C->C  unverified  
 NT5-CUT-W W->W  verified    output sha256:d4b412325255
 NT5-CUT  R->R  verified    
-NT6-SYNCHRONICITY D->D  declared    
+NT6-BODY-W W->W  verified    output sha256:98d66f8be785
+NT6-SILICON-TRACE-W W->W  verified    output sha256:d3ba404af78e
+NT6-BIO-TRACE-W W->W  verified    output sha256:176bc270f1ee
+NT6-SYNCHRONICITY R->R  verified    
+NT6-SILICON-TRACE R->R  verified    
+NT6-BIO-SUBSTRATE R->R  verified    
+NT6-NET-TO-CODE A->A  analysis    
+NT6-TOUCH-COUPLING R->R  verified    
 NT7-STACK-W W->W  verified    output sha256:c7b8fdb1ac3b
 NT7-STACK-ORDER R->R  verified    
 NT7-PROCESS-ZERO C->C  unverified  
@@ -43,4 +50,4 @@ NT11-AQP-W W->W  verified    output sha256:3078d2128437
 NT11-AQP-FORCED R->R  verified    
 NT11-AQP-FALSIFIER A->A  analysis    
 NT11-PRAXIS-ACTUALS C->C  unverified  
-45 claims, 0 problem(s)
+52 claims, 0 problem(s)

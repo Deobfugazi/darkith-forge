@@ -5,9 +5,9 @@ Status: executed. Every claim in the noveltreatise corpus was run through SAVF
 status and re-verified by a command that re-runs green. The gate `tools/nt_gate.py`
 enforces this in CI: a contradiction left unresolved stops the build.
 
-- Corpus carried: `docs/nt/` (7 files; NT I–XI, with NT VI carried as a declared gap).
-- Claims ledger: `proof/nt_claims.json` (45 claims).
-- Reconciliation: `proof/nt_reconciliation.json` (9 resolutions).
+- Corpus carried: `docs/nt/` (9 files; NT I–XI complete — NT VI is now carried).
+- Claims ledger: `proof/nt_claims.json` (52 claims).
+- Reconciliation: `proof/nt_reconciliation.json` (8 resolutions).
 - Pre-reconcile SAVF output: `proof/nt_ledger_prereconcile.txt`.
 - Gate: `tools/nt_gate.py` (wired into `tools/ci.sh`).
 
@@ -26,7 +26,7 @@ SAVF grades each claim by kind:
 Result of `savf.py ledger proof/nt_claims.json --run`:
 
 ```
-45 claims, 0 problem(s)
+52 claims, 0 problem(s)
 ```
 
 Every one of the 15 witnesses re-ran green (its evidence command executed and
@@ -55,7 +55,7 @@ the exact bytes. The `--run` pass executed all 15; each printed its marker.
 | NT11-RETENTION-W | NT XI carries the retention equation W_{in} − E = S ≠ 0 |
 | NT11-AQP-W | NT XI carries the forced derivation result (6 BUILD / 7 ADOPT) |
 
-## The 9 contradictions, resolved to absolution
+## The 8 contradictions, resolved to absolution
 
 A contradiction (kind C) is a claim that conflicts with reality and is not yet
 resolved. Each is resolved to exactly one of three truthful states:
@@ -67,7 +67,6 @@ resolved. Each is resolved to exactly one of three truthful states:
 
 | id | resolution | what it is |
 |---|---|---|
-| NT6-SYNCHRONICITY | INFERRED | NT VI is cited by NT VIII and NT XI as a load-bearing peer (payload-to-donor graft; DEX collision avoidance C = D ∩ P = ∅) but has no body. The interface is carried; the derivation is an open upload. Declared, not hidden. |
 | NT10-HEALER-ANDROIDX | RESOLVED (scoped) | NT X's Healer example repairs to `import androidx.compose.material3.Button`, which the repo law forbids (`fork_integrity_gate` SPI-13 / NEVER #12: zero `import androidx`). Compatible once scoped: the androidx symbol is an illustrative worked example of the Healer *mechanism*; it is not a claim about the delivered tree, which obeys the no-androidx law. Follow-up: re-point the corpus example to a raw `android.*` import. |
 | NT4-RABTSEVICH | EXPOSABLE | NT IV's live demonstration (Rabtsevich TESS pre-registration; VAAR; FAIA) is an external referent; the mechanism is RESOLVED in-document. |
 | NT7-PROCESS-ZERO | EXPOSABLE | NT VII Part 13 material-stream figures are carried without verbatim source, and NT VII itself flags this. |
@@ -79,11 +78,15 @@ resolved. Each is resolved to exactly one of three truthful states:
 
 ## The honest boundaries (nothing hidden)
 
-1. **NT VI has no body.** It is carried as a title and cited as a peer. The
-   interface is stated; the derivation is an open upload. Status: INFERRED.
+1. **NT VI is now carried.** It was the one gap in the set — cited by NT VIII and
+   NT XI as a load-bearing peer with no body. It is now `docs/nt/NT-VI.txt`: the
+   coupling law (the graft by which a payload joins a donor across every scale,
+   from the ore body to the neuron to the instruction set). It is RESOLVED, and
+   its three legs (disjointness, continuity, synchrony) are enforced by three
+   existing gates. The contradiction that NT VI was cited-but-absent is gone.
 2. **NT IX and NT X are now carried.** Before this run the repo cited both in
    Kotlin and docs but held neither. They are now in `docs/nt/` and hashed.
-3. **Seven of the nine contradictions are EXPOSABLE, not defects.** They are the
+3. **Seven of the eight contradictions are EXPOSABLE, not defects.** They are the
    corpus doing exactly what its own engine requires: naming where the path
    leaves the document for an external source.
 4. **One contradiction is scoped, not dissolved.** NT10-HEALER-ANDROIDX is

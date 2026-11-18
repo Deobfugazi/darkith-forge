@@ -1,14 +1,5 @@
 [
   {
-    "id": "NT6-SYNCHRONICITY",
-    "resolved_as": "INFERRED",
-    "resolution": "NT VI (The Synchronicity Engine) is cited by NT VIII and NT XI as a peer but has no body. Truthful absolution: the node's interface is carried (payload-to-donor graft; DEX collision avoidance C = D n P = empty) but the derivation is not. Status INFERRED: the node is named and its invariant stated; the body is an open upload. NOT a stub - the absence is declared, not hidden.",
-    "evidence": {
-      "cmd": "python3 -c \"a=open('docs/nt/NT-VIII.txt').read(); b=open('docs/nt/NT-V.txt').read(); assert 'NT VI' in a and 'Synchronicity Engine' in a; assert 'NOVELTREATISE VI' in b; print('NT6-CITED-NOT-BODIED')\"",
-      "expect": "NT6-CITED-NOT-BODIED"
-    }
-  },
-  {
     "id": "NT4-RABTSEVICH",
     "resolved_as": "EXPOSABLE",
     "resolution": "NT IV's live demonstration (Rabtsevich TESS pre-registration; VAAR; FAIA) is an external referent. Truthful absolution: the corpus carries the demonstration and its status; the verbatim external sources are EXPOSABLE (not carried in the repo). The mechanism (four gate properties) is RESOLVED in-document; only the primary citations are external.",

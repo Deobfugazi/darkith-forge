@@ -121,9 +121,75 @@
     "note": "NT V: the cut (producer keeps benefit, consumer absorbs cost); P1-P13; the two-clock payroll gap; the autophagic recycle bin."
   },
   {
+    "id": "NT6-BODY-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-VI.txt (the generated body)",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VI.txt').read(); assert 'C = D \u2229 P = \u2205' in s and 'the coupling invariant' in s and 'the clock is the invariant' in s.lower(); print('NT6-COUPLING-CARRIED')\"",
+      "expect": "NT6-COUPLING-CARRIED",
+      "external": true
+    },
+    "note": "The NT VI body is carried and states the coupling invariant (C = D n P = empty; three conditions; clock as invariant)."
+  },
+  {
+    "id": "NT6-SILICON-TRACE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-VI.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VI.txt').read(); assert 'SiO2 + 2C -> Si + 2CO' in s and 'SiHCl3 + H2 -> Si + 3 HCl' in s and 'Czochralski' in s; print('NT6-SILICON-TRACE-CARRIED')\"",
+      "expect": "NT6-SILICON-TRACE-CARRIED",
+      "external": true
+    },
+    "note": "The diachronic silicon trace (silica reduction, Siemens purification, Czochralski pull) is carried."
+  },
+  {
+    "id": "NT6-BIO-TRACE-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-VI.txt",
+    "evidence": {
+      "cmd": "python3 -c \"s=open('docs/nt/NT-VI.txt').read(); assert 'sodium-potassium ATPase' in s and 'all-or-nothing' in s and 'saltatory conduction' in s and 'connectome' in s; print('NT6-BIO-TRACE-CARRIED')\"",
+      "expect": "NT6-BIO-TRACE-CARRIED",
+      "external": true
+    },
+    "note": "The biological trace (membrane pump, all-or-nothing firing, saltatory conduction, connectome) is carried."
+  },
+  {
     "id": "NT6-SYNCHRONICITY",
-    "kind": "C",
-    "note": "NT VI - The Synchronicity Engine. CITED by NT VIII and NT XI as a load-bearing peer (payload-to-donor bond, C = D n P = empty, graft hold), but NO BODY EXISTS. CONTRADICTION: a load-bearing node with no derivation."
+    "kind": "R",
+    "derived_from": [
+      "NT6-BODY-W"
+    ],
+    "note": "NT VI - The Synchronicity Engine. The payload-to-donor graft: the graft holds iff D n P = empty (disjointness), the interface is continuous, and the payload and donor share a clock (chi = 0)."
+  },
+  {
+    "id": "NT6-SILICON-TRACE",
+    "kind": "R",
+    "derived_from": [
+      "NT6-SILICON-TRACE-W"
+    ],
+    "note": "The coupling runs from the ore body to the instruction set as one path: silica -> Si (redox) -> electronic-grade Si (Siemens) -> single crystal (Czochralski) -> MOSFET (gate oxide = chemistry, field effect = physics). Physics and chemistry unsiloed."
+  },
+  {
+    "id": "NT6-BIO-SUBSTRATE",
+    "kind": "R",
+    "derived_from": [
+      "NT6-BIO-TRACE-W"
+    ],
+    "note": "The neuron is the same graft in water and salt: membrane battery (chemistry), gated ion channel (physics), all-or-nothing spike (digital bit), myelin insulator (materials), chemical synapse (junction), dendritic addressing grid (structure)."
+  },
+  {
+    "id": "NT6-NET-TO-CODE",
+    "kind": "A",
+    "note": "The identification of the connectome (weighted graph of threshold gates) with the digital circuit (weighted graph of gates in charge and voltage) is the author's compression, self-marked INFERRED. Coherent as a mapping."
+  },
+  {
+    "id": "NT6-TOUCH-COUPLING",
+    "kind": "R",
+    "derived_from": [
+      "NT6-SYNCHRONICITY",
+      "NT7-STACK-W"
+    ],
+    "note": "The touchscreen is the coupling's demonstration case: a finger's biological field (payload) grafted onto a silicon electrode grid (donor), held by the same three conditions - in-band disjointness, void-free continuity, scan/refresh synchrony."
   },
   {
     "id": "NT7-STACK-W",

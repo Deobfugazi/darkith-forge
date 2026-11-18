@@ -18,7 +18,7 @@ are `proof/nt_reconciliation.json`; the absolution report is
 | III | `NT-I-IV-protocol.md` | assignment by rescue assay (DOSAGE/GEOMETRY/ENERGETICS) | RESOLVED |
 | IV | `NT-I-IV-protocol.md` | the pre-registration gate; reflexive Stage 0 | RESOLVED |
 | V | `NT-V.txt` | the cut; the two-clock payroll gap; the autophagic recycle bin | RESOLVED |
-| VI | *(no body)* | The Synchronicity Engine — the payload-to-donor graft; C = D ∩ P = ∅ | INFERRED (cited, not bodied) |
+| VI | `NT-VI.txt` | the coupling law — the payload-to-donor graft across the whole stack (ore → silicon → neuron → code); C = D ∩ P = ∅; the clock is the invariant | RESOLVED |
 | VII | `NT-VII.txt` | the screen stack layer order (adjacency necessity) | RESOLVED |
 | VIII | `NT-VIII.txt` | the Bond Formation Number ℬ ≥ 1 (the cross-scale bond criterion) | RESOLVED |
 | IX | `NT-IX.txt` | the multiplicative triad; the 7-step no-Gradle raw build chain | RESOLVED |
@@ -42,11 +42,19 @@ are `proof/nt_reconciliation.json`; the absolution report is
   named boundary, not a defect).
 - INFERRED — the author's synthesis; the uncertainty is flagged.
 
-## The one gap, declared
+## The gap, filled
 
-NT VI has no body. It is cited by NT VIII and NT XI as a load-bearing peer. It is
-carried here as a title and resolved as INFERRED. When the body is supplied, it
-lands in this directory and the index row moves to RESOLVED.
+NT VI was cited by NT VIII and NT XI as a load-bearing peer but had no body. It
+is now carried (`NT-VI.txt`): the coupling law — the graft by which a payload
+joins a donor across every scale, from the ore body to the neuron to the
+instruction set. The three legs of the coupling (disjointness, continuity,
+synchrony) are enforced by three existing gates:
+
+| NT VI leg | condition | gate that enforces it |
+|---|---|---|
+| Disjointness | D ∩ P = ∅ (no namespace collision) | `tools/fork_integrity_gate.sh` (SPI-13: no foreign symbol) |
+| Continuity | the interface is load-bearing | `tools/bridge_contract_audit.py` (the HTML ↔ Kotlin contract) |
+| Synchrony | payload and donor share one clock | `tools/synchrony_gate.py` (one clock, UTC+8) |
 
 ## The two the repo previously lacked
 
