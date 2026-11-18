@@ -198,6 +198,14 @@ fi
     run "source inspector (loophole trial)"          python3 tools/source_inspector.py inspect --fail-on-fixable
   fi
 
+  # Comment balance (the "Unclosed comment" class): a blind sed that strips an
+  # opening /* leaves a block comment that never closes — kotlinc then refuses the
+  # file and the raw chain stops. This lexes every .kt as code/line/block(nested)/
+  # string/raw/char and fails on an unclosed open OR an orphan */.
+  if have python3 && [ -f tools/comment_balance.py ]; then
+    run "comment balance (unclosed block comments)" python3 tools/comment_balance.py .
+  fi
+
 # The inscriber studio: boots in jsdom, engines present, terminal + toolkits live. Needs
 # jsdom (an npm dev dep, not always installed), so it is skipped honestly when absent.
 if have node && [ -f tools/test_inscriber.js ]; then
@@ -318,6 +326,13 @@ if have git && git rev-parse --git-dir >/dev/null 2>&1; then
   if ! python3 - <<'PYGATE'
 import hashlib, subprocess, sys, collections
 files = subprocess.run(["git","ls-files","-z"], capture_output=True, text=True).stdout.split("\0")[:-1]
+# NEVER #11 forbids two DIVERGENT copies within ONE authoritative tree. Two
+# independent apps (app/ and omega-app/) are each their own tree, so a shared
+# basename across them is not a fork — only divergence WITHIN a tree is. Scope
+# the comparison per tree; shared/root files use the "" tree.
+def tree_of(f):
+    head = f.split("/",1)[0]
+    return head if head in ("app","omega-app") else ""
 by = collections.defaultdict(list)
 for f in files:
     # EXEMPT Android resource-qualifier dirs: the SAME basename in different
@@ -326,9 +341,9 @@ for f in files:
     # people to ignore the gate.
     if "/res/" in f:
         continue
-    by[f.rsplit("/",1)[-1]].append(f)
+    by[(tree_of(f), f.rsplit("/",1)[-1])].append(f)
 divergent, mirrors = {}, {}
-for name, paths in sorted(by.items()):
+for (tree, name), paths in sorted(by.items()):
     if len(paths) < 2:
         continue
     hashes = {}
@@ -337,7 +352,7 @@ for name, paths in sorted(by.items()):
             hashes[pth] = hashlib.sha256(open(pth,"rb").read()).hexdigest()
         except OSError:
             hashes[pth] = "?"
-    (divergent if len(set(hashes.values())) > 1 else mirrors)[name] = hashes if len(set(hashes.values()))>1 else paths
+    (divergent if len(set(hashes.values())) > 1 else mirrors)[f"{tree}/{name}" if tree else name] = hashes if len(set(hashes.values()))>1 else paths
 for name, paths in mirrors.items():
     print(f"      mirror (identical): {name} at {', '.join(paths)}")
 if divergent:

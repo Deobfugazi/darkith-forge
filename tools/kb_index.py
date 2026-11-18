@@ -95,7 +95,7 @@ def register_of(path: str) -> str | None:
         return "B-knowledge"
     if "/" not in path and pathlib.PurePosixPath(path).suffix == ".html":
         return "C-skillbase"
-    if path.startswith("app/src/main/assets/"):
+    if path.startswith("app/src/main/assets/") or path.startswith("omega-app/src/main/assets/"):
         return "D-asset"
     if path.startswith("proof/"):
         return "E-evidence"

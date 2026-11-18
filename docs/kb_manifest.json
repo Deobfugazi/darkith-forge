@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 41,
+  "count": 42,
   "files": [
     {
       "bytes": 41214,
@@ -181,6 +181,12 @@
       "path": "app/src/main/assets/savf_core.html",
       "register": "D-asset",
       "sha256": "addc4f6d44b94ed4f26f21dffd88b9c1d4334753da4a454fa11c0d013d9812d2"
+    },
+    {
+      "bytes": 1320193,
+      "path": "omega-app/src/main/assets/omega_studio.html",
+      "register": "D-asset",
+      "sha256": "891c68154cc50531170f26dee3e030295f76aad233bc5d82e1304bd1623f4982"
     },
     {
       "bytes": 11203,

@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**41 readable files across 6 registers.**
+**42 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -60,6 +60,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `app/src/main/assets/darkith_ui.html` | 231,324 | `882eeb3e7d7b` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 473,721 | `e12c993c179c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,784 | `addc4f6d44b9` | SAVF-1 Universal Audit Engine |
+| `omega-app/src/main/assets/omega_studio.html` | 1,320,193 | `891c68154cc5` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 
 ## E-evidence — Machine-generated proof
 
