@@ -74,7 +74,11 @@ TERMINAL_BUILTIN = """%s
       var f = res.findings[i];
       out("  phi" + f.phi + "  " + f.rule + "  line " + f.line + "  " + f.msg);
     }
-    return res.verdict === "PASS" ? 0 : 1;
+    /* Mirror savf.py's EXIT map so `$?` here means the same as the CLI's:
+       PASS 0, REVIEW 2, BLOCKED 3, LIED 4.  Collapsing every non-PASS to 1
+       would hide which verdict was reached from `&&`, `||` and scripts. */
+    var EXIT = { PASS: 0, REVIEW: 2, BLOCKED: 3, LIED: 4 };
+    return (EXIT[res.verdict] != null) ? EXIT[res.verdict] : 1;
   };
 %s""" % (ST_START, ST_END)
 
