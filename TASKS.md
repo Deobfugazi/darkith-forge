@@ -34,9 +34,10 @@ the directive without the Operator repeating it.
 |---|---|---|---|
 | P1 | README: state the unique principle (Prime Directive / stamp-vs-hand / 9 modes / mint / coupling / Sigma=0 / 3 registers / A and B and C and D) | done | `README.md` section 2 (7 sub-sections); doctrine `docs/nt/NT-X.txt` 1.6, `docs/nt/NT-VI.txt`, `docs/nt/NT-XII.txt` |
 | P2 | README: inventory every hand-made asset + function, mark generated ones | done | `README.md` section 4 (10 groups: shell, forge, absolution, engine core, observability, native binaries, web studio, engine inputs, python, build scripts); generated marked: `app/src/main/assets/engine/template.dex` |
-| P3 | README: the pristine rationale + the coupling stress-test map | done | `README.md` section 5 (six guarantees) + section 6 (three coupling legs -> `tools/fork_integrity_gate.sh`, `tools/bridge_contract_audit.py`, `tools/synchrony_gate.py`) |
+| P3 | README: the pristine rationale + the coupling stress-test map | done | `README.md` section 6 (six guarantees) + section 7 (three coupling legs -> `tools/fork_integrity_gate.sh`, `tools/bridge_contract_audit.py`, `tools/synchrony_gate.py`) |
+| P5 | README: elevate the SUI GENERIS CORE (GL/GPU renderer + mem allocator) to its own top section, three tongues, full mechanism | done | `README.md` section 3 (5 sub-sections: sui generis why, two poles, the GLES renderer, the trace evidence, the hardware ground truth); files `app/src/main/java/com/darkith/transliaison/core/{OmegaRenderer,AutophagicAllocator,MemoryGovernor,GpuScanner,Allocation}.kt`; doctrine `docs/nt/NT-X.txt` Part Three |
+| P6 | README: assimilate the four-register reader shell (`omega-reader.html`) — the doctrine unit as one self-contained page, integrated into §5.7, §8, §2.6 disambiguation, glossary; bugs fixed and tested | done | `omega-reader.html` (4 registers, hash routing, bookmarks, TOC, print CSS, theme+position memory, escaped machine/provenance, bounds-safe router); `tools/test_omega_reader.js` 22/22; wired into `tools/ci.sh`; source `docs/DARKITH-OMEGA-repo.txt` Part 7 |
 | P4 | Converge the three independent derivations byte-for-byte | in_progress | `tools/convergence_gate.py` (py==js clock, tree blob-hash x2); `proof/convergence.json` |
-| P5 | Assimilate the four-register reader: one argument in Plain/Paper/Machine/Provenance registers over one `#/volume/section` route | done | `repository.html` (hand-written, offline, zero-dependency; 0 page errors on malformed/out-of-range routes; README section 4.7 + section 14) |
 
 ---
 
@@ -134,10 +135,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 49 | named work = board 41 + deficits 8 |
+| W_in | 50 | named work = board 42 + deficits 8 |
 | E | 16 | un-returned = todo 15 + in_progress 1 + blocked 0 + open 0 |
-| S | 33 | returned = done 25 + closed 3 + descoped 5 |
-| E/W_in | 0.327 | the progress-deficit indicator; absolution at 0 |
+| S | 34 | returned = done 26 + closed 3 + descoped 5 |
+| E/W_in | 0.320 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 38,
+  "count": 43,
   "files": [
     {
       "bytes": 34829,
@@ -21,10 +21,22 @@
       "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
     },
     {
-      "bytes": 47543,
+      "bytes": 63661,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "25834ccdd17e15f4ddbb56d457054f34cd2c03fc6e99d670dbc09cd68fe2f863"
+      "sha256": "2e007815fc7b3db9bb036358546257844c304613b25e8eab15c17625f66f45a4"
+    },
+    {
+      "bytes": 63661,
+      "path": "README.md",
+      "register": "A-apparatus",
+      "sha256": "2e007815fc7b3db9bb036358546257844c304613b25e8eab15c17625f66f45a4"
+    },
+    {
+      "bytes": 63661,
+      "path": "README.md",
+      "register": "A-apparatus",
+      "sha256": "2e007815fc7b3db9bb036358546257844c304613b25e8eab15c17625f66f45a4"
     },
     {
       "bytes": 4284,
@@ -33,10 +45,22 @@
       "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
     },
     {
-      "bytes": 13300,
+      "bytes": 13938,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "6aba5793fda3b642d2f99d73ef35122596de2c7360cdb33a40e1403c8b7dfabe"
+      "sha256": "bc380cbd5b3fdf4f5957c9e51073e9333ba866c049377c4cb17e91e4653a5746"
+    },
+    {
+      "bytes": 13938,
+      "path": "TASKS.md",
+      "register": "A-apparatus",
+      "sha256": "bc380cbd5b3fdf4f5957c9e51073e9333ba866c049377c4cb17e91e4653a5746"
+    },
+    {
+      "bytes": 13938,
+      "path": "TASKS.md",
+      "register": "A-apparatus",
+      "sha256": "bc380cbd5b3fdf4f5957c9e51073e9333ba866c049377c4cb17e91e4653a5746"
     },
     {
       "bytes": 9608,
@@ -133,6 +157,12 @@
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
       "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
+    },
+    {
+      "bytes": 24606,
+      "path": "omega-reader.html",
+      "register": "C-skillbase",
+      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     },
     {
       "bytes": 41959,

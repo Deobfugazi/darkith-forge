@@ -163,6 +163,12 @@ if have node && [ -f tools/test_darktools.js ]; then
   run "darktools unit tests" node tools/test_darktools.js
 fi
 
+  # The four-register reader (omega-reader.html): dependency-free DOM-shim test. Proves
+  # the routing is bounds-safe and the machine/provenance registers are HTML-escaped.
+  if have node && [ -f tools/test_omega_reader.js ]; then
+    run "omega reader tests" node tools/test_omega_reader.js
+  fi
+
 # The inscriber studio: boots in jsdom, engines present, terminal + toolkits live. Needs
 # jsdom (an npm dev dep, not always installed), so it is skipped honestly when absent.
 if have node && [ -f tools/test_inscriber.js ]; then
