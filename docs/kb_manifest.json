@@ -135,10 +135,10 @@
       "sha256": "a11d595c79b96dbf94a7b14ef82de5d5d8831e64b287232632c2f91b6e557edf"
     },
     {
-      "bytes": 399305,
+      "bytes": 399831,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "b3e62d520896be06a44e22ec6032a10dc3ecbf4c7b62306c1cce819409945cb1"
+      "sha256": "4a31db4624f57aeab38cc31f361ae9825f4280fc421c3f5055d5d55f6e3b310f"
     },
     {
       "bytes": 229875,
@@ -147,10 +147,10 @@
       "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
     },
     {
-      "bytes": 473721,
+      "bytes": 1298731,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "e12c993c179cd290030c0fda7da7942b0debe70c40bb924b534f2564c7f58816"
+      "sha256": "bbdbb1de42da683156469e8302d9a70e0443ba28573ca328ec1e773dac56c768"
     },
     {
       "bytes": 96784,
