@@ -37,6 +37,9 @@ if have python3; then
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
   run "savf cli contract"                 python3 build/savf-cli-test.py
   run "darkbot self-test"                 python3 tools/darkbot.py selftest
+  # Secret gate (fail-closed): no credential may ever be committed to the tracked tree.
+  run "secret gate (no committed credentials)" python3 tools/secret_gate.py
+  run "secret gate self-test"             python3 tools/secret_gate.py selftest
   # Fracture Scout: offline proof its boolean parser, adapters, and ranker are correct.
   run "fracture scout self-test"          python3 tools/fracture_scout.py selftest
   # Kotlin syntax gate: fail if any source tree has an unclosed block comment.

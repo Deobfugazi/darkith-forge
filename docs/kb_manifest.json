@@ -3,16 +3,16 @@
   "count": 34,
   "files": [
     {
-      "bytes": 33209,
+      "bytes": 34200,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "eaf129cbc527a2055c670869246e6c4a854bd663e300a30f30eca147426c457e"
+      "sha256": "348b2b34e84f411bc8bad99ea0cbc6e1904009bae5c4a36553a9ac296d5bb178"
     },
     {
-      "bytes": 53847,
+      "bytes": 55361,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "dfdc041df1512e8374472a48e9371811f146d5b3c9ba2b46d51c9cf1ad79260b"
+      "sha256": "7c4698d8800df55c39acadd7947d63db7986da9a0eb5bdad3162c34cd6ea98ae"
     },
     {
       "bytes": 3356,
@@ -27,10 +27,10 @@
       "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
     },
     {
-      "bytes": 10597,
+      "bytes": 11003,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "494eb452f1067a05d3825261ac939045c5927d87dc6955b52392fb3c96949bb1"
+      "sha256": "ba2a6aa6db3601b710dd8fb30be4adef80d5cc91b8c5eaee0a80e170faa5e25d"
     },
     {
       "bytes": 9608,

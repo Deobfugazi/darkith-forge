@@ -89,6 +89,7 @@ validation, contrast checks.
 | F11 | NT XI retention law as the omega progress-deficit indicator on the board | done | `tools/omega_deficit.py` (W_in=39 E=14 S=25 E/W_in=0.359; §H on this board; `proof/omega_deficit.json`); CI-gated; M6 SE non-extractive |
 | F12 | Universal KB index + dedup of the readable knowledge-skill base (MUST #29) | done | `tools/kb_index.py` (`docs/INDEX.md` + `docs/kb_manifest.json`; 33 files, 6 registers); removed orphan `homeforge.html`, moved blueprint to `docs/`; CI-gated |
 | F13 | Fracture Scout: scheduled, manually-configurable novelty hunter (MUST #30) | done | `tools/fracture_scout.py` + `tools/fractures.txt` (6 sources, non-naive boolean parser → DNF); `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); `selftest` CI-gated; live scan → `proof/fracture_scout.json` |
+| F14 | No committed credentials: fail-closed secret gate + device push alert (MUST #31) | done | `tools/secret_gate.py` (10 detectors, fail-closed, `--staged`, ALLOW with reasons; `selftest` CI-gated); `tools/security_alert.py` (dedup'd `security`+`critical` issue → GitHub app push to device); token purged from `.git/config`, remote made token-free (env credential helper); wired into `tools/ci.sh` |
 
 ## G. INSTALL + RUNTIME GATES (the two failures a user feels)
 
@@ -108,10 +109,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 43 | named work = board 35 + deficits 8 |
+| W_in | 44 | named work = board 36 + deficits 8 |
 | E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 28 | returned = done 20 + closed 3 + descoped 5 |
-| E/W_in | 0.349 | the progress-deficit indicator; absolution at 0 |
+| S | 29 | returned = done 21 + closed 3 + descoped 5 |
+| E/W_in | 0.341 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

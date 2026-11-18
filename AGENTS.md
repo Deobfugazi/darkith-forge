@@ -149,6 +149,17 @@ all docs, banners, suggestions and tests. Priority is `!N` (survives fine).
     ADMITS a survivor to the board as a NOVELTY row.
   - Cadence: `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); it opens
     a PR with the digest. stdlib only — runs on the phone in Termux with no installs.
+- SECURITY (MUST #31): no credential in the tracked tree. `tools/secret_gate.py` is
+    fail-closed — it scans every tracked (and `--staged`) file for token/key/private-key/
+    URL-cred/generic-secret shapes and exits non-zero on any hit (no warn-and-continue). Run in
+    `tools/ci.sh`. A finding is removed and ROTATED (a rewrite does not un-leak a token) or
+    recorded in the gate's ALLOW with a reason. A security fix is never silent:
+    `tools/security_alert.py push` opens ONE dedup'd issue (labels `security`, `critical`) and
+    GitHub pushes it to the Operator's device app. Autofix of a reversible, well-understood
+    security gap needs no permission — the push notice is how it is reported.
+  - The git remote is TOKEN-FREE (`https://github.com/...`, no `user:token@`): the credential is
+    supplied at run time by a git credential helper that reads `$GITHUB_TOKEN`, so no secret is
+    written to `.git/config`. Never paste a token into a remote URL or a tracked file.
 - `.github/workflows/auto-merge.yml` is the thin GitHub adapter: tests (tools/ci.sh) then
   merges a dependency PR (Dependabot and darkbot authors). The bot's own bumps are tested
   and committed directly, because a PR opened with GITHUB_TOKEN never triggers a second

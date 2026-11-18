@@ -15,6 +15,7 @@ Rule (deliberately simple and exact):
 """
 import pathlib
 import re
+import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -25,6 +26,17 @@ REPO_ROOTS = {"app", "tools", "build", "libs", "docs", "proof", "delivery", ".gi
 # path here (e.g. a built APK) because it IS checkable after a build, but it is never in a
 # fresh checkout, so a `done` row must not fail merely because the artifact is unbuilt.
 GENERATED_ROOTS = {"delivery", "dl"}
+
+
+def tracked_set() -> set[str]:
+    """Paths git actually publishes. A generated artifact that is not tracked is expected
+    to be absent in a fresh checkout, so its absence must never fail the board."""
+    try:
+        out = subprocess.run(["git", "-C", str(ROOT), "ls-files"],
+                             capture_output=True, text=True, check=True).stdout
+        return set(out.split())
+    except Exception:
+        return set()
 
 
 def cells(line: str):
@@ -38,6 +50,7 @@ def main() -> int:
 
     fails = []
     rows = 0
+    TRACKED = tracked_set()
     for i, line in enumerate(BOARD.read_text(encoding="utf-8").splitlines(), 1):
         if not line.lstrip().startswith("|") or set(line) <= set("|-: "):
             continue
@@ -54,10 +67,12 @@ def main() -> int:
             # and device/OS paths (`/proc/...`, `/sdcard/...`, `file:///...`).
             if tok.startswith(("/", "http", "file:")) or tok.split("/", 1)[0] not in REPO_ROOTS:
                 continue
-            # Generated output trees (delivery/, dl/) are gitignored, so a fresh checkout
-            # has none. Validate the path when the tree IS present (a stale board row must
-            # still fail); skip only when the whole tree is absent (not built here yet).
-            if tok.split("/", 1)[0] in GENERATED_ROOTS and not (ROOT / tok.split("/", 1)[0]).exists():
+            # Generated output trees (delivery/, dl/) hold gitignored build artifacts,
+            # so a fresh checkout legitimately has none. Judge such a path only when it is
+            # TRACKED (a committed artifact that moved is a real deficit); an untracked
+            # build output is never a failure — otherwise building one artifact would
+            # red-light every other unbuilt one.
+            if tok.split("/", 1)[0] in GENERATED_ROOTS and tok not in TRACKED:
                 continue
             if not (ROOT / tok).exists():
                 fails.append(f"TASKS.md:{i}: evidence path does not resolve: {tok}")
