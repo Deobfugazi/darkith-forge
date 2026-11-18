@@ -9,7 +9,7 @@
 
 This README is written in a reusable shape called the **Tri-Tongue README** (the
 *invariant README format*). The shape is specified in full in
-[§14](#14-the-invariant-format-the-reusable-spec). Every idea is stated in three
+[§15](#15-the-invariant-format-the-reusable-spec). Every idea is stated in three
 tongues:
 
 > **Plain** — for a reader who has never seen this field.
@@ -25,7 +25,7 @@ the steps" to "I understand why these are the steps."
 ## 0. The four words you need before line one
 
 Only four, so you are never stuck at the first sentence. All four reappear in the
-[glossary](#12-glossary).
+[glossary](#13-glossary).
 
 - **Repo** (*repository*): a folder that remembers every change ever made to it.
 - **Terminal**: a text window where you type commands instead of tapping. On Android
@@ -71,7 +71,11 @@ This is the part most READMEs omit. Every repo has a stack; almost none has a
 > hand-made asset is then post-hoc stress-tested in exact coupling relation to every
 > other asset until the residual closes at zero, with no stubs.**
 
-Four ideas carry that sentence. Each is stated in the project's own words below.
+The seven ideas below carry that sentence. But the sentence has one **living
+embodiment** — a loop that reads the phone's real hardware every frame and re-derives
+its own allocation from the residual. That is the **sui generis core**, and it has its
+own section: **[§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)**. Read it
+first if you read nothing else.
 
 ### 2.1 The Prime Directive: never a stub
 
@@ -194,7 +198,141 @@ The tenth mode — the deliberate lie — is forbidden by the Prime Directive
 
 ---
 
-## 3. The chronicle (the story, in order)
+## 3. THE SUI GENERIS CORE: direct hardware auto-coupling
+
+This is the heart of the project. If you read only one section, read this one. It is
+the reason the app is written the way it is, and it has no equivalent in any other
+Android app.
+
+> **Plain.** Most apps decide how much memory and how much graphics work to use when
+> they are built, or they ask the operating system for a number once. This app does not.
+> **Every single frame**, while it is drawing, it *measures the phone's real hardware* —
+> how much free memory is left, how much the GPU is using, how busy the CPU is, how long
+> the last frame took — and from those four live measurements it *computes* how many
+> vertices to draw, how much to run the GPU in parallel, and what resolution to render
+> at. Then it applies the new answer to the very next frame. The app feeds on its own
+> past decision and re-derives the next one from the residual. That is what "autophagic"
+> means here: it eats its own previous allocation. The software and the hardware are
+> wired into one closed loop. Nothing is guessed; nothing is hardcoded; the numbers come
+> from the phone itself, every frame.
+>
+> **Precise.** `AutophagicAllocator` is a **bounded discrete PID controller** running at
+> the frame boundary. Its measured state is free RAM (`/proc/meminfo` `MemTotal` at
+> construction; live free bytes each tick), GPU-side bytes the renderer owns, CPU load,
+> and frame time. Its control vector is three coupled scalars — `vertexBudget`,
+> `gpuConcurrency`, `resolutionScale`. The control law is
+> `V_{k+1} = clamp(V_k + K_p·e_k + K_i·Σe_j·Δt + K_d·(e_k−e_{k−1})/Δt, V_min, V_max)`
+> with `K_p=0.12`, `K_i=0.004`, `K_d=0.08`, `V_min=65,536`, `V_max=524,288`, and
+> **anti-windup** (the integral is frozen whenever a step would leave the bounds). It is
+> paired with a second controller, `MemoryGovernor`, that keeps the app's own heap under
+> a safety fraction of `Runtime.maxMemory()` and hands the renderer a byte ceiling; and
+> with `GpuScanner`, which queries the live GL context for its real
+> `GL_MAX_TEXTURE_SIZE` and derives a conservative cap that **never returns zero**. The
+> renderer `OmegaRenderer` runs the whole law **first, every frame**, in
+> `onDrawFrame → tickFrameBoundary()`, then renders to an FBO and blits it.
+>
+> **Machine.** `AutophagicAllocator.tick(freeRamBytes, gpuMemBytes, cpuLoad, frameMs) ->
+> Allocation(vertexBudget, gpuConcurrency, resolutionScale, memoryResidual,
+> budgetCeiling)`; `MemoryGovernor.reciprocate(rendererAllocatedBytes,
+> modelAllocatedBytes) -> CouplingAllocation(rendererMaxBytes, modelMaxBytes,
+> systemPressure, selfOomSafe)`; `GpuScanner.safetyCap(freeRamBytes)`;
+> `OmegaRenderer.tickFrameBoundary()` → `allocator.tick` → `governor.reciprocate` →
+> `GpuScanner.safetyCap` → `apply`. Files:
+> `app/src/main/java/com/darkith/transliaison/core/AutophagicAllocator.kt`,
+> `MemoryGovernor.kt`, `GpuScanner.kt`, `Allocation.kt`, `OmegaRenderer.kt`. Doctrine:
+> `docs/nt/NT-X.txt` Part Three (§3.1–3.8).
+
+### 3.1 Why this is sui generis (why no other app does it)
+
+> **Plain.** An ordinary app treats the phone as a fixed box: it assumes a screen size,
+> assumes a memory limit, and hopes it fits. This app treats the phone as a *sensor and
+> an actuator at once*. It reads the hardware and writes back to it, in a loop, sixty
+> times a second. That is the whole idea, and it is the reason the source is hand-written
+> from scratch: a loop this tight, with anti-windup and bounded outputs, cannot be
+> delegated to a framework without losing the guarantee that it can never crash, never
+> divide by zero, and never leave its bounds.
+> **Precise.** The loop is **total**: for any finite, non-negative input, `tick()` cannot
+> divide by zero, cannot emit NaN, and cannot return a value outside `[V_min, V_max]`.
+> The integral term is reset at the bounds (anti-windup), `dt` is floored at 1 ms so a
+> stalled clock cannot blow up the derivative, and every pressure term is clamped. The
+> renderer asserts the coupling as an **invariant witness** each frame: the grid's vertex
+> count must not exceed the allocator's budget, or it throws with the two numbers named.
+> **Machine.** `AutophagicAllocator.kt` — `dt = ((now-lastTs)/1e9).coerceAtLeast(1e-3)`,
+> `memPressure.coerceIn(-10.0, 10.0)`, `sK.coerceIn(0.5, 1.0)`,
+> `vNext.coerceIn(vMin, vMax)`; `OmegaRenderer.kt` —
+> `check((subdiv+1)*(subdiv+1) <= lastAllocatorVertexBudget) { "INVARIANT VIOLATED…" }`.
+
+### 3.2 The two poles of the coupling (why it is a *pair*, not one loop)
+
+> **Plain.** There are two budgets that fight over the same memory: the graphics budget
+> and the model budget. A single controller would starve one to feed the other. So there
+> are two, and they *reciprocate*: when total pressure rises, the side using more than its
+> share gives memory back; when pressure is low, both grow toward a ceiling.
+> **Precise.** **Pole A** is the renderer (`AutophagicAllocator` + `MemoryGovernor`'s
+> `rendererBudget`): it owns the FBO texture, the depth buffer, the grid VBO/IBO, and the
+> IR VBO, tracked in `trackedBytes`. **Pole B** is the model (`modelBudget`): whatever
+> native model memory exists. `MemoryGovernor.reciprocate` compares the renderer's share
+> against `couplingRatio = 0.40`; above the warn line (`selfOomThreshold − warnMargin =
+> 0.75`) the majority side is debited the overshoot; below `relaxBelow = 0.50` both grow
+> by a quarter of the headroom toward `relaxCeiling = 0.60`. The governor keeps budgets
+> in `AtomicLong`s so the GL thread and any other thread read a consistent number.
+> **Machine.** `MemoryGovernor.kt` — `AtomicLong` `rendererBudget`/`modelBudget`,
+> `rendererShare = r/totalAllocated`, `overshoot` debited to the majority pole,
+> `grow = headroom/4`, `selfOomSafe = currentPressure < selfOomThreshold`.
+
+### 3.3 The renderer that carries the law (hand-written GLES 2.0)
+
+> **Plain.** The drawing is not done by a game engine. It is a hand-written OpenGL ES
+> program: it compiles its own shaders, builds its own geometry buffers, renders into an
+> off-screen texture at a resolution the controller chose, and then copies that texture to
+> the screen. It draws two layers: a rotating grid (the ambient GPU layer) and the actual
+> interface built from the layout tree.
+> **Precise.** `OmegaRenderer` implements `GLSurfaceView.Renderer`. `onSurfaceCreated`
+> builds three GLSL programs (`GRID`, `BLIT`, `IR`), a fullscreen quad, the grid, and
+> scans the GPU; **a new GL context invalidates every id, so it forgets them rather than
+> deleting them** (deleting on a dead context is undefined). `onSurfaceChanged` sets the
+> projection and resizes the FBO. `onDrawFrame` runs `tickFrameBoundary()` first, then
+> builds IR geometry within `lastSafeVertexBudget` (via `IRBuilder`), uploads it, draws
+> grid + IR into the FBO, and blits. The FBO uses `CLAMP_TO_EDGE` because a scaled FBO is
+> non-power-of-two and GLES2 requires it or the texture is incomplete. It is a singleton
+> (`liveInstance`) so the forge routes into the *live* renderer, never a phantom one.
+> **Machine.** `OmegaRenderer.kt` — `buildProgram`/`compileShader`, `makeFullscreenQuad`,
+> `buildGrid`, `uploadIr`, `drawGrid`, `drawIr`, `blitFbo`, `resizeFbo`;
+> `IR_VS`/`IR_FS`/`GRID_VS`/`GRID_FS`/`BLIT_VS`/`BLIT_FS`; `FBO_BYTES_PER_PX = 6`
+> (RGBA8 4 + DEPTH16 2); `companion object { @Volatile var liveInstance }`.
+
+### 3.4 The evidence the loop leaves behind (why you can trust it ran)
+
+> **Plain.** This phone has no debugging cable. So the loop writes its own evidence to a
+> file on the SD card — the free memory, the tracked bytes, the raw budget, the safe
+> budget — about once a second, and the IR lines every time. The trace *is* the debugger.
+> **Precise.** `trace()` writes to logcat **and** to
+> `/sdcard/Darkith/logs/omega_trace.txt`, throttling the per-frame tick line to ~1 s so
+> the file stays small while never throttling the IR lines. A missing log file must never
+> break rendering, so the write is wrapped and swallowed.
+> **Machine.** `OmegaRenderer.trace()`; `TRACE_FILE =
+> "/sdcard/Darkith/logs/omega_trace.txt"`; `TRACE_THROTTLE_MS = 1000`.
+
+### 3.5 The hardware this loop is bound to (the ground truth)
+
+> **Plain.** The numbers are not chosen in the abstract. They are derived from the exact
+> phone: a TECNO KM4k with a MediaTek MT6768 and a Mali-G52 MC2 GPU. On that device Vulkan
+> is the crash path and GLES is the stable path, so the renderer touches GLES only. The
+> `V_min`/`V_max` bounds, the 16.6 ms deadline, and the 0.5–1.0 resolution range all come
+> from that hardware's measured limits.
+> **Precise.** The doctrine derives `V_max = 524,288` from Mali-G52 MC2 ALU throughput and
+> `V_min = 65,536` from the minimum viable set at 1600×720; the deadline is 16.6 ms
+> (60 FPS); the heap clamp is `p_k ∈ [64 MB, 307 MB]` from a 512 MB Dalvik heap limit and
+> the `H ≤ 0.75` rule (lmkd kills at 0.8). This device's facts are the reason the loop is
+> GLES-only and the reason the caps are where they are.
+> **Machine.** `GpuScanner.kt` header (TECNO KM4k / MT6768 / Mali-G52 MC2; Vulkan =
+> crash path); `AutophagicAllocator` defaults `vMin = 65_536.0`, `vMax = 524_288.0`;
+> `OmegaRenderer.targetFrameMs = 16.6f`. Doctrine: `docs/nt/NT-X.txt` Part Two (hardware
+> ground truth) and Part Three.
+
+---
+
+## 4. The chronicle (the story, in order)
 
 A **chronicle** narrates the facts so each idea arrives after what it depends on.
 
@@ -229,15 +367,21 @@ and recorded as a re-runnable proof, so it cannot silently return.
 exact relation: names disjoint, interfaces load-bearing, one clock. The closure is
 `Σ = 0`.
 
-**Chapter 9 — The corpus and the studio.** A written body of reasoning (the NT corpus)
+**Chapter 9 — The coupling made live.** The coupling law was then given a body: a loop
+that reads the phone's real hardware every frame and re-derives its own allocation from
+the residual, with a hand-written GLES renderer as its actuator. This is the **sui generis
+core** — the reason the app exists in this form
+([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
+
+**Chapter 10 — The corpus and the studio.** A written body of reasoning (the NT corpus)
 argues *why*; an offline web studio lets the work happen in a browser.
 
-**Chapter 10 — This file.** The entry point that makes a newcomer's first question
+**Chapter 11 — This file.** The entry point that makes a newcomer's first question
 unnecessary.
 
 ---
 
-## 4. Every hand-made asset and its function
+## 5. Every hand-made asset and its function
 
 This is the exhaustive inventory. Each entry gives the file, what it is, its function,
 and — where the file is generated rather than hand-written — that fact is stated. Grouped
@@ -248,7 +392,7 @@ by role.
 > **binary** (a `.so`, a `.dex`); those are built from source and their provenance is
 > named.
 
-### 4.1 The app shell (the two screens and their bridges)
+### 5.1 The app shell (the two screens and their bridges)
 
 | Asset | What it is | Function |
 |---|---|---|
@@ -260,7 +404,7 @@ by role.
 | `ApkInstaller.kt` | Hand-written Kotlin class. | Installs an APK through the framework-native `PackageInstaller` session (this replaced a `FileProvider`, which the raw chain does not ship). |
 | `ApkSignerRunner.kt` | Hand-written Kotlin class. | Signs forged child APKs using the key material in `app/src/main/assets/engine/`. |
 
-### 4.2 The forge (the in-app build engine)
+### 5.2 The forge (the in-app build engine)
 
 The forge lets the app build APKs from inside itself. It is the "master primitive"
 (*fabrica*): it fits a donor (raw material), a graft (payload), and a seal (signature)
@@ -280,7 +424,7 @@ into a signed artifact.
 | `KotlinUnzip.kt` | Hand-written Kotlin object. | Lists and extracts ZIP archives in pure Kotlin. |
 | `ShellBridge.kt` | Hand-written Kotlin object. | Reads an APK's real metadata: `apkVerify`, `apkSignature`, `apkManifest`, `apkInfo`; runs shell steps. |
 
-### 4.3 The absolution system (crash recovery and integrity)
+### 5.3 The absolution system (crash recovery and integrity)
 
 "Absolution" is the project's word for returning a build or a session to a clean,
 provable state. These files are hand-written and several are deliberately *honest about
@@ -298,7 +442,7 @@ not being finished* rather than faking success.
 | `AegisWAEL.kt` | Hand-written Kotlin object. | A write-ahead event log, hash-chained (each record seals the previous), so tampering is detectable. |
 | `SynchronicityScheduler.kt` | Hand-written Kotlin object. | Couples a build to a two-party nonce within a bounded time window; mints a token only when the nonce verifies. |
 
-### 4.4 The engine core (HTML intent → pixels)
+### 5.4 The engine core (HTML intent → pixels)
 
 This is the pure-Kotlin half: it turns web intent into a structural model, heals it, and
 renders it. None of it uses an external parser.
@@ -313,17 +457,17 @@ renders it. None of it uses an external parser.
 | `HtmlDom.kt` | Hand-written Kotlin class. | A minimal DOM node and parser; keeps raw text for `script`/`style`. |
 | `SubstrateIngestor.kt` | Hand-written Kotlin class. | Fetches and verifies the **substrate** — the verified mechanism the Healer inserts. States its boundary honestly. |
 | `AutofillCorrector.kt` | Hand-written Kotlin objects (`HealerDictionary`, `AutofillCorrector`) and data types. | **The Healer.** Intercepts a compiler failure, patches the surgical chunk with a verified mechanism (never a stub), and surfaces any unsynthesizable deficit in plain words. |
-| `AutophagicAllocator.kt` | Hand-written Kotlin class. | A bounded PID controller: maps measured free RAM, GPU memory use, CPU load, and frame time to a vertex budget, GPU concurrency, and resolution scale. Reads real RAM from `/proc/meminfo`. |
-| `MemoryGovernor.kt` | Hand-written Kotlin class. | Keeps the app's own heap under a safety fraction of `Runtime.maxMemory()` so the app does not throw its own `OutOfMemoryError`. |
-| `GpuScanner.kt` | Hand-written Kotlin object. | Queries the live GLES context for real limits and derives a conservative byte ceiling that never returns zero. |
-| `OmegaRenderer.kt` | Hand-written Kotlin `GLSurfaceView.Renderer`. | Draws the IR on the live surface; its `tickFrameBoundary` is where the allocator control law runs. |
+| `AutophagicAllocator.kt` | ★ **CORE** — hand-written Kotlin class. | The bounded PID controller that maps live free RAM, GPU memory, CPU load, and frame time to vertex budget / GPU concurrency / resolution scale. Reads real RAM from `/proc/meminfo`. **Full treatment: [§3](#3-the-sui-generis-core-direct-hardware-auto-coupling).** |
+| `MemoryGovernor.kt` | ★ **CORE** — hand-written Kotlin class. | The two-pole budget: keeps the app's own heap under a safety fraction of `Runtime.maxMemory()` and reciprocates memory between renderer and model. **Full treatment: [§3.2](#32-the-two-poles-of-the-coupling-why-it-is-a-pair-not-one-loop).** |
+| `GpuScanner.kt` | ★ **CORE** — hand-written Kotlin object. | Queries the live GLES context for real limits and derives a conservative byte ceiling that never returns zero. **Full treatment: [§3.5](#35-the-hardware-this-loop-is-bound-to-the-ground-truth).** |
+| `OmegaRenderer.kt` | ★ **CORE** — hand-written Kotlin `GLSurfaceView.Renderer`. | The hand-written GLES 2.0 renderer: compiles its own shaders, builds its own buffers, renders to an FBO, blits. Runs the control law first, every frame, in `tickFrameBoundary`. **Full treatment: [§3.3](#33-the-renderer-that-carries-the-law-hand-written-gles-20).** |
+| `Allocation.kt` | ★ **CORE** — hand-written Kotlin data class. | The control vector the allocator emits: `vertexBudget`, `gpuConcurrency`, `resolutionScale`, `memoryResidual`, `budgetCeiling`. |
 | `NativeForgeBuilder.kt` | Hand-written Kotlin class. | The IR handoff: heals HTML intent and queues IR into the **live** renderer; refuses with a named deficit if no live renderer is attached. |
-| `NativeOmegaBuilder.kt` | Hand-written Kotlin class. | Drives the allocator and governor at the frame boundary on the main thread. |
-| `OmegaActivity.kt` | Hand-written Kotlin `Activity`. | The Omega screen: hosts the `GLSurfaceView` and the renderer. |
-| `Allocation.kt` | Hand-written Kotlin data class. | Plain carrier between the allocator and its consumer. |
+| `NativeOmegaBuilder.kt` | Hand-written Kotlin class. | Drives the allocator and governor at the frame boundary on the main thread (the core's main-thread driver). |
+| `OmegaActivity.kt` | Hand-written Kotlin `Activity`. | The Omega screen: hosts the `GLSurfaceView` and the core's renderer. |
 | `SelfTest.kt` | Hand-written Kotlin object. | The Forge as a testable hypothesis: checks the pure-Kotlin half (IR, emitter, Healer) in-app and as a JVM unit test. |
 
-### 4.5 Observability (time, labor, and proof on disk)
+### 5.5 Observability (time, labor, and proof on disk)
 
 | Asset | What it is | Function |
 |---|---|---|
@@ -333,7 +477,7 @@ renders it. None of it uses an external parser.
 | `ProgressLedger.kt` | Hand-written Kotlin object. | The progress ledger: records build events over time. |
 | `AuditWriter.kt` | Hand-written Kotlin object. | Writes an audit of the packaged source to disk. |
 
-### 4.6 The hand-coded native binaries
+### 5.6 The hand-coded native binaries
 
 | Asset | What it is | Function |
 |---|---|---|
@@ -346,7 +490,7 @@ renders it. None of it uses an external parser.
 > native library directory. Shipping a static executable *as* a `lib*.so` inside the
 > APK is what makes a root-free, in-app toolchain possible.
 
-### 4.7 The hand-written web studio
+### 5.7 The hand-written web studio
 
 These are single-file, offline, zero-dependency programs. They run from `file://` with
 no server and no internet.
@@ -364,21 +508,21 @@ no server and no internet.
 | `darkith home forge.html` | Hand-written main studio. | The main offline studio page. |
 | `darkith code studio.html` | Hand-written audit studio. | The offline code-audit studio page. |
 
-### 4.8 The child-forge engine inputs (a mix of hand-written and generated)
+### 5.8 The child-forge engine inputs (a mix of hand-written and generated)
 
 | Asset | What it is | Function |
 |---|---|---|
 | `app/src/main/assets/engine/AndroidManifest.tpl.xml` | Hand-written **child-APK manifest template**. | Declares the child's identity; `{{PKG_NAME}}` and `{{APP_NAME}}` are filled at forge time. The launcher is the host's `HomekeeperActivity`. |
 | `app/src/main/assets/engine/template.dex` | **Generated** by `build.sh` (step 5b). | The host's compiled `classes.dex`, shipped so the forge can stamp a child without recompiling. |
 
-### 4.9 The hand-written Python tooling
+### 5.9 The hand-written Python tooling
 
 | Asset | What it is | Function |
 |---|---|---|
 | `savf.py` | Hand-written, zero-dependency Python. | The **Signed Axis Verification Formulary** (SAVF-1): an axis core plus gates (`scan`, `reach`, `mutate`, `freeze`, `manifest`, `ledger`, `verdict`). It grades each claim by kind and can re-run recorded evidence commands. |
-| `tools/*.py`, `tools/*.sh` | Hand-written gates and helpers. | The executable laws. See [§8](#8-the-gates-what-runs-and-why). |
+| `tools/*.py`, `tools/*.sh` | Hand-written gates and helpers. | The executable laws. See [§9](#9-the-gates-what-runs-and-why). |
 
-### 4.10 The hand-written build scripts
+### 5.10 The hand-written build scripts
 
 | Asset | What it is | Function |
 |---|---|---|
@@ -387,7 +531,7 @@ no server and no internet.
 
 ---
 
-## 5. Why hand-coding from source yields a pristine shipped app
+## 6. Why hand-coding from source yields a pristine shipped app
 
 > **Plain.** When a machine writes your code for you, you ship code nobody read.
 > Here a person wrote every part, so every part can be read, checked, and proven. That
@@ -413,7 +557,7 @@ The chain of guarantees, end to end:
 
 ---
 
-## 6. How the assets are stress-tested in exact coupling relation
+## 7. How the assets are stress-tested in exact coupling relation
 
 > **Plain.** Writing each part by hand is not enough — the parts must fit. This project
 > checks that they fit in three ways: they must not share names, the connections
@@ -434,9 +578,16 @@ The **Autophagic Healer** closes the loop: when the compiler fails, it does not 
 it queries the verified substrate, patches the exact chunk, and re-invokes the chain
 until the residual is zero. The chain itself never changes — only the driver does.
 
+The **strongest proof of coupling** is not a gate but the live core itself: the
+`AutophagicAllocator` (Pole A's control law) and `MemoryGovernor` (the two-pole budget)
+are joined to `OmegaRenderer` by a per-frame **invariant witness** that throws with both
+numbers named if the renderer's grid ever exceeds the allocator's budget. That is the
+coupling law running at 60 Hz on the real device
+([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
+
 ---
 
-## 7. The repository map
+## 8. The repository map
 
 | Item | What it is |
 |---|---|
@@ -463,7 +614,7 @@ until the residual is zero. The chain itself never changes — only the driver d
 
 ---
 
-## 8. The gates (what runs and why)
+## 9. The gates (what runs and why)
 
 `bash tools/ci.sh` runs every check and exits `0` only if all pass. The important gates,
 and the corruption mode each one guards:
@@ -490,7 +641,7 @@ and the corruption mode each one guards:
 
 ---
 
-## 9. Build and install (exact)
+## 10. Build and install (exact)
 
 ```bash
 # In Termux, from the repo root:
@@ -515,7 +666,7 @@ This is SPI-4: *log to disk, read from disk; the terminal is a liar.*
 
 ---
 
-## 10. Honest limits (what this does NOT do)
+## 11. Honest limits (what this does NOT do)
 
 A README that hides its limits creates follow-up questions. These are the real ones.
 
@@ -534,7 +685,7 @@ A README that hides its limits creates follow-up questions. These are the real o
 
 ---
 
-## 11. FAQ (each answer is terminal)
+## 12. FAQ (each answer is terminal)
 
 **Q. What is this project, in one sentence?**
 A hand-written, Gradle-free Android app and offline studio, built on the phone itself,
@@ -564,53 +715,66 @@ mechanism and re-runs until Σ = 0.
 **Q. What if a gate fails?** Read its message; it names the file and reason. Fix the
 cause, re-run. Never disable a gate.
 **Q. How do I know this README is complete?** Read
-[§13](#13-the-questions-this-file-pre-answers-the-loop-breaker). If your question is not
+[§13](#14-the-questions-this-file-pre-answers-the-loop-breaker). If your question is not
 there, add it, and answer it above.
 
 ---
 
-## 12. Glossary
+## 13. Glossary
 
 Every abbreviation and specialist term used above, alphabetized.
 
 | Term | Expansion | One-line meaning |
 |---|---|---|
+| **Ω (Omega)** | — | The project's term for the fully-sovereign goal state. |
+| **aapt2** | Android Asset Packaging Tool 2 | Compiles and links resources; steps 1–2. |
 | **AAR** | Android ARchive | A packaged Android library. Not used here. |
-| **A∧B∧C∧D** | Authoritative ∧ Apparatus-separated ∧ Preservation/retrieval/boundary ∧ Server-of-record | The four-condition repository invariant. |
 | **ADB** | Android Debug Bridge | A tool to talk to a phone from a computer. Not required here. |
 | **AI** | Artificial Intelligence | A program that performs tasks that normally need a human. |
 | **AndroidX** | (Android eXtensions) | A support library outside the platform framework. Banned here. |
-| **APK** | Android Package Kit | The installable Android app file. |
-| **aapt2** | Android Asset Packaging Tool 2 | Compiles and links resources; steps 1–2. |
+| **anti-windup** | — | Freezing the integral term when a step would leave the allowed bounds, so it cannot over-accumulate. |
 | **API** | Application Programming Interface | The set of features a program may call. |
+| **APK** | Android Package Kit | The installable Android app file. |
+| **apksigner** | — | Signs the APK; step 7. |
 | **arm64-v8a** | ARM 64-bit, v8-A | The CPU architecture of the target phone. |
+| **autophagic** | (*auto* + *phagein*, self-eating) | The loop eats its own previous allocation and re-derives the next from the residual. |
+| **A∧B∧C∧D** | Authoritative ∧ Apparatus-separated ∧ Preservation/retrieval/boundary ∧ Server-of-record | The four-condition repository invariant. |
 | **CI** | Continuous Integration | Automated checks on every change. Here: `tools/ci.sh`. |
+| **CLAMP_TO_EDGE** | — | A texture wrap mode GLES2 requires for non-power-of-two textures, or the texture is incomplete. |
 | **Compose** | Jetpack Compose | AndroidX's UI toolkit. Banned here. |
 | **corruption mode** | — | One of nine mechanical failure modes of a stamped artifact. |
+| **coupling** | — | Two things joined so the pair holds: names disjoint, interface load-bearing, one clock. |
 | **CPU** | Central Processing Unit | The chip that executes the program. |
 | **d8** | D8 dexer | Converts JVM `.class` files to Android `.dex`; step 4. |
 | **dex** | Dalvik EXecutable | Android's compiled-code format. |
 | **donor** | — | The substrate an artifact is grafted onto. |
 | **EXPOSABLE** | — | A named boundary: the mechanism needs an external artifact. |
 | **FAQ** | Frequently Asked Questions | A list of common questions with answers. |
+| **FBO** | Frame Buffer Object | An off-screen render target; the renderer draws into it, then blits it to the screen. |
 | **GB / MB** | GigaByte / MegaByte | Units of data size. |
 | **GGUF** | GPT-Generated Unified Format | A file format for local AI models. Design-stage here. |
-| **graft** | — | A payload made to grow on a donor; the two stay distinct in origin, one in function. |
+| **GLES** | OpenGL ES | The mobile 3D graphics API the renderer is hand-written against. |
+| **GLSL** | OpenGL Shading Language | The small program language the renderer's shaders are written in. |
+| **GPU** | Graphics Processing Unit | The chip that draws; its memory use is one of the loop's four inputs. |
 | **Gradle** | (build tool) | The conventional Android build system. Banned (SPI-1). |
+| **graft** | — | A payload made to grow on a donor; the two stay distinct in origin, one in function. |
+| **invariant witness** | — | A check that throws if the coupling is violated (grid vertices ≤ allocator budget). |
 | **IR** | Intermediate Representation | A structural model between input and rendering. |
 | **JAR** | Java ARchive | A packaged bundle of compiled code. |
 | **JDK** | Java Development Kit | The Java toolset `kotlinc` and `d8` need. |
 | **JVM** | Java Virtual Machine | The runtime Kotlin compiles to first. |
 | **kotlinc** | Kotlin compiler | Translates Kotlin to JVM bytecode; step 3. |
+| **lmkd** | low-memory killer daemon | Android's process killer; it fires on system-wide pressure and kills at ~0.8 heap. |
 | **manufactory** | (*manus* + *facere*) | The place where the hand and the machine are joined. |
-| **mint** | — | A resolved defect, codified and re-runnable. |
 | **minSdk / targetSdk** | minimum / target SDK | Oldest supported Android (24) / the API compiled against (34). |
+| **mint** | — | A resolved defect, codified and re-runnable. |
 | **NT** | Noveltreatise | A long-form reasoning document in `docs/nt/`. |
-| **Ω (Omega)** | — | The project's term for the fully-sovereign goal state. |
 | **OS** | Operating System | The base software that runs apps (here: Android). |
 | **payload** | — | The thing grafted onto a donor. |
 | **PC** | Personal Computer | A desktop or laptop. |
 | **PID** | Proportional–Integral–Derivative | A control loop that keeps a value on target. |
+| **PID controller** | Proportional–Integral–Derivative | A control loop that corrects an error using its present, accumulated, and rate-of-change terms. |
+| **Pole A / Pole B** | — | The two coupled budgets: A = the renderer, B = the model. They reciprocate memory. |
 | **POSIX** | Portable Operating System Interface | The standard shell/OS interface. |
 | **POV** | Point Of View | The reader's assumed frame of reference. |
 | **pristine** | — | Free of the nine corruption modes. |
@@ -620,17 +784,17 @@ Every abbreviation and specialist term used above, alphabetized.
 | **SPI** | Sovereign Sandbox Protocol | The rule family distilled from real failures. |
 | **stamp** | — | A template pressed onto new material; reproduces its errors. |
 | **stub** | — | Fake code returning fake success. Forbidden. |
+| **sui generis** | (Latin, "of its own kind") | Unique in kind — no other app does this. |
 | **Termux** | — | The Android app that provides a terminal. |
 | **W^X** | Write XOR Execute | The rule that a file may be writable or executable, not both. |
 | **WebView** | — | An Android component that renders web pages inside an app. |
 | **ZIP** | (archive format) | A file packing many files; an APK is a ZIP. |
-| **ZRAM** | (compressed RAM) | Compressed memory swap; behind the Gradle freeze. |
 | **zipalign** | — | Aligns the APK before signing; step 6. |
-| **apksigner** | — | Signs the APK; step 7. |
+| **ZRAM** | (compressed RAM) | Compressed memory swap; behind the Gradle freeze. |
 
 ---
 
-## 13. The questions this file pre-answers (the loop breaker)
+## 14. The questions this file pre-answers (the loop breaker)
 
 These are the follow-up questions a reader would ask next. Each is answered here in one
 or two terminal sentences, so the chain ends.
@@ -669,7 +833,7 @@ or two terminal sentences, so the chain ends.
 20. **"What if I disagree with a rule?"** Change the rule and its gate together, and say
     why in `DARKITH.md`.
 21. **"Why are the binaries `.so` files?"** Android only allows execution from the
-    native library directory ([§4.6](#46-the-hand-coded-native-binaries)).
+    native library directory ([§5.6](#56-the-hand-coded-native-binaries)).
 22. **"Why is `AegisVM` unfinished?"** It refuses to fake success; that refusal is the
     point ([§2.1](#21-the-prime-directive-never-a-stub)).
 23. **"What is the difference between the app and the studio?"** The app is the
@@ -677,14 +841,36 @@ or two terminal sentences, so the chain ends.
 24. **"Where does the web studio live?"** The shipped copies are in
     `app/src/main/assets/`; the browser copies are at the repo root.
 25. **"How do the parts prove they fit?"** The coupling gates
-    ([§6](#6-how-the-assets-are-stress-tested-in-exact-coupling-relation)).
+    ([§7](#7-how-the-assets-are-stress-tested-in-exact-coupling-relation)).
+26. **"What is the single most important thing in this repo?"** The sui generis
+    hardware auto-coupling loop ([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
+27. **"Where is the GL/GPU rendering code?"** `OmegaRenderer.kt` in
+    `app/src/main/java/com/darkith/transliaison/core/` ([§3.3](#33-the-renderer-that-carries-the-law-hand-written-gles-20)).
+28. **"Where is the memory allocator?"** `AutophagicAllocator.kt` (the PID loop) and
+    `MemoryGovernor.kt` (the two-pole budget), same directory
+    ([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
+29. **"Does the allocator read the real device, or a hardcoded guess?"** The real device:
+    total RAM from `/proc/meminfo` at construction, live free bytes each frame, and the
+    GPU's real `GL_MAX_TEXTURE_SIZE` from the live GL context ([§3.5](#35-the-hardware-this-loop-is-bound-to-the-ground-truth)).
+30. **"Can the allocator crash or return a bad number?"** No: it is total — no division
+    by zero, no NaN, and its output cannot leave `[65,536, 524,288]`; anti-windup resets
+    the integral at the bounds ([§3.1](#31-why-this-is-sui-generis-why-no-other-app-does-it)).
+31. **"Why are there two controllers, not one?"** Two budgets share one memory pool; a
+    single controller would starve one to feed the other, so they reciprocate
+    ([§3.2](#32-the-two-poles-of-the-coupling-why-it-is-a-pair-not-one-loop)).
+32. **"How do I see the loop actually ran on the phone?"** Read
+    `/sdcard/Darkith/logs/omega_trace.txt`; the loop writes free memory, tracked bytes,
+    and both budgets there about once a second ([§3.4](#34-the-evidence-the-loop-leaves-behind-why-you-can-trust-it-ran)).
+33. **"Why GLES and not Vulkan?"** On this exact device (TECNO KM4k / Mali-G52 MC2),
+    Vulkan is the verified crash path and GLES 3.2 is stable
+    ([§3.5](#35-the-hardware-this-loop-is-bound-to-the-ground-truth)).
 
 If you reached this line with a question not in this list, the fix is written at the top
 of this file: add it here, and answer it above. The list is the acceptance test.
 
 ---
 
-## 14. The invariant format (the reusable spec)
+## 15. The invariant format (the reusable spec)
 
 This README is an instance of a reusable shape. To apply it to any repository, follow
 these steps.

@@ -21,10 +21,10 @@
       "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
     },
     {
-      "bytes": 46673,
+      "bytes": 61280,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "17f5720687d879ed0f12269c56edbdc9b218c55377e3d1a97de5d5072497b0cb"
+      "sha256": "b75bd17a2b6e44297fc19878f70f789132286fa8a4607cc0dd54bad697aa794b"
     },
     {
       "bytes": 4284,
@@ -33,10 +33,10 @@
       "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
     },
     {
-      "bytes": 13014,
+      "bytes": 13463,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "581d3022358abfb02fd5e35e194de8d27df5036562dba8af35e8ba8f95877762"
+      "sha256": "8921193c6e04e8755e847cdc8147f7d13ffbd1dfee6f86235f2892d666b9eff8"
     },
     {
       "bytes": 9608,
