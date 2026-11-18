@@ -4785,11 +4785,88 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
     b.title = "Pre-runner \u2014 race the race before the race";
     b.setAttribute("aria-label", "Pre-runner");
     b.textContent = "\u25b6";
-    b.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:2147483000;width:46px;height:46px;border-radius:50%;" +
+    var SIZE = 44, M = 12;
+    b.style.cssText = "position:fixed;z-index:2147483000;width:" + SIZE + "px;height:" + SIZE + "px;border-radius:50%;" +
       "border:1px solid #2a2e35;background:#14171c;color:#ff8a3d;font-size:18px;line-height:1;cursor:pointer;" +
-      "box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:.85;-webkit-tap-highlight-color:transparent";
-    b.addEventListener("click", function () { var p = api(); if (p) p.ui(); });
+      "box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:.55;-webkit-tap-highlight-color:transparent;touch-action:none;" +
+      "right:" + M + "px;bottom:" + M + "px;transition:opacity .18s ease";
+    b.addEventListener("mouseenter", function () { b.style.opacity = "1"; });
+    b.addEventListener("mouseleave", function () { b.style.opacity = ".55"; });
+    b.addEventListener("focus", function () { b.style.opacity = "1"; });
+    b.addEventListener("blur", function () { b.style.opacity = ".55"; });
+    b.addEventListener("click", function () { if (!b.__dragged) { var p = api(); if (p) p.ui(); } b.__dragged = false; });
+
+    /* The launcher must never sit on a real control. Some surfaces put their
+       primary button in this corner (omega's Send, the studio belt), so we move
+       out of any control's way, and let the Operator drag it anywhere. */
+    function overlapArea(el, f) {
+      var r = el.getBoundingClientRect();
+      if (r.width <= 0 || r.height <= 0) return 0;
+      var ox = Math.max(0, Math.min(r.right, f.right) - Math.max(r.left, f.left));
+      var oy = Math.max(0, Math.min(r.bottom, f.bottom) - Math.max(r.top, f.top));
+      return ox * oy;
+    }
+    function scoreAt(left, top) {
+      var f = { left: left, top: top, right: left + SIZE, bottom: top + SIZE };
+      /* Actions (buttons/links) must never be covered — that is what broke omega's
+         Send. Text fields are content, and a floating launcher over content is the
+         normal FAB pattern, so they are weighted low. */
+      var actions = document.querySelectorAll("button,a[href],[role=button],input[type=submit],input[type=button]");
+      var fields = document.querySelectorAll("input,textarea,select,[contenteditable=true]");
+      var s = 0, i;
+      for (i = 0; i < actions.length; i++) { if (actions[i] !== b && !b.contains(actions[i])) s += 1000 * overlapArea(actions[i], f); }
+      for (i = 0; i < fields.length; i++) { if (fields[i] !== b && !b.contains(fields[i])) s += overlapArea(fields[i], f); }
+      return s;
+    }
+    function setPos(left, top) {
+      b.style.left = left + "px"; b.style.top = top + "px";
+      b.style.right = "auto"; b.style.bottom = "auto";
+    }
+    function place() {
+      if (b.__moved) return;
+      var w = window.innerWidth, h = window.innerHeight;
+      var xs = [w - SIZE - M, M];
+      var ys = [h - SIZE - M, M, Math.round(h * 0.5 - SIZE / 2), Math.round(h * 0.72), Math.round(h * 0.28)];
+      var best = null, bestScore = Infinity;
+      for (var xi = 0; xi < xs.length; xi++) {
+        for (var yi = 0; yi < ys.length; yi++) {
+          var s = scoreAt(xs[xi], ys[yi]);
+          if (s === 0) { setPos(xs[xi], ys[yi]); return; }
+          if (s < bestScore) { bestScore = s; best = [xs[xi], ys[yi]]; }
+        }
+      }
+      if (best) setPos(best[0], best[1]);
+    }
+
+    var dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+    function down(e) {
+      var t = e.touches ? e.touches[0] : e;
+      var f = b.getBoundingClientRect();
+      dragging = true; moved = false; b.__dragged = false; sx = t.clientX; sy = t.clientY; ox = f.left; oy = f.top;
+      b.style.left = f.left + "px"; b.style.top = f.top + "px"; b.style.right = "auto"; b.style.bottom = "auto";
+      b.style.cursor = "grabbing";
+      e.preventDefault();
+    }
+    function move(e) {
+      if (!dragging) return;
+      var t = e.touches ? e.touches[0] : e;
+      var nx = ox + (t.clientX - sx), ny = oy + (t.clientY - sy);
+      nx = Math.max(4, Math.min(window.innerWidth - SIZE - 4, nx));
+      ny = Math.max(4, Math.min(window.innerHeight - SIZE - 4, ny));
+      b.style.left = nx + "px"; b.style.top = ny + "px";
+      if (Math.abs(t.clientX - sx) > 3 || Math.abs(t.clientY - sy) > 3) { moved = true; b.__dragged = true; }
+      e.preventDefault();
+    }
+    function up() { if (!dragging) return; dragging = false; b.style.cursor = "pointer"; b.__moved = moved || b.__moved; }
+    b.addEventListener("mousedown", down); b.addEventListener("touchstart", down, { passive: false });
+    window.addEventListener("mousemove", move, { passive: false }); window.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("mouseup", up); window.addEventListener("touchend", up);
+
     (document.body || document.documentElement).appendChild(b);
+    place();
+    setTimeout(place, 300); setTimeout(place, 1200);
+    window.addEventListener("resize", function () { b.__moved = false; place(); });
+    window.addEventListener("scroll", function () { if (!b.__moved) place(); }, { passive: true });
   }
   function register() {
     var p = api(), c = clApi(); fab();

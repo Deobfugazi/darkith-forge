@@ -15,7 +15,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 55,621 | `cef864b7835b` | AGENTS.md — Darkith |
+| `AGENTS.md` | 55,633 | `3f59f8d8327c` | AGENTS.md — Darkith |
 | `DARKITH.md` | 65,331 | `d07c51867f52` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 64,860 | `6708b9ada18d` | DARKITH — README |
@@ -46,19 +46,19 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `darkith code studio.html` | 579,483 | `b484b949f1cd` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,427,722 | `25eff8317f07` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
-| `darkith-inscriber.html` | 265,754 | `a4fb38df74e3` | Darkith Inscriber — SAVF Lite Studio |
+| `darkith code studio.html` | 583,821 | `2a23f423cca5` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,436,398 | `9032405d3362` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith-inscriber.html` | 270,092 | `8aa4a514930b` | Darkith Inscriber — SAVF Lite Studio |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
-| `omega.html` | 77,820 | `00a3e207a5c8` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 438,782 | `ddb5f037c7ea` | SAVF-1 Universal Audit Engine |
+| `omega.html` | 82,158 | `e19779ce6860` | DARKITH Ω — terminal + local assistant |
+| `savf.html` | 443,120 | `b35f17537c84` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `app/src/main/assets/darkith_ui.html` | 265,754 | `a4fb38df74e3` | Darkith Inscriber — SAVF Lite Studio |
+| `app/src/main/assets/darkith_ui.html` | 270,092 | `8aa4a514930b` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 490,080 | `f2d2ab18a562` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,790 | `c688b31320a2` | SAVF-1 Universal Audit Engine |
 
