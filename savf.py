@@ -204,9 +204,13 @@ def _finding(rule, phi, path, line, msg, sev):
 
 def scan_file(path, local, installed=None):
     try:
-        src = open(path, encoding="utf-8").read()
+        # Decode exactly as CPython does: a UTF-8 BOM or a PEP 263 `coding:`
+        # cookie on line 1 or 2 selects the codec.  A file Python can run must
+        # never be reported as unparseable.
+        with tokenize.open(path) as fh:
+            src = fh.read()
         tree = ast.parse(src, path)
-    except (SyntaxError, UnicodeDecodeError, RecursionError, ValueError) as e:
+    except (SyntaxError, UnicodeDecodeError, LookupError, RecursionError, ValueError) as e:
         # CPython's own compiler recurses, so a long enough expression raises
         # RecursionError.  That is a failure to parse, not a reason to abort the
         # whole scan: report it as a parse finding like any other.
