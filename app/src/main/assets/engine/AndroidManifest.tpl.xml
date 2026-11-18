@@ -15,6 +15,7 @@
     <application
         android:label="{{APP_NAME}}"
         android:allowBackup="false"
+        android:extractNativeLibs="true"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">

@@ -350,6 +350,13 @@ if have python3 && [ -f tools/install_gate.py ]; then
   run "install gate selftest (I-03 v2 detector)" python3 tools/install_gate.py --selftest
 fi
 
+# C2: a forged child APK must be a working, self-forging app, not merely a clean build. The
+# host manifest sets extractNativeLibs for exactly this reason (L-17); the child template must
+# match or a forged app cannot exec the native forge tools and install_gate I-07 goes OPEN.
+if have python3 && [ -f tools/forge_child_gate.py ]; then
+  run "forge child gate (C2)" python3 tools/forge_child_gate.py
+fi
+
 printf '\n=== runtime render gate (the UI the OS hands to Zygote) ===\n'
 # Loads the real launcher asset at 360x800 with and without the native bridge and fails on
 # any console/page error, blank body, empty DOM, or overflow. Self-skips (exit 0) when
