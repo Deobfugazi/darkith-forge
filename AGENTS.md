@@ -578,6 +578,19 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   status (it is the LAST command's; a bare `return N` yields 127). Probe before you document.
   The developer register also carries the INVARIANT DEBUGGER (the fixture battery) and the
   FRACTURE CLOSURE (each Linux divergence, its closed form, why it is correct here).
+- PARITY GATE (armed, `tools/savf_parity_gate.py`): the durable form of the differential
+  proof above. It runs `savf.py` and drives `savf.html` through playwright/chromium and FAILS
+  if the two ports disagree on any verdict (all-hard-fail, all-soft-fail, marginal cases) or
+  any chart sign (3 charts × 3 axes × 2 moves). Wired into `tools/ci.sh` after the version
+  surface gate. Skips loudly only when no browser is present. Run it after ANY change to the
+  verdict rule, the chart table, or a hash helper — it is the cheap guard against one port
+  drifting from the other.
+- THIS SESSION re-verified, by pre-run: selftest 9/9; SHA-256 js==hashlib on 5/5 inputs
+  (incl. empty + unicode); `fExp`/`gLog` exact inverse (max err 4.4e-16); freeze→check-freeze
+  detects tampering (exit 1); HMAC `manifest create/verify` verifies clean and rejects a
+  tampered artifact (exit 1); `scan` on stub/binary/non-UTF8 inputs returns honest findings
+  with correct exit codes and no traceback; browser UI renders 0-error at 360–1280px in both
+  themes with no horizontal overflow.
 
 ## §35 CLIENT-COUPLING UPDATE WATCHER (binding, 2026-11-18)
 - THE GAP THIS CLOSES: nothing tracked whether the installed copy was stale against the live
