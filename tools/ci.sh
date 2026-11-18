@@ -73,6 +73,13 @@ if have python3; then
       if [ -f tools/nt_gate.py ]; then
         run "nt corpus reconciliation (SAVF)" python3 tools/nt_gate.py
       fi
+      # Absolution admission: a noveltreatise enters the carried corpus only when it
+      # is truthful down to the verifiable bit — carried (not merely cited), every claim
+      # witnessed or derived, every contradiction resolved to a named EXPOSABLE boundary,
+      # its own corpus count true, and no unresolved mechanism smuggled as RESOLVED.
+      if [ -f tools/absolution_admission.py ]; then
+        run "absolution admission (NT XII)"  python3 tools/absolution_admission.py
+      fi
       # NT XI progress-deficit indicator: the retention law W_in - E = S != 0 read off
       # the durable board + deficit ledger. Fails if the board's printed indicator is stale,
       # or if the ratio rose across a delivery with no new descope (M6 non-extractive).

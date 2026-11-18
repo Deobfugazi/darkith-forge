@@ -70,5 +70,65 @@
       "cmd": "python3 -c \"s=open('docs/nt/NT-XI.txt').read(); assert 'Champlain' in s and 'Mondragon' in s; print('PRAXIS-ACTUALS-EXTERNAL')\"",
       "expect": "PRAXIS-ACTUALS-EXTERNAL"
     }
+  },
+  {
+    "id": "XII-DEMO-ECON-C",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "Truthful absolution: the treatise carries the demonstration and flags its parts EXPOSABLE; the verbatim primary sources are a named boundary, not a defect.",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkVYUE9TQUJMRQpYSUktREVNTy1FWFBPU0FCTEU=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-DEMO-EXPOSABLE",
+      "external": true
+    }
+  },
+  {
+    "id": "XII-MATERIALS-C",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "Truthful absolution: the archaeology is carried with its dates and flagged EXPOSABLE.",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkNhbXBpdGVsbG8gUXVhcnJ5ClhJSS1NQVRFUklBTFMtRVhQT1NBQkxF').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-MATERIALS-EXPOSABLE",
+      "external": true
+    }
+  },
+  {
+    "id": "XII-API35-C",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "Truthful absolution: the ceiling is carried as empirical (34 works, 35 fails) and flagged EXPOSABLE.",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkFQSSAzNQpYSUktQVBJMzUtRVhQT1NBQkxF').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-API35-EXPOSABLE",
+      "external": true
+    }
+  },
+  {
+    "id": "XII-NOVELTY-C",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "Truthful absolution: the novelty boundary is stated precisely; the search itself is a named boundary.",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmNvbXBvbmVudC1ub3ZlbCwgbm90IGNvbXBvbmVudC1pbnZlbnRlZApYSUktTk9WRUxUWS1FWFBPU0FCTEU=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-NOVELTY-EXPOSABLE",
+      "external": true
+    }
+  },
+  {
+    "id": "XII-HEALER-C",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "Truthful absolution: the Healer is carried as a designed mechanism; its execution is a named boundary.",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmxpYmxsYW1hLnNvClhJSS1IRUFMRVItRVhQT1NBQkxF').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-HEALER-EXPOSABLE",
+      "external": true
+    }
+  },
+  {
+    "id": "XII-ASE-PRAXIS-C",
+    "resolved_as": "EXPOSABLE",
+    "resolution": "Truthful absolution: the ASE modules are carried as the design; their praxis actuals are a named boundary.",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkF1dG9waGFnaWMgRmVlZGJhY2sgTG9vcApYSUktQVNFLUVYUE9TQUJMRQ==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ASE-EXPOSABLE",
+      "external": true
+    }
   }
 ]

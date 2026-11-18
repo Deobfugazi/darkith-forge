@@ -14,6 +14,7 @@ Run:  python3 build/sync-delivery.py [--check]
 """
 import argparse
 import hashlib
+import html
 import pathlib
 import re
 import shutil
@@ -97,6 +98,9 @@ def check_links(text: str) -> list:
     for href in sorted(set(hrefs)):
         if href.startswith(("http:", "https:", "#", "mailto:")):
             continue
+        # The href is HTML-escaped in the source (`&amp;` in `build&install.sh`); a
+        # browser decodes it before resolving, so the on-disk name is the unescaped form.
+        href = html.unescape(href)
         if not (DELIVERY / href).exists():
             missing.append(href)
     return missing
