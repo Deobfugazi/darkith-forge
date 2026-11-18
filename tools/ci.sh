@@ -171,6 +171,15 @@ fi
     run "omega reader tests" node tools/test_omega_reader.js
   fi
 
+  # The Icon Forge (icon_forge.html): the visual-affordance specialist. Dependency-free
+  # DOM/canvas-shim test that evaluates the REAL script. Proves sha256, the deterministic
+  # ZIP (CRC-verified), absolute-only pathData for VectorDrawable, safe-zone geometry, the
+  # four-state gates (a missing bridge is UNAVAILABLE, never PASS) and device coupling.
+  if have node && [ -f tools/test_icon_forge.js ]; then
+    run "icon forge tests" node tools/test_icon_forge.js
+  fi
+
+
   # The source inspector — the logical trial examiner. It puts the source on trial: 10
   # named charges, each calibrated (positive+negative), then autofixes the reversible ones
   # and enforces the HOMEOKINESIS ratchet (debt may only flux downward; stasis degrades).

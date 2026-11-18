@@ -9,18 +9,18 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**38 readable files across 6 registers.**
+**39 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 36,894 | `58221eb4e4c1` | AGENTS.md — Darkith |
-| `DARKITH.md` | 60,374 | `1a01ec2e090f` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 64,043 | `3a65cf904a2a` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `55898aae4fe6` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 63,656 | `d2cff8bb5588` | DARKITH — README |
+| `README.md` | 64,277 | `750b199111d3` | DARKITH — README |
 | `RESUME.md` | 4,284 | `8a7dd377f4e1` | RESUME — read this first in any new session |
-| `TASKS.md` | 14,801 | `dab6270e6db0` | TASKS — the durable board |
+| `TASKS.md` | 16,772 | `4e7c3002349f` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -47,6 +47,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith code studio.html` | 539,472 | `f706384c84db` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,297,607 | `0a6c54dd8816` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
+| `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,568 | `622dc406953f` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
 | `savf.html` | 398,245 | `5030bd163189` | SAVF-1 Universal Audit Engine |

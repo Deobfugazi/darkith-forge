@@ -964,3 +964,58 @@ nullable, a cleanup catch — counted and gated as a REGRESSION against the ratc
 HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 `--fail-on-fixable`). The bounty is a single scalar, weighted 100:1:0.1, so
 "how bad is the tree" is a number, not a feeling.
+
+§34 — THE VISUAL-AFFORDANCE SPECIALIST & THE COUPLING LAW (2026-11-10)
+  ════════════════════════════════════════════════════════════════════════════
+  Source: Operator directive — "in my launcher userspace I need to build a software
+  specialist for every kind of app developers already develop. Like for visual
+  affordance, the ICONS, LOGOS and THUMBNAILS, one omega app for it." And, binding:
+  the app must "instantly couple to whatever limited preconditions and state" of
+  the APK build — it must work whether or not the native bridge is present, and it
+  must never claim health it cannot measure.
+
+  ─── W-049 (THE SPECIALIST THAT CANNOT COUPLE) ───
+  A domain specialist that assumes a rich environment lies about what it did. The
+  forge must emit an INSTALLABLE pack (a foreground drawable, the adaptive XML the
+  manifest names, the background colour) or it has produced art, not an asset. It
+  must write through the REAL bridge (`window.darkith.fileWrite`) when one exists,
+  and when none exists it must say so — a green gate computed from a missing
+  sensor is the exact bug the four-states rule (measured / unavailable /
+  not-sampled / inferred) exists to prevent. And every artefact it emits must be
+  BYTE-DETERMINISTIC, so a rebuild is diffable and a hash is meaningful.
+
+  Insight: one specialist is a thin module on the same kernel and the same forge.
+  It takes a typed spec in, and gives a deterministic artefact plus an audit
+  record out. The icon/logo/thumbnail app is the first vertical because it is pure
+  algorithms with no network: adaptive layers with the 66/108 dp safe zone, palette
+  and contrast, saliency-aware crops, a size budget chosen by search.
+
+  ─── NEVER #20 (NO FOREIGN GEOMETRY IN AN EMITTED DRAWABLE) ───
+  GATE: tools/test_icon_forge.js
+  Every `android:pathData` the forge emits is absolute `M/L/C/Z` only — no SVG
+  arcs. The normaliser converts arcs to cubics before emission. An emitted
+  VectorDrawable that aapt2 must reject is a delivery defect; the test asserts the
+  alphabet of every emitted path.
+
+  ─── MUST #34 (THE PACK IS INSTALLABLE OR IT IS NOT A BUILD) ───
+  GATE: tools/test_icon_forge.js
+  A build is only a build if it carries the resources the manifest names:
+  `res/mipmap-anydpi-v26/ic_launcher.xml` and `ic_launcher_round.xml`, a foreground
+  drawable (`@drawable/ic_launcher_foreground`), and `res/values/ic_launcher_background.xml`.
+  The test asserts the pack's file set, and that legacy mipmaps are emitted when
+  requested. This is the same rule `tools/icon_gate.py` applies to the app's own
+  icon, pointed at the forge's output.
+
+  ─── SPI-28 (THE ZIP IS STORED AND DETERMINISTIC) ───
+  GATE: tools/test_icon_forge.js
+  The pack travels as a ZIP with STORED entries and a fixed timestamp, so the same
+  spec yields the same bytes. The reader verifies every entry's CRC. Determinism is
+  what makes `buildKey()` (a sha256 of the spec) a truthful identity for a build.
+
+  ─── THE COUPLING CLAUSE (WINDOW.DARKITH, OR NOTHING) ───
+  The Couple tab probes the real bridge and reports each method as MEASURED, or the
+  whole coupling as UNAVAILABLE when `window.darkith` is absent. A build with a
+  bridge writes every file to `/sdcard/Darkith/icon-pack/` through `fileWrite` and
+  records the device directory in the ledger; a build without one downloads the ZIP
+  and says "local mode". The four-state gate is the honest sensor: absence is a
+  state, never a pass.
