@@ -225,6 +225,13 @@ Toolchain got: aapt2/zipalign/apksigner via `apt install aapt android-sdk-build-
 d8 via R8 jar (`dl.google.com/dl/android/maven2/com/android/tools/r8/8.2.42/r8-8.2.42.jar`);
 kotlinc 1.9.24 (JetBrains zip); apksig 8.1.1 (Google maven). `tools/fetch_toolchain.sh`
 provisions all of it into `.tools/` (gitignored) so CI can run the real compile proof.
+  - CI FAILS (not skips) when `.tools/` is absent: `ci.sh` forces FAILED=1 so a skipped compile
+    proof can never look green. To run CI here, provision `.tools/` first — `bash
+    tools/fetch_toolchain.sh`, or symlink an existing cache (`kotlinc`, `jdk-17.0.12+7`,
+    `aapt2d`, `apksig.jar`, `android-all-14-robolectric-10818077.jar`). Then L-07/L-10 close.
+  - Do NOT run two `kotlinc` compile proofs at once: each takes `-J-Xmx2g`, and two concurrent
+    JVMs starve memory and emit spurious `unresolved reference` errors that look like real
+    defects. Serialize (let the background CI finish before a manual gate run).
 
 ## WHERE THE SCROLLBACK LIVES (recover any prompt the app won't scroll to)
 The GUI cannot always scroll back. The full event history is on disk:
