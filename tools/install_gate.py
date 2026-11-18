@@ -123,8 +123,9 @@ def main():
     apksigner = find_apksigner()
     if apksigner:
         r = subprocess.run([apksigner, "verify", "--verbose", apk], capture_output=True, text=True)
-        v2 = re.search(r"v2 scheme:\s*true", r.stdout, re.I)
-        verifies = re.search(r"Verifies", r.stdout)
+        # apksigner prints e.g. "Verified using v2 scheme (APK Signature Scheme v2): true",
+        # so the scheme name and its boolean are not adjacent — match across the label.
+        v2 = re.search(r"v2 scheme[^\n]*:\s*true", r.stdout, re.I)
         if r.returncode == 0 and v2:
             rec("I-03-signature-v2", "CLOSED", "v2 signature verifies")
         else:
