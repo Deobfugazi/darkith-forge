@@ -617,3 +617,13 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   point -> commit -> PUSH (board_pulse needs HEAD==origin) -> CI -> GitHub Release with
   the one-shot script + `VERSION.json` as assets. The runtime host (port 12000) is a
   moving sandbox: point the PRIMARY mirror at GitHub once the repo is public.
+- APK DELIVERY (the shortest path for the Operator, who has no toolchain): the alert leads
+  with **Download APK**, then the one-shot. `VERSION.json.apk_urls` (runtime host first) feed
+  `DEFAULT_APK_URLS`; `decide()` carries `apkUrl`; `overlay()` shows both buttons. The signed
+  build is published to `delivery/darkith-forge.apk` (served, HTTP 200) and as a release asset.
+- REBUILDING THE APK: `build.sh` finds `keytool` on PATH, so export JAVA_HOME's bin (and the
+  `.tools/bt/android-14` + `.tools/aapt2d` dirs) BEFORE running it, or it dies
+  "keytool missing (no JDK)". It needs KOTLINC and ANDROID_JAR exported too. A clean run is
+  7/7 and prints "DONE". The checked-in `app-signed.apk` was STALE (1.1.0-omega / code 2);
+  after any surface change you must rebuild it or the APK lags the page. Verify with
+  `aapt2 dump badging` and by reading the watcher out of the packaged `assets/homekeeper.html`.
