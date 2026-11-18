@@ -108,6 +108,30 @@ with tempfile.TemporaryDirectory() as td:
     r = run("check-freeze", cwd=td)
     check("check-freeze: detects tampering", r.returncode != 0, r.stdout.strip())
 
+# 11. reach/mutate with a --src that is not there is an error, never a silent
+#     "0 functions / nothing missed" -- a confident green that hides a missing
+#     path, exactly what the scan test above forbids.
+r = run("reach", "--root", ".", "--src", "/tmp/savf-does-not-exist-xyz",
+        "--test", "x")
+check("reach: missing --src exits non-zero", r.returncode != 0, r.stdout.strip())
+check("reach: missing --src says so, no traceback",
+      "no such file" in (r.stdout + r.stderr) and "Traceback" not in r.stderr,
+      (r.stdout + r.stderr)[-160:])
+r = run("mutate", "--root", ".", "--src", "/tmp/savf-does-not-exist-xyz",
+        "--test-cmd", "true")
+check("mutate: missing --src exits non-zero", r.returncode != 0, r.stdout.strip())
+check("mutate: missing --src says so, no traceback",
+      "no such file" in (r.stdout + r.stderr) and "Traceback" not in r.stderr,
+      (r.stdout + r.stderr)[-160:])
+
+# 12. a --src directory with no Python in it is an error too, not an empty pass.
+with tempfile.TemporaryDirectory() as td:
+    (pathlib.Path(td) / "note.txt").write_text("nothing to scan\n")
+    r = run("reach", "--root", td, "--src", td, "--test", "x")
+    check("reach: empty --src tree exits non-zero", r.returncode != 0, r.stdout.strip())
+    check("reach: empty --src tree says so", "no Python source" in (r.stdout + r.stderr),
+          (r.stdout + r.stderr)[-160:])
+
 fails = [x for x in results if not x[1]]
 for name, ok, detail in results:
     print(f"  {'ok  ' if ok else 'FAIL'} {name}" + (f"  -- {detail}" if detail and not ok else ""))

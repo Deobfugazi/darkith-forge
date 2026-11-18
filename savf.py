@@ -158,6 +158,22 @@ def is_test_file(p):
     return b.startswith("test_") or b.endswith("_test.py") or f"{os.sep}tests{os.sep}" in p
 
 
+def _source_files(src, cmd):
+    """Source files under --src for reach/mutate.
+
+    A path that is not there is an error, never a silent empty set: an empty
+    set makes reach report "0 functions, nothing missed" and mutate report
+    "score null" -- both a confident green that hides a missing path, the exact
+    false-green scan already refuses to produce.
+    """
+    if not os.path.exists(src):
+        raise SystemExit(f"{cmd}: no such file or directory: {src}")
+    files = [p for p in py_files(src) if not is_test_file(p)]
+    if not files:
+        raise SystemExit(f"{cmd}: no Python source files under: {src}")
+    return files
+
+
 def local_modules(root):
     base = root if os.path.isdir(root) else os.path.dirname(root) or "."
     names = set()
@@ -955,13 +971,15 @@ def main(argv=None):
     elif A.cmd == "reach":
         if not os.path.isdir(A.root):
             raise SystemExit(f"reach: no such root directory: {A.root}")
-        out = reach(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test)
+        srcs = _source_files(A.src, "reach")
+        out = reach(A.root, srcs, A.test)
         print(json.dumps(out, indent=2))
         return 0 if not out["missed"] and out["tests_exit"] == 0 else 1
     elif A.cmd == "mutate":
         if not os.path.isdir(A.root):
             raise SystemExit(f"mutate: no such root directory: {A.root}")
-        out = mutate(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test_cmd, A.max, A.seed)
+        srcs = _source_files(A.src, "mutate")
+        out = mutate(A.root, srcs, A.test_cmd, A.max, A.seed)
         print(json.dumps(out, indent=2))
     elif A.cmd == "freeze":
         th = {k: v for k, v in (("theta_mut", A.theta_mut), ("theta_cov", A.theta_cov)) if v is not None}
