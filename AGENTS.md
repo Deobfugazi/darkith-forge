@@ -745,3 +745,40 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
 
   Regenerate after editing the manual: `python3 build/build-forge.py` (writes the fused
   page) then `python3 build/make-oneshot.py` (the one-shot embeds the shell).
+
+## §39 SAVF CLI ARGUMENT HARDENING + CROSS-ENGINE PROOF (2026-11-19)
+Second pass over the SAVF utility (§34 governs the product; this records what a fuller
+pre-run found). The engine itself was faithful — two REAL defects were in the CLI shell,
+both reproduced before they were fixed:
+
+- DEFECT (fixed): a NEGATIVE axis coordinate could not be passed on the command line.
+  `savf axis --p0 -41.4,-8.1 --p1 1,2 --s .5 --tau 1` died with argparse's
+  `argument --p0: expected one argument`, because a leading `-` reads as an option. For an
+  axis/formulary tool negative poles are the ordinary case, so this broke the primary
+  command. Fix: `_normalize_argv` folds a data-looking token (`-3`, `-1.5`, `-41.4,-8.1`)
+  onto the option it follows (`--p0=-41.4,-8.1`); real flags are untouched, `--tau -1` works
+  too, and `s` still validates to [0,1]. Regression checks live in `build/savf-cli-test.py`.
+- DEFECT (fixed): `savf freeze ghost.py` raised a bare `FileNotFoundError`. It now prints
+  `freeze: no such file: ghost.py` and exits 1, matching `scan`. No CLI path leaks a
+  traceback for ordinary misuse (checked verdict/ledger/manifest/sign/freeze/scan).
+
+Pre-run evidence this session (all through the REAL engines, not inferred):
+- CROSS-ENGINE: `savf.html` driven under BOTH chromium and firefox — identical freeze seal,
+  identical HMAC, identical selftest (9/9) and verdict, 0 console/page errors, 7 tabs each.
+  Seals are byte-portable: a lock sealed in the browser == `savf.py freeze` (SEAL MATCH,
+  LOCK EQUAL) and the HMAC matches `savf.py manifest create`.
+- DIFFERENTIAL FUZZ: 150 randomized Python sources through `window.SAVF.auditSource` vs
+  `savf.py scan --json` — **150/150 identical**; plus 372 core cases (60 random axes,
+  all 3 charts × 3 axes × 8 moves incl. the error cases, 40 exp/log round-trips, 200 random
+  phi-state verdicts) — **372/372 identical**.
+- OFFLINE: loaded under a context with `offline=True`; ZERO non-`file:`/`data:` requests,
+  audit + selftest still work, 0 errors. The "offline, zero-dependency" promise holds.
+- UI: no horizontal overflow on any of the 7 tabs at 360px; contrast 17.6:1 (dark) / 17.2:1
+  (light); every button and tab >= 44px; FAB drags, theme + tab persist across reload.
+- CI: `tools/ci.sh` exit 0 (CI: PASS). `board pulse` passes once the branch is pushed.
+
+NOTE — `tools/sync.sh` defaults `BRANCH=main` but the working branch is
+`absolution/admission`; a bare `tools/sync.sh` therefore rebases against the WRONG branch and
+reports a false conflict. Push the working branch with
+`DARKITH_BRANCH=absolution/admission tools/board_pulse.sh` (never force). `main` and the
+working branch are separate histories here.
