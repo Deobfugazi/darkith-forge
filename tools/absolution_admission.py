@@ -32,7 +32,7 @@ The gate FAILS (exit 1) unless ALL hold:
 
 Usage:
   python3 tools/absolution_admission.py
-  python3 tools/absolution_admission.py --treatise "NT XII.txt" --roman XII \
+  python3 tools/absolution_admission.py --roman XII \
       --claims proof/nt_xii_claims.json --recon proof/nt_xii_reconciliation.json
 """
 from __future__ import annotations
@@ -142,11 +142,10 @@ def check_boundaries(text: str) -> list[str]:
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--treatise", default="NT XII.txt", help="the treatise to admit (repo root or docs/nt/)")
-    ap.add_argument("--roman", default="XII", help="its roman numeral")
+    ap.add_argument("--roman", default="XII", help="the roman numeral of the treatise to admit")
     ap.add_argument("--claims", default="proof/nt_xii_claims.json")
     ap.add_argument("--recon", default="proof/nt_xii_reconciliation.json")
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
 
     # 1. the treatise must be CARRIED in the corpus, not merely present at the root.
     carried_path = CORPUS / f"NT-{a.roman}.txt"
