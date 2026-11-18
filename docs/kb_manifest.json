@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 34,
+  "count": 35,
   "files": [
     {
       "bytes": 34200,
@@ -43,6 +43,12 @@
       "path": "docs/DARKITH-OMEGA-repo.txt",
       "register": "B-knowledge",
       "sha256": "ed122343b34d693016b579e570c7de20cd72bf536ce80075b3b67d55593b68d8"
+    },
+    {
+      "bytes": 3960,
+      "path": "docs/SECURITY_REMEDIATION.md",
+      "register": "B-knowledge",
+      "sha256": "714045540aa609926a3f1fed7c94d7282296016db34f73a4e1e824d2f635fddf"
     },
     {
       "bytes": 146183,

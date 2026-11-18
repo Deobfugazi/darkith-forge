@@ -35,9 +35,15 @@ LABEL_SECURITY = "security"
 LABEL_CRITICAL = "critical"
 
 
-def dedup_key(title: str, body: str) -> str:
-    """Stable across re-runs: same finding -> same key -> no second issue."""
-    return hashlib.sha256((title.strip() + "\0" + body.strip()).encode()).hexdigest()[:16]
+def dedup_key(title: str, finding_id: str = "") -> str:
+    """Stable across re-runs of the SAME finding -> same key -> no second issue.
+
+    Keyed on the finding's identity (an explicit id, else the normalised title), never on the
+    body: the body is prose that grows as detail is added, and hashing it made a re-report of
+    one finding open a fresh issue. Identity is the title (case/whitespace-insensitive) unless
+    the caller supplies a stable --finding-id."""
+    ident = finding_id.strip() or " ".join(title.split()).lower()
+    return hashlib.sha256(ident.encode()).hexdigest()[:16]
 
 
 def load_record() -> dict:
@@ -92,12 +98,40 @@ def open_issue(title: str, body: str, severity: str) -> tuple[bool, str]:
         return False, str(e)
 
 
+def remote_issue_for(title: str) -> str:
+    """URL of an existing issue whose title matches exactly, else "". The local record is a
+    gitignored proof/ file, so a fresh clone starts empty; without this check the same finding
+    would re-open on every clone. The exact title is the portable identity."""
+    if not gh_available():
+        return ""
+    p = subprocess.run(["gh", "issue", "list", "--state", "all", "--limit", "200",
+                        "--json", "number,title,url,state"],
+                       capture_output=True, text=True, cwd=str(ROOT))
+    if p.returncode != 0:
+        return ""
+    try:
+        hits = [it for it in json.loads(p.stdout or "[]")
+                if it.get("title", "").strip() == title.strip()]
+    except json.JSONDecodeError:
+        hits = []
+    # Prefer an OPEN match: a closed duplicate from an older bug must not shadow the live one.
+    hits.sort(key=lambda it: it.get("state", "") != "OPEN")
+    return hits[0].get("url", "") if hits else ""
+
+
 def cmd_push(args: argparse.Namespace) -> int:
-    key = dedup_key(args.title, args.body)
+    key = dedup_key(args.title, getattr(args, "finding_id", "") or "")
     rec = load_record()
     if key in rec["alerts"]:
         prev = rec["alerts"][key]
         print(f"security_alert: ALREADY PUSHED ({key}) -> {prev.get('url', '?')}")
+        return 0
+    existing = remote_issue_for(args.title)
+    if existing:
+        rec["alerts"][key] = {"title": args.title, "severity": args.severity,
+                              "url": existing, "key": key}
+        save_record(rec)
+        print(f"security_alert: ALREADY ON REMOTE ({key}) -> {existing}")
         return 0
     ok, info = open_issue(args.title, args.body, args.severity)
     if not ok:
@@ -128,11 +162,15 @@ def cmd_selftest(_args: argparse.Namespace) -> int:
         if not cond:
             fails.append(msg)
 
-    k1 = dedup_key("Leak: token in remote", "removed from .git/config")
-    k2 = dedup_key("Leak: token in remote", "removed from .git/config")
-    k3 = dedup_key("Leak: token in remote", "a different body")
-    expect(k1 == k2, "same finding -> same dedup key (no re-spam)")
+    k1 = dedup_key("Leak: token in remote")
+    k2 = dedup_key("  leak: TOKEN in remote  ")     # same identity, re-cased/re-spaced
+    k3 = dedup_key("Leak: different finding")
+    k4 = dedup_key("anything", finding_id="SEC-2026-0001")
+    k5 = dedup_key("another title", finding_id="SEC-2026-0001")
+    expect(k1 == k2, "same finding (re-cased/re-spaced) -> same dedup key")
     expect(k1 != k3, "different finding -> different key")
+    expect(k4 == k5, "explicit --finding-id is the identity, title irrelevant")
+    expect(k4 != k1, "explicit id differs from a title-derived key")
 
     # record round-trips and a duplicate push is suppressed without network
     import tempfile
@@ -159,6 +197,8 @@ def main() -> int:
     p.add_argument("--title", required=True)
     p.add_argument("--body", required=True)
     p.add_argument("--severity", choices=["critical", "high"], default="critical")
+    p.add_argument("--finding-id", default="",
+                   help="stable id for this finding; defaults to the title")
     args = ap.parse_args()
     if args.cmd == "push":
         return cmd_push(args)

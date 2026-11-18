@@ -38,7 +38,16 @@ if have python3; then
   run "savf cli contract"                 python3 build/savf-cli-test.py
   run "darkbot self-test"                 python3 tools/darkbot.py selftest
   # Secret gate (fail-closed): no credential may ever be committed to the tracked tree.
-  run "secret gate (no committed credentials)" python3 tools/secret_gate.py
+  # A hit is not just a red line: push the dedup'd device alert so the Operator learns
+  # at once (MUST #31). The gate stays the source of truth for pass/fail; the alert is
+  # best-effort and never masks the failure (the gate's own exit code still governs).
+  if ! python3 tools/secret_gate.py; then
+    python3 tools/security_alert.py push --severity critical \
+      --finding-id "committed-credential" \
+      --title "SECURITY: a credential-shaped string is committed to the tree" \
+      --body "tools/secret_gate.py failed in CI. See the run log for the exact path:line.\n\nA credential in the tree is already leaked (forks, backups, logs, git history): remove it\nAND rotate it. A rewrite does not un-leak it. This notice was created by an AI agent\n(OpenHands) on behalf of the Operator." || true
+    FAILED=1
+  fi
   run "secret gate self-test"             python3 tools/secret_gate.py selftest
   # Fracture Scout: offline proof its boolean parser, adapters, and ranker are correct.
   run "fracture scout self-test"          python3 tools/fracture_scout.py selftest
