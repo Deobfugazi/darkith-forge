@@ -553,3 +553,14 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   NEVER run `savf freeze`/`manifest create` with CWD = repo root, or CI's savf-cli test fails
   on the leftover `.savf/`.
 - GATES: `build/verify.py` (7 checks incl. battery) and `tools/ci.sh` (45 gates) both PASS.
+- TERMINAL SURFACE (Termkit `savf` builtin): defined ONCE in `build/build-forge.py`
+  (`TERMINAL_BUILTIN`) and injected into the fused page between `/* SAVF-TERM:START|END */`.
+  It calls `globalThis.SavfTruth.auditSource`, so the verdict printed in the terminal is
+  the verdict the page and the studio give. Its EXIT CODE mirrors `savf.py`'s
+  `EXIT = {PASS:0, REVIEW:2, BLOCKED:3, LIED:4}` — never collapse non-PASS to 1, or `$?`/
+  `&&`/`||` in the terminal stop agreeing with the CLI on the same file. Verified in-browser:
+  10/10 rule-exact vs `savf.py scan --json`, 6/6 exit-map match.
+- ONE-SHOT: `delivery/darkith-one-shot.sh` = bash header + raw ZIP payload after the
+  `__DARKITH_PAYLOAD_BELOW__` line. It is NOT valid bash end-to-end (`bash -n` fails on the
+  binary tail by design); the header `tail`s the payload out and checks its sha256. On a host
+  without the Android toolchain it fails HONESTLY (`apksigner missing`), never fakes a build.
