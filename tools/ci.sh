@@ -73,6 +73,12 @@ if have python3; then
       if [ -f tools/nt_gate.py ]; then
         run "nt corpus reconciliation (SAVF)" python3 tools/nt_gate.py
       fi
+      # NT XI progress-deficit indicator: the retention law W_in - E = S != 0 read off
+      # the durable board + deficit ledger. Fails if the board's printed indicator is stale,
+      # or if the ratio rose across a delivery with no new descope (M6 non-extractive).
+      if [ -f tools/omega_deficit.py ]; then
+        run "omega deficit (NT XI retention)" python3 tools/omega_deficit.py
+      fi
     # the board must be pushed in REAL TIME so a parallel worker sees it (MUST #26)
     if [ -f tools/board_pulse.sh ]; then
       run "board pulse (real-time push)"    bash tools/board_pulse.sh --check

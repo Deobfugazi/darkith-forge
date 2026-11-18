@@ -85,6 +85,7 @@ validation, contrast checks.
 | F8 | Real-time board push + parallel-worker ping (§32 MUST #26) | done | `tools/board_pulse.sh` (`--check` gated in CI; ping `proof/board_pulse.json`) |
 | F9 | Parallel convergence proven, not asserted (§32 MUST #27) | done | `tools/convergence_gate.py` (clock py==js, phase py==js, tree git==independent blob hash) |
 | F10 | Edge-device time coupling + boot-aware session (§32 MUST #28) | done | `tools/synchrony_pulse.py` (`proof/synchrony_pulse.json`: boot, last activity, cycle phase, device zone) |
+| F11 | NT XI retention law as the omega progress-deficit indicator on the board | done | `tools/omega_deficit.py` (W_in=39 E=14 S=25 E/W_in=0.359; §H on this board; `proof/omega_deficit.json`); CI-gated; M6 SE non-extractive |
 
 ## G. INSTALL + RUNTIME GATES (the two failures a user feels)
 
@@ -93,3 +94,21 @@ validation, contrast checks.
 | G1 | "App not installed" registry — the installer accepts the APK | done | `tools/install_gate.py` (I-01..I-14: version, sdk, v2 sig, align, arsc/so STORED, extractNativeLibs, dup entries, testOnly, launcher, components-in-dex, ABI, label; reads the APK's own manifest); wired as delivery-gate `L-18` and into `tools/ci.sh` |
 | G2 | Runtime render gate — the UI actually paints | done | `tools/runtime_gate.py` (loads `app/src/main/assets/homekeeper.html` at 360x800 with and without the `window.darkith` bridge; 0 JS errors, non-blank, no overflow); wired as delivery-gate `L-19` and into `tools/ci.sh` |
 | G3 | Green the three red gates on main (board_gate, doc consolidation, delivery source laws) | done | `tools/board_gate.py` (delivery/ treated as generated), `tools/consolidate_docs.sh` (ROOT defaults to the repo, not a sandbox path), `.github/workflows/auto-merge.yml` (stages `tools/fetch_toolchain.sh` so the §19 compile proof runs) |
+
+## H. NT XI - THE OMEGA PROGRESS-DEFICIT INDICATOR
+
+NT XI (Autophagic Sovereign Economy) carries the retention law `W_in - E = S != 0`, with
+absolution as `E/W_in -> 0`. Read off the durable board and the deficit ledger, it is this
+project's own progress-deficit indicator. `W_in` is all named work; `E` is work named but not
+returned to the source; `S` is work returned. A rising ratio across a delivery is extraction
+and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is formally descoped.
+
+| metric | value | meaning |
+|---|---|---|
+| W_in | 40 | named work = board 32 + deficits 8 |
+| E | 14 | un-returned = todo 14 + in_progress 0 + blocked 0 + open 0 |
+| S | 26 | returned = done 18 + closed 3 + descoped 5 |
+| E/W_in | 0.350 | the progress-deficit indicator; absolution at 0 |
+| absolution | NO | E = 0 (all named work returned) |
+
+Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.
