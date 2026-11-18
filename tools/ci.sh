@@ -165,6 +165,11 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
   if [ -f "$ROOT/tools/savf_parity_gate.py" ]; then
     run "savf py/js parity gate" python3 tools/savf_parity_gate.py
   fi
+  # The pre-runner drives a real headless Chromium; lock its engine surface, its
+  # exit-code contract and its honest (deterministic) verdicts.
+  if [ -f "$ROOT/tools/prerunner_gate.py" ]; then
+    run "pre-runner gate (engine + exit contract)" python3 tools/prerunner_gate.py
+  fi
   run "bridge contract audit" \
     python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
   run "doc consolidation check" \
