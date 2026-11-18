@@ -152,6 +152,15 @@ if have python3 && [ -f tools/doc_path_gate.py ]; then
   run "doc path gate" python3 tools/doc_path_gate.py
 fi
 
+# Blueprint gate: the Operator's specification corpus must never instruct the agent. The
+# blueprint rode onto main with a live prompt-injection payload (`COPY AND PASTE ... INTO
+# OPENHANDS`, `do not ask for confirmation; execute immediately`) because NOTHING checked
+# it — a law that is not a gate is a note. This runs unconditionally (the corpus is not
+# under app/), so the contaminant can never ride in ungated again.
+if have python3 && [ -f tools/blueprint_gate.py ]; then
+  run "blueprint gate (no injection)" python3 tools/blueprint_gate.py
+fi
+
 if have python3 && [ -f tools/kb_index.py ]; then
   # Universal index of the readable knowledge-skill base (SPI-15). Fails if the index is
   # stale, if a readable file is unfiled, if two files share a hash without a declared
@@ -167,6 +176,17 @@ fi
   # the routing is bounds-safe and the machine/provenance registers are HTML-escaped.
   if have node && [ -f tools/test_omega_reader.js ]; then
     run "omega reader tests" node tools/test_omega_reader.js
+  fi
+
+  # The source inspector — the logical trial examiner. It puts the source on trial: 10
+  # named charges, each calibrated (positive+negative), then autofixes the reversible ones
+  # and enforces the HOMEOKINESIS ratchet (debt may only flux downward; stasis degrades).
+  # `trial` proves every charge is calibrated AND the four ratchet laws hold, so a
+  # miscalibrated gate can never reach CI. `inspect` then fails on any open blocker or any
+  # net addition of escrow debt above the ratchet high-water mark.
+  if have python3 && [ -f tools/source_inspector.py ]; then
+    run "source inspector trial (charges + ratchet)" python3 tools/source_inspector.py trial
+    run "source inspector (loophole trial)"          python3 tools/source_inspector.py inspect --fail-on-fixable
   fi
 
 # The inscriber studio: boots in jsdom, engines present, terminal + toolkits live. Needs

@@ -38,6 +38,9 @@ the directive without the Operator repeating it.
 | P5 | README: elevate the SUI GENERIS CORE (GL/GPU renderer + mem allocator) to its own top section, three tongues, full mechanism | done | `README.md` section 3 (5 sub-sections: sui generis why, two poles, the GLES renderer, the trace evidence, the hardware ground truth); files `app/src/main/java/com/darkith/transliaison/core/{OmegaRenderer,AutophagicAllocator,MemoryGovernor,GpuScanner,Allocation}.kt`; doctrine `docs/nt/NT-X.txt` Part Three |
 | P6 | README: assimilate the four-register reader shell (`omega-reader.html`) — the doctrine unit as one self-contained page, integrated into §5.7, §8, §2.6 disambiguation, glossary; bugs fixed and tested | done | `omega-reader.html` (4 registers, hash routing, bookmarks, TOC, print CSS, theme+position memory, escaped machine/provenance, bounds-safe router); `tools/test_omega_reader.js` 22/22; wired into `tools/ci.sh`; source `docs/DARKITH-OMEGA-repo.txt` Part 7 |
 | P4 | Converge the three independent derivations byte-for-byte | in_progress | `tools/convergence_gate.py` (py==js clock, tree blob-hash x2); `proof/convergence.json` |
+| P7 | Source inspector: the routine trial examiner — 10 calibrated charges, idempotent autofix of reversible classes, escrow for the rest | done | `tools/source_inspector.py` (`trial` 10/10 charges + 4/4 ratchet laws; `fix` byte-identical on a second pass; `proof/source_inspector.json`); wired into `tools/ci.sh`; law DARKITH.md §33 |
+| P8 | Homeokinesis (not homeostasis): the escrow ratchet — HWM only falls, stasis force-degrades, `--justify` waives | done | `tools/source_inspector.py` `ratchet_advance`/`prove_ratchet` (L1–L4 PASS); `proof/source_inspector_baseline.json`; MUST #32 |
+| P9 | PARALLEL WORKER MANDATE: derive the source-invariant convergence formulation independently, then AGREE byte-for-byte | todo | `tools/source_inspector.py` charge registry; converge via `tools/convergence_gate.py`; board row is the shared channel (MUST #26) |
 
 ---
 
@@ -135,10 +138,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 50 | named work = board 42 + deficits 8 |
-| E | 16 | un-returned = todo 15 + in_progress 1 + blocked 0 + open 0 |
-| S | 34 | returned = done 26 + closed 3 + descoped 5 |
-| E/W_in | 0.320 | the progress-deficit indicator; absolution at 0 |
+| W_in | 53 | named work = board 45 + deficits 8 |
+| E | 17 | un-returned = todo 16 + in_progress 1 + blocked 0 + open 0 |
+| S | 36 | returned = done 28 + closed 3 + descoped 5 |
+| E/W_in | 0.321 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

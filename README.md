@@ -637,6 +637,7 @@ and the corruption mode each one guards:
 | `tools/syntax_gate.py` | unclosed block comments in Kotlin |
 | `tools/api_level_gate.py` | a high-API call with no guard (mode 7) |
 | `tools/secret_gate.py` | a credential committed to the tree |
+| `tools/source_inspector.py` | an unexamined source feature: unclosed comment, foreign import, `!!`, stub, swallowed exception, duplicate node function (and the stasis gate that would tolerate them) |
 | `tools/board_gate.py` | a board item marked done with no evidence |
 | `tools/stall_gate.py` | a named deficit left open across deliveries |
 | `tools/law_gate.py` | a rule with no executable gate (mode 5) |
@@ -767,6 +768,7 @@ Every abbreviation and specialist term used above, alphabetized.
 | **GPU** | Graphics Processing Unit | The chip that draws; its memory use is one of the loop's four inputs. |
 | **Gradle** | (build tool) | The conventional Android build system. Banned (SPI-1). |
 | **graft** | — | A payload made to grow on a donor; the two stay distinct in origin, one in function. |
+| **homeokinesis** | — | The living equilibrium: the internal state is held by a FLUX (the rate of clearance), never by a static setpoint. The inspector's escrow ratchet is homeokinetic — debt may only move down, and stasis is force-degraded. Contrast **homeostasis**, a fixed tolerated level, which the Operator rejects as a stasis that promotes stagnation (MUST #32). |
 | **invariant witness** | — | A check that throws if the coupling is violated (grid vertices ≤ allocator budget). |
 | **IR** | Intermediate Representation | A structural model between input and rendering. |
 | **JAR** | Java ARchive | A packaged bundle of compiled code. |

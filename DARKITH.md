@@ -889,3 +889,78 @@ defect. This is the prophylactic cure: the next app cannot be born without time.
     device app — the Operator works from a phone and must learn of a security fix at once,
     not by re-reading git log. Autofix of a well-understood, reversible security gap needs no
     permission; the push notice is how it is reported.
+
+════════════════════════════════════════════════════════════════════════════
+§33 — THE SOURCE INSPECTOR & THE HOMEOKINESIS LAW (2026-11-10)
+════════════════════════════════════════════════════════════════════════════
+Source: Operator directive — "add a routine source inspector as the logical
+trial examiner that deliberately stress-tests source features for loopholes and
+autofixes them like the invariant bounty hunter." Then, a correction:
+"I don't promote homeostasis. Stasis must be corrected to homeokinesis. Stasis
+promotes stagnation as a metastatic autoimmune carcinomalous malefactor."
+
+─── W-048 (UNEXAMINED SOURCE / STATIC TOLERANCE) ───
+`delivery_gate.sh` is the loophole registry for the ARTIFACT (an APK's version,
+signing, alignment). Nothing tried the SOURCE FEATURES themselves as a routine
+trial: a comment-stripping sed, a foreign `androidx.` import in a raw-chain tree,
+a `!!` that crashes at runtime, a stub `TODO()`, a swallowed exception. Worse, a
+gate that tolerates a fixed level of such debt FOREVER is a STASIS gate: it
+freezes the defect in place and calls the freeze health. A still photograph is
+not a pulse. The defect is not one miss; it is that no routine examiner existed,
+and that the only imagined equilibrium was homeostasis — a setpoint that, held
+static, becomes the metastatic, autoimmune, carcinomalous malefactor the
+Operator named.
+
+Insight: A scanner is not a parser (W-023), and a charge is not a conviction.
+The examiner must be a COURT: every charge tried on a positive case (must catch
+the defect) and a negative case (must not flag clean code) — because a gate that
+cries wolf is a broken gate (W-040). And the equilibrium it enforces must be
+HOMEOKINESIS, not homeostasis: the internal state is held by a FLUX, not a
+setpoint. Health is the RATE of clearance, not the level.
+
+─── NEVER #19 (NO UNEXAMINED SOURCE) ───
+GATE: tools/source_inspector.py
+NEVER ship a source tree that has not passed the routine trial of the source.
+Every named loophole in the source-feature registry is a CHARGE; `inspect` fails
+on any open BLOCKER. A charge with no negative trial is a miscalibrated charge
+and is itself a MISTRIAL the gate reports. The registry is the source analogue of
+the delivery gate's loophole registry: adding a new failure without adding a
+charge here is a defect.
+
+─── MUST #32 (HOMEOKINESIS, NOT HOMEOSTASIS) ───
+GATE: tools/source_inspector.py
+The inspector's equilibrium must be a RATCHET, never a static tolerance:
+  - the high-water mark (HWM) per escrow class may only ever move DOWN;
+  - any class above its HWM is a NET ADDITION of debt = a regression = FAIL;
+  - debt that does not flux downward for DELIVERY_WINDOW (5) deliveries is
+    FORCE-DEGRADED to a blocker — stasis is scheduled to become fatal;
+  - a rise is permitted ONLY by a recorded, reasoned `--justify` waiver (an
+    apoptotic exception: a cell removed so the whole may live).
+`trial` proves the four laws (L1 monotone clearance, L2 regression fails,
+L3 stasis degrades, L4 apoptotic waiver) on a deterministic simulation, so the
+claim is executable, not asserted.
+
+─── SPI-27 (DEDUP: ONE LEXER, ONE EXAMINER) ───
+GATE: tools/source_inspector.py
+The inspector must not fork a scanner. The comment/string-aware lexer is the ONE
+canonical `tools/kt_comment_scan.py`; the closer-restorer is the ONE narrow
+`tools/fix_unclosed_comments.py`. The inspector IMPORTS them (dedup rule, the
+same law that forbids a second source tree, NEVER #11). A duplicated scanner is a
+divergent scanner, and a divergent scanner is two truths about one tree.
+
+─── MUST #33 (THE CHARGE IS CALIBRATED OR WITHDRAWN) ───
+GATE: tools/source_inspector.py
+Every charge carries a positive trial (sensitivity) and a negative trial
+(specificity). A charge that fails either is a MISTRIAL and stops the run before
+any verdict. This is the structural answer to W-040: the gate cannot cry wolf
+because it must first prove, on a case it is told is clean, that it stays silent.
+The calibration is itself gated in CI (`source_inspector.py trial`).
+
+─── THE SENTENCING POLICY (SEVERITY, NOT A FLAT FAIL) ───
+A flat "any finding fails" gate is the crying-wolf gate. The examiner sentences
+in three tiers: BLOCKER (a real defect that stops the raw chain or breaks a
+NEVER — fails always), ESCROW (a real but pervasive hazard, e.g. a `!!` on a
+nullable, a cleanup catch — counted and gated as a REGRESSION against the ratchet
+HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
+`--fail-on-fixable`). The bounty is a single scalar, weighted 100:1:0.1, so
+"how bad is the tree" is a number, not a feeling.

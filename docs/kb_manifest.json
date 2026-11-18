@@ -3,16 +3,16 @@
   "count": 38,
   "files": [
     {
-      "bytes": 35456,
+      "bytes": 37521,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "686f3d2d526db00fb7fb16697184c2abd0b69770ed04dfd6ce5172a394ed40a4"
+      "sha256": "6ce5b96f605ca1404ff392940cf8307de4a7f5625e31d954729bad56326310c7"
     },
     {
-      "bytes": 55361,
+      "bytes": 60374,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "7c4698d8800df55c39acadd7947d63db7986da9a0eb5bdad3162c34cd6ea98ae"
+      "sha256": "1a01ec2e090feb68a6c97203df6bd20c7c15f0db15886f53507512022665bedc"
     },
     {
       "bytes": 3356,
@@ -21,10 +21,10 @@
       "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
     },
     {
-      "bytes": 63661,
+      "bytes": 64239,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "2e007815fc7b3db9bb036358546257844c304613b25e8eab15c17625f66f45a4"
+      "sha256": "7bd8873e65e509fb8e4642aa447e614d80702d88f2114ce80679bf2de9899fc0"
     },
     {
       "bytes": 4284,
@@ -33,10 +33,10 @@
       "sha256": "8a7dd377f4e1fc8e47cb12dcd7e7ee798cd11ed19028b1ff63a5ca04d69ec745"
     },
     {
-      "bytes": 13938,
+      "bytes": 14801,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "bc380cbd5b3fdf4f5957c9e51073e9333ba866c049377c4cb17e91e4653a5746"
+      "sha256": "dab6270e6db0c37cca64141ec3b7e09742bc81012f439c0e107599d1f4edd577"
     },
     {
       "bytes": 9608,
@@ -45,10 +45,10 @@
       "sha256": "43c74ae223ecf5ca8eff63d04219ebb6cdfffae60dbe81433cc40fdd5a715619"
     },
     {
-      "bytes": 139509,
+      "bytes": 120500,
       "path": "docs/DARKITH-OMEGA-repo.txt",
       "register": "B-knowledge",
-      "sha256": "ed122343b34d693016b579e570c7de20cd72bf536ce80075b3b67d55593b68d8"
+      "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
     },
     {
       "bytes": 3960,

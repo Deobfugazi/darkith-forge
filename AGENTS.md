@@ -489,3 +489,31 @@ whether the device's zone agrees with the Operator's; every session BOOTS timest
 records its boot instant, the user's last activity, and the circadian phase of each
 (`tools/synchrony_pulse.py` -> `proof/synchrony_pulse.json`). Law: DARKITH.md §32 (MUST
 #26/#27/#28, SPI-26).
+
+## §33 THE SOURCE INSPECTOR & HOMEOKINESIS (binding, 2026-11-10)
+
+`tools/source_inspector.py` is the logical trial examiner: it puts the SOURCE on trial the
+way `tools/delivery_gate.sh` puts the ARTIFACT on trial. It carries a registry of 10 named
+charges (unclosed comment, foreign `androidx.` import, `!!` assertion, stub `TODO`, swallowed
+exception, trailing whitespace, missing final newline, conflict marker, hardcoded secret,
+duplicate node function). Every charge is tried on a POSITIVE case (must catch the defect)
+and a NEGATIVE case (must not flag clean code); a charge that fails either is a MISTRIAL and
+stops the run — because a gate that cries wolf is a broken gate (W-040, §20). The lexer is
+the ONE canonical `tools/kt_comment_scan.py` and the closer-restorer is the ONE
+`tools/fix_unclosed_comments.py`; the inspector IMPORTS them, never forks them (SPI-27,
+NEVER #11).
+
+The equilibrium it enforces is HOMEOKINESIS, not homeostasis (MUST #32). A static tolerated
+level is STASIS — the metastatic, autoimmune, carcinomalous malefactor the Operator named.
+So the model is a RATCHET: the high-water mark per escrow class may only ever move DOWN; any
+class above its HWM is a net addition of debt and FAILS; debt that does not flux downward for
+5 deliveries is FORCE-DEGRADED to a blocker; a rise is permitted only by a recorded,
+reasoned `--justify` waiver (an apoptotic exception). `source_inspector.py trial` proves the
+four ratchet laws on a deterministic simulation, so the claim is executable, not asserted.
+The verdict reports the CLEARANCE FLUX — health is the RATE of clearance, not the level.
+
+Severity is the sentencing policy: BLOCKER (fails always), ESCROW (gated as a regression
+against the HWM), COSMETIC (autofixed; fatal only with `--fail-on-fixable`). The bounty is
+one scalar weighted 100:1:0.1. Commands: `trial` (calibrate + prove), `inspect` (verdict),
+`fix` (autofix reversible charges, idempotent), `ratchet` (advance the setpoint one
+delivery), `report`. Law: DARKITH.md §33 (NEVER #19, MUST #32/#33, SPI-27, W-048).
