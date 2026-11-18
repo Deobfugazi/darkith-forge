@@ -1,6 +1,6 @@
 {
   "_law": "NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WITHIN ONE CYCLE). A deficit open across two or more deliveries is a STALL and fails tools/stall_gate.py. Every entry is CLOSED (evidence) or DESCoped (reason). Silence is not an option.",
-  "_delivery_versioncode": 4,
+  "_delivery_versioncode": 2,
   "deficits": [
     {
       "id": "B1",
@@ -56,7 +56,7 @@
       "title": "exact installed-version delta is inferred (prior APK declared no versionName)",
       "status": "closed",
       "named_in": 1,
-      "evidence": "This build declares versionCode=4 / versionName=2.1.0-omega and self-reports at runtime via apkVersion() (L-01/L-02/L-03 in tools/delivery_gate.sh)."
+      "evidence": "This build declares versionCode=3 / versionName=1.2.0-omega and self-reports at runtime via apkVersion() (L-01/L-02/L-03 in tools/delivery_gate.sh)."
     }
   ]
 }

@@ -70,10 +70,12 @@ def build() -> int:
     }
 
     # 1. app/ is owned by the one-shot payload (current Kotlin, engine assets,
-    #    release key/cert, arm64 toolchain libs).
+    #    release key/cert, arm64 toolchain libs).  Payload members are rooted at
+    #    PREFIX (`darkith-forge/`), so compare on the path below it.
     for n in pay.namelist():
-        if n.startswith("app/") and not n.endswith("/"):
-            entries[n] = pay.read(n)
+        rel = n[len(PREFIX):] if n.startswith(PREFIX) else n
+        if rel.startswith("app/") and not n.endswith("/"):
+            entries[rel] = pay.read(n)
 
     # 2. webapp/ is owned by the project's current single-file apps.
     for rel, src in WEBAPP.items():
@@ -120,7 +122,8 @@ def check() -> int:
     same2 = got_savf == cur_savf
     print(f"  {'OK  ' if same2 else 'STALE'} repo webapp/savf.html  {sha256(got_savf)[:16]}")
     got_hk = z.read(PREFIX + "app/src/main/assets/homekeeper.html")
-    same3 = got_hk == cur
+    cur_asset = (ROOT / "app/src/main/assets/homekeeper.html").read_bytes()
+    same3 = got_hk == cur_asset
     print(f"  {'OK  ' if same3 else 'STALE'} repo app/.../homekeeper.html  {sha256(got_hk)[:16]}")
     cur_omega = (ROOT / "omega.html").read_bytes()
     got_omega = z.read(PREFIX + "webapp/omega.html")

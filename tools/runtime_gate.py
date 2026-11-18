@@ -76,7 +76,14 @@ def main():
 
     def run_mode(p, bridged):
         errors = []
-        browser = p.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
+        # Prefer the system chromium when playwright's bundled browser is absent,
+        # so CI in a slim image renders instead of failing on a missing download.
+        launch_kwargs = {"args": ["--no-sandbox", "--disable-dev-shm-usage"]}
+        for cand in ("/usr/bin/chromium", "/usr/bin/chromium-browser", "/usr/bin/google-chrome"):
+            if os.path.exists(cand):
+                launch_kwargs["executable_path"] = cand
+                break
+        browser = p.chromium.launch(**launch_kwargs)
         ctx = browser.new_context(viewport={"width": 360, "height": 800},
                                   device_scale_factor=2, color_scheme="dark",
                                   is_mobile=True, has_touch=True)

@@ -27,8 +27,9 @@ object ProgressLedger {
         ProgressDirectory.writeMeta()
         LaborClock.start()
         thread = HandlerThread("darkith-progress").also { it.start() }
-        handler = Handler(thread!!.looper)
-        handler!!.post(tickRunnable)
+        val h = thread?.looper?.let { Handler(it) }
+        handler = h
+        h?.post(tickRunnable)
         onEvent("progress.ledger.start", "{\"pkg\":\"${ctx.packageName}\"}")
     }
     fun stop() {

@@ -40,6 +40,7 @@ INCLUDE_FILES = (
     "AGENTS.md",
     "DARKITH.md",
     "RESUME.md",
+    "VERSION.json",
 )
 WEBAPPS = (
     "darkith home forge.html",

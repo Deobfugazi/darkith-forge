@@ -54,7 +54,7 @@ object AegisVM {
                         synchronized(sb) { if (sb.length < 100000) sb.append(buf, 0, n) }
                     }
                 }
-            } catch (e: Exception) { }
+            } catch (e: Exception) { android.util.Log.w("Darkith", "process output read failed", e) }
         }
         reader.start()
         if (!p.waitFor(60, java.util.concurrent.TimeUnit.SECONDS)) {

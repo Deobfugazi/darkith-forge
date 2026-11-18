@@ -127,7 +127,7 @@ class ChimeraBuilder(private val context: Context) {
                 val p = arr.optString(i)
                 if (p.isNotEmpty()) wanted.add(p)
             }
-        } catch (e: Exception) { }
+        } catch (e: Exception) { android.util.Log.w("Darkith", "permission options parse failed", e) }
         if (wanted.isEmpty()) return manifest
         val xml = wanted.joinToString("\n    ") { "<uses-permission android:name=\"$it\" />" }
         var fgsXml = ""
@@ -197,7 +197,7 @@ class ChimeraBuilder(private val context: Context) {
                         synchronized(sb) { if (sb.length < 20000) sb.append(buf, 0, n) }
                     }
                 }
-            } catch (e: Exception) { }
+            } catch (e: Exception) { android.util.Log.w("Darkith", "tool output read failed", e) }
         }
         reader.start()
         if (!p.waitFor(120, TimeUnit.SECONDS)) {

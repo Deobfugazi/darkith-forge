@@ -15,8 +15,10 @@ Six checks, each of which fails loudly:
                   correct, and there is no horizontal overflow
   6. savf cli  -- savf.py's selftest passes and bad input fails cleanly
                   instead of dumping a traceback or a silent clean bill
+  7. encoding  -- `savf.py` and the browser core decode source exactly as
+                  CPython does, honoring a UTF-8 BOM and a PEP 263 cookie
 
-Run:  python3 build/verify.py            (all six)
+Run:  python3 build/verify.py            (all seven)
       python3 build/verify.py --fast     (all but the browser checks)
 
 Exit status is 0 only when every check passes.
@@ -74,7 +76,7 @@ def run(cmd, **kw):
 
 
 def check_sync() -> bool:
-    print("[1/6] sync")
+    print("[1/7] sync")
     # Each checker is (label, argv, needs_delivery). `delivery/` and the zips are
     # regenerable output that .gitignore forbids committing (RESUME.md §4), so in a
     # clean checkout they are absent. Absent is a skip, not a failure: the gate must
@@ -83,6 +85,7 @@ def check_sync() -> bool:
     ok = True
     checkers = [
         ("build-forge.py", ["build-forge.py", "--check"], False),
+        ("integrate-engines.py", ["integrate-engines.py", "--check"], False),
         ("sync-delivery.py", ["sync-delivery.py", "--check"], True),
         ("make-repo-zip.py", ["make-repo-zip.py", "--check"], True),
         ("make-bundle-zip.py", ["make-bundle-zip.py", "--check"], True),
@@ -113,8 +116,77 @@ def cli_findings(path: pathlib.Path):
     return sorted(res)
 
 
+# Source encodings the reference accepts or rejects.  A file Python can run must
+# never be reported as unparseable, and a file it refuses must be reported as
+# such; both `savf.py` and the browser core must agree with `ast.parse`.
+ENCODING_CORPUS = {
+    "plain_utf8.py": "def f():\n    return 1\n".encode(),
+    "bom_utf8.py": b"\xef\xbb\xbfdef f():\n    return 1\n",
+    "bom_todo.py": b"\xef\xbb\xbfdef f():\n    # TODO\n    pass\n",
+    "latin1_cookie.py": "# -*- coding: latin-1 -*-\ndef f():\n    x = 'caf\u00e9'\n    return x\n".encode("latin-1"),
+    "cp1252_cookie.py": "# -*- coding: cp1252 -*-\ndef f():\n    x = '\u20ac'\n    return x\n".encode("cp1252"),
+    "utf8_cookie.py": "# -*- coding: utf-8 -*-\ndef f():\n    x = 'caf\u00e9'\n    return x\n".encode(),
+    "cookie_line2.py": b"#!/usr/bin/env python\n# -*- coding: latin-1 -*-\ndef f():\n    x='\xe9'\n",
+    "no_cookie_latin1.py": "def f():\n    x = 'caf\u00e9'\n    return x\n".encode("latin-1"),
+    "unknown_cookie.py": b"# -*- coding: not-a-codec-xyz -*-\ndef f():\n    pass\n",
+    "bom_and_latin1.py": b"\xef\xbb\xbf# -*- coding: latin-1 -*-\ndef f():\n    pass\n",
+    "only_bom.py": b"\xef\xbb\xbf",
+    "null_bytes.py": b"def f():\n    x = \x00\n",
+}
+
+
+def _reference_parses(data: bytes) -> bool:
+    """True when CPython itself accepts the bytes (`ast.parse` on raw bytes)."""
+    import ast
+    try:
+        ast.parse(data, "m.py")
+        return True
+    except (SyntaxError, UnicodeDecodeError, ValueError):
+        return False
+
+
+def check_encoding() -> bool:
+    """Every surface decodes source exactly as CPython does (BOM, PEP 263)."""
+    print("[7/7] encoding (BOM + PEP 263 cookie, py + JS core)")
+    import base64
+    import json
+    import tempfile
+
+    core = CORE.read_text(encoding="utf-8")
+    driver = r"""
+const fs = require('fs');
+eval(fs.readFileSync(process.argv[2], 'utf8'));
+const bytes = new Uint8Array(Buffer.from(process.argv[3], 'base64'));
+const r = globalThis.SavfScan.scanBytes('m.py', bytes, { stdlib: {}, stdattrs: {}, local: {} });
+process.stdout.write(JSON.stringify(r.map(f => f.rule)));
+"""
+    ok = True
+    with tempfile.TemporaryDirectory() as td:
+        td = pathlib.Path(td)
+        (td / "core.js").write_text(core, encoding="utf-8")
+        (td / "driver.js").write_text(driver, encoding="utf-8")
+        for name, data in ENCODING_CORPUS.items():
+            ref = _reference_parses(data)
+            f = td / name
+            f.write_bytes(data)
+            py = "PARSE" not in {rule for _, rule, _ in cli_findings(f)}
+            r = run(["node", str(td / "driver.js"), str(td / "core.js"),
+                     base64.b64encode(data).decode()])
+            if r.returncode != 0:
+                print(f"      {name:<22} node failed: {r.stderr.strip()[:80]}")
+                ok = False
+                continue
+            js = "PARSE" not in set(json.loads(r.stdout))
+            good = (py == ref) and (js == ref)
+            ok = ok and good
+            print(f"      {name:<22} cpython={'ok' if ref else 'no':<3} "
+                  f"py={'ok' if py else 'no':<3} js={'ok' if js else 'no':<3} "
+                  f"{'match' if good else 'DIVERGE'}")
+    return ok
+
+
 def check_parity() -> bool:
-    print("[2/6] parity (JS core vs savf.py)")
+    print("[2/7] parity (JS core vs savf.py)")
     import json
     import tempfile
 
@@ -166,7 +238,7 @@ def check_battery():
     so it must not report FAIL (which made the full run contradict --fast). A browser that
     IS installed but throws, or a page that errors, is a real FAIL.
     """
-    print("[3/6] battery (chromium/firefox/webkit, file://, no network)")
+    print("[3/7] battery (chromium/firefox/webkit, file://, no network)")
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -253,7 +325,7 @@ def check_battery():
 
 def check_omega() -> bool:
     """The Ω engine: exec contract, wasm tier, and assistant policy."""
-    print("[4/6] omega")
+    print("[4/7] omega")
     node = shutil.which("node")
     if not node:
         print("      node not installed; skipping omega contract tests")
@@ -269,7 +341,7 @@ def check_omega() -> bool:
 
 def check_omega_ui() -> bool:
     """The Ω webapp UI: boots from file://, builtins correct, no overflow."""
-    print("[5/6] omega ui")
+    print("[5/7] omega ui")
     try:
         from playwright.sync_api import sync_playwright  # noqa: F401
     except ImportError:
@@ -285,7 +357,7 @@ def check_omega_ui() -> bool:
 
 def check_savf_cli() -> bool:
     """The savf.py CLI: selftest passes and bad input fails cleanly."""
-    print("[6/6] savf cli")
+    print("[6/7] savf cli")
     r = run([sys.executable, str(BUILD / "savf-cli-test.py")])
     last = (r.stdout.strip().splitlines() or [""])[-1]
     print("      " + last)
@@ -306,6 +378,7 @@ def main() -> int:
     if not args.fast:
         results.append(("omega-ui", check_omega_ui()))
     results.append(("savf-cli", check_savf_cli()))
+    results.append(("encoding", check_encoding()))
 
     print()
     # A check returns True (pass), False (fail), or None (SKIPPED — the runtime is absent,

@@ -11,6 +11,8 @@ agreement, then records the result to `proof/convergence.json`:
   A. the Operator's clock — via the Python runtime AND the JS runtime (two languages)
   B. the working tree content — via `git hash-object` AND a sha256 walk (two methods)
   C. the circadian phase — via both runtimes (two implementations)
+  D. the source universe — via the examiner's iterator, a filesystem walk, AND git's index
+     (three methods; NEVER #19: no source escapes the trial, none lives only on disk)
 
 Disagreement fails the gate. A pass means the two derivations converged on the same bytes,
 which is what lets a second agent trust the first agent's board without re-doing the work.
@@ -78,6 +80,41 @@ def tree_blobs_python() -> dict:
     return m
 
 
+def source_universe_examiner() -> list:
+    """Derivation 1: the file universe the SOURCE INSPECTOR actually examined — the tree
+    NEVER #19 says must have passed the routine trial (no unexamined source)."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import source_inspector as si
+    src_root = si._root_of(si.DEFAULT_ROOT)
+    rel = src_root.relative_to(ROOT)
+    return sorted(str(p.relative_to(ROOT)) for p in si.iter_sources(src_root))
+
+
+def source_universe_walk() -> list:
+    """Derivation 2: an independent filesystem walk for the same extensions. Agrees with
+    derivation 1 iff the examiner's iterator sees every source file on disk."""
+    import source_inspector as si
+    src_root = si._root_of(si.DEFAULT_ROOT)
+    exts = si.KT_EXTS | si.JS_EXTS
+    return sorted(str(p.relative_to(ROOT)) for p in src_root.rglob("*")
+                  if p.is_file() and p.suffix in exts)
+
+
+def source_universe_git() -> list:
+    """Derivation 3: the source files git TRACKS (the authoritative server-of-record). Agrees
+    with the walk iff every source file is committed — no source survives only on disk."""
+    import source_inspector as si
+    src_root = si._root_of(si.DEFAULT_ROOT)
+    rel = src_root.relative_to(ROOT)
+    exts = si.KT_EXTS | si.JS_EXTS
+    out = []
+    for f in _tracked_files():
+        pf = pathlib.PurePosixPath(f)
+        if pf.suffix in exts and pf.is_relative_to(pathlib.PurePosixPath(str(rel))):
+            out.append(f)
+    return sorted(out)
+
+
 def main() -> int:
     write = "--check" not in sys.argv[1:]
     fails, facts = [], {}
@@ -135,6 +172,21 @@ def main() -> int:
         fails.append(f"tree: {len(differ)} file(s) whose bytes differ from the index "
                      f"(uncommitted drift): {differ[:5]}")
 
+    # D. the SOURCE UNIVERSE — three independent derivations of the same set (NEVER #19: no
+    # unexamined source). The examiner's iterator, a filesystem walk, and git's index must
+    # agree; a disagreement means a source file escaped the trial, or survives only on disk.
+    ux, uw, ug = source_universe_examiner(), source_universe_walk(), source_universe_git()
+    facts["source.examiner"] = len(ux)
+    facts["source.walk"] = len(uw)
+    facts["source.git"] = len(ug)
+    facts["source.agree"] = ux == uw == ug
+    if ux != uw:
+        fails.append(f"source: examiner saw {len(ux)} but the walk found {len(uw)} "
+                     f"(escaped the trial: {sorted(set(uw) - set(ux))[:5]})")
+    if uw != ug:
+        fails.append(f"source: the walk found {len(uw)} but git tracks {len(ug)} "
+                     f"(on disk only, uncommitted: {sorted(set(uw) - set(ug))[:5]})")
+
     facts["converged"] = not fails
     facts["agent"] = "primary"
     if write:
@@ -147,7 +199,8 @@ def main() -> int:
             print("  " + f)
         return 1
     print(f"convergence_gate: PASS — clock (py==js), iso, phase (active+rest), tree "
-          f"({facts['tree.files']} files: git index == independent blob hash); clock={facts['clock.py']}")
+          f"({facts['tree.files']} files: git index == independent blob hash), source "
+          f"universe ({facts['source.walk']} files: examiner == walk == git); clock={facts['clock.py']}")
     return 0
 
 

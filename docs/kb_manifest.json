@@ -1,30 +1,30 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 43,
+  "count": 44,
   "files": [
     {
-      "bytes": 42825,
+      "bytes": 60394,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "64acdc127dba10b8ab5d375d5f2b6f4e02ef026540a1a9fb2e8d7668e06e464a"
+      "sha256": "e8d78c281e62ca2a644f02f9286fdcf3d626282d5b13e2f8a6464f2692857e7f"
     },
     {
-      "bytes": 65141,
+      "bytes": 65331,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "a220f50aefe33efaffd342bcd9b028f9c104b59b1fcd70af1f9f5f24bab81aca"
+      "sha256": "9260e4a3afd7ae773276d6468c7893fafa3375b6540ed399fd139e78dbb33bdf"
     },
     {
       "bytes": 3356,
       "path": "DEFICITS.json",
       "register": "A-apparatus",
-      "sha256": "13453acc041093f506a9167706e041027da34870ae06e94fd23817bcb1e5adac"
+      "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 64277,
+      "bytes": 64860,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "750b199111d3c7150d786af68b61441f8d7e511b801e15057d4fd64025babd30"
+      "sha256": "6708b9ada18d1cf2fd6341bafb3c17f937f71d3abde6a537d6873a75d12fbf55"
     },
     {
       "bytes": 4457,
@@ -33,10 +33,10 @@
       "sha256": "52ce56a89a58b9883ca4dfb868417104dbb3a92f203eb7f42adc27c3b1634a0d"
     },
     {
-      "bytes": 16772,
+      "bytes": 17404,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "4e7c3002349f177180ed7526202cc564b38c67a45a5af2bc34a45dcc79edf509"
+      "sha256": "b45dc72f9dd827361e485b0e64efaad5a92d10b9944bdd6488e1857f986aa486"
     },
     {
       "bytes": 9608,
@@ -63,16 +63,22 @@
       "sha256": "714045540aa609926a3f1fed7c94d7282296016db34f73a4e1e824d2f635fddf"
     },
     {
+      "bytes": 2729,
+      "path": "docs/UPDATES.md",
+      "register": "B-knowledge",
+      "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
+    },
+    {
       "bytes": 146183,
       "path": "docs/nt/NT-I-IV-protocol.md",
       "register": "B-knowledge",
       "sha256": "5c35948728cd69540108fc5aac5f930e4ec033a315652ce0ec641fa328dc7165"
     },
     {
-      "bytes": 4087,
+      "bytes": 4329,
       "path": "docs/nt/NT-INDEX.md",
       "register": "B-knowledge",
-      "sha256": "bfa58a87d12f496fdea1120ce4b8023182807dc0f5ba52327878075274364599"
+      "sha256": "c244fba77d05b16d9c8ac7b4f0eb36b4449044c1a0e31d3ba3303e2730979306"
     },
     {
       "bytes": 47852,
@@ -123,22 +129,22 @@
       "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
     },
     {
-      "bytes": 539472,
+      "bytes": 583821,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "f706384c84db0093f451df9c348d550af33ed24c117327f055349d9ae198b673"
+      "sha256": "8cecd66d64fadc318f66889ed96d793947e990c84029b3f17a33ec49ce8129c1"
     },
     {
-      "bytes": 1318719,
+      "bytes": 1436398,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "cd298f7106472b08b5fba514229a993e2c42a9bc28692ad540c413deaae73cce"
+      "sha256": "8ead738e0bb8abe422ead57643914bc8bb1f67b0cdfdd6fb4a70d0c28148c28b"
     },
     {
-      "bytes": 231324,
+      "bytes": 271541,
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
-      "sha256": "882eeb3e7d7ba67dd07497169f5519ad8246ecf8e262989c4ec15d3296f7f806"
+      "sha256": "71fba2835db8960b03021b9fe25a676b0a3cbcfea411e79c24f4605173de01d4"
     },
     {
       "bytes": 60965,
@@ -153,40 +159,40 @@
       "sha256": "9cf24b11b3ee803c53ea96db7b480e291a519c800bf1a04e37f7fc7c85595e42"
     },
     {
-      "bytes": 24568,
+      "bytes": 24606,
       "path": "omega-reader.html",
       "register": "C-skillbase",
-      "sha256": "622dc406953f3b86a680b9834e5ce09112666f94332ae2df4aa83288bd305f68"
+      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     },
     {
-      "bytes": 41959,
+      "bytes": 82158,
       "path": "omega.html",
       "register": "C-skillbase",
-      "sha256": "a11d595c79b96dbf94a7b14ef82de5d5d8831e64b287232632c2f91b6e557edf"
+      "sha256": "e19779ce68608b305c1f143301d348660d013a7694bee15e15fc1191f0353335"
     },
     {
-      "bytes": 398245,
+      "bytes": 443120,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "5030bd163189924db9bd07346fff827a846fc16f7edd77c65fa61427f8902632"
+      "sha256": "b35f17537c84a07e291b55026bfbe2ebb157f5163dd3b8bc52f49f8429ac98a7"
     },
     {
-      "bytes": 231324,
+      "bytes": 271541,
       "path": "app/src/main/assets/darkith_ui.html",
       "register": "D-asset",
-      "sha256": "882eeb3e7d7ba67dd07497169f5519ad8246ecf8e262989c4ec15d3296f7f806"
+      "sha256": "71fba2835db8960b03021b9fe25a676b0a3cbcfea411e79c24f4605173de01d4"
     },
     {
-      "bytes": 473721,
+      "bytes": 490080,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "e12c993c179cd290030c0fda7da7942b0debe70c40bb924b534f2564c7f58816"
+      "sha256": "f3c83ac2f31cbeda21c0e1d180da5eda1599b1c3620ec854a114b31b8993d75e"
     },
     {
-      "bytes": 96784,
+      "bytes": 96790,
       "path": "app/src/main/assets/savf_core.html",
       "register": "D-asset",
-      "sha256": "addc4f6d44b94ed4f26f21dffd88b9c1d4334753da4a454fa11c0d013d9812d2"
+      "sha256": "a37cd725501b496cc1112aa706b314d665e134c047a515246a6c0ec0d22e175a"
     },
     {
       "bytes": 1320193,

@@ -414,7 +414,7 @@ class SubstrateIngestor(
         val out = ArrayList<JSONObject>()
         for (line in f.readLines(Charsets.UTF_8)) {
             if (line.isBlank()) continue
-            try { out.add(JSONObject(line)) } catch (e: Exception) { }
+            try { out.add(JSONObject(line)) } catch (_: Exception) {}
         }
         return out
     }

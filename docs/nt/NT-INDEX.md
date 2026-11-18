@@ -24,7 +24,7 @@ are `proof/nt_reconciliation.json`; the absolution report is
 | IX | `NT-IX.txt` | the multiplicative triad; the 7-step no-Gradle raw build chain | RESOLVED |
 | X | `NT-X.txt` | hardware ground truth; the autophagic allocator; the Healer; Σ = 0 | RESOLVED |
 | XI | `NT-XI.txt` | the Autophagic Sovereign Economy; the AQP implementation synthesis | RESOLVED |
-| XII | `NT-XII.txt` | the terminal convergence: the Bond Formation Number closed across all scales; the SAVF Generative Manufactory; the no-Gradle proto-node; the Autophagic Sovereign Economy | RESOLVED |
+| XII | `NT-XII.txt` | the terminal convergence: the Bond Formation Number closed across all scales; the Triadic Resolver; the SAVF Generative Manufactory; the no-Gradle proto-node; the Autophagic Sovereign Economy | RESOLVED (mechanics), EXPOSABLE (external figures), INFERRED (cross-scale synthesis) |
 
 ## The NT → gate map (SPI-15: a law that is not a gate is a note)
 
@@ -34,6 +34,7 @@ are `proof/nt_reconciliation.json`; the absolution report is
 | II, XIII | no foreign symbol | `tools/fork_integrity_gate.sh` (SPI-13: zero `import androidx`) |
 | IX | the 7-step raw chain; API-34 ceiling; align before sign | `build.sh`, `tools/api_level_gate.py`, `tools/fork_integrity_gate.sh` |
 | X | never write a stub (Prime Directive) | `tools/law_gate.py`, `tools/syntax_gate.py` |
+| XII | the corpus count is true; a treatise is carried, witnessed, and contradiction-free before admission | `tools/absolution_admission.py` |
 | all | the corpus is carried, not merely cited; every contradiction resolved | `tools/nt_gate.py` |
 | X, XII | the Healer repairs to a symbol the reference carries (raw `android.*`, not `androidx.*`) | `tools/nt_sensor.py` (reads the reference `android.jar`; SPI-13) |
 

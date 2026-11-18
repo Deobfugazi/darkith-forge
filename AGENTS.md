@@ -226,7 +226,9 @@ W-041: the recurring defect was the ABSENCE of a delivery gate — shipping with
   APK-dependent checks as named SKIPs on a box with no APK, never a silent pass.
 
 ## Version truth (never guess again)
-  - Truth is AndroidManifest.xml: versionCode=4, versionName=2.1.0-omega. Bridge VERSION=hk-bridge-52.
+- Truth is AndroidManifest.xml: versionCode=4, versionName=2.1.0-omega. Bridge VERSION=hk-bridge-52.
+- One version of record: VERSION.json. `python3 tools/stamp_versions.py` stamps it into every
+  terminal surface (darkterm/darktools/termkit/savf/fused pages); `--check` fails if any drifts.
 - The app self-reports: `darkith.apkVersion()` -> "bridge=... pkg=... (code)".
 - On device: `pm dump com.darkith.transliaison | grep -E 'versionName|versionCode'`.
 - From the APK: `aapt dump badging <apk> | grep ^package`.
@@ -349,6 +351,14 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   its frame. `savf.py selftest` -> ok; in-page SAVF self-test -> 9/9, 0 errors.
 - TWO-TAB CONVERGENCE (§0b): `tools/sync.sh` + `tools/converge.sh` proven by a
   real divergence (two tabs, both commits survived, linear history).
+- SOURCE ENCODING (fixed): `savf.py` used to read every file as strict UTF-8, so a
+  file CPython runs fine — a UTF-8 BOM, or a PEP 263 `coding:` cookie for any
+  non-UTF-8 codec — drew a false PARSE finding and flipped the verdict to LIED.
+  Both surfaces now decode as CPython does: `savf.py` via `tokenize.open`; the
+  browser core via a PEP 263 decoder (BOM, cookie on line 1 or 2 with line 2 only
+  when line 1 is blank or a comment, name normalization, a strict ASCII path, and
+  `TextDecoder` otherwise). Gate `7/7 encoding` in `build/verify.py` holds
+  `savf.py` + the JS core to `ast.parse` over a 12-file corpus.
 
 ## §26 DELIVERY RECORD — forensic remediation + hub-generation rule (2026-11-17)
 - FORENSIC REMEDIATION (P1–P5). The "vacuous green" family is closed by making each law an
@@ -536,7 +546,168 @@ one scalar weighted 100:1:0.1. Commands: `trial` (calibrate + prove), `inspect` 
 `fix` (autofix reversible charges, idempotent), `ratchet` (advance the setpoint one
 delivery), `report`. Law: DARKITH.md §33 (NEVER #19, MUST #32/#33, SPI-27, W-048).
 
-## §34 THE VISUAL-AFFORDANCE SPECIALIST — the Ω Icon Forge (binding, 2026-11-10)
+## §34 SAVF UTILITY HARDENING + CROSS-SURFACE PROOF (2026-11-18)
+SAVF (`savf.py` CLI + `savf.html` offline webapp) is the utility this section governs: a
+zero-dependency Python source auditor whose verdict names the rule/fact/computation behind
+it. It is a TWO-SURFACE product — the CLI and the browser core must agree byte-for-byte, and
+its seals must be portable between them. Verified this session by PRE-RUN, not inference:
+
+- BROWSER BATTERY (real engines, `file://`, network blocked): `build/verify.py` [3/7] now
+  runs because playwright is installed (chromium + firefox + webkit). `savf.html` (and the
+  fused pages) load with **0 console errors, 0 page errors, net=0**. This was SKIP before —
+  install the browsers (`python3 -m playwright install chromium firefox webkit`) to arm it.
+- DIFFERENTIAL FUZZ (the strong parity proof): 1200 randomized sources (imports, stubs,
+  markers, phantom attrs, swallow, taut asserts, BOM, CRLF, latin-1 cookie, syntax error,
+  empty) scanned through the page's OWN contract — `SavfScan.scanBytes(path, bytes, opts)`
+  with `window.SAVF_STDLIB` / `SAVF_STDATTRIB` — matched `savf.py scan` **1200/1200**, no
+  divergence. Reproduce the surface: extract those two maps from `savf.html` and call
+  `scanBytes` exactly as `runAudit()` does. (Passing an empty stdlib map is a HARNESS BUG,
+  not a product bug — every stdlib import then reads as phantom.)
+- CPYTHON REFERENCE: deep nesting (parens, indentation) and long binop chains agree with
+  `compile()` on all three surfaces. CPython's real paren limit is 200 (201 -> SyntaxError);
+  the JS core's `bracketDepth > 200` cap is CALIBRATED to it, not arbitrary.
+- CRYPTO INTEROP (byte-identical): `SavfAudit.canonJson` == `json.dumps(sort_keys,separators)`;
+  `SavfAudit.sealOf` == `hashlib.sha256(canon)`; `SavfHash.sha256Text` and
+  `hmacSha256Text` == Python `hashlib`/`hmac`. A contract lock sealed in the browser verifies
+  in the CLI and vice versa. Do not change one hasher without the other.
+- FAIL-CLOSED VERDICT: garbage/missing phi states -> REVIEW (never PASS); `verdict` returns
+  PASS(0)/REVIEW(2)/BLOCKED(3). Ledger is strict (kinds D/N/R/W/C/A/U).
+- UI: 7 tabs (audit/gates/axis/ledger/freeze/self/help), no horizontal overflow at
+  320–1440px, keyboard-focusable, theme toggle persists. Contrast passes AA in light+dark
+  (the `.btn.pri` gradient is dark blue→purple with white text; a naive probe that ignores
+  `background-image` will falsely flag it).
+- RUNNING STATE: the tool writes its lock/manifest to the CWD (`.savf/`), by design —
+  `build/savf-cli-test.py` asserts the repo root stays clean. `.savf/` is now gitignored.
+  NEVER run `savf freeze`/`manifest create` with CWD = repo root, or CI's savf-cli test fails
+  on the leftover `.savf/`.
+- GATES: `build/verify.py` (7 checks incl. battery) and `tools/ci.sh` (45 gates) both PASS.
+- TERMINAL SURFACE (Termkit `savf` builtin): defined ONCE in `build/build-forge.py`
+  (`TERMINAL_BUILTIN`) and injected into the fused page between `/* SAVF-TERM:START|END */`.
+  It calls `globalThis.SavfTruth.auditSource`, so the verdict printed in the terminal is
+  the verdict the page and the studio give. Its EXIT CODE mirrors `savf.py`'s
+  `EXIT = {PASS:0, REVIEW:2, BLOCKED:3, LIED:4}` — never collapse non-PASS to 1, or `$?`/
+  `&&`/`||` in the terminal stop agreeing with the CLI on the same file. Verified in-browser:
+  10/10 rule-exact vs `savf.py scan --json`, 6/6 exit-map match.
+- ONE-SHOT: `delivery/darkith-one-shot.sh` = bash header + raw ZIP payload after the
+  `__DARKITH_PAYLOAD_BELOW__` line. It is NOT valid bash end-to-end (`bash -n` fails on the
+  binary tail by design); the header `tail`s the payload out and checks its sha256. On a host
+  without the Android toolchain it fails HONESTLY (`apksigner missing`), never fakes a build.
+- DUAL-REGISTER HELP: `help` (and `help beginner|novice|novices`) prints the beginner
+  register; `help dev|developer|expert|ai|full` prints the developer register; `help CMD`
+  stays the one-line `HELP` table; unknown args print an honest error (exit 1). Both
+  registers are defined ONCE in `build/build-forge.py` (`HELP_BEGINNER` / `HELP_DEV`) and
+  injected between `/* DUAL-HELP:START|END */` over the pristine `HELP_ANCHOR`. Rebuild
+  restores `HELP_ANCHOR` first (`restore_dual_help`), so the injection is idempotent.
+  LAW: every sample command + expected output in the help is PROBED from the live shell,
+  never invented — a first draft claimed `test` runs the battery (it is the POSIX predicate;
+  the battery is the `test` CHIP / `TermKit.selftest()`) and that `f(){ return N; }` sets the
+  status (it is the LAST command's; a bare `return N` yields 127). Probe before you document.
+  The developer register also carries the INVARIANT DEBUGGER (the fixture battery) and the
+  FRACTURE CLOSURE (each Linux divergence, its closed form, why it is correct here).
+- PARITY GATE (armed, `tools/savf_parity_gate.py`): the durable form of the differential
+  proof above. It runs `savf.py` and drives `savf.html` through playwright/chromium and FAILS
+  if the two ports disagree on any verdict (all-hard-fail, all-soft-fail, marginal cases) or
+  any chart sign (3 charts × 3 axes × 2 moves). Wired into `tools/ci.sh` after the version
+  surface gate. Skips loudly only when no browser is present. Run it after ANY change to the
+  verdict rule, the chart table, or a hash helper — it is the cheap guard against one port
+  drifting from the other.
+- THIS SESSION re-verified, by pre-run: selftest 9/9; SHA-256 js==hashlib on 5/5 inputs
+  (incl. empty + unicode); `fExp`/`gLog` exact inverse (max err 4.4e-16); freeze→check-freeze
+  detects tampering (exit 1); HMAC `manifest create/verify` verifies clean and rejects a
+  tampered artifact (exit 1); `scan` on stub/binary/non-UTF8 inputs returns honest findings
+  with correct exit codes and no traceback; browser UI renders 0-error at 360–1280px in both
+  themes with no horizontal overflow.
+
+## §35 CLIENT-COUPLING UPDATE WATCHER (binding, 2026-11-18)
+- THE GAP THIS CLOSES: nothing tracked whether the installed copy was stale against the live
+  remote. The app could read its own version (`darkith.apkVersion()`) but never compared it to
+  anything, and no version manifest existed for a client to read. Now: `VERSION.json` is the
+  manifest of record; `build/updater.js` compares installed-vs-remote and alerts.
+- INJECTED AT BUILD TIME, IDEMPOTENT: into the fused page by `build/build-forge.py`
+  (markers `/* UPDATE-WATCHER:START|END */`) and into the app surface
+  `app/src/main/assets/homekeeper.html` by `build/inject_updater.py`. BOTH strip before
+  inject. TRAP (cost a debug cycle): `inject()` in build-forge.py ALREADY wraps the payload
+  in the markers — `updater_block()` must return the bare `<script>`, never the markers too,
+  or the block nests and the build grows ~25 bytes per run.
+- MIRRORS, NOT ONE URL: the repo is PRIVATE, so `raw.githubusercontent.com` and
+  `releases/.../download` 404 without auth, and the app's WebView has none. The check walks
+  `VERSION.json.manifest_urls` (sovereign runtime host FIRST) via `fetchFirst()`, first answer
+  wins; only when EVERY mirror is dead is the state `offline`. `manifest_url` MUST equal
+  `manifest_urls[0]` (gated).
+- NEVER LIE: offline -> `unknown` ("neither confirmed nor denied"), never a false `current`.
+  The alert fires ONCE per new versionCode. `decide()` is pure; only the transport is stubbed
+  in tests. Version algebra: versionCode is authoritative, else derived from a dotted name.
+- PRESENTATION: `present()` prefers the host `UI.dialog`, else a self-contained overlay
+  (`overlay()`, dark panel + gold Ω + one-shot link, fits 360px), else native `alert`. Every
+  string is `textContent` — a remote manifest is UNTRUSTED and must never inject markup.
+  (At runtime `window.UI` is undefined, so the overlay is the real surface, not the fallback.)
+- VERSION TRUTH: bump in ONE place — `VERSION.json` — then run `python3 build/inject_updater.py`
+  + `python3 build/build-forge.py`; `tools/update_gate.py` fails CI unless the `var LOCAL`
+  stamp in the fused page AND the app surface, the AndroidManifest versionName, and every
+  mirror URL in updater.js all agree.
+- GATES: `node tools/updater_test.mjs` (38 checks) and `python3 tools/update_gate.py`, both in
+  `tools/ci.sh`. Live-verified in headless chromium against the real public mirror (`current`)
+  and a bumped mirror (`update`, alert names both versions), 0 page errors.
+- GIT HYGIENE (cost two CI cycles): NEVER `git add -A` here. the `tree_omega/`, `dist/` and
+  agent-scratch directories, plus `app-signed.apk`, are deliberately untracked; `add -A` commits them and
+  then kb_index ("misfiled (no register)"), fork-singularity ("divergent copies") and the
+  convergence tree hash all FAIL. Stage surgically: `git add -u` for tracked edits, plus
+  explicit paths for new files.
+- DEPLOY ORDER for a release that the live app can actually see: `inject_updater.py` ->
+  `build-forge.py` -> `kb_index.py --write` -> one-shot/sync/bundle/repo/delivery to fixed
+  point -> commit -> PUSH (board_pulse needs HEAD==origin) -> CI -> GitHub Release with
+  the one-shot script + `VERSION.json` as assets. The runtime host (port 12000) is a
+  moving sandbox: point the PRIMARY mirror at GitHub once the repo is public.
+- APK DELIVERY (the shortest path for the Operator, who has no toolchain): the alert leads
+  with **Download APK**, then the one-shot. `VERSION.json.apk_urls` (runtime host first) feed
+  `DEFAULT_APK_URLS`; `decide()` carries `apkUrl`; `overlay()` shows both buttons. The signed
+  build is published to `delivery/darkith-forge.apk` (served, HTTP 200) and as a release asset.
+- REBUILDING THE APK: `build.sh` finds `keytool` on PATH, so export JAVA_HOME's bin (and the
+  `.tools/bt/android-14` + `.tools/aapt2d` dirs) BEFORE running it, or it dies
+  "keytool missing (no JDK)". It needs KOTLINC and ANDROID_JAR exported too. A clean run is
+  7/7 and prints "DONE". The checked-in `app-signed.apk` was STALE (1.1.0-omega / code 2);
+  after any surface change you must rebuild it or the APK lags the page. Verify with
+  `aapt2 dump badging` and by reading the watcher out of the packaged `assets/homekeeper.html`.
+
+## §36 THE OMEGA TERMKIT PRE-RUNNER + CLEARANCELOOP (binding, 2026-11-18)
+- WHAT SHIPPED: two offline engines, injected into EVERY surface as one integration step.
+  (a) PRE-RUNNER — `app/src/main/assets/vendor/prerunner.js` (canonical). One report contract,
+  two engines: a sandboxed offscreen iframe for in-app/WebView, a real headless Chromium for
+  node (`tools/prerunner-cli.js`, playwright-core + system `/usr/bin/chromium`, no browser download).
+  (b) CLEARANCELOOP — `app/src/main/assets/vendor/clearanceloop.js`. The homeokinetic debt
+  ratchet of §33 (`tools/source_inspector.py`) carried into the runtime: per-class friction HWM
+  may only flux DOWN, a rise is a regression = FAIL, stasis over `WINDOW`=5 deliveries is
+  force-degraded to a blocker, a rise needs a recorded waiver. `absorb(report)` closes the loop
+  between them: a pre-run's errors + long tasks become friction debt.
+- INJECTED BY `build/integrate-engines.py` (idempotent, marker-delimited: `<!-- PRERUNNER:START|END -->`
+  + `<!-- PRERUN-SHIM:START|END -->`). It writes BOTH the surface's own shell AND the `studio-src`
+  carrier inside `darkith home forge.html`, because `build-forge.py` regenerates the standalone
+  studio AND the fused forge FROM that carrier. Run it BEFORE `build-forge.py`; `build/verify.py`
+  (sync step 1) runs its `--check`, so drift fails CI.
+- ANCHOR TRAP (cost a cycle): inject AFTER THE FIRST `<script>…</script>`, never after `<body>`.
+  `build/make_core.py` extracts the SAVF core from savf.html's FIRST script — a block ahead of it
+  is mistaken for the core and the build dies "engine or reference marker missing". Anchoring
+  after the first script is also invisible to `build-forge.py` (which injects at the last `</body>`),
+  so both `--check`s reproduce byte-for-byte.
+- `</script` TRAP (cost two cycles): the carrier round-trips its payload through a `text/plain`
+  script, escaping then UNescaping the raw closing-script sequence. So a literal `</script` OR its
+  backslash-escaped form inside an injected engine/shim gets unescaped to `</script` and closes the
+  tag early (SyntaxError). Neither engine nor the shim may contain that sequence — build it at
+  runtime (`'<'+'/script>'`) and assemble closing-script regexes with `new RegExp`.
+- RUNTIME SURFACE every app gains: `window.DarkithPreRunner`, `window.DarkithPrerun`,
+  `window.ClearanceLoop`, `window.DarkithCL`; a floating `▶` FAB (id `prerun-fab`); a `prerun`
+  and a `clearance` terminal builtin/command wherever the surface has one (omega `Omega.BUILTINS`,
+  studio `CMD_REGISTRY`/`dispatchCommand`).
+- REAL BUG THE FUZZER FOUND: the studio's `saveToPool()` HALTed `SAVE_FAIL` on `file://` because
+  Chromium denies IndexedDB there — the app's exact offline case. Fixed in the canonical carrier
+  to degrade to a toast. Re-apply if the carrier is ever regenerated from a stale source.
+- GATES: `python3 tools/prerunner_gate.py` (engine surface + CLI exit contract + honest verdicts),
+  `python3 tools/clearanceloop_gate.py` (the four ratchet laws + engines wired into every surface),
+  and `node tools/prerunner-cli.js --selftest` (8/8). All three in `tools/ci.sh`. Dogfood proof: all six
+  surfaces PASS with 0 page errors at 360×800 (`node tools/prerunner-cli.js <surface> --stress 15
+  --expect DarkithPreRunner,ClearanceLoop`).
+
+## §37 THE VISUAL-AFFORDANCE SPECIALIST — the Ω Icon Forge (binding, 2026-11-10)
 
   The first domain app of the launcher userspace: one offline, zero-dependency page
   (`icon_forge.html`) that forges **icons, logos and thumbnails**. Five tabs — Icon, Logo,
@@ -567,7 +738,7 @@ delivery), `report`. Law: DARKITH.md §33 (NEVER #19, MUST #32/#33, SPI-27, W-04
   a valid `/**` (the 19th, HomekeeperBridge.kt:282, is a code line). `tools/syntax_gate.py app`
   = PASS, 55 files. The injector would have CREATED the defect it set out to fix.
 
-## §35 THE DUAL-REGISTER MANUAL — TermKit `help beginner` / `help dev` (binding, 2026-11-10)
+## §38 THE DUAL-REGISTER MANUAL — TermKit `help beginner` / `help dev` (binding, 2026-11-10)
 
   TermKit's `help` now has two registers, both served from ONE source of truth so they can
   never disagree with each other or with the engine:
@@ -593,3 +764,45 @@ delivery), `report`. Law: DARKITH.md §33 (NEVER #19, MUST #32/#33, SPI-27, W-04
 
   Regenerate after editing the manual: `python3 build/build-forge.py` (writes the fused
   page) then `python3 build/make-oneshot.py` (the one-shot embeds the shell).
+
+## §39 SAVF CLI ARGUMENT HARDENING + CROSS-ENGINE PROOF (2026-11-19)
+Second pass over the SAVF utility (§34 governs the product; this records what a fuller
+pre-run found). The engine itself was faithful — two REAL defects were in the CLI shell,
+both reproduced before they were fixed:
+
+- DEFECT (fixed): a NEGATIVE axis coordinate could not be passed on the command line.
+  `savf axis --p0 -41.4,-8.1 --p1 1,2 --s .5 --tau 1` died with argparse's
+  `argument --p0: expected one argument`, because a leading `-` reads as an option. For an
+  axis/formulary tool negative poles are the ordinary case, so this broke the primary
+  command. Fix: `_normalize_argv` folds a data-looking token (`-3`, `-1.5`, `-41.4,-8.1`)
+  onto the option it follows (`--p0=-41.4,-8.1`); real flags are untouched, `--tau -1` works
+  too, and `s` still validates to [0,1]. Regression checks live in `build/savf-cli-test.py`.
+- DEFECT (fixed): freezing an ABSENT file raised a bare `FileNotFoundError`. It now
+  prints `freeze: no such file: <path>` and exits 1, matching `scan`. No CLI path leaks a
+  traceback for ordinary misuse (checked verdict/ledger/manifest/sign/freeze/scan).
+
+Pre-run evidence this session (all through the REAL engines, not inferred):
+- CROSS-ENGINE: `savf.html` driven under BOTH chromium and firefox — identical freeze seal,
+  identical HMAC, identical selftest (9/9) and verdict, 0 console/page errors, 7 tabs each.
+  Seals are byte-portable: a lock sealed in the browser == `savf.py freeze` (SEAL MATCH,
+  LOCK EQUAL) and the HMAC matches `savf.py manifest create`.
+- DIFFERENTIAL FUZZ: 150 randomized Python sources through `window.SAVF.auditSource` vs
+  `savf.py scan --json` — **150/150 identical**; plus 372 core cases (60 random axes,
+  all 3 charts × 3 axes × 8 moves incl. the error cases, 40 exp/log round-trips, 200 random
+  phi-state verdicts) — **372/372 identical**.
+- OFFLINE: loaded under a context with `offline=True`; ZERO non-`file:`/`data:` requests,
+  audit + selftest still work, 0 errors. The "offline, zero-dependency" promise holds.
+- UI: no horizontal overflow on any of the 7 tabs at 360px; contrast 17.6:1 (dark) / 17.2:1
+  (light); every button and tab >= 44px; FAB drags, theme + tab persist across reload.
+- CI: `tools/ci.sh` exit 0 (CI: PASS). `board pulse` passes once the branch is pushed.
+- INSTALL GATE ARMED: the install gate skipped even on a provisioned runner because
+  `apksigner` (which ships in the build-tools tree that the host-artifact refresh
+  stages under the toolchain dir) was never staged, though `tools/ci.sh` already put `aapt2` on PATH. Staging `apksigner`
+  (and `APKSIGNER`) runs the gate for real: all four delivery APKs report INSTALLABLE
+  (14/14 checks closed). A bare runner still skips by name, never fakes a pass.
+
+NOTE — `tools/sync.sh` defaults `BRANCH=main` but the working branch is
+`absolution/admission`; a bare `tools/sync.sh` therefore rebases against the WRONG branch and
+reports a false conflict. Push the working branch with
+`DARKITH_BRANCH=absolution/admission tools/board_pulse.sh` (never force). `main` and the
+working branch are separate histories here.

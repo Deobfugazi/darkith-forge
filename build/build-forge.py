@@ -25,6 +25,7 @@ Run:  python3 build/build-forge.py
       python3 build/build-forge.py --check     (verify sync, write nothing)
 """
 import argparse
+import json
 import pathlib
 import re
 import subprocess
@@ -41,6 +42,8 @@ SAVF_HTML = ROOT / "savf.html"
 CORE = BUILD / "savf-core.js"
 HOST = BUILD / "savf-host.js"
 FACADE = BUILD / "truth-facade.js"
+UPDATER = BUILD / "updater.js"
+VERSION_JSON = ROOT / "VERSION.json"
 HELP = BUILD / "termkit-help.js"
 
 # markers: studio blocks live inside the carrier, shell blocks outside it, so
@@ -49,6 +52,7 @@ SC_START, SC_END = "<!-- SAVF-CORE:START -->", "<!-- SAVF-CORE:END -->"
 SH_START, SH_END = "<!-- SAVF-HOST:START -->", "<!-- SAVF-HOST:END -->"
 SS_START, SS_END = "<!-- SAVF-SHELL:START -->", "<!-- SAVF-SHELL:END -->"
 ST_START, ST_END = "/* SAVF-TERM:START */", "/* SAVF-TERM:END */"
+UP_START, UP_END = "/* UPDATE-WATCHER:START */", "/* UPDATE-WATCHER:END */"
 PF_START, PF_END = "<!-- SAVF-FACADE:START -->", "<!-- SAVF-FACADE:END -->"
 # The TermKit manual (dual-register help + its invariant fixtures). Injected as
 # its own block so build-forge can regenerate it; `help` reads it lazily.
@@ -78,7 +82,11 @@ TERMINAL_BUILTIN = """%s
       var f = res.findings[i];
       out("  phi" + f.phi + "  " + f.rule + "  line " + f.line + "  " + f.msg);
     }
-    return res.verdict === "PASS" ? 0 : 1;
+    /* Mirror savf.py's EXIT map so `$?` here means the same as the CLI's:
+       PASS 0, REVIEW 2, BLOCKED 3, LIED 4.  Collapsing every non-PASS to 1
+       would hide which verdict was reached from `&&`, `||` and scripts. */
+    var EXIT = { PASS: 0, REVIEW: 2, BLOCKED: 3, LIED: 4 };
+    return (EXIT[res.verdict] != null) ? EXIT[res.verdict] : 1;
   };
 %s""" % (ST_START, ST_END)
 
@@ -131,10 +139,30 @@ def patch_studio(studio: str, core: str, host: str) -> str:
     return studio
 
 
+
+
+def updater_block() -> str:
+    """The update watcher: `build/updater.js` with its LOCAL stamp replaced by
+    the repo's `VERSION.json`, so the page carries its own version offline."""
+    man = json.loads(VERSION_JSON.read_text(encoding="utf-8"))
+    js = UPDATER.read_text(encoding="utf-8")
+    local = {
+        "versionCode": man["versionCode"],
+        "versionName": man["versionName"],
+        "surfaceVersion": man.get("surfaceVersion", ""),
+    }
+    if "var LOCAL = " not in js:
+        raise SystemExit("updater.js lost its LOCAL stamp anchor")
+    js = re.sub(r"var LOCAL = \{[^}]*\};",
+                "var LOCAL = " + json.dumps(local, separators=(",", ":")) + ";", js, count=1)
+    return wrap_script(js)
+
+
 def patch_shell(shell: str, core: str) -> str:
     shell = strip(shell, SS_START, SS_END)
     shell = strip(shell, ST_START, ST_END)
     shell = strip(shell, TK_START, TK_END)
+    shell = strip(shell, UP_START, UP_END)
     shell = inject(shell, SS_START, SS_END, wrap_script(core))
     if BUILTINS_ANCHOR not in shell:
         raise SystemExit("TermKit anchor missing: cannot add the `savf` builtin")
@@ -142,6 +170,7 @@ def patch_shell(shell: str, core: str) -> str:
                           BUILTINS_ANCHOR + "\n" + TERMINAL_BUILTIN, 1)
     help_js = HELP.read_text(encoding="utf-8")
     shell = inject(shell, TK_START, TK_END, wrap_script(help_js))
+    shell = inject(shell, UP_START, UP_END, updater_block())
     return shell
 
 

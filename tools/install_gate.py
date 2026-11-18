@@ -147,7 +147,6 @@ def main():
     if apksigner:
         r = subprocess.run([apksigner, "verify", "--verbose", apk], capture_output=True, text=True)
         v2 = V2_RE.search(r.stdout)
-        verifies = re.search(r"Verifies", r.stdout)
         if r.returncode == 0 and v2:
             rec("I-03-signature-v2", "CLOSED", "v2 signature verifies")
         else:

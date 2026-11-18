@@ -833,10 +833,12 @@ board is never a private local view.
 GATE: tools/convergence_gate.py
 Two independent derivations of the same fact must AGREE byte-for-byte, or the divergence is
 a defect. The gate derives the Operator's clock through BOTH the Python and the JS runtime,
-derives the circadian phase through both, and derives the working tree through two
-independent implementations of git's blob hash. A disagreement fails CI; the result is
-recorded to `proof/convergence.json` so a second agent can trust the first without redoing
-the work. (The two-tab ritual `tools/converge.sh` remains the human-facing form.)
+derives the circadian phase through both, derives the working tree through two
+independent implementations of git's blob hash, and derives the SOURCE UNIVERSE three ways
+(the source inspector's iterator, a filesystem walk, and git's index) so no source file can
+escape the routine trial (NEVER #19) or live only on disk. A disagreement fails CI; the
+result is recorded to `proof/convergence.json` so a second agent can trust the first without
+redoing the work. (The two-tab ritual `tools/converge.sh` remains the human-facing form.)
 
 ─── MUST #28 (EDGE-DEVICE TIME COUPLING + BOOT-AWARE SESSION) ───
 GATE: tools/synchrony_pulse.py

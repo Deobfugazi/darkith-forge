@@ -916,6 +916,14 @@ proves the closure. A README that also states its **principle** (step 3) and inv
 its **assets** (step 5) is what makes it a description of a specific repository rather
 than a generic template.
 
+**The live instance.** This shape is not only prose. `omega-reader.html` is the same
+argument carried in **four registers** — Plain, Paper, Machine, Provenance — over one
+`#/volume/section` route. The Plain register is the novice's path, the Paper register the
+expert's, the Machine register the literal `key: value` synthesis, and the Provenance
+register the audit that lists, per claim, who asserted it, who verified it, its referent,
+and its falsifier. It runs from `file://` with no server and no network, so a reader who
+holds only the file still holds all four registers.
+
 ---
 
 *This file is the README for `Deobfugazi/darkith-forge`. It is governed by the same rules

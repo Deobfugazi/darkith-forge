@@ -103,7 +103,9 @@
     var opts = {
       stdlib: stdlibDict(),
       stdattrs: global.SAVF_STDATTRIB || {},
-      local: localDict(entries)
+      local: localDict(entries),
+      /* mirrors the CLI's --installed: third-party roots the caller vouches for */
+      installed: options.installed
     };
 
     var findings = [], parsed = 0, skipped = 0;

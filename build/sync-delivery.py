@@ -14,6 +14,7 @@ Run:  python3 build/sync-delivery.py [--check]
 """
 import argparse
 import hashlib
+import html
 import pathlib
 import re
 import shutil
@@ -26,8 +27,10 @@ INDEX = DELIVERY / "index.html"
 # repo file -> name inside delivery/
 COPY = {
     ROOT / "savf.html": DELIVERY / "savf.html",
+    ROOT / "savf.py": DELIVERY / "savf.py",
     ROOT / "darkith forge.html": DELIVERY / "darkith-forge.html",
     ROOT / "omega.html": DELIVERY / "omega.html",
+    ROOT / "VERSION.json": DELIVERY / "VERSION.json",
 }
 
 # Documents that quote a size and a sha256 for the webapp.  Kept in step with
@@ -97,6 +100,9 @@ def check_links(text: str) -> list:
     for href in sorted(set(hrefs)):
         if href.startswith(("http:", "https:", "#", "mailto:")):
             continue
+        # The href is HTML-escaped in the source (`&amp;` in `build&install.sh`); a
+        # browser decodes it before resolving, so the on-disk name is the unescaped form.
+        href = html.unescape(href)
         if not (DELIVERY / href).exists():
             missing.append(href)
     return missing

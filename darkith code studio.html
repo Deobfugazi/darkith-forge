@@ -766,7 +766,7 @@ body[data-belt-pos="right"] #render,body[data-belt-pos="right"] #input{padding-r
 
 /* ---------- SAVF CORE ---------- */
 (function(){
-  var VERSION = "3.0.0";
+  var VERSION = "2.1.0-omega";
   function defaultPayload(){
     return {
       schema: "savf-payload/1",
@@ -2857,7 +2857,14 @@ function saveToPool(){
     STATE.currentFileId=name; markSaved(); openPool();
     toast('Saved to Memory Pool.','ok');
     idbDel('__recovery__','current').catch(function(){});
-  }).catch(function(e){ HALT('SAVE_FAIL', e.message); });
+  }).catch(function(e){
+    /* IndexedDB is denied on file:// in some browsers — the exact offline
+       single-file case this app targets. Degrade to a clear message instead of
+       HALTing: a blocked pool must not look like a lost document. */
+    if(/indexed ?database|idbfactory|denied|unavailable|security/i.test(String(e&&e.message))){
+      toast('Memory Pool needs IndexedDB, which this context blocks (file://). Your document is safe — Export it to keep it.','warn',null,null,6000);
+    } else { HALT('SAVE_FAIL', e.message); }
+  });
 }
 function openConfigurator(name){
   var all=document.querySelectorAll('.cfg.on');
@@ -3523,6 +3530,674 @@ function boot(){
 }
 boot();
 </script>
+<!-- PRERUNNER:START -->
+<script>
+/* darkith · pre-runner v1
+   Ephemeral "silent race before the race".
+   One report contract, two engines:
+     browser : sandboxed offscreen iframe (works inside the app/WebView, no deps)
+     node    : real headless Chromium via Playwright OR Puppeteer (desktop/Termux/CI)
+   Usage (browser):  DarkithPreRunner.run({files:{'a.js':src}, entry:'a.js', shots:4, interval:600, stress:25}).then(report)
+   Usage (node):     node darkith-prerunner.js app.html --shots 5 --ms 800 --stress 40 --out ./pr
+   Language support is an adapter registry: register(lang, fn) -> {html}|{js}. Nothing is "magic". */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(root);
+  else root.DarkithPreRunner = factory(root);
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
+  'use strict';
+  var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  var sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var NEEDS = function (l, w) { var e = new Error('NEEDS_ADAPTER: ' + l + ' needs ' + w); e.needs = true; return e; };
+  /* Script tags, assembled at runtime. The forge build round-trips its embedded
+     studio through a `text/plain` carrier that escapes then unescapes the raw
+     closing-script sequence, so this file must never contain that sequence (nor
+     its backslash-escaped form) — the tags are built here instead of written. */
+  var SE = '<' + '/script>';
+  var SEE = '<' + '\\' + '/script';
+
+
+  /* ---------- ADAPTERS (virtual transpile, in memory only) ---------- */
+  var AD = {
+    html: function (s) { return { html: s }; },
+    js: function (s) { return { js: s }; },
+    mjs: function (s) { return { js: s, module: true }; },
+    css: function (s) { return { html: '<style>' + s + '</style><div>css loaded</div>' }; },
+    json: function (s) { JSON.parse(s); return { html: '<pre>' + esc(s) + '</pre>' }; },
+    md: function (s) { return { html: '<pre style="white-space:pre-wrap">' + esc(s) + '</pre>' }; }
+  };
+  function viaCompiler(s, l) {
+    if (root.Sucrase) return { js: root.Sucrase.transform(s, { transforms: ['typescript', 'jsx'] }).code };
+    if (root.ts) return { js: root.ts.transpileModule(s, { compilerOptions: { jsx: 1, target: 7 } }).outputText };
+    if (root.Babel) return { js: root.Babel.transform(s, { presets: ['typescript', 'react'], filename: 'x.' + l }).code };
+    throw NEEDS(l, 'Sucrase, TypeScript or Babel on the page (load one first)');
+  }
+  ['ts', 'tsx', 'jsx'].forEach(function (l) { AD[l] = function (s) { return viaCompiler(s, l); }; });
+  function register(lang, fn) { AD[lang] = fn; }
+  function extOf(n) { var m = /\.([a-z0-9]+)$/i.exec(n || ''); return m ? m[1].toLowerCase() : 'js'; }
+
+
+  async function transpile(files, entry) {
+    var t0 = Date.now(), notes = [], pre = [], ent = null;
+    for (var n in files) {
+      var l = extOf(n), a = AD[l];
+      if (!a) throw NEEDS(l, 'register("' + l + '", fn) adapter');
+      var out = await a(files[n], l);
+      notes.push(n + ' -> ' + (out.html ? 'html' : 'js'));
+      if (n === entry) ent = out; else if (out.js) pre.push(out.js);
+    }
+    if (!ent) throw new Error('entry not found: ' + entry);
+    return { ent: ent, pre: pre, notes: notes, ms: Date.now() - t0 };
+  }
+
+
+  /* ---------- PROBE (runs inside the page under test) ---------- */
+  var PROBE = '(' + function (T) {
+    var D = window.__dpr = { log: [], errs: [], lt: 0, ltMax: 0, frames: 0, t0: performance.now() };
+    ['log', 'info', 'warn', 'error'].forEach(function (k) {
+      var o = console[k]; console[k] = function () {
+        var m = [].slice.call(arguments).map(function (a) { try { return typeof a === 'string' ? a : JSON.stringify(a); } catch (e) { return String(a); } }).join(' ');
+        if (D.log.length < 500) D.log.push({ k: k, m: m }); try { o.apply(console, arguments); } catch (e) {}
+      };
+    });
+    window.addEventListener('error', function (e) { D.errs.push((e.message || 'error') + (e.lineno ? ' @' + e.lineno + ':' + e.colno : '')); });
+    window.addEventListener('unhandledrejection', function (e) { D.errs.push('rejection: ' + (e.reason && e.reason.message || e.reason)); });
+    try { new PerformanceObserver(function (l) { l.getEntries().forEach(function (x) { D.lt++; D.ltMax = Math.max(D.ltMax, x.duration); }); }).observe({ entryTypes: ['longtask'] }); } catch (e) {}
+    (function f() { D.frames++; requestAnimationFrame(f); })();
+    window.__dprSnap = async function () {
+      var w = innerWidth, h = innerHeight, s = new XMLSerializer().serializeToString(document.documentElement);
+      var u = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '"><foreignObject width="100%" height="100%">' + s + '</foreignObject></svg>');
+      try {
+        var im = new Image(); await new Promise(function (r, j) { im.onload = r; im.onerror = j; im.src = u; });
+        var c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(im, 0, 0); return c.toDataURL('image/png');
+      } catch (e) { return u; }
+    };
+    window.__dprFuzz = function (n, seed) {
+      var keys = ['a', 'Enter', 'Tab', 'Backspace', 'ArrowDown', ' ', '{', '"'];
+      /* mulberry32 — seeded so a run is reproducible: same seed -> same fuzz -> same report. */
+      var s = (seed >>> 0) || 1;
+      var rnd = function () { s = (s + 0x6D2B79F5) | 0; var t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+      for (var i = 0; i < n; i++) {
+        var els = [].slice.call(document.querySelectorAll('button,a,input,select,textarea,[onclick],[tabindex],canvas'));
+        var e = els.length ? els[rnd() * els.length | 0] : document.body, r = e.getBoundingClientRect();
+        var x = r.left + r.width / 2, y = r.top + r.height / 2;
+        try {
+          ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'].forEach(function (t) { e.dispatchEvent(new MouseEvent(t, { bubbles: true, clientX: x, clientY: y })); });
+          if (/^(INPUT|TEXTAREA)$/.test(e.tagName)) {
+            /* setting .value is OUR action: a file/color input may reject it. Swallow that —
+               it is harness misuse, not a page fault, so it must not be reported as an error. */
+            try { e.value = rnd().toString(36).slice(2); e.dispatchEvent(new Event('input', { bubbles: true })); } catch (_) {}
+          }
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: keys[rnd() * keys.length | 0], bubbles: true }));
+          if (i % 9 === 0) window.dispatchEvent(new Event('resize'));
+        } catch (er) { D.errs.push('fuzz: ' + er.message); }
+      }
+    };
+    window.__dprDump = function () {
+      var s = (performance.now() - D.t0) / 1000;
+      return { console: D.log, errors: D.errs, metrics: { fps: Math.round(D.frames / s), longTasks: D.lt, maxLongMs: Math.round(D.ltMax), nodes: document.getElementsByTagName('*').length, heapMB: performance.memory ? +(performance.memory.usedJSHeapSize / 1048576).toFixed(1) : null } };
+    };
+    window.addEventListener('message', function (e) {
+      if (e.source === window) return; /* ignore our own posts (top-level/node engine) — avoids a self-loop */
+      var d = e.data; if (!d || d.t !== T) return;
+      Promise.resolve(d.cmd === 'snap' ? window.__dprSnap() : d.cmd === 'fuzz' ? window.__dprFuzz(d.n, d.seed) : window.__dprDump())
+        .then(function (v) { parent.postMessage({ t: T, id: d.id, v: v }, '*'); });
+    });
+    addEventListener('load', function () { parent.postMessage({ t: T, ready: 1 }, '*'); });
+  }.toString() + ')(' + JSON.stringify('__TOKEN__') + ')';
+
+
+  function buildHtml(tp, token) {
+    var probe = '<script>' + PROBE.replace('__TOKEN__', token) + SE;
+    var safe = function (s) { return String(s).replace(new RegExp(SEE, 'gi'), SEE + '>'); };
+    if (tp.ent.html) {
+      var h = tp.ent.html;
+      return /<head[^>]*>/i.test(h) ? h.replace(/<head[^>]*>/i, function (m) { return m + probe; }) : probe + h;
+    }
+    return '<!doctype html><meta charset="utf-8">' + probe + '<body>' +
+      tp.pre.map(function (s) { return '<script>' + safe(s) + SE; }).join('') +
+      '<script' + (tp.ent.module ? ' type="module"' : '') + '>' + safe(tp.ent.js) + SE + '</body>';
+  }
+
+
+  function verdict(r) {
+    if (r.errors.length) return 'FAIL';
+    var m = r.metrics;
+    return (m.fps && m.fps < 20) || m.longTasks > 5 ? 'WARN' : 'PASS';
+  }
+
+
+  /* ---------- BROWSER ENGINE ---------- */
+  async function runBrowser(o) {
+    var tp = await transpile(o.files, o.entry), token = 'dpr' + Math.random().toString(36).slice(2);
+    var fr = document.createElement('iframe'), w = o.width || 390, h = o.height || 780, pend = {}, ready, n = 0;
+    var readyP = new Promise(function (r) { ready = r; });
+    function onMsg(e) { var d = e.data; if (!d || d.t !== token) return; if (d.ready) ready(); else if (pend[d.id]) { pend[d.id](d.v); delete pend[d.id]; } }
+    function rpc(cmd, extra) { return new Promise(function (res) { var id = ++n; pend[id] = res; fr.contentWindow.postMessage(Object.assign({ t: token, id: id, cmd: cmd }, extra || {}), '*'); setTimeout(function () { if (pend[id]) { delete pend[id]; res(null); } }, 5000); }); }
+    window.addEventListener('message', onMsg);
+    fr.setAttribute('sandbox', 'allow-scripts');
+    fr.style.cssText = 'position:fixed;left:-9999px;top:0;border:0;width:' + w + 'px;height:' + h + 'px';
+    fr.srcdoc = buildHtml(tp, token);
+    document.body.appendChild(fr);
+    var shots = [], t0 = Date.now();
+    try {
+      await Promise.race([readyP, sleep(o.timeout || 8000)]);
+      for (var i = 0; i < (o.shots || 4); i++) {
+        await sleep(o.interval || 600);
+        if (o.stress) await rpc('fuzz', { n: o.stress, seed: (o.seed || 1) + i });
+        shots.push({ t: Date.now() - t0, png: await rpc('snap') });
+      }
+      var d = await rpc('dump') || { console: [], errors: ['no response from page (hung?)'], metrics: {} };
+      return finish('browser', o, tp, d, shots);
+    } finally { window.removeEventListener('message', onMsg); fr.remove(); }
+  }
+
+
+  /* ---------- NODE ENGINE (real headless Chromium) ---------- */
+  async function runNode(o) {
+    var lib = o.lib || (function () { try { return require('playwright'); } catch (e) { try { return require('playwright-core'); } catch (e2) { return require('puppeteer-core'); } } })();
+    var tp = await transpile(o.files, o.entry), html = buildHtml(tp, 'node');
+    var launchOpts = { headless: true, args: ['--no-sandbox'] };
+    /* A system Chromium (no browser download) may be supplied directly or by env,
+       mirroring the python render gate's fallback so CI never needs a fetch. */
+    var env = (root && root.process && root.process.env) || {};
+    var exe = o.executablePath || env.PRERUNNER_CHROME || env.CHROME_PATH;
+    if (exe) launchOpts.executablePath = exe;
+    var br = await (lib.chromium || lib).launch(launchOpts);
+    var shots = [], t0 = Date.now();
+    try {
+      var pg = await br.newPage(), vp = { width: o.width || 390, height: o.height || 780 };
+      await (pg.setViewportSize ? pg.setViewportSize(vp) : pg.setViewport(vp));
+      await pg.setContent(html);
+      for (var i = 0; i < (o.shots || 4); i++) {
+        await sleep(o.interval || 600);
+        if (o.stress) await pg.evaluate('window.__dprFuzz(' + (o.stress | 0) + ',' + ((o.seed || 1) + i) + ')');
+        shots.push({ t: Date.now() - t0, png: 'data:image/png;base64,' + Buffer.from(await pg.screenshot({ type: 'png' })).toString('base64') });
+      }
+      return finish('node', o, tp, await pg.evaluate('window.__dprDump()'), shots,
+                    o.expect ? await pg.evaluate(function (ks) { var o = {}; ks.forEach(function (k) { o[k] = typeof window[k]; }); return o; }, o.expect) : null);
+    } finally { await br.close(); }
+  }
+
+
+  function finish(engine, o, tp, d, shots, globals) {
+    var r = { engine: engine, entry: o.entry, ok: true, verdict: 'PASS',
+              console: d.console, errors: d.errors, metrics: d.metrics, shots: shots,
+              target: { width: o.width || 390, height: o.height || 780, shots: o.shots || 4,
+                        interval: o.interval || 600, stress: o.stress || 0, seed: o.seed || 1 },
+              transpile: { ms: tp.ms, notes: tp.notes } };
+    if (globals) {
+      r.globals = globals;
+      Object.keys(globals).forEach(function (k) {
+        if (globals[k] === 'undefined') r.errors = r.errors.concat('expected global missing: ' + k);
+      });
+    }
+    r.verdict = verdict(r); r.ok = r.verdict !== 'FAIL'; return r;
+  }
+
+
+  async function run(o) {
+    o = o || {};
+    if (!o.files) throw new Error('files required: {name: source}');
+    o.entry = o.entry || Object.keys(o.files)[0];
+    try { return await (o.engine === 'node' || typeof document === 'undefined' ? runNode(o) : runBrowser(o)); }
+    catch (e) {
+      return { engine: o.engine === 'node' ? 'node' : 'browser', entry: o.entry, ok: false,
+               verdict: e.needs ? 'NEEDS_ADAPTER' : 'ERROR', errors: [e.message],
+               console: [], metrics: {}, shots: [], transpile: {} };
+    }
+  }
+
+
+  /* ---------- UI (optional): a self-contained report overlay ---------- */
+  var VC = { PASS: '#3fb950', WARN: '#d29922', FAIL: '#f85149', NEEDS_ADAPTER: '#58a6ff', ERROR: '#8b949e' };
+  function el(tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; }
+  function ui(opts) {
+    if (typeof document === 'undefined') return run(opts);
+    opts = opts || {};
+    var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    var card = el('div', 'width:min(560px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    host.appendChild(card); document.body.appendChild(host);
+    var close = function () { if (host.parentNode) host.remove(); };
+    host.addEventListener('click', function (e) { if (e.target === host) close(); });
+    var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
+    head.appendChild(el('span', 'color:#ff8a3d;font-weight:700', '\u25b6 Pre-runner'));
+    var pill = el('span', 'padding:2px 9px;border-radius:999px;font-weight:700;font-size:12px;background:#161a20;color:#8b949e', 'running\u2026');
+    head.appendChild(pill);
+    var x = el('button', 'margin-left:auto;background:transparent;border:0;color:#8b949e;font-size:16px;cursor:pointer', '\u2715');
+    x.addEventListener('click', close); head.appendChild(x); card.appendChild(head);
+    var body = el('div', 'padding:12px 14px'); card.appendChild(body);
+    body.appendChild(el('div', 'color:#8b949e', 'racing the race before the race\u2026'));
+    Promise.resolve(run(opts)).then(function (r) {
+      pill.textContent = r.verdict; pill.style.color = '#05070a'; pill.style.background = VC[r.verdict] || '#8b949e';
+      body.innerHTML = '';
+      var m = r.metrics || {}, t = r.target || {}, mrow = el('div', 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px');
+      [['fps', m.fps], ['long', m.longTasks], ['max ms', m.maxLongMs], ['nodes', m.nodes], ['heap MB', m.heapMB]].forEach(function (kv) {
+        if (kv[1] == null) return;
+        mrow.appendChild(el('span', 'padding:3px 8px;border:1px solid #262a31;border-radius:8px;color:#c9d1d9', kv[0] + ' ' + kv[1]));
+      });
+      body.appendChild(mrow);
+      body.appendChild(el('div', 'color:#8b949e;margin-bottom:4px', 'errors: ' + r.errors.length));
+      if (r.errors.length) {
+        var eb = el('div', 'max-height:130px;overflow:auto;background:#140a0c;border:1px solid #3d1d22;border-radius:8px;padding:8px;color:#ffb4ad;white-space:pre-wrap;margin-bottom:10px');
+        eb.textContent = r.errors.slice(0, 20).join('\n'); body.appendChild(eb);
+      }
+      if (r.shots && r.shots.length) {
+        var strip = el('div', 'display:flex;gap:8px;overflow:auto;padding-bottom:6px');
+        r.shots.forEach(function (s, i) {
+          if (!s.png) return;
+          var im = el('img', 'height:150px;border:1px solid #262a31;border-radius:8px;background:#fff');
+          im.src = s.png; im.alt = 'shot ' + (i + 1); im.title = 't=' + s.t + 'ms'; strip.appendChild(im);
+        });
+        body.appendChild(strip);
+      }
+      var foot = el('div', 'display:flex;align-items:center;gap:8px;margin-top:10px;color:#8b949e;font-size:12px');
+      foot.appendChild(el('span', null, 'seed ' + (t.seed || 1) + ' \u00b7 shots ' + (t.shots || 4) + ' \u00b7 stress ' + (t.stress || 0) + ' \u00b7 ' + r.engine));
+      var again = el('button', 'margin-left:auto;background:#161a20;border:1px solid #262a31;color:#e8edf3;border-radius:8px;padding:5px 10px;cursor:pointer', '\u21bb Re-run');
+      again.addEventListener('click', function () { close(); ui(opts); });
+      foot.appendChild(again); body.appendChild(foot);
+    });
+    return host;
+  }
+
+
+  /* ---------- CLI ---------- */
+  if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+    var fs = require('fs'), path = require('path'), a = process.argv.slice(2), file = a[0];
+    var opt = function (k, d) { var i = a.indexOf('--' + k); return i > -1 ? a[i + 1] : d; };
+    var out = opt('out', './prerun-out');
+    if (!file) { console.log('usage: node darkith-prerunner.js <file> [--shots 5 --ms 800 --stress 40 --out dir]'); process.exit(2); }
+    var f = {}; f[path.basename(file)] = fs.readFileSync(file, 'utf8');
+    run({ engine: 'node', files: f, shots: +opt('shots', 5), interval: +opt('ms', 800), stress: +opt('stress', 30) }).then(function (r) {
+      fs.mkdirSync(out, { recursive: true });
+      r.shots.forEach(function (s, i) { if (s.png) { fs.writeFileSync(path.join(out, 'shot' + (i + 1) + '.png'), Buffer.from(s.png.split(',')[1], 'base64')); s.png = 'shot' + (i + 1) + '.png'; } });
+      fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(r, null, 2));
+      console.log(r.verdict, JSON.stringify(r.metrics), r.errors.length + ' errors ->', out);
+      process.exit(r.ok ? 0 : 1);
+    });
+  }
+
+
+  return { run: run, ui: ui, register: register, transpile: transpile, adapters: AD };
+});
+
+</script>
+<!-- PRERUNNER:START -->
+<script>
+/* ClearanceLoop — the Homeokinetic Debt Ratchet, as a runtime engine.
+ *
+ * One law, the same one tools/source_inspector.py proves on source bytes: health
+ * is a RATE of clearance, not a static tolerance. Debt (friction) is measured per
+ * class; the per-class high-water mark (HWM) may only ever move DOWN; any class
+ * above its HWM is a net addition of debt = a regression = FAIL; debt that does
+ * not flux downward over a delivery window is FORCE-DEGRADED to a blocker; a rise
+ * is permitted only by a recorded, reasoned, time-boxed waiver.
+ *
+ * This is the runtime half of the pair: the pre-runner produces diagnostic truth
+ * (errors, long tasks), ClearanceLoop turns that truth into a clearance verdict and
+ * refuses to let the number settle. `absorb(report)` closes the loop between them.
+ *
+ * Offline, dependency-free, OS-agnostic: it runs in any browser or WebView, and in
+ * Node it degrades to a pure function (no DOM, no storage).
+ *
+ * UMD-ish: browser global `ClearanceLoop`; Node module.
+ */
+;(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports) module.exports = factory();
+  else root.ClearanceLoop = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var CLASSES = ['switching', 'waiting', 'searching', 'correcting', 'review'];
+  var WINDOW = 5;                 // deliveries of non-clearance before force-degradation
+  var KEY = 'darkith.clearanceloop.v1';
+  var LAW = 'homeokinesis: debt may only flux downward; stasis is force-degraded';
+
+  var store = function () { try { return root && root.localStorage; } catch (e) { return null; } };
+  var load = function () {
+    try { var j = store() && store().getItem(KEY); return j ? JSON.parse(j) : null; } catch (e) { return null; }
+  };
+  var persist = function (st) { try { var s = store(); if (s) s.setItem(KEY, JSON.stringify(st)); } catch (e) { /* file:// may deny storage; memory still holds */ } };
+  var cp = function (o) { var r = {}; for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) r[k] = o[k]; return r; };
+
+  var state = load() || { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] };
+  var acc = {};                    // friction accrued since the last delivery
+  var hooks = false;
+
+  function bump(cls, n) { acc[cls] = (acc[cls] || 0) + (n == null ? 1 : n); }
+
+  /* Real, offline signals — no self-report. Every hook is guarded: a missing API
+     costs a signal, never an exception. */
+  function install() {
+    if (hooks || typeof window === 'undefined' || !window.addEventListener) return;
+    hooks = true;
+    var d = window.document;
+    window.addEventListener('blur', function () { bump('switching'); });
+    window.addEventListener('focus', function () { bump('switching'); });
+    if (d && d.addEventListener) d.addEventListener('visibilitychange', function () { bump('switching'); });
+    window.addEventListener('hashchange', function () { bump('searching'); });
+    window.addEventListener('error', function () { bump('correcting'); });
+    window.addEventListener('unhandledrejection', function () { bump('correcting'); });
+    try {
+      if (window.PerformanceObserver) {
+        new window.PerformanceObserver(function (l) {
+          var e = l.getEntries(); for (var i = 0; i < e.length; i++) bump('waiting');
+        }).observe({ entryTypes: ['longtask'] });
+      }
+    } catch (e) { /* not all engines expose longtask */ }
+  }
+
+  function sample() { var o = {}; for (var i = 0; i < CLASSES.length; i++) o[CLASSES[i]] = acc[CLASSES[i]] || 0; return o; }
+  function score(now) { var s = 0; for (var i = 0; i < CLASSES.length; i++) s += now[CLASSES[i]] || 0; return s; }
+
+  /* Absorb a pre-runner report: its errors and long tasks are friction debt. */
+  function absorb(report) {
+    if (!report) return acc;
+    var m = report.metrics || {};
+    bump('waiting', m.longTasks || 0);
+    bump('correcting', (report.errors || []).length);
+    return acc;
+  }
+
+  function observe(partial) {
+    if (partial) for (var k in partial) if (Object.prototype.hasOwnProperty.call(partial, k) && CLASSES.indexOf(k) >= 0) acc[k] = partial[k];
+    return acc;
+  }
+
+  /* One delivery: apply the law, advance the HWM, report events + degradations. */
+  function advance(justify) {
+    install();
+    var now = sample();
+    var hwm = cp(state.hwm), since = cp(state.since), justified = cp(state.justified);
+    var events = [], i, cls, n, prev;
+
+    for (i = 0; i < CLASSES.length; i++) {
+      cls = CLASSES[i]; n = now[cls] || 0;
+      if (!(cls in hwm)) { hwm[cls] = n; since[cls] = 0; events.push('seeded ' + cls + ': HWM ' + n); continue; }
+      prev = hwm[cls];
+      if (n < prev) { events.push('cleared ' + cls + ': ' + prev + ' -> ' + n + ' (flux down)'); hwm[cls] = n; since[cls] = 0; }
+      else if (n === prev) { since[cls] = (since[cls] || 0) + 1; }
+      else if (justify) { justified[cls] = justify; events.push('JUSTIFIED waiver ' + cls + ': ' + prev + ' -> ' + n + ' (' + justify + ')'); hwm[cls] = n; since[cls] = 0; }
+      /* else: net addition left in place; the HWM is NOT raised and the verdict fails. */
+    }
+    for (cls in hwm) {
+      if (Object.prototype.hasOwnProperty.call(hwm, cls) && (now[cls] || 0) === 0 && hwm[cls] !== 0) {
+        events.push('cleared ' + cls + ': ' + hwm[cls] + ' -> 0 (flux down)'); hwm[cls] = 0; since[cls] = 0;
+      }
+    }
+    var degraded = [];
+    for (cls in since) {
+      if (Object.prototype.hasOwnProperty.call(since, cls) && (now[cls] || 0) > 0 && since[cls] >= WINDOW && !justified[cls]) degraded.push(cls);
+    }
+
+    var delivery = (state.delivery || 0) + 1;
+    state = {
+      hwm: hwm, justified: justified, since: since, delivery: delivery,
+      history: (state.history || []).concat([{ delivery: delivery, now: now, score: score(now) }]).slice(-40)
+    };
+    acc = {}; persist(state);
+    return { events: events, degraded: degraded, now: now, delivery: delivery };
+  }
+
+  function last() { var h = state.history || []; return h.length ? h[h.length - 1] : null; }
+  function flux() { var h = state.history || []; if (h.length < 2) return 0; return h[h.length - 1].score - h[h.length - 2].score; }
+
+  function report() {
+    var now = (last() && last().now) || sample();
+    var classes = [], outstanding = 0, i, cls, n, h, since, status;
+    for (i = 0; i < CLASSES.length; i++) {
+      cls = CLASSES[i]; n = now[cls] || 0; h = state.hwm[cls] == null ? n : state.hwm[cls]; since = state.since[cls] || 0;
+      status = 'clear';
+      if (n > h && !state.justified[cls]) status = 'regression';
+      else if (n > 0 && since >= WINDOW && !state.justified[cls]) status = 'stale';
+      else if (n > 0) status = state.justified[cls] ? 'waived' : 'tracked';
+      if (n > 0) outstanding += n;
+      classes.push({ cls: cls, now: n, hwm: h, since: since, waived: !!state.justified[cls], status: status });
+    }
+    var regress = [], stale = [];
+    for (i = 0; i < classes.length; i++) { if (classes[i].status === 'regression') regress.push(classes[i].cls); if (classes[i].status === 'stale') stale.push(classes[i].cls); }
+    var v, reason;
+    if (regress.length) { v = 'FAIL'; reason = 'net addition of debt: ' + regress.join(', '); }
+    else if (stale.length) { v = 'FAIL'; reason = 'stasis force-degraded to blocker: ' + stale.join(', '); }
+    else if (outstanding > 0 && flux() === 0) { v = 'WARN'; reason = 'stasis: debt outstanding and not clearing'; }
+    else { v = 'PASS'; reason = outstanding ? 'debt fluxing down' : 'no friction debt'; }
+    return { law: LAW, verdict: v, reason: reason, flux: flux(), delivery: state.delivery || 0, outstanding: outstanding, window: WINDOW, classes: classes };
+  }
+
+  function reset() { state = { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] }; acc = {}; persist(state); return state; }
+
+  /* ---------- UI: a self-contained, sleek ratchet report ---------- */
+  var VC = { PASS: '#3fb950', WARN: '#d29922', FAIL: '#f85149' };
+  function el(tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; }
+  function ui() {
+    if (typeof document === 'undefined') return report();
+    var r = report();
+    var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    var card = el('div', 'width:min(600px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    host.appendChild(card); document.body.appendChild(host);
+    var close = function () { if (host.parentNode) host.remove(); };
+    host.addEventListener('click', function (e) { if (e.target === host) close(); });
+    var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
+    head.appendChild(el('span', 'color:#7ee787;font-weight:700', '\u25c9 ClearanceLoop'));
+    head.appendChild(el('span', 'padding:2px 9px;border-radius:999px;font-weight:700;font-size:12px;color:#05070a;background:' + (VC[r.verdict] || '#8b949e'), r.verdict));
+    var x = el('button', 'margin-left:auto;background:transparent;border:0;color:#8b949e;font-size:16px;cursor:pointer', '\u2715');
+    x.addEventListener('click', close); head.appendChild(x); card.appendChild(head);
+    var body = el('div', 'padding:12px 14px'); card.appendChild(body);
+    body.appendChild(el('div', 'color:#8b949e;margin-bottom:10px', r.reason + ' \u00b7 flux ' + r.flux + ' \u00b7 delivery ' + r.delivery));
+    var tbl = el('div', 'display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr;gap:4px 8px;font-size:12px');
+    ['class', 'now', 'hwm', 'stasis'].forEach(function (h) { tbl.appendChild(el('div', 'color:#8b949e', h)); });
+    r.classes.forEach(function (c) {
+      var col = c.status === 'regression' ? '#ffb4ad' : c.status === 'stale' ? '#ffd28a' : '#c9d1d9';
+      tbl.appendChild(el('div', 'color:' + col, c.cls + (c.waived ? ' (waived)' : '')));
+      tbl.appendChild(el('div', 'color:' + col, String(c.now)));
+      tbl.appendChild(el('div', 'color:#8b949e', String(c.hwm)));
+      tbl.appendChild(el('div', 'color:#8b949e', c.since + '/' + r.window));
+    });
+    body.appendChild(tbl);
+    var foot = el('div', 'display:flex;align-items:center;gap:8px;margin-top:12px');
+    var adv = el('button', 'background:#161a20;border:1px solid #262a31;color:#e8edf3;border-radius:8px;padding:6px 12px;cursor:pointer', 'Advance delivery');
+    adv.addEventListener('click', function () { advance(); close(); ui(); });
+    var jst = el('button', 'background:#161a20;border:1px solid #262a31;color:#e8edf3;border-radius:8px;padding:6px 12px;cursor:pointer', 'Waive (justify)');
+    jst.addEventListener('click', function () {
+      var w = (root.prompt && root.prompt('Reason for the waiver (an apoptotic exception):')) || 'manual waiver';
+      advance(w); close(); ui();
+    });
+    var rst = el('button', 'margin-left:auto;background:transparent;border:1px solid #262a31;color:#8b949e;border-radius:8px;padding:6px 12px;cursor:pointer', 'Reset');
+    rst.addEventListener('click', function () { reset(); close(); ui(); });
+    foot.appendChild(adv); foot.appendChild(jst); foot.appendChild(rst); body.appendChild(foot);
+    return host;
+  }
+
+  return {
+    LAW: LAW, CLASSES: CLASSES, WINDOW: WINDOW,
+    install: install, observe: observe, absorb: absorb, advance: advance,
+    flux: flux, report: report, verdict: function () { return report().verdict; },
+    state: function () { return state; }, reset: reset, ui: ui
+  };
+});
+
+</script>
+<!-- PRERUNNER:END -->
+<!-- PRERUN-SHIM:START -->
+<script>
+(function () {
+  "use strict";
+  function ready(fn) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+    else fn();
+  }
+  var DEMO = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+    + '<body style="margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0b0c0e;color:#e8edf3;padding:18px">'
+    + '<h3 style="color:#ff8a3d;margin:0 0 6px">pre-runner self-check</h3>'
+    + '<p id="s" style="color:#8b949e">booting\u2026</p>'
+    + '<button id="b" style="font:inherit;padding:9px 14px;border-radius:10px;border:1px solid #2a2e35;background:#161a20;color:#e8edf3;cursor:pointer">tap me</button>'
+    + '<script>var n=0,b=document.getElementById("b"),s=document.getElementById("s");'
+    + 'b.onclick=function(){s.textContent="tapped "+(++n)+" time"+(n===1?"":"s")};s.textContent="ready \u2014 tap the button";'
+    + '<' + '/script>';
+  function editorText() {
+    var ids = ["input", "pasteBox", "payload-editor"];
+    for (var i = 0; i < ids.length; i++) { var e = document.getElementById(ids[i]); if (e && e.value && e.value.trim()) return e.value; }
+    return "";
+  }
+  function target(extra) {
+    var t = editorText();
+    var looksHtml = /<\s*(!doctype|html|body|div|script|style|button|canvas|svg|table|form)/i.test(t);
+    var files = looksHtml ? { "surface.html": t } : { "selfcheck.html": DEMO };
+    var o = { files: files, entry: Object.keys(files)[0], shots: 4, interval: 500, stress: 20, seed: 1 };
+    if (extra) for (var k in extra) if (Object.prototype.hasOwnProperty.call(extra, k)) o[k] = extra[k];
+    return o;
+  }
+  function api() {
+    if (!window.DarkithPreRunner) return null;
+    if (!window.DarkithPrerun) {
+      window.DarkithPrerun = {
+        run: function (o) { return window.DarkithPreRunner.run(target(o)); },
+        ui: function (o) { return window.DarkithPreRunner.ui(target(o)); },
+        target: target, demo: DEMO
+      };
+    }
+    return window.DarkithPrerun;
+  }
+  function clApi() {
+    if (!window.ClearanceLoop) return null;
+    if (!window.DarkithCL) {
+      window.ClearanceLoop.install();
+      window.DarkithCL = {
+        /* Advance the ratchet one delivery, folding in the friction the last
+           pre-run exposed (its errors + long tasks) before the law is applied. */
+        advance: function (justify) {
+          var last = window.__darkithLastRun;
+          if (last) window.ClearanceLoop.absorb(last);
+          var r = window.ClearanceLoop.advance(justify);
+          if (window.__darkithToast) window.__darkithToast('ClearanceLoop: ' + window.ClearanceLoop.verdict() + ' (flux ' + window.ClearanceLoop.flux() + ')');
+          return r;
+        },
+        ui: function () { return window.ClearanceLoop.ui(); },
+        report: function () { return window.ClearanceLoop.report(); }
+      };
+    }
+    return window.DarkithCL;
+  }
+  function fab() {
+    if (document.getElementById("prerun-fab")) return;
+    var b = document.createElement("button");
+    b.id = "prerun-fab"; b.type = "button";
+    b.title = "Pre-runner \u2014 race the race before the race";
+    b.setAttribute("aria-label", "Pre-runner");
+    b.textContent = "\u25b6";
+    var SIZE = 44, M = 12;
+    b.style.cssText = "position:fixed;z-index:2147483000;width:" + SIZE + "px;height:" + SIZE + "px;border-radius:50%;" +
+      "border:1px solid #2a2e35;background:#14171c;color:#ff8a3d;font-size:18px;line-height:1;cursor:pointer;" +
+      "box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:.55;-webkit-tap-highlight-color:transparent;touch-action:none;" +
+      "right:" + M + "px;bottom:" + M + "px;transition:opacity .18s ease";
+    b.addEventListener("mouseenter", function () { b.style.opacity = "1"; });
+    b.addEventListener("mouseleave", function () { b.style.opacity = ".55"; });
+    b.addEventListener("focus", function () { b.style.opacity = "1"; });
+    b.addEventListener("blur", function () { b.style.opacity = ".55"; });
+    b.addEventListener("click", function () { if (!b.__dragged) { var p = api(); if (p) p.ui(); } b.__dragged = false; });
+
+    /* The launcher must never sit on a real control. Some surfaces put their
+       primary button in this corner (omega's Send, the studio belt), so we move
+       out of any control's way, and let the Operator drag it anywhere. */
+    function overlapArea(el, f) {
+      var r = el.getBoundingClientRect();
+      if (r.width <= 0 || r.height <= 0) return 0;
+      var ox = Math.max(0, Math.min(r.right, f.right) - Math.max(r.left, f.left));
+      var oy = Math.max(0, Math.min(r.bottom, f.bottom) - Math.max(r.top, f.top));
+      return ox * oy;
+    }
+    function scoreAt(left, top) {
+      var f = { left: left, top: top, right: left + SIZE, bottom: top + SIZE };
+      /* Actions (buttons/links) must never be covered — that is what broke omega's
+         Send. Text fields are content, and a floating launcher over content is the
+         normal FAB pattern, so they are weighted low. */
+      var actions = document.querySelectorAll("button,a[href],[role=button],input[type=submit],input[type=button]");
+      var fields = document.querySelectorAll("input,textarea,select,[contenteditable=true]");
+      var s = 0, i;
+      for (i = 0; i < actions.length; i++) { if (actions[i] !== b && !b.contains(actions[i])) s += 1000 * overlapArea(actions[i], f); }
+      for (i = 0; i < fields.length; i++) { if (fields[i] !== b && !b.contains(fields[i])) s += overlapArea(fields[i], f); }
+      return s;
+    }
+    function setPos(left, top) {
+      b.style.left = left + "px"; b.style.top = top + "px";
+      b.style.right = "auto"; b.style.bottom = "auto";
+    }
+    function place() {
+      if (b.__moved) return;
+      var w = window.innerWidth, h = window.innerHeight;
+      var xs = [w - SIZE - M, M];
+      var ys = [h - SIZE - M, M, Math.round(h * 0.5 - SIZE / 2), Math.round(h * 0.72), Math.round(h * 0.28)];
+      var best = null, bestScore = Infinity;
+      for (var xi = 0; xi < xs.length; xi++) {
+        for (var yi = 0; yi < ys.length; yi++) {
+          var s = scoreAt(xs[xi], ys[yi]);
+          if (s === 0) { setPos(xs[xi], ys[yi]); return; }
+          if (s < bestScore) { bestScore = s; best = [xs[xi], ys[yi]]; }
+        }
+      }
+      if (best) setPos(best[0], best[1]);
+    }
+
+    var dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+    function down(e) {
+      var t = e.touches ? e.touches[0] : e;
+      var f = b.getBoundingClientRect();
+      dragging = true; moved = false; b.__dragged = false; sx = t.clientX; sy = t.clientY; ox = f.left; oy = f.top;
+      b.style.left = f.left + "px"; b.style.top = f.top + "px"; b.style.right = "auto"; b.style.bottom = "auto";
+      b.style.cursor = "grabbing";
+      e.preventDefault();
+    }
+    function move(e) {
+      if (!dragging) return;
+      var t = e.touches ? e.touches[0] : e;
+      var nx = ox + (t.clientX - sx), ny = oy + (t.clientY - sy);
+      nx = Math.max(4, Math.min(window.innerWidth - SIZE - 4, nx));
+      ny = Math.max(4, Math.min(window.innerHeight - SIZE - 4, ny));
+      b.style.left = nx + "px"; b.style.top = ny + "px";
+      if (Math.abs(t.clientX - sx) > 3 || Math.abs(t.clientY - sy) > 3) { moved = true; b.__dragged = true; }
+      e.preventDefault();
+    }
+    function up() { if (!dragging) return; dragging = false; b.style.cursor = "pointer"; b.__moved = moved || b.__moved; }
+    b.addEventListener("mousedown", down); b.addEventListener("touchstart", down, { passive: false });
+    window.addEventListener("mousemove", move, { passive: false }); window.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("mouseup", up); window.addEventListener("touchend", up);
+
+    (document.body || document.documentElement).appendChild(b);
+    place();
+    setTimeout(place, 300); setTimeout(place, 1200);
+    window.addEventListener("resize", function () { b.__moved = false; place(); });
+    window.addEventListener("scroll", function () { if (!b.__moved) place(); }, { passive: true });
+  }
+  function register() {
+    var p = api(), c = clApi(); fab();
+    /* Remember the last pre-run report so ClearanceLoop can absorb its friction. */
+    if (p && !window.__prerunWrapped) {
+      window.__prerunWrapped = true;
+      var orig = p.run;
+      p.run = function (o) { return Promise.resolve(orig(o)).then(function (r) { window.__darkithLastRun = r; return r; }); };
+    }
+    if (window.Omega && window.Omega.BUILTINS) {
+      if (!window.Omega.BUILTINS.prerun) window.Omega.BUILTINS.prerun = function () { if (p) p.ui(); return "(pre-running \u2014 see the overlay)"; };
+      if (!window.Omega.BUILTINS.clearance) window.Omega.BUILTINS.clearance = function () { if (c) c.ui(); return null; };
+    }
+    if (typeof window.CMD_REGISTRY === "object" && window.CMD_REGISTRY) {
+      if (!window.CMD_REGISTRY.prerun) window.CMD_REGISTRY.prerun = { icon: "\u25b6", label: "Pre-run", group: "Audit" };
+      if (!window.CMD_REGISTRY.clearance) window.CMD_REGISTRY.clearance = { icon: "\u25c9", label: "ClearanceLoop", group: "Audit" };
+    }
+    if (typeof window.dispatchCommand === "function" && !window.__prerunPatched) {
+      window.__prerunPatched = true;
+      var origD = window.dispatchCommand;
+      window.dispatchCommand = function (cmd) {
+        if (cmd === "prerun") { if (p) p.ui(); return; }
+        if (cmd === "clearance") { if (c) c.ui(); return; }
+        return origD.apply(this, arguments);
+      };
+    }
+  }
+  ready(function () { setTimeout(register, 0); });
+  window.DarkithPrerunReady = register;
+})();
+</script>
+<!-- PRERUN-SHIM:END -->
 
 <script>
 /* DARKITH FORGE · studio-side hook (added by the integrator, harmless standalone) */
@@ -5928,14 +6603,86 @@ function dict(seed) {
     return out.join("");
   }
 
-  /* Decode bytes as the reference does.  Returns { ok, text } or { ok:false, msg }. */
+  /* Decode bytes as CPython does.  A UTF-8 BOM, or a PEP 263 `coding:` cookie
+     on line 1 or 2, selects the codec; a file Python can run must never be
+     reported as unparseable.  Returns { ok, text } or { ok:false, msg }. */
   function decodeSource(bytes) {
-    try { return { ok: true, text: utf8Decode(bytes) }; }
-    catch (e) {
-      if (e && e.codecPos !== undefined) return { ok: false, msg: e.message };
-      throw e;
+    var n = bytes.length, bom = false;
+    if (n >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+      bom = true; bytes = bytes.subarray(3);
     }
+    var lines = firstLines(bytes, 2);
+    var cookie = lines.length ? cookieIn(lines[0]) : null;
+    if (cookie === null && lines.length > 1 && blankRe(lines[0])) cookie = cookieIn(lines[1]);
+    var enc = cookie ? normalName(cookie) : "utf-8";
+    if (bom && enc !== "utf-8") {
+      return { ok: false, msg: "encoding problem: " + enc + " with BOM (m.py, line 0)" };
+    }
+    if (enc === "utf-8") {
+      try { return { ok: true, text: utf8Decode(bytes) }; }
+      catch (e) {
+        if (e && e.codecPos !== undefined) return { ok: false, msg: e.message };
+        throw e;
+      }
+    }
+    if (enc === "ascii") return asciiDecode(bytes);
+    var dec;
+    try { dec = new TextDecoder(enc); }
+    catch (e) { return { ok: false, msg: "unknown encoding: " + enc + " (m.py, line 0)" }; }
+    try { return { ok: true, text: dec.decode(bytes) }; }
+    catch (e) { return { ok: false, msg: "cannot decode with " + enc + ": " + (e && e.message ? e.message : e) }; }
   }
+
+  function asciiDecode(bytes) {
+    var out = [], i;
+    for (i = 0; i < bytes.length; i++) {
+      if (bytes[i] > 0x7F) {
+        return { ok: false, msg: "'ascii' codec can't decode byte 0x" + bytes[i].toString(16) +
+                 " in position " + i + ": ordinal not in range(128)" };
+      }
+      out.push(String.fromCharCode(bytes[i]));
+    }
+    return { ok: true, text: out.join("") };
+  }
+
+  /* The first up-to-`k` physical lines of the byte stream, newline stripped.
+     Only the first two matter for the coding cookie. */
+  function firstLines(bytes, k) {
+    var out = [], start = 0, i = 0, n = bytes.length;
+    while (i < n && out.length < k) {
+      var b = bytes[i];
+      if (b === 0x0A) { out.push(sliceAscii(bytes, start, i)); start = i + 1; }
+      else if (b === 0x0D) {
+        out.push(sliceAscii(bytes, start, i));
+        start = (i + 1 < n && bytes[i + 1] === 0x0A) ? i + 2 : i + 1;
+        i++;
+      }
+      i++;
+    }
+    if (out.length < k && start <= n) out.push(sliceAscii(bytes, start, n));
+    return out;
+  }
+
+  function sliceAscii(bytes, a, b) {
+    var s = "";
+    for (var i = a; i < b && i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return s;
+  }
+
+  var COOKIE_RE = /coding[:=][ \t]*([-_.a-zA-Z0-9]+)/;
+  function cookieIn(line) { var m = COOKIE_RE.exec(line); return m ? m[1] : null; }
+  /* PEP 263: the cookie is on line 2 only if line 1 is blank or a comment. */
+  function blankRe(line) { return /^[ \t\f]*(?:#|$)/.test(line); }
+
+  /* Normalize a declared codec name the way `codecs.lookup` does: lower-case,
+     runs of non-alphanumerics collapsed to one underscore. */
+  function normalName(name) {
+    var s = String(name).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    var alias = { latin_1: "iso-8859-1", latin1: "iso-8859-1", l1: "iso-8859-1", iso8859_1: "iso-8859-1",
+                  cp1252: "windows-1252", utf8: "utf-8", u8: "utf-8", utf_8: "utf-8" };
+    return alias[s] || s;
+  }
+
 
   /* Scan raw bytes, reporting undecodable input the way the reference does. */
   function scanBytes(file, bytes, opts) {
@@ -5970,9 +6717,17 @@ function dict(seed) {
       return [finding("PARSE", 1, file, ln, "cannot parse: " + named(text, ln), "high")];
     }
     /* Module and attribute lookups are keyed by names taken from the source,
-       so the option maps must not inherit Object.prototype. */
+       so the option maps must not inherit Object.prototype.  `installed` mirrors
+       the CLI's --installed: a caller may name third-party roots it knows are
+       importable, and it is accepted as an array, a Set, or a plain object. */
+    var installed = dict();
+    var ins = opts.installed;
+    if (ins) {
+      if (typeof ins.forEach === "function") ins.forEach(function (k) { installed[k] = 1; });
+      else Object.keys(ins).forEach(function (k) { installed[k] = 1; });
+    }
     opts = { stdlib: dict(opts.stdlib), local: dict(opts.local),
-             stdattrs: opts.stdattrs || {}, installed: opts.installed };
+             stdattrs: opts.stdattrs || {}, installed: installed };
     var testFile = isTestFile(file);
 
     /* markers: comments and identifiers only, never string literals */
@@ -5992,7 +6747,7 @@ function dict(seed) {
       names.forEach(function (row) {
         var full = row[0], bound = row[1], line = row[2];
         var root = full.split(".")[0];
-        if (opts.stdlib[root] || opts.local[root] || root === "__future__") {
+        if (opts.stdlib[root] || opts.installed[root] || opts.local[root] || root === "__future__") {
           if (opts.stdlib[root] && bound && full.indexOf(".") < 0) modAlias[bound] = root;
           return;
         }
@@ -6667,7 +7422,9 @@ window.SAVF_STDATTRIB = {"__future__":["CO_FUTURE_ABSOLUTE_IMPORT","CO_FUTURE_AN
     var opts = {
       stdlib: stdlibDict(),
       stdattrs: global.SAVF_STDATTRIB || {},
-      local: localDict(entries)
+      local: localDict(entries),
+      /* mirrors the CLI's --installed: third-party roots the caller vouches for */
+      installed: options.installed
     };
 
     var findings = [], parsed = 0, skipped = 0;

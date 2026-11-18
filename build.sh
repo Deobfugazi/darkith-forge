@@ -51,6 +51,15 @@ AAPT2="${AAPT2:-$(which_tool aapt2   || true)}"
 ZIPALIGN="${ZIPALIGN:-$(which_tool zipalign || true)}"
 APKSIGNER="${APKSIGNER:-$(which_tool apksigner || true)}"
 KOTLINC="${KOTLINC:-$(which_tool kotlinc || true)}"
+# The stdlib jars that MUST be bundled into classes.dex (see d8_run). Derived from
+# KOTLINC's own lib/ so a Termux kotlinc and a JDK kotlinc both resolve.
+KOTLIN_STDLIB_JARS=()
+if [ -n "$KOTLINC" ]; then
+  KLIB="$(cd "$(dirname "$KOTLINC")/../lib" 2>/dev/null && pwd || true)"
+  for j in "$KLIB"/kotlin-stdlib.jar "$KLIB"/kotlin-stdlib-jdk7.jar "$KLIB"/kotlin-stdlib-jdk8.jar; do
+    [ -r "$j" ] && KOTLIN_STDLIB_JARS+=("$j")
+  done
+fi
 KEYTOOL=$(which_tool keytool || true)
 PY3=$(which_tool python3 || true); [ -n "$PY3" ] || PY3=$(which_tool python || true)
 
@@ -109,8 +118,17 @@ zipalign_check(){
 
 d8_run(){
   local out="$1"; shift
-  if [ -n "$D8_BIN" ]; then "$D8_BIN" --min-api "$MIN_SDK" --lib "$ANDROID_JAR" --output "$out" "$@"
-  else java -cp "$R8_JAR" com.android.tools.r8.D8 --min-api "$MIN_SDK" --lib "$ANDROID_JAR" --output "$out" "$@"; fi
+  # FATAL-FIX: inputs must include the LIBRARIES the app references, not only the
+  # app's own .class files. kotlinc puts kotlin-stdlib/apksig on the COMPILE
+  # classpath but d8 never saw them, so classes.dex referenced
+  # kotlin/jvm/internal/Intrinsics + com/android/apksig/ApkSigner while defining
+  # NEITHER -> ART threw NoClassDefFoundError on launch and the app died before
+  # the UI painted. Everything the code references must be a d8 INPUT.
+  local libs=()
+  for j in "$ROOT"/libs/*.jar "$PROJ_DIR"/libs/*.jar; do [ -r "$j" ] && libs+=("$j"); done
+  for j in "${KOTLIN_STDLIB_JARS[@]}"; do [ -r "$j" ] && libs+=("$j"); done
+  if [ -n "$D8_BIN" ]; then "$D8_BIN" --min-api "$MIN_SDK" --lib "$ANDROID_JAR" --output "$out" "$@" "${libs[@]}"
+  else java -cp "$R8_JAR" com.android.tools.r8.D8 --min-api "$MIN_SDK" --lib "$ANDROID_JAR" --output "$out" "$@" "${libs[@]}"; fi
 }
 
 # ── 3. CLEAN & PREPARE ───────────────────────────────────────────────────────

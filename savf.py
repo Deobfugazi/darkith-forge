@@ -204,9 +204,13 @@ def _finding(rule, phi, path, line, msg, sev):
 
 def scan_file(path, local, installed=None):
     try:
-        src = open(path, encoding="utf-8").read()
+        # Decode exactly as CPython does: a UTF-8 BOM or a PEP 263 `coding:`
+        # cookie on line 1 or 2 selects the codec.  A file Python can run must
+        # never be reported as unparseable.
+        with tokenize.open(path) as fh:
+            src = fh.read()
         tree = ast.parse(src, path)
-    except (SyntaxError, UnicodeDecodeError, RecursionError, ValueError) as e:
+    except (SyntaxError, UnicodeDecodeError, LookupError, RecursionError, ValueError) as e:
         # CPython's own compiler recurses, so a long enough expression raises
         # RecursionError.  That is a failure to parse, not a reason to abort the
         # whole scan: report it as a parse finding like any other.
@@ -549,6 +553,9 @@ def _canon(d): return json.dumps(d, sort_keys=True, separators=(",", ":")).encod
 def freeze(paths, thresholds=None, exemptions=(), chart="unspecified", lock=LOCK, force=False):
     if os.path.exists(lock) and not force:
         raise SystemExit(f"{lock} exists; refusing to overwrite (overwriting is a tamper event; use --force)")
+    for p in paths:
+        if not os.path.isfile(p):
+            raise SystemExit(f"freeze: no such file: {p}")
     d = {"version": 1, "files": {p: sha256_file(p) for p in paths},
          "thresholds": {"theta_mut": 0.6, "theta_cov": 0.8, **(thresholds or {})},
          "exemptions": sorted(exemptions), "chart": chart}
@@ -836,6 +843,33 @@ def gate(root, src, test_cmd, reach_args, max_mutants, seed):
 # ======================================================================
 # CLI
 # ======================================================================
+def _is_data_token(tok):
+    """True for a value like `-3`, `-1.5`, or `-41.4,-8.1` -- data that merely
+    happens to start with a minus sign."""
+    if len(tok) < 2 or tok[0] != "-" or tok[1] == "-":
+        return False
+    for part in tok[1:].split(","):
+        try:
+            float(part)
+        except ValueError:
+            return False
+    return True
+
+
+def _normalize_argv(argv):
+    """argparse reads a leading '-' as an option, so `--p0 -41.4,-8.1` fails with
+    "expected one argument".  Fold such a value onto the option it follows
+    (`--p0=-41.4,-8.1`), which argparse accepts.  Real flags are untouched."""
+    out = []
+    for tok in argv:
+        if (out and out[-1].startswith("--") and "=" not in out[-1]
+                and _is_data_token(tok)):
+            out[-1] += "=" + tok
+        else:
+            out.append(tok)
+    return out
+
+
 def _parse_pt(s):
     try:
         return tuple(float(x) for x in s.split(","))
@@ -852,6 +886,8 @@ def _load_json_arg(path):
 
 
 def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
     ap = argparse.ArgumentParser(prog="savf", description=__doc__.split("\n")[0])
     ap.add_argument("--version", action="version", version=__version__)
     sp = ap.add_subparsers(dest="cmd", required=True)
@@ -886,7 +922,7 @@ def main(argv=None):
     g.add_argument("--test-cmd", required=True); g.add_argument("--reach-test", required=True)
     g.add_argument("--max", type=int, default=30); g.add_argument("--seed", type=int, default=1); g.add_argument("--out")
 
-    A = ap.parse_args(argv)
+    A = ap.parse_args(_normalize_argv(list(argv)))
     if A.cmd == "axis":
         try:
             ax = Axis(_parse_pt(A.p0), _parse_pt(A.p1))
@@ -917,10 +953,14 @@ def main(argv=None):
             print(f"{len(F)} finding(s)")
         return 1 if any(x["sev"] == "high" for x in F) else 0
     elif A.cmd == "reach":
+        if not os.path.isdir(A.root):
+            raise SystemExit(f"reach: no such root directory: {A.root}")
         out = reach(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test)
         print(json.dumps(out, indent=2))
         return 0 if not out["missed"] and out["tests_exit"] == 0 else 1
     elif A.cmd == "mutate":
+        if not os.path.isdir(A.root):
+            raise SystemExit(f"mutate: no such root directory: {A.root}")
         out = mutate(A.root, [p for p in py_files(A.src) if not is_test_file(p)], A.test_cmd, A.max, A.seed)
         print(json.dumps(out, indent=2))
     elif A.cmd == "freeze":
@@ -964,4 +1004,15 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # The tool promises bad input yields a clean, non-zero error, never a raw
+    # traceback. SystemExit (argparse usage, deliberate messages) passes through;
+    # every other operational failure is reported as one line on stderr.
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except KeyboardInterrupt:
+        sys.exit(130)
+    except Exception as e:
+        sys.stderr.write(f"savf: {type(e).__name__}: {e}\n")
+        sys.exit(2)
