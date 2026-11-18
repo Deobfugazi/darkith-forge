@@ -124,6 +124,13 @@ if have python3 && [ -f tools/doc_path_gate.py ]; then
   run "doc path gate" python3 tools/doc_path_gate.py
 fi
 
+if have python3 && [ -f tools/kb_index.py ]; then
+  # Universal index of the readable knowledge-skill base (SPI-15). Fails if the index is
+  # stale, if a readable file is unfiled, if two files share a hash without a declared
+  # mirror, or if a declared mirror has drifted (NEVER #11 / #15 / #16, §22).
+  run "knowledge-base index + dedup" python3 tools/kb_index.py
+fi
+
 if have node && [ -f tools/test_darktools.js ]; then
   run "darktools unit tests" node tools/test_darktools.js
 fi

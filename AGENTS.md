@@ -235,6 +235,15 @@ The schema: each event = {id,timestamp,source,parent_id,llm_message,kind}; the u
   timestamps. Re-run -> byte-identical. Prove idempotency by running twice and diffing.
 - Consolidation (SPI-18): tools/consolidate_docs.sh merges overlapping docs; refuses to delete
   unless the canonical doc already holds every law. Idempotent (2nd run is a no-op).
+- UNIVERSAL KB INDEX (MUST #29): the readable knowledge-skill base is indexed, not scattered.
+  tools/kb_index.py generates docs/INDEX.md (human) + docs/kb_manifest.json (machine) from the
+  tracked bytes, in the repo's own registers — A-apparatus (root governance), B-knowledge
+  (docs/** corpus), C-skillbase (root web apps), D-asset (app assets), E-evidence (proof/),
+  F-config (dependency manifests). The registers are the repo's invariant A∧B∧C∧D applied to the
+  filesystem: apparatus separate from content (B), one retrieval surface (C), one canonical copy
+  (D). The gate (SPI-15) fails if the index is stale, a readable file is unfiled, two files share
+  a hash without a declared mirror (NEVER #11/#15/#16), or a declared mirror has drifted.
+  Deterministic: re-running yields byte-identical output (MUST #18).
 
 ## §23 NO STALLED DEFICIENCY (binding)
 - NEVER #17: a named deficiency may not survive two deliveries. Close it or descope it, in writing.

@@ -841,3 +841,17 @@ The synchrony bylaw (§31) applies to ALL apps, bots, and machine-software/sourc
 automations — not only the user-facing ones. The clock is GENERATED and injected, so adding
 a surface adds the clock; a surface or automation that re-implements or omits the clock is a
 defect. This is the prophylactic cure: the next app cannot be born without time.
+
+  ─── MUST #29 (THE KNOWLEDGE BASE IS INDEXED, NOT SCATTERED) ───
+  GATE: tools/kb_index.py
+  The readable knowledge-skill base is a first-class, indexed register — not documents "all
+  over the place". tools/kb_index.py generates docs/INDEX.md (human) + docs/kb_manifest.json
+  (machine) from the tracked bytes and files every readable file in exactly one register:
+  A-apparatus (root governance), B-knowledge (docs/** corpus), C-skillbase (root web apps),
+  D-asset (app assets), E-evidence (proof/), F-config (dependency manifests). The registers are
+  the repo's own invariant A∧B∧C∧D applied to the filesystem: apparatus separate from content
+  (B), one retrieval surface (C), one canonical copy (D). The gate fails if the index is stale,
+  a readable file is unfiled, two files share a hash without a declared mirror (NEVER #11/#15/#16),
+  or a declared mirror has drifted. Deterministic (MUST #18): re-running yields byte-identical
+  output. The corpus is the corrected, reality-coupled, self-scrutinizing, gate-checked
+  knowledge base — it grows by adding a register-filed, indexed, deduplicated file.
