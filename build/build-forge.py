@@ -41,6 +41,7 @@ SAVF_HTML = ROOT / "savf.html"
 CORE = BUILD / "savf-core.js"
 HOST = BUILD / "savf-host.js"
 FACADE = BUILD / "truth-facade.js"
+HELP = BUILD / "termkit-help.js"
 
 # markers: studio blocks live inside the carrier, shell blocks outside it, so
 # they get distinct names and can never be confused by the stripper.
@@ -49,6 +50,9 @@ SH_START, SH_END = "<!-- SAVF-HOST:START -->", "<!-- SAVF-HOST:END -->"
 SS_START, SS_END = "<!-- SAVF-SHELL:START -->", "<!-- SAVF-SHELL:END -->"
 ST_START, ST_END = "/* SAVF-TERM:START */", "/* SAVF-TERM:END */"
 PF_START, PF_END = "<!-- SAVF-FACADE:START -->", "<!-- SAVF-FACADE:END -->"
+# The TermKit manual (dual-register help + its invariant fixtures). Injected as
+# its own block so build-forge can regenerate it; `help` reads it lazily.
+TK_START, TK_END = "<!-- TERMKIT-HELP:START -->", "<!-- TERMKIT-HELP:END -->"
 
 CARRIER_RE = re.compile(r'<script type="text/plain" id="studio-src">')
 BUILTINS_ANCHOR = "var builtins = Object.create(null);"
@@ -130,11 +134,14 @@ def patch_studio(studio: str, core: str, host: str) -> str:
 def patch_shell(shell: str, core: str) -> str:
     shell = strip(shell, SS_START, SS_END)
     shell = strip(shell, ST_START, ST_END)
+    shell = strip(shell, TK_START, TK_END)
     shell = inject(shell, SS_START, SS_END, wrap_script(core))
     if BUILTINS_ANCHOR not in shell:
         raise SystemExit("TermKit anchor missing: cannot add the `savf` builtin")
     shell = shell.replace(BUILTINS_ANCHOR,
                           BUILTINS_ANCHOR + "\n" + TERMINAL_BUILTIN, 1)
+    help_js = HELP.read_text(encoding="utf-8")
+    shell = inject(shell, TK_START, TK_END, wrap_script(help_js))
     return shell
 
 
@@ -177,7 +184,7 @@ def main() -> int:
     core = CORE.read_text(encoding="utf-8")
     host = HOST.read_text(encoding="utf-8")
     facade = FACADE.read_text(encoding="utf-8")
-    syntax_gate(CORE, HOST)
+    syntax_gate(CORE, HOST, HELP)
 
     shell0 = FORGE.read_text(encoding="utf-8")
     studio0 = get_carrier(shell0)

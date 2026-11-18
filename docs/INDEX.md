@@ -46,7 +46,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `darkith code studio.html` | 539,472 | `f706384c84db` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,297,607 | `0a6c54dd8816` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith home forge.html` | 1,318,719 | `cd298f710647` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,568 | `622dc406953f` | Repository — A Unit in Four Registers |

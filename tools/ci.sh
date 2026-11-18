@@ -179,6 +179,13 @@ fi
     run "icon forge tests" node tools/test_icon_forge.js
   fi
 
+  # The TermKit dual-register manual (help beginner / help dev). The invariant debugger
+  # extracts the REAL shell core from the canonical page and executes every fixture the
+  # manual prints, so documentation can never drift from the engine. No browser needed.
+  if have node && [ -f tools/termkit_help_audit.mjs ]; then
+    run "termkit help audit (dual register)" node tools/termkit_help_audit.mjs
+  fi
+
 
   # The source inspector — the logical trial examiner. It puts the source on trial: 10
   # named charges, each calibrated (positive+negative), then autofixes the reversible ones
