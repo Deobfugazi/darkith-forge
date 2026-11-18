@@ -806,3 +806,38 @@ NOTE — `tools/sync.sh` defaults `BRANCH=main` but the working branch is
 reports a false conflict. Push the working branch with
 `DARKITH_BRANCH=absolution/admission tools/board_pulse.sh` (never force). `main` and the
 working branch are separate histories here.
+
+## SAVF pre-run, third pass (reach/mutate false-green + scout re-run)
+
+Two more REAL defects found and fixed, both reproduced before the fix:
+
+- DEFECT (fixed): `reach` and `mutate` built their source list with a bare
+  `[p for p in py_files(src) ...]`. `py_files()` returns `[]` for a path that is not there,
+  so a typo'd `--src` made `reach` print `{functions: 0, missed: []}` and exit 0, and
+  `mutate` print `{mutants: 0, score: null}` and exit 0 — a confident green that hides a
+  missing path, the exact false-green `scan` already refuses. Both now route through
+  `_source_files()`, which errors cleanly (non-zero, no traceback) on a missing path and on a
+  directory with no Python in it. Locked in `build/savf-cli-test.py` (now 30/30). This is the
+  second time the CLI shell, not the core, held the defect — audit the shell first.
+
+- DEFECT (fixed, prior session, verified LIVE this session): the fracture-scout push died on
+  a re-run because the day's branch already existed (`git push -u` → non-fast-forward). The
+  workflow now creates the branch or updates it under an explicit
+  `--force-with-lease="refs/heads/$BR:refs/remotes/origin/$BR"` after an explicit-refspec
+  fetch. PROOF on real GitHub Actions: dispatch run #3 (new branch) success, dispatch run #4
+  (re-run) success with log line `+ 06849aa...abb0890 (forced update)`; PR opened/updated.
+
+Re-verified this session (through the real engines): `savf.py selftest` 2839 checks / 0 fail;
+verdict total over 3^11 = exactly one PASS; `tools/savf_parity_gate.py` PASS (12 verdicts +
+18 signs); the CLI fuzz harness in the scratch dir 21/21 clean; `savf.html` in chromium at
+360×800 — 2839 checks in-browser, 0 console/page errors, no overflow, all 7 tabs functionally
+correct and agreeing with the CLI. `savf.html` has zero external references (single 443 KB
+file, offline). Local `tools/ci.sh` → CI: PASS (after `build/sync-delivery.py` +
+`build/make-oneshot.py` are re-run to refresh the gitignored `delivery/` bundle and the
+printed hashes).
+
+- `assets/engine/android.jar` is NOT a main-branch defect: `tools/stage_engine_inputs.sh`
+  (called by `build&install.sh`) stages it at build time and `build.sh` deliberately excludes
+  it from the host's own assets. Only running a bare `build.sh` with no prior staging omits it.
+  `master`'s "track it in git" commits are a superseded approach; master is 170 behind main.
+
