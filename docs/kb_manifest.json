@@ -6,7 +6,7 @@
       "bytes": 42427,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "273bb8869d5ab7ddcfe9ff0d4fcc8c8b07d16cf14305a70bbfbac2102cccf3a6"
+      "sha256": "d931ad78ba96b9122a723626fe305b673e1bf29abcffcf7f3ef2d218d9fffe9a"
     },
     {
       "bytes": 60564,
@@ -18,7 +18,7 @@
       "bytes": 3356,
       "path": "DEFICITS.json",
       "register": "A-apparatus",
-      "sha256": "55898aae4fe66d38ee21e8863c5e20ebffcd7dba69e3076918ec44dc34ce4632"
+      "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
       "bytes": 64239,
@@ -123,10 +123,10 @@
       "sha256": "69326584950566f1d26672c77957f506f65621d4da975369b7567dd1c5da33c4"
     },
     {
-      "bytes": 1318090,
+      "bytes": 1328665,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "02da251795aafb0bae07a1a2c83959363e376152fe3e9012d94f7678c6629762"
+      "sha256": "6747d959d65f8ca8ea6d9036becb5894ef775fc5dc6a741eee69fa3e0a52afc2"
     },
     {
       "bytes": 229875,
@@ -159,10 +159,10 @@
       "sha256": "b836908030f85e29452bae32decbb31e9d008187c0e51706589934bdcd36c7ea"
     },
     {
-      "bytes": 473721,
+      "bytes": 484364,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "e12c993c179cd290030c0fda7da7942b0debe70c40bb924b534f2564c7f58816"
+      "sha256": "e1a70f9c987885be0972144a6e38c24e2912789b444c5977b2af2c99d4f88635"
     },
     {
       "bytes": 96784,

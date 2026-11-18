@@ -25,7 +25,7 @@ DEFAULT_TARGET = ROOT / "app" / "src" / "main" / "assets" / "homekeeper.html"
 # stubbed to safe values so the page can be exercised as it is on device.
 BRIDGE = r"""
 window.darkith = {
-  apkVersion: () => "1.1.0-omega",
+  apkVersion: () => "1.2.0-omega",
   browserOpen: () => "{\"ok\":true}", browserClose: () => "{\"ok\":true}",
   copyText: () => "{\"ok\":true}",
   fileCopy: () => "{\"ok\":true}", fileDelete: () => "{\"ok\":true}",

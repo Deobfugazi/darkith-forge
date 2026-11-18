@@ -15,9 +15,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 42,427 | `273bb8869d5a` | AGENTS.md — Darkith |
+| `AGENTS.md` | 42,427 | `d931ad78ba96` | AGENTS.md — Darkith |
 | `DARKITH.md` | 60,564 | `5c15916533ee` | DARKITH — THE SINGLE SOURCE OF TRUTH |
-| `DEFICITS.json` | 3,356 | `55898aae4fe6` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
+| `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 64,239 | `7bd8873e65e5` | DARKITH — README |
 | `RESUME.md` | 4,284 | `8a7dd377f4e1` | RESUME — read this first in any new session |
 | `TASKS.md` | 15,433 | `4efc36cbb816` | TASKS — the durable board |
@@ -45,7 +45,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `darkith code studio.html` | 543,124 | `693265849505` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,318,090 | `02da251795aa` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith home forge.html` | 1,328,665 | `6747d959d65f` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
@@ -56,7 +56,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `app/src/main/assets/darkith_ui.html` | 229,875 | `b836908030f8` | Darkith Inscriber — SAVF Lite Studio |
-| `app/src/main/assets/homekeeper.html` | 473,721 | `e12c993c179c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `app/src/main/assets/homekeeper.html` | 484,364 | `e1a70f9c9878` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,784 | `addc4f6d44b9` | SAVF-1 Universal Audit Engine |
 
 ## E-evidence — Machine-generated proof

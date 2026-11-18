@@ -42,6 +42,8 @@ SAVF_HTML = ROOT / "savf.html"
 CORE = BUILD / "savf-core.js"
 HOST = BUILD / "savf-host.js"
 FACADE = BUILD / "truth-facade.js"
+UPDATER = BUILD / "updater.js"
+VERSION_JSON = ROOT / "VERSION.json"
 
 # markers: studio blocks live inside the carrier, shell blocks outside it, so
 # they get distinct names and can never be confused by the stripper.
@@ -50,6 +52,7 @@ SH_START, SH_END = "<!-- SAVF-HOST:START -->", "<!-- SAVF-HOST:END -->"
 SS_START, SS_END = "<!-- SAVF-SHELL:START -->", "<!-- SAVF-SHELL:END -->"
 ST_START, ST_END = "/* SAVF-TERM:START */", "/* SAVF-TERM:END */"
 DH_START, DH_END = "/* DUAL-HELP:START */", "/* DUAL-HELP:END */"
+UP_START, UP_END = "/* UPDATE-WATCHER:START */", "/* UPDATE-WATCHER:END */"
 PF_START, PF_END = "<!-- SAVF-FACADE:START -->", "<!-- SAVF-FACADE:END -->"
 
 CARRIER_RE = re.compile(r'<script type="text/plain" id="studio-src">')
@@ -428,10 +431,28 @@ def restore_dual_help(shell: str) -> str:
     return _DH_RE.sub(lambda m: HELP_ANCHOR, shell, count=1)
 
 
+def updater_block() -> str:
+    """The update watcher: `build/updater.js` with its LOCAL stamp replaced by
+    the repo's `VERSION.json`, so the page carries its own version offline."""
+    man = json.loads(VERSION_JSON.read_text(encoding="utf-8"))
+    js = UPDATER.read_text(encoding="utf-8")
+    local = {
+        "versionCode": man["versionCode"],
+        "versionName": man["versionName"],
+        "surfaceVersion": man.get("surfaceVersion", ""),
+    }
+    if "var LOCAL = " not in js:
+        raise SystemExit("updater.js lost its LOCAL stamp anchor")
+    js = re.sub(r"var LOCAL = \{[^}]*\};",
+                "var LOCAL = " + json.dumps(local, separators=(",", ":")) + ";", js, count=1)
+    return wrap_script(js)
+
+
 def patch_shell(shell: str, core: str) -> str:
     shell = strip(shell, SS_START, SS_END)
     shell = strip(shell, ST_START, ST_END)
     shell = restore_dual_help(shell)
+    shell = strip(shell, UP_START, UP_END)
     shell = inject(shell, SS_START, SS_END, wrap_script(core))
     if BUILTINS_ANCHOR not in shell:
         raise SystemExit("TermKit anchor missing: cannot add the `savf` builtin")
@@ -440,6 +461,7 @@ def patch_shell(shell: str, core: str) -> str:
     if HELP_ANCHOR not in shell:
         raise SystemExit("TermKit help anchor missing: cannot add the dual register")
     shell = shell.replace(HELP_ANCHOR, help_block(), 1)
+    shell = inject(shell, UP_START, UP_END, updater_block())
     return shell
 
 

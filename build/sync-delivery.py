@@ -30,6 +30,7 @@ COPY = {
     ROOT / "savf.py": DELIVERY / "savf.py",
     ROOT / "darkith forge.html": DELIVERY / "darkith-forge.html",
     ROOT / "omega.html": DELIVERY / "omega.html",
+    ROOT / "VERSION.json": DELIVERY / "VERSION.json",
 }
 
 # Documents that quote a size and a sha256 for the webapp.  Kept in step with

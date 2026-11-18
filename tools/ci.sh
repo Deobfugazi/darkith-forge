@@ -205,6 +205,12 @@ else
   echo "SKIP: node not found"; FAILED=1
 fi
 
+# The update watcher's decision logic (stale-vs-remote): pure, exercised with real
+# inputs and a stubbed transport, so the alerting cannot silently rot.
+if have node && [ -f tools/updater_test.mjs ]; then
+  run "update watcher logic" node tools/updater_test.mjs
+fi
+
 # Browser UI test needs playwright; run it only if importable, so a slim environment
 # skips it honestly instead of reporting a false failure.
 if have python3 && python3 -c 'import playwright' >/dev/null 2>&1; then
@@ -385,6 +391,18 @@ if have python3 && [ -f build/make-oneshot.py ]; then
     FAILED=1
   fi
   rm -f /tmp/oneshot_check.$$
+fi
+
+# Version truth + update-watcher wiring: the version stamped in the page, the
+# app surface, the manifest and updater.js must all agree with VERSION.json, or a
+# stale install could be told it is current (or a current one told to update).
+if have python3 && [ -f tools/update_gate.py ]; then
+  run "version truth + update wiring" python3 tools/update_gate.py
+fi
+
+# The app surface must carry the CURRENT watcher block (idempotent injector).
+if have python3 && [ -f build/inject_updater.py ]; then
+  run "update watcher injected (app surface)" python3 build/inject_updater.py --check
 fi
 
 # The Operator's one-shot entrypoint (build&install.sh) must exist, be valid bash,

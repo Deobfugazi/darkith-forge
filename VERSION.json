@@ -1,0 +1,14 @@
+{
+  "app": "darkith-forge",
+  "name": "DARKITH Forge",
+  "versionCode": 3,
+  "versionName": "1.2.0-omega",
+  "surfaceVersion": "v5.3.1",
+  "released": "2026-11-18T00:00:00Z",
+  "channel": "absolution/admission",
+  "repo": "Deobfugazi/darkith-forge",
+  "manifest_url": "https://raw.githubusercontent.com/Deobfugazi/darkith-forge/main/VERSION.json",
+  "release_tag_prefix": "oneshot-",
+  "oneshot_url": "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/darkith-one-shot.sh",
+  "notes": "Sovereign upliftment. Adds dual-register terminal help and the integrated client-coupling update watcher."
+}
