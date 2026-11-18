@@ -358,7 +358,7 @@ def cmd_scan(args) -> int:
          f"({len(errors)} source errors) -> {out}")
 
     digest = _digest(ranked[: args.top], rows, errors)
-    print("\n== " + digest, end="")
+    print("\n" + digest, end="")
     if args.summary:
         s = pathlib.Path(args.summary)
         s.parent.mkdir(parents=True, exist_ok=True)
