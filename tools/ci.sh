@@ -87,6 +87,13 @@ if have python3; then
       if [ -f tools/nt_gate.py ]; then
         run "nt corpus reconciliation (SAVF)" python3 tools/nt_gate.py
       fi
+      # NT hardware-coupled sensor: the Healer repair example must name a symbol the
+      # reference android.jar actually carries (raw android.*, not androidx.*). Reads the
+      # compiler's own ground truth; a silent skip is announced (SPI-2/SPI-13).
+      if [ -f tools/nt_sensor.py ]; then
+        run "nt sensor (Healer example vs android.jar)" python3 tools/nt_sensor.py
+        run "nt sensor self-test"           python3 tools/nt_sensor.py --selftest
+      fi
       # NT XI progress-deficit indicator: the retention law W_in - E = S != 0 read off
       # the durable board + deficit ledger. Fails if the board's printed indicator is stale,
       # or if the ratio rose across a delivery with no new descope (M6 non-extractive).

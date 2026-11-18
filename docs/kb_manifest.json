@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 35,
+  "count": 36,
   "files": [
     {
       "bytes": 34829,
@@ -57,10 +57,10 @@
       "sha256": "5c35948728cd69540108fc5aac5f930e4ec033a315652ce0ec641fa328dc7165"
     },
     {
-      "bytes": 3709,
+      "bytes": 4087,
       "path": "docs/nt/NT-INDEX.md",
       "register": "B-knowledge",
-      "sha256": "69427ff092f15121fa4d0404aa9397d28d52e09bbd6676b4a519a19e397680f3"
+      "sha256": "bfa58a87d12f496fdea1120ce4b8023182807dc0f5ba52327878075274364599"
     },
     {
       "bytes": 47852,
@@ -93,16 +93,22 @@
       "sha256": "6cd891c3be9a85ea15fe518f9c9f7f1fe9edc754db0217c8c1b963d0c9bdbdd9"
     },
     {
-      "bytes": 27539,
+      "bytes": 27503,
       "path": "docs/nt/NT-X.txt",
       "register": "B-knowledge",
-      "sha256": "a0f35644bd55b926aa60f9135ede7e6b5e1cfd0c9dcbaec8a683e96d60625690"
+      "sha256": "560b5904324ac2111bb93d2dbec4768ea2c3e88d0611fcade63b7ef45ca0048e"
     },
     {
       "bytes": 70277,
       "path": "docs/nt/NT-XI.txt",
       "register": "B-knowledge",
       "sha256": "a46ef4198869cb8eda778676d1bdcbb394f4386884bfc9f374a562a1ec50924b"
+    },
+    {
+      "bytes": 78125,
+      "path": "docs/nt/NT-XII.txt",
+      "register": "B-knowledge",
+      "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
     },
     {
       "bytes": 539472,
@@ -159,10 +165,10 @@
       "sha256": "bd7589bc3d9344ae2d0996d0774ed1b5ad543ab7259bf162a8a143fe31e26fb9"
     },
     {
-      "bytes": 6371,
+      "bytes": 7185,
       "path": "proof/NT_RECONCILIATION.md",
       "register": "E-evidence",
-      "sha256": "0f94de11e15f9b3658439c89e5a6db29e559eeb93f2672075966b3e16e829aa3"
+      "sha256": "fa523afa591475099b08349515e14f8e73c96661b3dfcaf97483d79b0feed920"
     },
     {
       "bytes": 1214,
@@ -183,10 +189,10 @@
       "sha256": "ca98b4c82cb37c862441016782bf412a7c4ab5d61c9e8a28f896a5f6779f3233"
     },
     {
-      "bytes": 2240,
+      "bytes": 2924,
       "path": "proof/nt_ledger_prereconcile.txt",
       "register": "E-evidence",
-      "sha256": "bbb69c49da218913c359908114d74979097a3e52a5cbaf628a926e4095f01a7e"
+      "sha256": "800061c03912d4ff0b3c3fad4ab977180d9369e2b0d3abdbd3a780d8b24a76c7"
     },
     {
       "bytes": 1556,

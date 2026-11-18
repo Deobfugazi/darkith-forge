@@ -56,10 +56,10 @@
   {
     "id": "NT10-HEALER-ANDROIDX",
     "resolved_as": "RESOLVED",
-    "resolution": "SCOPED RESOLUTION. NT X 4.4/5.4 demonstrates the Healer repairing an unresolved import to 'import androidx.compose.material3.Button'. The repo law (fork_integrity_gate SPI-13 / NEVER #12) forbids any 'import androidx' in the delivered Kotlin tree. These are compatible once scoped: the androidx symbol is an ILLUSTRATIVE worked example of the Healer MECHANISM (detect unresolved symbol -> ingest verified import -> patch); it is NOT a claim about the delivered tree, which obeys the no-androidx law (ComposeEmitter is purged). RESOLVED as scoped. RECOMMENDED FOLLOW-UP: re-point the corpus example to a raw android.* import to remove the apparent conflict at the source.",
+    "resolution": "RESOLVED (follow-up done). NT X 4.4/5.4 demonstrates the Healer repairing an unresolved import. It originally named 'import androidx.compose.material3.Button' as the verified truth, which the repo law forbids (fork_integrity_gate SPI-13 / NEVER #12: zero 'import androidx' in the delivered tree). The reference android.jar carries android/widget/Button.class and ZERO androidx symbols, so the truthful repair is the raw import. The corpus example was re-pointed to 'import android.widget.Button' in NT-X.txt and NT-XII.txt; the Healer mechanism (detect unresolved symbol -> ingest verified import -> patch) is unchanged. The hardware-coupled sensor tools/nt_sensor.py re-checks this against the reference jar.",
     "evidence": {
-      "cmd": "python3 -c \"a=open('tools/fork_integrity_gate.sh').read(); b=open('docs/nt/NT-X.txt').read(); assert 'import androidx' in a and 'androidx.compose.material3.Button' in b; print('ANDROIDX-LAW-VS-EXAMPLE-SCOPED')\"",
-      "expect": "ANDROIDX-LAW-VS-EXAMPLE-SCOPED"
+      "cmd": "python3 tools/nt_sensor.py",
+      "expect": "HEALER-RAW-IMPORT-HARDWARE-VERIFIED"
     }
   },
   {

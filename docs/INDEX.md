@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**35 readable files across 6 registers.**
+**36 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -29,14 +29,15 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/DARKITH-OMEGA-repo.txt` | 139,509 | `ed122343b34d` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
-| `docs/nt/NT-INDEX.md` | 3,709 | `69427ff092f1` | NT INDEX — the noveltreatise corpus, carried and reconciled |
+| `docs/nt/NT-INDEX.md` | 4,087 | `bfa58a87d12f` | NT INDEX — the noveltreatise corpus, carried and reconciled |
 | `docs/nt/NT-IX.txt` | 47,852 | `148373385f60` | NOVELTREATISE IX — OMEGA FINAL EDITION (REVISED: DEVICE-BOUND, ALIGNME |
 | `docs/nt/NT-V.txt` | 154,001 | `fc36c1018bac` | NOVELTREATISE V |
 | `docs/nt/NT-VI.txt` | 31,069 | `72a2ca0e1a6a` | NOVELTREATISE VI — THE SYNCHRONICITY ENGINE |
 | `docs/nt/NT-VII.txt` | 133,393 | `f08f9b048066` | NOVELTREATISE VII |
 | `docs/nt/NT-VIII.txt` | 30,927 | `6cd891c3be9a` | NOVELTREATISE VIII |
-| `docs/nt/NT-X.txt` | 27,539 | `a0f35644bd55` | NOVELTREATISE X — OMEGA FINAL EDITION (REVISED: HARDWARE-BOUND, DELTA- |
+| `docs/nt/NT-X.txt` | 27,503 | `560b5904324a` | NOVELTREATISE X — OMEGA FINAL EDITION (REVISED: HARDWARE-BOUND, DELTA- |
 | `docs/nt/NT-XI.txt` | 70,277 | `a46ef4198869` | NOVELTREATISE XI: THE AUTOPHAGIC SOVEREIGN ECONOMY (ASE) |
+| `docs/nt/NT-XII.txt` | 78,125 | `9412708d5468` | NOVELTREATISE XII — OMEGA FINAL EDITION |
 
 ## C-skillbase — Skill surfaces — the interactive web apps
 
@@ -61,11 +62,11 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `proof/FIELD_REPORT_THIS_TAB.md` | 11,203 | `bd7589bc3d93` | DARKITH — byte-measured field report (this tab) |
-| `proof/NT_RECONCILIATION.md` | 6,371 | `0f94de11e15f` | NT CORPUS RECONCILIATION — the SAVF run and the absolution |
+| `proof/NT_RECONCILIATION.md` | 7,185 | `fa523afa5914` | NT CORPUS RECONCILIATION — the SAVF run and the absolution |
 | `proof/comment_19files_proof.txt` | 1,214 | `eb65d81efeb4` | file                       brief  open close  line-N bytes (SPI-2) |
 | `proof/comment_premise_check.txt` | 2,823 | `5713322369ba` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
 | `proof/kt_compile_proof.txt` | 1,003 | `ca98b4c82cb3` | === §19 FORK-INTEGRITY GATE — COMPILE PROOF (SPI-2/4/6) === |
-| `proof/nt_ledger_prereconcile.txt` | 2,240 | `bbb69c49da21` | ENGINE-RULE A->A  analysis |
+| `proof/nt_ledger_prereconcile.txt` | 2,924 | `800061c03912` | ENGINE-RULE A->A  analysis |
 | `proof/oneshot_proof.txt` | 1,556 | `dcda10db485e` | PROOF — one-shot installer + native-lib packaging (SPI-2/4/6) |
 
 ## F-config — Build configuration — dependency manifests
