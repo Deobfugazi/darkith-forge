@@ -8,7 +8,7 @@
   "phase.rest.py": "rest/digest/restore",
   "phase.rest.js": "rest/digest/restore",
   "tree.files": 213,
-  "tree.blobsha.agree": false,
-  "converged": false,
+  "tree.blobsha.agree": true,
+  "converged": true,
   "agent": "primary"
 }
