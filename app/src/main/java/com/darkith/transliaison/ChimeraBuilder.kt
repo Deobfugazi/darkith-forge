@@ -82,6 +82,24 @@ class ChimeraBuilder(private val context: Context) {
                     }
                 }
                 copyAssetsRecursively("")
+                // Ship the handcoded native tools STORED under lib/<abi>/ so the child is itself
+                // a forge (the host ships them the same way). Without them a forged app cannot
+                // build a child of its own; extractNativeLibs=true in the template is what makes
+                // Android extract them to nativeLibraryDir, the only exec-capable location.
+                for (abi in nativeDir.listFiles().orEmpty()) {
+                    if (!abi.isDirectory) continue
+                    for (so in abi.listFiles().orEmpty()) {
+                        if (!so.isFile || !so.name.endsWith(".so")) continue
+                        val bytes = so.readBytes()
+                        val ne = ZipEntry("lib/${abi.name}/${so.name}")
+                        val crc = CRC32(); crc.update(bytes)
+                        ne.method = ZipEntry.STORED
+                        ne.size = bytes.size.toLong()
+                        ne.compressedSize = bytes.size.toLong()
+                        ne.crc = crc.value
+                        zo.putNextEntry(ne); zo.write(bytes); zo.closeEntry()
+                    }
+                }
             }
         }
 

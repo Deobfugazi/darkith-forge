@@ -40,11 +40,19 @@ class BuildEngine(private val context: Context) {
         val templateDex = File(workingDir, "classes.dex")
         context.assets.open("engine/template.dex").use { input -> FileOutputStream(templateDex).use { output -> input.copyTo(output) } }
         val mergedApk = File(workingDir, "merged.apk")
-        mergeIntoApk(baseApk, mergedApk, listOf(
+        val extras = mutableListOf(
             "classes.dex" to templateDex.readBytes(),
             "assets/index.html" to injected.toByteArray(),
             "assets/vendor/darkith-rt.js" to File(vendorDir, "darkith-rt.js").readBytes()
-        ))
+        )
+        // Ship the handcoded native tools STORED under lib/<abi>/ so the child is itself a forge.
+        // The template's extractNativeLibs=true is what makes Android extract them where they can run.
+        File(nativeDir).listFiles().orEmpty().filter { it.isDirectory }.forEach { abi ->
+            abi.listFiles().orEmpty().filter { it.isFile && it.name.endsWith(".so") }.forEach { so ->
+                extras += "lib/${abi.name}/${so.name}" to so.readBytes()
+            }
+        }
+        mergeIntoApk(baseApk, mergedApk, extras)
 
         val signedApk = File(workingDir, "${sanitize(appName)}.apk")
         val aligned = File(workingDir, "aligned.apk")
@@ -85,8 +93,18 @@ class BuildEngine(private val context: Context) {
                 }
                 for ((name, data) in entries) {
                     if (seen.contains(name)) continue
-                    val e = ZipEntry(name); e.method = ZipEntry.DEFLATED
-                    out.putNextEntry(e); out.write(data); out.closeEntry()
+                    // lib/*.so MUST be STORED (uncompressed) and aligned, or Android 11+ refuses
+                    // the APK and the native tools cannot be exec'd from nativeLibraryDir.
+                    if (name.startsWith("lib/") && name.endsWith(".so")) {
+                        val crc = java.util.zip.CRC32(); crc.update(data)
+                        val ne = ZipEntry(name)
+                        ne.method = ZipEntry.STORED; ne.size = data.size.toLong()
+                        ne.compressedSize = data.size.toLong(); ne.crc = crc.value
+                        out.putNextEntry(ne); out.write(data); out.closeEntry()
+                    } else {
+                        val e = ZipEntry(name); e.method = ZipEntry.DEFLATED
+                        out.putNextEntry(e); out.write(data); out.closeEntry()
+                    }
                 }
             }
         }

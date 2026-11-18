@@ -1,29 +1,29 @@
 {
   "law": "NT XI: W_in - E = S != 0; absolution as E/W_in -> 0",
   "delivery_versioncode": 2,
-  "W_in": 41,
-  "E": 15,
-  "S": 26,
-  "ratio": 0.3659,
+  "W_in": 42,
+  "E": 14,
+  "S": 28,
+  "ratio": 0.3333,
   "absolution": false,
   "omega": false,
   "components": {
     "board_total": 33,
-    "board_done": 18,
-    "board_todo": 15,
+    "board_done": 19,
+    "board_todo": 14,
     "board_in_progress": 0,
     "board_blocked": 0,
-    "deficit_total": 8,
-    "deficits_closed": 3,
+    "deficit_total": 9,
+    "deficits_closed": 4,
     "deficits_descoped": 5,
     "deficits_open": 0
   },
   "history": [
     {
       "delivery_versioncode": 2,
-      "W_in": 41,
-      "E": 15,
-      "ratio": 0.3659,
+      "W_in": 42,
+      "E": 14,
+      "ratio": 0.3333,
       "deficits_descoped": 5
     }
   ]

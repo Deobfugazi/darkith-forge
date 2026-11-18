@@ -109,6 +109,19 @@ fi
 # 6. zipalign is NOT fetched here: it is not a Maven artifact, and alignment is checked
 #    in pure Python by tools/install_gate.py (I-04), so no binary is required.
 
+# 6b. r8.jar — its D8 dexer regenerates assets/engine/template.dex from the sources
+#     (tools/rebuild_template_dex.sh). Without it the forge's engine dex cannot be rebuilt
+#     and drifts stale against app/src/main/java. Pinned to the version proven in the sandbox.
+R8_VER="8.3.37"
+if [ -r "$DEST/r8.jar" ]; then
+  say "r8.jar: cached"
+else
+  say "r8.jar: fetching ($R8_VER)"
+  curl -fsSL -o "$DEST/r8.jar" \
+    "https://dl.google.com/dl/android/maven2/com/android/tools/r8/${R8_VER}/r8-${R8_VER}.jar" \
+    || { say "DEFICIT: r8.jar download failed"; exit 1; }
+fi
+
 # Validate
 [ -x "$DEST/kotlinc/bin/kotlinc" ] || { say "DEFICIT: kotlinc missing"; exit 1; }
 [ -r "$DEST/$ANDROID_JAR_NAME" ]   || { say "DEFICIT: android.jar missing"; exit 1; }

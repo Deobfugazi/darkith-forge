@@ -40,10 +40,10 @@ validation, contrast checks.
 | # | task | status | evidence |
 |---|---|---|---|
 | C1 | Finish the APK (install + launch on device) | done | `delivery/darkith-homekeeper-debug.apk` 8,013,998 B; apksigner v2+v3; zipalign ok; launch-crash fix + icon; see AGENTS.md §28 |
-| C2 | Fix the native forge end to end (`forgeNative` → real builder) | todo | `BuildEngine` defects named: no `LD_LIBRARY_PATH`, recompresses `resources.arsc`, no zipalign step — all predicted, not yet run |
+| C2 | Fix the native forge end to end (`forgeNative` → real builder) | done | `forgeNative`→`ChimeraBuilder.forgeChimera` reproduced in-sandbox through the real toolchain (aapt2 link → package → zipalign → apksigner) on the arm64 host: forged child APK signed+verified v2/v3, `install_gate.py` 14/14 CLOSED. Defects named in the old row were fixed in-tree: child template `assets/engine/AndroidManifest.tpl.xml` now sets `extractNativeLibs=true` (was missing → `nativeLibraryDir` empty → child I-07 OPEN and un-forgeable); `ChimeraBuilder.kt` + `BuildEngine.kt` now ship `lib/<abi>/libaapt2.so`+`libzipalign.so` STORED so a forged child is itself a forge. Gated by `tools/forge_child_gate.py` (fail-closed). Recursive-forge on a physical device remains the owner's on-device step (sandbox cannot exec Android) |
 | C3 | Icon pipeline that feeds the forge | done | `tools/make_icon.py` (pure stdlib, omega Ω gold on near-black, all densities + adaptive) + `tools/icon_gate.py`; CI-gated |
 | C4 | The specialist icon app (the developer vertical in §B) | todo | distinct from C3: this is the user-facing module, not the app's own icon |
-| C5 | Sensing core — only for a consumer that exists | todo | first consumer is the forge memory guard (C2); sensors built in the abstract are the scope trap |
+| C5 | Sensing core — only for a consumer that exists | todo | first consumer is the forge memory guard; C2 now proven in-sandbox (see C2 evidence), so the consumer exists and this is unblocked |
 | C6 | Build the `darkith-omega-homekeeper` module (blueprint preserved at `DARKITH OMEGA repo.txt`, pushed fb85bcf) | todo | spec present, module not built; 8 membership rules + 9 admission conditions (A1-A9) unexecuted |
 
 ## D. SENSING-CORE GAPS (named in the forwarded dialogue — do not lose them again)
@@ -106,10 +106,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 41 | named work = board 33 + deficits 8 |
-| E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 26 | returned = done 18 + closed 3 + descoped 5 |
-| E/W_in | 0.366 | the progress-deficit indicator; absolution at 0 |
+| W_in | 42 | named work = board 33 + deficits 9 |
+| E | 14 | un-returned = todo 14 + in_progress 0 + blocked 0 + open 0 |
+| S | 28 | returned = done 19 + closed 4 + descoped 5 |
+| E/W_in | 0.333 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

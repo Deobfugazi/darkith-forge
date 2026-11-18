@@ -51,6 +51,12 @@ if have python3; then
     if [ -f tools/icon_gate.py ]; then
       run "icon gate"                     python3 tools/icon_gate.py
     fi
+    # Forge-child gate (C2): a forged child must be a working, self-forging app —
+    # extractNativeLibs=true in the child template, and both builders ship lib/<abi>/*.so.
+    # A regression here compiles clean and passes every source law yet ships dead-end children.
+    if [ -f tools/forge_child_gate.py ]; then
+      run "forge child gate (C2)"         python3 tools/forge_child_gate.py
+    fi
     # Board gate: the durable board must exist and every done item must carry evidence.
     if [ -f tools/board_gate.py ]; then
       run "board gate"                    python3 tools/board_gate.py
@@ -122,6 +128,12 @@ fi
 
 if have python3 && [ -f tools/doc_path_gate.py ]; then
   run "doc path gate" python3 tools/doc_path_gate.py
+fi
+
+# Knowledgebase index (AGENTS.md §22): every tracked document declares exactly one role;
+# docs/INDEX.md must be current. An unclassified doc is an orphan and fails.
+if have python3 && [ -f tools/doc_index.py ]; then
+  run "doc index gate (knowledgebase)" python3 tools/doc_index.py
 fi
 
 if have node && [ -f tools/test_darktools.js ]; then
