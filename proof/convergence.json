@@ -8,11 +8,11 @@
   "phase.rest.py": "rest/digest/restore",
   "phase.rest.js": "rest/digest/restore",
   "tree.files": 289,
-  "tree.blobsha.agree": false,
+  "tree.blobsha.agree": true,
   "source.examiner": 58,
   "source.walk": 58,
   "source.git": 58,
   "source.agree": true,
-  "converged": false,
+  "converged": true,
   "agent": "primary"
 }

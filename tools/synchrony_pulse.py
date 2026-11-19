@@ -57,8 +57,14 @@ def observe(mark: bool = False) -> dict:
         "currentPhase": phase(),
         "device": device_relation(),
     }
-    PULSE.parent.mkdir(parents=True, exist_ok=True)
-    PULSE.write_text(json.dumps(pulse, indent=2) + "\n", encoding="utf-8")
+    # Persist only when the DURABLE identity (boot, lastActivity) changes. `observedNow`,
+    # `gapHours` and the device clock are observation-time values: rewriting this tracked file
+    # on every run dirties the tree on every CI pass, which is a churn loop — and a churn loop
+    # makes a dwell gate (MUST #36) fire on CI's own output instead of on a real stall.
+    durable = (pulse["boot"], pulse["lastActivity"])
+    if durable != (prev.get("boot"), prev.get("lastActivity")):
+        PULSE.parent.mkdir(parents=True, exist_ok=True)
+        PULSE.write_text(json.dumps(pulse, indent=2) + "\n", encoding="utf-8")
     return pulse
 
 
