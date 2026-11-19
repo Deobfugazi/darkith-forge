@@ -27,7 +27,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
-| `docs/DARKITH-OMEGA-README.html` | 68,484 | `e78957b7eed5` | The Invariant — A Constant Parameter Formulary |
+| `docs/DARKITH-OMEGA-README.html` | 68,526 | `847896ba62c0` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
