@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 60,
+  "count": 61,
   "files": [
     {
       "bytes": 69253,
@@ -45,10 +45,10 @@
       "sha256": "43c74ae223ecf5ca8eff63d04219ebb6cdfffae60dbe81433cc40fdd5a715619"
     },
     {
-      "bytes": 59319,
+      "bytes": 68484,
       "path": "docs/DARKITH-OMEGA-README.html",
       "register": "B-knowledge",
-      "sha256": "28fb3d5fc476e570a4494c0a33b7118ad1c3eeede2287eda3e286c6021c98f83"
+      "sha256": "e78957b7eed5ece73c7193a0c862b70f406f4cb1921dee02dbcafa72194b68a2"
     },
     {
       "bytes": 120500,
@@ -73,6 +73,12 @@
       "path": "docs/UPDATES.md",
       "register": "B-knowledge",
       "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
+    },
+    {
+      "bytes": 5077,
+      "path": "docs/evidence/SECTOR-PAIN-LEDGER.md",
+      "register": "B-knowledge",
+      "sha256": "9d6b452e87d84d38eec53a3d6a5fbcaf3377aaec72291523dd3d299ffee9706e"
     },
     {
       "bytes": 146183,

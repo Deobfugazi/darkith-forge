@@ -139,8 +139,9 @@ const SECTIONS = [
   { id: 6,  title: "Information layers" },
   { id: 7,  title: "Security" },
   { id: 8,  title: "Composition" },
-  { id: 9,  title: "Closure" },
-  { id: 10, title: "Conclusion" },
+  { id: 9,  title: "The failure, measured" },
+  { id: 10, title: "Closure" },
+  { id: 11, title: "Conclusion" },
 ];
 
 /* ============================================================
@@ -189,9 +190,16 @@ const CONTENT = {
         <p>The sharpest case is ordering. A signature applied before alignment is destroyed by the alignment. So the order is not a preference: align, then sign. The signer never sees an unaligned thing. There is no fallback, because a fallback here is just a way to ship the broken thing.</p>`,
     8: `<h2>Composition</h2>
         <p>Each specification breaks into a counted list, and the counts are observations, not intentions. A list that does not end in a number is a list that can quietly grow or shrink until it means nothing.</p>`,
-    9: `<h2>Closure</h2>
+    9: `<h2>The failure, measured</h2>
+        <p>The formulary makes a prediction you can check against the world: wherever a bond is asserted and does not hold, the size of the failure is a number somebody already publishes. So here are the numbers, taken from the bodies that issue them rather than from commentary about them.</p>
+        <p><strong>Software that ships broken.</strong> The United States keeps a catalogue of vulnerabilities known to be used in real attacks. It held <strong>1,786</strong> entries on 18 November 2026, and <strong>361</strong> of them are tied to ransomware. The national vulnerability database carries <strong>428,256</strong> records. Every one of those reached a user, which means the gate that should have stopped it was missing or did not close.</p>
+        <p><strong>People who lose money.</strong> The FBI's complaint centre took <strong>859,532</strong> complaints in 2024 and recorded <strong>$16.6 billion</strong> in losses, a third more than the year before. Investment fraud alone was <strong>$6.57 billion</strong>. Business email compromise, where an attacker simply uses a name you already trust, was <strong>$2.77 billion</strong> across 21,442 cases.</p>
+        <p><strong>Money crossing borders.</strong> Foreign exchange turns over <strong>$9.6 trillion every day</strong>. The G20 has been working since 2020 on why moving value between countries is still costly, slow, exclusive and opaque, and it has not finished.</p>
+        <p><strong>The black market.</strong> The best available estimate of illicit crypto flows in 2024 is <strong>$40.9 billion</strong>, and the same firm raised its 2023 figure from $24.2 billion to <strong>$46.1 billion</strong> once it identified more. The measuring instrument itself carries a residual of about 25%.</p>
+        <p>Read that list again and notice it is one list. In every case something was promised, the promise was not kept, and the gap has a published size. That is the whole argument of this document, applied to the world instead of to a formula.</p>`,
+    10: `<h2>Closure</h2>
         <p>A claim that cannot be wrong is not a claim. This document names four ways it could be wrong, and names the test for each. It also states plainly what is new: the synthesis and the forcing, not the components. The components are public. Nobody is pretending otherwise.</p>`,
-    10: `<h2>Conclusion</h2>
+    11: `<h2>Conclusion</h2>
         <p>There is one invariant: a bond holds when adhesion beats cohesion, corrected for contact and cure, with the threshold at one. It is measurable, it is the same at every scale, and when it fails the failure has an exact size.</p>
         <p>The four conditions are the checklist you can carry away: hold, separate, promise, originate. The rule is the rule: compute the gap, force the correction, ship only at zero.</p>
         <p>The telephone is where it was hardest. It is not where it ends.</p>`,
@@ -264,7 +272,7 @@ const CONTENT = {
         <p><strong>Independence — the load-bearing argument.</strong> C does not entail A: a cache satisfies the functional condition while failing the relational one; it preserves and retrieves for a purpose but is not where the artifact lives. A does not entail C: a scratch directory satisfies the relational condition while promising nothing. Because neither entails the other, the conjunction is not redundant and the four are genuinely four. If this argument fails, section 5 fails, and the checklist collapses to a single condition wearing four names. It is the first thing a reader should attack.</p>`,
     6: `<h2>6. Information layers</h2>
         <p>Three layers, closed. <strong>R</strong> — raw: the bytes. <strong>I</strong> — inflated: names, indices, manifests, the organising apparatus. <strong>&Delta;</strong> — deflated: the descriptor that points back at R — a digest, a commit id, a version string.</p>
-        <p>The invariant requires the separation (Core B), and the separation is only real if it is enforced. In the repository that carries this document the three layers are literal and gated: R is the tracked tree (299 files); I is <code>docs/INDEX.md</code>, <code>docs/kb_manifest.json</code>, <code>TASKS.md</code>; &Delta; is the version of record <code>2.1.0-omega</code> plus the per-artifact sha256 digests under <code>proof/</code>. A gate fails if a readable file is unfiled; a second gate fails if a document cites a path that does not resolve; a third fails if the tree's bytes disagree with the index's blob hashes.</p>
+        <p>The invariant requires the separation (Core B), and the separation is only real if it is enforced. In the repository that carries this document the three layers are literal and gated: R is the tracked tree (300 files, observed 2026-11-19); I is <code>docs/INDEX.md</code>, <code>docs/kb_manifest.json</code>, <code>TASKS.md</code>; &Delta; is the version of record <code>2.1.0-omega</code> plus the per-artifact sha256 digests under <code>proof/</code>. A gate fails if a readable file is unfiled; a second gate fails if a document cites a path that does not resolve; a third fails if the tree's bytes disagree with the index's blob hashes.</p>
         <p>That is the point of the layer discipline: <code>&Sigma;_S = 0</code> is not a slogan, it is a measurement that a machine performs on the tree.</p>`,
     7: `<h2>7. Security</h2>
         <p>Eight layers, each naming the failure it stops and the mechanism that stops it.</p>
@@ -285,7 +293,7 @@ const CONTENT = {
         <p>Counts are observations of the tracked tree, not intentions.</p>
         <table>
           <tr><th>Component</th><th>Count</th><th>Where</th></tr>
-          <tr><td>Tracked files</td><td>299</td><td><code>git ls-files</code></td></tr>
+          <tr><td>Tracked files</td><td>300</td><td><code>git ls-files</code>, observed 2026-11-19</td></tr>
           <tr><td>Kotlin sources</td><td>63</td><td><code>*.kt</code></td></tr>
           <tr><td>Python tools</td><td>44</td><td><code>tools/*.py</code></td></tr>
           <tr><td>Shell tools</td><td>12</td><td><code>tools/*.sh</code></td></tr>
@@ -298,7 +306,25 @@ const CONTENT = {
           <tr><td>MUST laws</td><td>6</td><td><code>DARKITH.md</code></td></tr>
         </table>
         <p><strong>Count: 11 rows.</strong> The 12 noveltreatises are carried in 9 files because the first four share one protocol document. The count of treatises is 12 and the count of files is 9; both are true because they count different things — the same sense/transmission-form distinction the source corpus draws.</p>`,
-    9: `<h2>9. Closure</h2>
+    9: `<h2>9. The failure, measured: sector observations against the residual</h2>
+        <p>The formulary is falsifiable because it predicts that failure is <em>quantified</em> at every scale. The following are primary observations, fetched 2026-11-19 from the issuing bodies, each mapped to the term it violates. The full ledger, with URLs and the sources I refused, is at <code>docs/evidence/SECTOR-PAIN-LEDGER.md</code>.</p>
+        <table>
+          <tr><th>#</th><th>Sector</th><th>Observation as published</th><th>Term that fails</th></tr>
+          <tr><td>1</td><td>Critical infrastructure</td><td>CISA KEV 2026.11.18: 1,786 known-exploited; 361 ransomware-linked</td><td><code>&Sigma;_B &ne; 0</code> &mdash; exploited defects still shipping</td></tr>
+          <tr><td>2</td><td>All software</td><td>NVD: 428,256 CVE records</td><td><code>&Sigma;_B &ne; 0</code> &mdash; unbounded rejection surface</td></tr>
+          <tr><td>3</td><td>Consumers</td><td>FBI IC3 2024: 859,532 complaints, $16.6B losses, +33% YoY</td><td>Condition C without D &mdash; promise with no server of record</td></tr>
+          <tr><td>4</td><td>Consumers (investment)</td><td>IC3: investment fraud $6.57B (2024); $4.57B (2023); $3.31B (2022)</td><td>Retention &mdash; <code>E/W_in &gt; 0</code></td></tr>
+          <tr><td>5</td><td>Private companies</td><td>IC3: BEC $2.77B across 21,442 complaints</td><td>Coupling &mdash; <code>C = D &cap; P &ne; &empty;</code></td></tr>
+          <tr><td>6</td><td>Fintech / FX</td><td>BIS Triennial 2025: $9.6T/day FX turnover; OTC IRD $7.9T</td><td>Scale of the settlement surface the residual accrues on</td></tr>
+          <tr><td>7</td><td>Government / G20</td><td>FSB: four persistent challenges &mdash; high cost, low speed, limited access, insufficient transparency; 19 building blocks since 2020</td><td>Retention plus latency</td></tr>
+          <tr><td>8</td><td>Political / monetary</td><td>BIS AR 2025: more than 60% of responding jurisdictions had or were developing stablecoin frameworks</td><td>Condition D under construction</td></tr>
+          <tr><td>9</td><td>Black market</td><td>Chainalysis: 2024 illicit inflows $40.9B lower bound; 2023 revised $24.2B &rarr; $46.1B; ~25% upward revision</td><td>Measurement residual &mdash; the ledger undercounts its own failures</td></tr>
+          <tr><td>10</td><td>Developers</td><td>GitHub Octoverse 2025: 986 million code pushes</td><td>Coupling volume &mdash; each push is a graft under <code>C = D &cap; P</code></td></tr>
+        </table>
+        <p><strong>Count: 10 rows across 7 sectors.</strong> Consumers, developers, private companies, fintech, government, the political&ndash;monetary apparatus, and the illicit economy. Each row is the same failure expressed in that sector's own unit. A CVE is a defect that escaped a gate. A dollar of investment fraud is value that left without return. A stablecoin framework under construction is a Condition D that does not yet answer "who is the server of record".</p>
+        <p><strong>What this table is not.</strong> It is not evidence that the formulary is correct. It is evidence that the failure mode the formulary names is the failure mode present at every sector, and that each sector already measures it. The formulary's own claim is narrower and stronger: that these are one failure with one measure, and that a single closure rule &mdash; compute the gap, force the correction, ship at zero &mdash; applies to each.</p>
+        <p><strong>Sources refused.</strong> Sonatype's 2026 supply-chain report renders its headline figures as JavaScript counters with no static number in the served bytes. The World Bank Gini API returns <code>null</code> for the world aggregate from 2021 to 2025. FATF, the US defence releases and GAO returned 403 to this client. None is cited. A number that is not in the bytes is not a number.</p>`,
+    10: `<h2>9. Closure</h2>
         <p><strong>Novelty boundary.</strong> Component-novel, not component-invented. Adhesion, cohesion, the logarithmic residual, name disjointness, and the retention limit are all public. What is claimed as new is the <em>identification</em> of them as one formulary with one threshold and one closure rule, and the forcing of that rule into executable gates. The identification is marked <em>inferred</em>; the forcing is <em>resolved</em> and runs on every commit.</p>
         <p><strong>Four falsification conditions.</strong></p>
         <ul>
@@ -308,7 +334,7 @@ const CONTENT = {
           <li><strong>F4.</strong> A prior publication of this same synthesis, which would make the novelty claim false.</li>
         </ul>
         <p>Each is testable. F1 and F2 are tested by the count-and-membership discipline. F3 is tested by the independence argument in section 5 and by the coupling table in section 3 — the strongest form of F3 is a cross-scale row where the triad closes (<code>r = 0</code>) but the bond fails, or where the triad fails but the bond holds. F4 is tested by search, and remains open in the sense that no search is exhaustive.</p>`,
-    10: `<h2>10. Conclusion</h2>
+    11: `<h2>10. Conclusion</h2>
         <p>The invariant is a single dimensionless formulary with a threshold at unity: <code>&#8492; = (W_A/W_coh)(&alpha;&#8734;/&alpha;gel)&eta; &ge; 1</code>, closed by the exact residual <code>r = ln x &minus; n ln b</code> and the criterion <code>&Sigma; = &Sigma;_S + &Sigma;_B = 0</code>, coupled by <code>C = D &cap; P = &empty;</code>, and retained by <code>lim (E/W_in) = 0</code>.</p>
         <p>It is instantiated eleven times across matter, mechanism, and money, stored eight ways, and diagnosed by four conditions — relational, structural, functional, authority — of which each is necessary, the four are jointly sufficient, and the independence of C and A is the argument that keeps the conjunction from collapsing.</p>
         <p><em>Darkith Omega</em> is one coordinate of this formulary, chosen because it is the adversarial one: a 4 GB arm64 telephone, no Gradle, no cloud, no vendor resolver, <code>&Sigma; = 0</code> enforced by 24 gates on every commit. The telephone is the proof of hardness, not the subject. The subject is the invariant, and the rule is the rule: compute the gap, force the correction, ship only at zero.</p>`,
@@ -423,7 +449,7 @@ independence:
   consequence: conjunction_not_redundant_four_are_genuinely_four
   if_this_fails: section_5_fails_and_the_checklist_collapses_to_one_condition_with_four_names`,
     6: `layers:
-  R_raw: {is: bytes, instantiation: tracked_tree_299_files}
+  R_raw: {is: bytes, instantiation: tracked_tree_300_files}
   I_inflated: {is: organising_apparatus, instantiation: [docs/INDEX.md, docs/kb_manifest.json, TASKS.md]}
   D_deflated: {is: descriptor_pointing_back_to_R, instantiation: [2.1.0-omega, proof_digests]}
 requirement: core_B_demands_the_separation
@@ -449,7 +475,7 @@ forced_order: align_then_sign
   signer_input: aligned_file
   fallback: none_a_fallback_here_is_only_a_way_to_ship_the_broken_thing`,
     8: `composition:
-  tracked_files: 299
+  tracked_files: 300
   kotlin_sources: 63
   python_tools: 44
   shell_tools: 12
@@ -462,7 +488,29 @@ forced_order: align_then_sign
   proof_artifacts: 24
   must_laws: 6
 count_note: treatises_12_files_9_counts_different_things_both_true`,
-    9: `novelty: component_novel_not_invented
+    9: `sector_observations:
+  fetched: 2026-11-19
+  ledger: docs/evidence/SECTOR-PAIN-LEDGER.md
+  count_rows: 10
+  count_sectors: 7
+  rows:
+    - {n: 1,  sector: critical_infrastructure, observation: "CISA KEV 2026.11.18: 1786 known_exploited; 361 ransomware_linked", fails: "Sigma_B != 0"}
+    - {n: 2,  sector: all_software,            observation: "NVD: 428256 CVE records",                                    fails: "Sigma_B != 0"}
+    - {n: 3,  sector: consumers,               observation: "IC3 2024: 859532 complaints; USD 16.6B losses; +33% YoY",    fails: "condition_C_without_D"}
+    - {n: 4,  sector: consumers_investment,    observation: "IC3: 6.57B 2024; 4.57B 2023; 3.31B 2022",                   fails: "retention_E_over_W_in_gt_0"}
+    - {n: 5,  sector: private_companies,       observation: "IC3: BEC USD 2.77B; 21442 complaints",                       fails: "coupling_C_eq_D_n_P_not_empty"}
+    - {n: 6,  sector: fintech_fx,              observation: "BIS 2025: USD 9.6T per day FX; OTC IRD 7.9T",               fails: "scale_of_settlement_surface"}
+    - {n: 7,  sector: government_g20,          observation: "FSB: high cost, low speed, limited access, insufficient transparency; 19 building blocks", fails: "retention_plus_latency"}
+    - {n: 8,  sector: political_monetary,      observation: "BIS AR2025: over 60pct jurisdictions had or developing stablecoin frameworks", fails: "condition_D_under_construction"}
+    - {n: 9,  sector: black_market,            observation: "Chainalysis: 2024 illicit 40.9B lower bound; 2023 revised 24.2B to 46.1B; 25pct revision", fails: "measurement_residual"}
+    - {n: 10, sector: developers,              observation: "GitHub Octoverse 2025: 986 million code pushes",             fails: "coupling_volume"}
+  reading: every_row_is_one_failure_expressed_in_that_sector_unit
+  not_claimed: this_does_not_prove_the_formulary_it_shows_the_failure_mode_is_the_failure_mode
+  refused_sources:
+    - {source: sonatype_2026_sssc, reason: figures_are_js_counters_no_static_bytes}
+    - {source: world_bank_gini_wld, reason: api_returns_null_2021_2025}
+    - {source: fatf_defense_gao, reason: http_403}`,
+    10: `novelty: component_novel_not_invented
 novelty_boundary:
   resolved: forcing_the_rule_into_executable_gates_runs_every_commit
   inferred: identifying_the_components_as_one_formulary_with_one_threshold
@@ -472,7 +520,7 @@ falsifiers:
   - {id: F3, condition: scale_where_threshold_is_not_unity_or_residual_does_not_track_failure, kills: the_central_claim}
   - {id: F4, condition: prior_publication_of_same_synthesis, kills: novelty}
 F3_strongest_form: cross_scale_row_where_triad_closes_r_zero_but_bond_fails_or_triad_fails_but_bond_holds`,
-    10: `conclusion:
+    11: `conclusion:
   bonding: "B = (W_A/W_coh)(a_inf/a_gel) * eta >= 1"
   closure: "r = ln x - n ln b ; Sigma = Sigma_S + Sigma_B = 0"
   coupling: "C = D n P = empty"
@@ -644,6 +692,31 @@ note: primitives are carried from docs/nt/NT-VI, NT-VIII, NT-IX, NT-XI, NT-XII`,
     falsifier: F2`,
     9: `claims:
   - id: C-9-01
+    text: sector_failure_magnitudes_are_published_by_the_issuing_bodies
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [live_primary_fetch_2026_11_19, byte_level_extraction]
+    real_world_referent: { kind: observation, ref: docs/evidence/SECTOR-PAIN-LEDGER.md }
+    status: resolved
+    falsifier: re_fetch_the_urls
+  - id: C-9-02
+    text: each_published_magnitude_maps_to_a_named_invariant_term
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [term_mapping_table]
+    real_world_referent: { kind: derivation, ref: section-9 }
+    status: inferred
+    falsifier: F3
+  - id: C-9-03
+    text: four_sources_were_refused_because_the_number_was_not_in_the_bytes
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [sonatype_js_counters, worldbank_null, http_403_fatf_defense_gao]
+    real_world_referent: { kind: observation, ref: docs/evidence/SECTOR-PAIN-LEDGER.md }
+    status: resolved
+    falsifier: re_fetch_the_urls`,
+    10: `claims:
+  - id: C-9-01
     text: four_falsification_conditions_are_testable
     asserted_by: inscriber
     asserted_role: agent
@@ -659,7 +732,7 @@ note: primitives are carried from docs/nt/NT-VI, NT-VIII, NT-IX, NT-XI, NT-XII`,
     real_world_referent: { kind: derivation, ref: section-9 }
     status: inferred
     falsifier: F4`,
-    10: `claims:
+    11: `claims:
   - id: C-10-01
     text: the_four_primitives_are_one_formulary
     asserted_by: inscriber
