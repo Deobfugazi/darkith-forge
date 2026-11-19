@@ -1,12 +1,12 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 43,
+  "count": 58,
   "files": [
     {
-      "bytes": 42825,
+      "bytes": 45218,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "64acdc127dba10b8ab5d375d5f2b6f4e02ef026540a1a9fb2e8d7668e06e464a"
+      "sha256": "d2079e71ab8783cb47a1740652cd28d6217efc7915252e309c916aea82a255e2"
     },
     {
       "bytes": 65141,
@@ -33,10 +33,10 @@
       "sha256": "52ce56a89a58b9883ca4dfb868417104dbb3a92f203eb7f42adc27c3b1634a0d"
     },
     {
-      "bytes": 16772,
+      "bytes": 18977,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "4e7c3002349f177180ed7526202cc564b38c67a45a5af2bc34a45dcc79edf509"
+      "sha256": "b9d87290e4768e2a03e15d5e4ae2dd83ea374adbf11b6a1f806531b1d1d3d1ea"
     },
     {
       "bytes": 9608,
@@ -141,10 +141,52 @@
       "sha256": "882eeb3e7d7ba67dd07497169f5519ad8246ecf8e262989c4ec15d3296f7f806"
     },
     {
+      "bytes": 7073,
+      "path": "darkith-omega-apps.html",
+      "register": "C-skillbase",
+      "sha256": "428a803bf15132deee11dbba22d825b07a6faa638c74c324ef9c8344f86ca2ae"
+    },
+    {
+      "bytes": 10016,
+      "path": "darkith-omega-camera.html",
+      "register": "C-skillbase",
+      "sha256": "425678dcb5746ca61e44de1da4a8f58a18d39c9a43d571b000b35a7e3f92d97b"
+    },
+    {
+      "bytes": 13690,
+      "path": "darkith-omega-clock.html",
+      "register": "C-skillbase",
+      "sha256": "c16768265a0477a16ca85cd933b1c2f6b2b9eabb52336e7372f1644f3b998c98"
+    },
+    {
+      "bytes": 9864,
+      "path": "darkith-omega-contacts.html",
+      "register": "C-skillbase",
+      "sha256": "7f954c5221082405bef0a56f6ce73474acddadef8c8251c66174fef55216e792"
+    },
+    {
+      "bytes": 28833,
+      "path": "darkith-omega-files.html",
+      "register": "C-skillbase",
+      "sha256": "ac55dcbb4e8eb0ec9379e5c46f4acc304e17226a6cfb60232b18da245aa5a068"
+    },
+    {
       "bytes": 60965,
       "path": "darkith-omega-media-player.html",
       "register": "C-skillbase",
       "sha256": "afe4285205cb1ea21d062596d4a749359c0181fa2b2928899085e8f6d55f6951"
+    },
+    {
+      "bytes": 9399,
+      "path": "darkith-omega-messages.html",
+      "register": "C-skillbase",
+      "sha256": "c160d93c8630f3340bc40a146bd76f300aa686bc2f91a0d983afc1a681f2b72a"
+    },
+    {
+      "bytes": 8086,
+      "path": "darkith-omega-phone.html",
+      "register": "C-skillbase",
+      "sha256": "53db3fb7719c47a40a860d73ec172b2c5fce0f5b958ed8a255f3c8308dbddd88"
     },
     {
       "bytes": 64437,
@@ -169,6 +211,54 @@
       "path": "savf.html",
       "register": "C-skillbase",
       "sha256": "5030bd163189924db9bd07346fff827a846fc16f7edd77c65fa61427f8902632"
+    },
+    {
+      "bytes": 11465,
+      "path": "app/src/main/assets/darkith-omega-apps.html",
+      "register": "D-asset",
+      "sha256": "370c4d805fa46789ca041862ef433fec2a6edbf9fd002e7788f592e35343c8e8"
+    },
+    {
+      "bytes": 14408,
+      "path": "app/src/main/assets/darkith-omega-camera.html",
+      "register": "D-asset",
+      "sha256": "df105012ee67e39138aac8bb67f5fe78a350ec0b00941d1c4eeaf79e2be73bdb"
+    },
+    {
+      "bytes": 18082,
+      "path": "app/src/main/assets/darkith-omega-clock.html",
+      "register": "D-asset",
+      "sha256": "36855cd22a42e3367428612ee28d40e25fa17b43297e78255a34582dcb80fd46"
+    },
+    {
+      "bytes": 14256,
+      "path": "app/src/main/assets/darkith-omega-contacts.html",
+      "register": "D-asset",
+      "sha256": "c6d386c47677797d0678a5b68454addab83b108947c3de22d8368dc65e9878dc"
+    },
+    {
+      "bytes": 33225,
+      "path": "app/src/main/assets/darkith-omega-files.html",
+      "register": "D-asset",
+      "sha256": "ec814dccd76adefdfbfca7ff076f1f9d6c7f6f3af7ff238afbb2ac1de3f03913"
+    },
+    {
+      "bytes": 65357,
+      "path": "app/src/main/assets/darkith-omega-media-player.html",
+      "register": "D-asset",
+      "sha256": "8fa4059929da8acc05a26f3c596c4c92ee4a28cfe8ac1c3bfd8be3d0cc8cd600"
+    },
+    {
+      "bytes": 13791,
+      "path": "app/src/main/assets/darkith-omega-messages.html",
+      "register": "D-asset",
+      "sha256": "c43b0d8585cef56133abf6e6b6bde9fa92010dd6fc9c8d50943b0a0680f63122"
+    },
+    {
+      "bytes": 12478,
+      "path": "app/src/main/assets/darkith-omega-phone.html",
+      "register": "D-asset",
+      "sha256": "2bccb0ab5978142e3811988700e93691efb0e1a5e50b1f61d94ae4d8a3b1936a"
     },
     {
       "bytes": 231324,

@@ -138,10 +138,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 60 | named work = board 52 + deficits 8 |
-| E | 16 | un-returned = todo 15 + in_progress 1 + blocked 0 + open 0 |
-| S | 44 | returned = done 36 + closed 3 + descoped 5 |
-| E/W_in | 0.267 | the progress-deficit indicator; absolution at 0 |
+| W_in | 70 | named work = board 62 + deficits 8 |
+| E | 17 | un-returned = todo 16 + in_progress 1 + blocked 0 + open 0 |
+| S | 53 | returned = done 45 + closed 3 + descoped 5 |
+| E/W_in | 0.243 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.
@@ -157,3 +157,24 @@ Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit
 | H5 | Every emitted `pathData` is absolute `M/L/C/Z` only — aapt2/VectorDrawable law (NEVER #20) | done | `icon_forge.html` arc→cubic normaliser; `tools/test_icon_forge.js` T-4 |
 | H6 | The safe-zone gate is truthful (no crying wolf) | done | `markRadius` samples each segment (a bbox-corner test over-estimated and is gone); the test proves all four presets sit inside the 66 dp safe zone — `tools/test_icon_forge.js` T-6 |
 | H7 | Wire the specialist into CI and the doctrine | done | `tools/ci.sh` ("icon forge tests"); `DARKITH.md` §34 (NEVER #20, MUST #34, SPI-28, W-049); `README.md` §5.7; `tools/law_gate.py` now recognises `.js` gates |
+
+---
+
+## J. THE Ω DEFAULT-APP SUITE (handcoded Android apps, 2026-11-10)
+
+Operator directive: "I intend to handcode all of my Android default apps" and
+"Both ofcourse at its Omega form" — both the flagship app AND the bridge-extension pass,
+each at full Omega form. One HTML file per app, no build step, one surface.
+
+| # | task | status | evidence |
+|---|---|---|---|
+| J1 | Bridge extension: complete device families (dial/sms/contacts/camera/clock/media/notif/sys), whole or absent (SPI-19) | done | `app/src/main/java/com/darkith/transliaison/DeviceBridge.kt` (new, raw `android.*` only); forwarded through `HomekeeperBridge.kt` so the JS namespace stays the single `darkith` object; `fileRoots` added to `HomekeeperBridge` for contract parity with `DarkithBridge` |
+| J2 | Compile-verify the extended tree (MUST-11) | done | kotlinc 58 .kt + R.java → exit 0, 0 errors, 178 `.class`, `androidx in log: 0` |
+| J3 | Flagship: File Manager at Omega form | done | `darkith-omega-files.html` (`window.DarkithFiles`); normalises BOTH `fileList` contracts, respects `BINARY_REFUSAL`, roots/navigate/sort/filter/rename/move/copy/delete/multi-select/preview; `tools/test_files.js` 37/37 |
+| J4 | Device apps: Phone, Messages, Contacts, Camera, Clock | done | `darkith-omega-{phone,messages,contacts,camera,clock}.html`; `tools/test_device_apps.js` 40/40 |
+| J5 | ONE SURFACE: the launcher registry (NEVER #15) | done | `darkith-omega-apps.html` (`window.DarkithApps`) lists all 7 apps; headless render exit 0, no page errors |
+| J6 | Ship the apps in the APK | done | all 8 files copied to `app/src/main/assets/`; `build.sh` step 5 walks `assets/` so no build-script change was needed |
+| J7 | Wire the new suites into CI | done | `tools/ci.sh` — "file manager tests", "device app tests" alongside "media player tests" |
+| J8 | Inscribe the law + the board | done | `AGENTS.md` §36; this section |
+| J9 | Headless render proof for every new surface | done | chromium exit 0 and zero page errors for files, phone, messages, contacts, camera, clock, apps |
+| J10 | Rebuild the APK so the shipped assets are current | todo | `dist/Darkith-1.1.0-omega.apk` predates these assets; needs a full 7-step run |

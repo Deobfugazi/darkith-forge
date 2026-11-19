@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#050505">
+<title>DARKITH Ω — camera</title>
+<style>
+  :root{--bg:#050505;--panel:#0b0d10;--panel2:#12151a;--line:#1e232b;--ink:#e8ecf1;
+    --dim:#8a93a0;--faint:#5b6572;--acc:#39d3a0;--acc2:#7aa2ff;--bad:#ff5f5f;--warn:#ffb454}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Roboto,sans-serif;overscroll-behavior:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #app{display:flex;flex-direction:column;height:100%;max-width:760px;margin:0 auto}
+  header{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+  #title{flex:1;font-size:13px;color:var(--dim)}
+  .chip{font-size:11px;padding:4px 9px;border-radius:20px;background:var(--panel2);color:var(--dim)}
+  .chip.ok{color:var(--acc);background:rgba(57,211,160,.12)}
+  .chip.no{color:var(--bad);background:rgba(255,95,95,.12)}
+  #stage{flex:1;overflow-y:auto;padding:12px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;align-content:start}
+  .shot{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--panel2);
+    border:1px solid var(--line);display:grid;place-items:center}
+  .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .shot .ph{font-size:22px;color:var(--faint)}
+  .shot .cap{position:absolute;left:0;right:0;bottom:0;padding:3px 6px;font-size:9px;
+    background:linear-gradient(180deg,transparent,rgba(0,0,0,.85));color:#cfd6df;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #empty{grid-column:1/-1;padding:44px 16px;text-align:center;color:var(--dim);font-size:13px;line-height:1.7}
+  #bar{display:flex;gap:8px;padding:10px 12px calc(12px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:var(--panel)}
+  #bar button{flex:1;min-height:50px;border-radius:11px;background:var(--panel2);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:7px;font-size:13.5px}
+  #bar button.primary{background:var(--acc);color:#04120c;font-weight:800;border-color:var(--acc)}
+  #bar button:disabled{color:var(--faint);background:#0e1116}
+  #toast{position:fixed;left:50%;bottom:88px;transform:translate(-50%,12px);background:#161a20;
+    border:1px solid var(--line);padding:9px 15px;border-radius:9px;font-size:12.5px;opacity:0;
+    transition:.16s;pointer-events:none;z-index:50;max-width:88vw;text-align:center}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  #toast.bad{border-color:rgba(255,95,95,.5);color:#ffd9d9}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div id="title">Camera — hands off to the system capture app</div>
+    <span class="chip" id="cams">cameras…</span>
+  </header>
+  <div id="stage"></div>
+  <div id="bar">
+    <button id="gallery">▦ Gallery</button>
+    <button class="primary" id="shoot">◉ Capture</button>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+(function () {
+  "use strict";
+  var W = typeof window !== "undefined" ? window : globalThis;
+  var B = W.darkith || W.darkithNative || null;
+  var VERSION = "1.0.0";
+  var MAX_MEDIA = 120;
+  var POLL_MS = 120;
+  var POLL_TRIES = 250;   // ~30s ceiling, then we stop and say so
+
+  var S = { cameras: [], shots: [], pending: null, busy: false };
+
+  function has(fn) { return !!(B && typeof B[fn] === "function"); }
+  function call() {
+    var a = Array.prototype.slice.call(arguments), fn = a.shift();
+    if (!has(fn)) return null;
+    try { return B[fn].apply(B, a); } catch (e) { return null; }
+  }
+  function isError(r) { return typeof r === "string" && r.indexOf("ERROR") === 0; }
+  function json(r) {
+    if (!r) return null;
+    if (typeof r === "object") return r;
+    try { return JSON.parse(String(r)); } catch (e) { return null; }
+  }
+
+  function toast(msg, bad) {
+    var t = W.document.getElementById("toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.className = "show" + (bad ? " bad" : "");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.className = bad ? "bad" : ""; }, 2200);
+  }
+
+  function fmtBytes(n) {
+    if (typeof n !== "number" || n < 0) return "—";
+    if (n < 1024) return n + " B";
+    var u = ["KB", "MB", "GB"], v = n, i = -1;
+    do { v /= 1024; i++; } while (v >= 1024 && i < u.length - 1);
+    return (v >= 10 ? v.toFixed(0) : v.toFixed(1)) + " " + u[i];
+  }
+
+  function renderCams() {
+    var el = W.document.getElementById("cams");
+    if (!el) return;
+    if (!S.cameras.length) { el.textContent = "no camera"; el.className = "chip no"; return; }
+    var back = S.cameras.filter(function (c) { return c.facing === "back"; }).length;
+    var front = S.cameras.filter(function (c) { return c.facing === "front"; }).length;
+    el.textContent = back + " back · " + front + " front";
+    el.className = "chip ok";
+  }
+
+  function render() {
+    var st = W.document.getElementById("stage");
+    if (!st) return;
+    st.textContent = "";
+
+    if (!S.shots.length) {
+      var e = W.document.createElement("div");
+      e.id = "empty";
+      e.appendChild(W.document.createTextNode("No photos yet."));
+      e.appendChild(W.document.createElement("br"));
+      e.appendChild(W.document.createTextNode("Capture opens the system camera and stores the result in Darkith's own Pictures folder."));
+      st.appendChild(e);
+      return;
+    }
+
+    S.shots.forEach(function (s) {
+      var cell = W.document.createElement("div");
+      cell.className = "shot";
+      if (s.path) {
+        var img = W.document.createElement("img");
+        img.alt = s.name || "photo";
+        img.src = "file://" + s.path;
+        img.loading = "lazy";
+        cell.appendChild(img);
+      } else {
+        var ph = W.document.createElement("div");
+        ph.className = "ph";
+        ph.textContent = "▣";
+        cell.appendChild(ph);
+      }
+      var cap = W.document.createElement("div");
+      cap.className = "cap";
+      cap.textContent = (s.name || "") + (s.bytes ? " · " + fmtBytes(s.bytes) : "");
+      cell.appendChild(cap);
+      st.appendChild(cell);
+    });
+  }
+
+  /** The MediaStore gallery, read through the bridge — never a fake list. */
+  function loadGallery() {
+    var r = call("mediaList", "image", MAX_MEDIA);
+    if (r === null || isError(r)) {
+      S.shots = [];
+      render();
+      return [];
+    }
+    var arr = json(r);
+    S.shots = (Array.isArray(arr) ? arr : []).map(function (m) {
+      return { name: m.name, path: m.path, bytes: m.bytes, uri: m.uri };
+    });
+    render();
+    return S.shots;
+  }
+
+  function loadCameras() {
+    var r = call("cameraList");
+    if (r === null || isError(r)) { S.cameras = []; renderCams(); return []; }
+    var arr = json(r);
+    S.cameras = Array.isArray(arr) ? arr : [];
+    renderCams();
+    return S.cameras;
+  }
+
+  /**
+   * Capture is asynchronous: the bridge answers PENDING:<id> and the payload lands
+   * later. Polling is bounded — if it never arrives we say so instead of hanging.
+   */
+  function capture() {
+    if (S.busy) { toast("Capture already running"); return false; }
+    var r = call("cameraCapture");
+    if (r === null) { toast("Camera bridge unavailable", true); return false; }
+    if (isError(r)) { toast(String(r).replace("ERROR: ", ""), true); return false; }
+
+    var s = String(r);
+    if (s.indexOf("PENDING:") !== 0) {
+      toast("Unexpected reply", true);
+      return false;
+    }
+    var id = s.slice(8);
+    S.pending = id;
+    S.busy = true;
+    setBusy(true);
+    poll(id, 0);
+    return true;
+  }
+
+  function setBusy(on) {
+    var b = W.document.getElementById("shoot");
+    if (b) b.disabled = !!on;
+  }
+
+  function poll(id, tries) {
+    var r = call("deviceResult", id);
+    if (r === null) { finish("Bridge unavailable", true); return; }
+    var s = String(r);
+    if (s) {
+      if (isError(s)) finish(String(s).replace("ERROR: ", ""), true);
+      else {
+        var res = json(s);
+        if (res && res.path) {
+          S.shots.unshift({ name: baseName(res.path), path: res.path, bytes: res.bytes });
+          render();
+          finish("Saved " + baseName(res.path));
+        } else finish("No image returned", true);
+      }
+      return;
+    }
+    if (tries >= POLL_TRIES) { finish("Capture timed out", true); return; }
+    setTimeout(function () { poll(id, tries + 1); }, POLL_MS);
+  }
+
+  function finish(msg, bad) {
+    S.busy = false; S.pending = null;
+    setBusy(false);
+    toast(msg, bad);
+  }
+
+  function pick() {
+    var r = call("cameraPickImage");
+    if (r === null) { toast("Picker unavailable", true); return false; }
+    if (isError(r)) { toast(String(r).replace("ERROR: ", ""), true); return false; }
+    var s = String(r);
+    if (s.indexOf("PENDING:") !== 0) return false;
+    var id = s.slice(8);
+    S.busy = true; setBusy(true);
+    poll(id, 0);
+    return true;
+  }
+
+  function baseName(p) {
+    if (!p) return "";
+    var t = String(p).replace(/\/+$/, "");
+    var i = t.lastIndexOf("/");
+    return i < 0 ? t : t.slice(i + 1);
+  }
+
+  function boot() {
+    var on = function (id, fn) {
+      var el = W.document.getElementById(id);
+      if (el) el.addEventListener("click", fn);
+    };
+    on("shoot", capture);
+    on("gallery", loadGallery);
+    loadCameras();
+    loadGallery();
+    return S;
+  }
+
+  var API = {
+    VERSION: VERSION, state: S, boot: boot, capture: capture, pick: pick,
+    loadGallery: loadGallery, loadCameras: loadCameras, fmtBytes: fmtBytes,
+    baseName: baseName, _render: render, _boot: boot
+  };
+  W.DarkithCamera = API;
+  if (W.document && W.document.readyState !== "loading") boot();
+  else if (W.document) W.document.addEventListener("DOMContentLoaded", boot);
+})();
+</script>
+</body>
+</html>

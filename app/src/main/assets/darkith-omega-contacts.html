@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#050505">
+<title>DARKITH Ω — contacts</title>
+<style>
+  :root{--bg:#050505;--panel:#0b0d10;--panel2:#12151a;--line:#1e232b;--ink:#e8ecf1;
+    --dim:#8a93a0;--faint:#5b6572;--acc:#39d3a0;--acc2:#7aa2ff;--bad:#ff5f5f}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Roboto,sans-serif;overscroll-behavior:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #app{display:flex;flex-direction:column;height:100%;max-width:620px;margin:0 auto}
+  header{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);align-items:center}
+  #q{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;
+    padding:10px 12px;color:var(--ink);font-size:13.5px;outline:none}
+  #q:focus{border-color:rgba(122,162,255,.5)}
+  .chip{font-size:11px;padding:4px 9px;border-radius:20px;background:var(--panel2);color:var(--dim)}
+  .chip.ok{color:var(--acc);background:rgba(57,211,160,.12)}
+  .chip.no{color:var(--bad);background:rgba(255,95,95,.12)}
+  #list{flex:1;overflow-y:auto;padding-bottom:80px}
+  .c{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid rgba(30,35,43,.55)}
+  .c:active{background:var(--panel2)}
+  .av{width:36px;height:36px;border-radius:50%;background:rgba(122,162,255,.16);color:var(--acc2);
+    display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+  .info{flex:1;min-width:0}
+  .nm{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .no{font-size:11.5px;color:var(--faint);font-family:ui-monospace,monospace}
+  .go{display:flex;gap:2px}
+  .go button{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;
+    color:var(--dim);font-size:15px}
+  .go button:hover{background:var(--panel2);color:var(--ink)}
+  #empty{padding:44px 20px;text-align:center;color:var(--dim);font-size:13px;line-height:1.7}
+  #add{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:54px;height:54px;
+    border-radius:50%;background:var(--acc);color:#04120c;font-size:26px;display:grid;place-items:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.5);z-index:30}
+  #toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,12px);background:#161a20;
+    border:1px solid var(--line);padding:9px 15px;border-radius:9px;font-size:12.5px;opacity:0;
+    transition:.16s;pointer-events:none;z-index:50;max-width:88vw;text-align:center}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  #toast.bad{border-color:rgba(255,95,95,.5);color:#ffd9d9}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <input id="q" placeholder="Search contacts…" autocomplete="off" spellcheck="false">
+    <span class="chip" id="perm">Contacts</span>
+  </header>
+  <div id="list"></div>
+</div>
+<button id="add" aria-label="Add contact">＋</button>
+<div id="toast"></div>
+<script>
+(function () {
+  "use strict";
+  var W = typeof window !== "undefined" ? window : globalThis;
+  var B = W.darkith || W.darkithNative || null;
+  var VERSION = "1.0.0";
+  var LIMIT = 1000;
+
+  var S = { all: [], view: [], query: "", granted: false };
+
+  function has(fn) { return !!(B && typeof B[fn] === "function"); }
+  function call() {
+    var a = Array.prototype.slice.call(arguments), fn = a.shift();
+    if (!has(fn)) return null;
+    try { return B[fn].apply(B, a); } catch (e) { return null; }
+  }
+  function isError(r) { return typeof r === "string" && r.indexOf("ERROR") === 0; }
+  function json(r) {
+    if (!r) return null;
+    if (typeof r === "object") return r;
+    try { return JSON.parse(String(r)); } catch (e) { return null; }
+  }
+
+  function toast(msg, bad) {
+    var t = W.document.getElementById("toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.className = "show" + (bad ? " bad" : "");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.className = bad ? "bad" : ""; }, 2100);
+  }
+
+  function initials(name) {
+    var parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "?";
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  /** Phone-number type codes from ContactsContract.CommonDataKinds.Phone. */
+  var TYPE_LABEL = { 1: "home", 2: "mobile", 3: "work", 0: "other" };
+  function typeLabel(t) { return TYPE_LABEL[t] || "other"; }
+
+  function filter(list, q) {
+    var s = String(q || "").trim().toLowerCase();
+    if (!s) return list.slice();
+    return list.filter(function (c) {
+      return String(c.name || "").toLowerCase().indexOf(s) >= 0 ||
+             String(c.number || "").replace(/\s/g, "").indexOf(s.replace(/\s/g, "")) >= 0;
+    });
+  }
+
+  function render() {
+    var el = W.document.getElementById("list");
+    if (!el) return;
+    el.textContent = "";
+
+    if (!S.granted) {
+      var e = W.document.createElement("div");
+      e.id = "empty";
+      e.appendChild(W.document.createTextNode("Contacts access is not granted."));
+      e.appendChild(W.document.createElement("br"));
+      e.appendChild(W.document.createTextNode("Tap the badge to request it. Darkith will not invent contacts."));
+      el.appendChild(e);
+      return;
+    }
+
+    if (!S.view.length) {
+      var e2 = W.document.createElement("div");
+      e2.id = "empty";
+      e2.textContent = S.query ? "No contact matches “" + S.query + "”." : "No contacts.";
+      el.appendChild(e2);
+      return;
+    }
+
+    S.view.forEach(function (c) {
+      var row = W.document.createElement("div");
+      row.className = "c";
+
+      var av = W.document.createElement("div");
+      av.className = "av";
+      av.textContent = initials(c.name);
+
+      var info = W.document.createElement("div");
+      info.className = "info";
+      var nm = W.document.createElement("div");
+      nm.className = "nm";
+      nm.textContent = c.name || "(no name)";   // textContent: never inject
+      var no = W.document.createElement("div");
+      no.className = "no";
+      no.textContent = (c.number || "") + (c.type != null ? " · " + typeLabel(c.type) : "");
+      info.appendChild(nm); info.appendChild(no);
+
+      var go = W.document.createElement("div");
+      go.className = "go";
+      var callBtn = W.document.createElement("button");
+      callBtn.textContent = "✆";
+      callBtn.title = "Call";
+      callBtn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var r = call("dialNumber", c.number);
+        if (isError(r)) toast(String(r).replace("ERROR: ", ""), true);
+      });
+      var msgBtn = W.document.createElement("button");
+      msgBtn.textContent = "✉";
+      msgBtn.title = "Message";
+      msgBtn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var r = call("smsCompose", c.number, "");
+        if (isError(r)) toast(String(r).replace("ERROR: ", ""), true);
+      });
+      go.appendChild(callBtn); go.appendChild(msgBtn);
+
+      row.appendChild(av); row.appendChild(info); row.appendChild(go);
+      el.appendChild(row);
+    });
+  }
+
+  function renderPerm() {
+    var el = W.document.getElementById("perm");
+    if (!el) return;
+    el.textContent = S.granted ? (S.all.length + " contacts") : "Denied";
+    el.className = "chip " + (S.granted ? "ok" : "no");
+  }
+
+  function load() {
+    var r = call("contactsList", LIMIT);
+    if (r === null || isError(r)) {
+      S.granted = false; S.all = []; S.view = [];
+      renderPerm(); render();
+      return [];
+    }
+    var arr = json(r);
+    S.granted = true;
+    S.all = Array.isArray(arr) ? arr : [];
+    S.view = filter(S.all, S.query);
+    renderPerm(); render();
+    return S.all;
+  }
+
+  function search(q) {
+    S.query = q || "";
+    S.view = filter(S.all, S.query);
+    render();
+    return S.view;
+  }
+
+  function requestAccess() {
+    var r = call("sysRequest", "android.permission.READ_CONTACTS,android.permission.WRITE_CONTACTS");
+    if (r === null) { toast("Bridge unavailable", true); return false; }
+    toast("Grant contacts access, then reload");
+    return true;
+  }
+
+  function add(name, number, email) {
+    if (!name || !String(name).trim()) { toast("Name required", true); return false; }
+    var r = call("contactsAdd", name, number || "", email || "");
+    if (r === null) { toast("Bridge unavailable", true); return false; }
+    if (isError(r)) { toast(String(r).replace("ERROR: ", ""), true); return false; }
+    toast("Contact added");
+    load();
+    return true;
+  }
+
+  function boot() {
+    var q = W.document.getElementById("q");
+    if (q) q.addEventListener("input", function (ev) { search(ev.target.value); });
+    var perm = W.document.getElementById("perm");
+    if (perm) perm.addEventListener("click", requestAccess);
+    var addBtn = W.document.getElementById("add");
+    if (addBtn) addBtn.addEventListener("click", function () {
+      if (!W.prompt) return;
+      var n = W.prompt("Name"); if (!n) return;
+      var p = W.prompt("Phone number") || "";
+      var e = W.prompt("Email (optional)") || "";
+      add(n, p, e);
+    });
+    load();
+    return S;
+  }
+
+  var API = {
+    VERSION: VERSION, state: S, boot: boot, load: load, search: search,
+    add: add, filter: filter, initials: initials, typeLabel: typeLabel,
+    requestAccess: requestAccess, _render: render, _boot: boot
+  };
+  W.DarkithContacts = API;
+  if (W.document && W.document.readyState !== "loading") boot();
+  else if (W.document) W.document.addEventListener("DOMContentLoaded", boot);
+})();
+</script>
+<!-- BEGIN GENERATED synchrony (build/inject_synchrony.py) — DO NOT EDIT -->
+<script>
+/* omega-time — GENERATED by build/gen_synchrony.py. DO NOT HAND-EDIT.
+   Synchrony bylaw: every surface carries timestamp awareness so documents, logs and
+   artifacts sort diachronically. The clock AUTOCCOUPLES the edge device's own system
+   local time to the global clock (epoch), and classifies each instant against the
+   Operator's circadian cycle. Operator zone: Asia/Manila (UTC+8). */
+(function () {
+  "use strict";
+  var TZ_HOURS = 8, TZ_NAME = "Asia/Manila (UTC+8)";
+  /* the Operator's default cycle: wake/activity vs rest/digest/restore (deactivity) */
+  var CYCLE = { activeStart: 6, activeEnd: 22 };
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function local(d) { d = d || new Date(); return new Date(d.getTime() + (TZ_HOURS * 60 + d.getTimezoneOffset()) * 60000); }
+  function parts(d) { var t = local(d); return { y: t.getFullYear(), mo: t.getMonth() + 1, da: t.getDate(), h: t.getHours(), mi: t.getMinutes(), s: t.getSeconds() }; }
+  var omegaTime = {
+    tz: TZ_NAME,
+    cycle: CYCLE,
+    now: function () { return new Date(); },
+    parts: parts,
+    /* "YYYY-MM-DD HH:MM:SS" — human, Operator-local */
+    stamp: function (d) { var p = parts(d); return p.y + "-" + pad(p.mo) + "-" + pad(p.da) + " " + pad(p.h) + ":" + pad(p.mi) + ":" + pad(p.s); },
+    /* "YYYY-MM-DDTHH:MM:SS+08:00" — lexicographically sortable (diachronic sort key) */
+    iso: function (d) { var p = parts(d); return p.y + "-" + pad(p.mo) + "-" + pad(p.da) + "T" + pad(p.h) + ":" + pad(p.mi) + ":" + pad(p.s) + "+08:00"; },
+    key: function (d) { return this.iso(d); },
+    label: function (d) { return this.stamp(d) + " \u00b7 " + this.tz; },
+    /* diachronic sort: oldest first by default; pass true for newest first */
+    sortBy: function (items, getKey, newestFirst) {
+      return items.slice().sort(function (a, b) {
+        var ka = getKey(a), kb = getKey(b);
+        return newestFirst ? (ka < kb ? 1 : ka > kb ? -1 : 0) : (ka < kb ? -1 : ka > kb ? 1 : 0);
+      });
+    },
+    /* --- edge-device hardware coupling: the device's OWN local time vs the global clock --- */
+    deviceOffsetMin: function () { return -new Date().getTimezoneOffset(); },
+    /* autocouple: report the device's system local time beside the global epoch, and whether
+       the device's own zone agrees with the Operator's. A device set to the wrong zone shows
+       agrees=false — the drift the Operator must see (SPI-2: read the real bytes). */
+    relation: function (d) {
+      var dd = d || new Date();
+      var off = this.deviceOffsetMin();
+      return {
+        deviceLocal: this.stamp(dd),
+        deviceOffsetMin: off,
+        deviceZone: "UTC" + (off >= 0 ? "+" : "-") + pad(Math.floor(Math.abs(off) / 60)) + ":" + pad(Math.abs(off) % 60),
+        globalUtc: new Date(dd.getTime()).toISOString(),
+        globalEpochMs: dd.getTime(),
+        agrees: off === TZ_HOURS * 60
+      };
+    },
+    /* --- circadian cycle: wake/activity vs rest/digest/restore (deactivity) --- */
+    phase: function (d) { var h = parts(d).h; return (h >= CYCLE.activeStart && h < CYCLE.activeEnd) ? "wake/active" : "rest/digest/restore"; },
+    /* hours since a prior instant (last activity), as a number */
+    since: function (prior, d) {
+      var a = (prior instanceof Date) ? prior : new Date(prior);
+      return ((d ? d.getTime() : Date.now()) - a.getTime()) / 3600000;
+    },
+    /* classify an instant: which cycle phase, and whether it falls in the active window */
+    classify: function (d) { return { stamp: this.stamp(d), phase: this.phase(d), active: this.phase(d) === "wake/active" }; }
+  };
+  if (typeof window !== "undefined") { window.omegaTime = omegaTime; }
+  if (typeof module !== "undefined" && module.exports) { module.exports = omegaTime; }
+})();
+</script>
+<script>(function(){function tick(){var e=document.getElementById('omega-clock');if(e&&window.omegaTime)e.textContent=window.omegaTime.stamp();}tick();setInterval(tick,1000);})();</script>
+<span id="omega-clock" title="Operator time (Asia/Manila, UTC+8)" style="position:fixed;right:6px;bottom:6px;z-index:2147483647;font:11px/1.2 ui-monospace,monospace;color:#E8C268;background:rgba(5,5,5,.82);border:1px solid rgba(232,194,104,.35);border-radius:6px;padding:3px 7px;pointer-events:none">--</span>
+<!-- END GENERATED synchrony -->
+</body>
+</html>

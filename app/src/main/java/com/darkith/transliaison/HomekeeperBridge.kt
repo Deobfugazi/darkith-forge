@@ -81,6 +81,13 @@ class HomekeeperBridge(private val host: HomekeeperActivity) {
     }
 
     @JavascriptInterface fun fileDirs(path: String?): String = try { val d = File(norm(path)); if (d.isDirectory || d.mkdirs()) "OK" else "ERROR: mkdir failed" } catch (e: Throwable) { err(e) }
+    /** Same contract as DarkithBridge.fileRoots: U+0001-joined absolute roots, SD card first (SPI-8). */
+    @JavascriptInterface fun fileRoots(): String = try {
+        val r = mutableListOf<String>()
+        r.add(Environment.getExternalStorageDirectory().absolutePath)
+        host.getExternalFilesDirs(null).forEach { it?.let { f -> r.add(f.absolutePath) } }
+        r.distinct().joinToString("\u0001")
+    } catch (e: Throwable) { "" }
     @JavascriptInterface fun fileMove(src: String?, dst: String?): String = try { val s = File(norm(src)); val d = File(norm(dst)); if (s.renameTo(d)) "OK" else "ERROR: move failed" } catch (e: Throwable) { err(e) }
     @JavascriptInterface fun fileCopy(src: String?, dst: String?): String = try { val s = File(norm(src)); val d = File(norm(dst)); s.copyTo(d, overwrite = true); "OK" } catch (e: Throwable) { err(e) }
     @JavascriptInterface fun fileDelete(path: String?): String = try { val f = File(norm(path)); if (f.deleteRecursively()) "OK" else "ERROR: delete failed" } catch (e: Throwable) { err(e) }
@@ -581,4 +588,51 @@ class HomekeeperBridge(private val host: HomekeeperActivity) {
         if (signer != digest) false
         else hmacHex(digest, "darkith:signer=$digest:device=${deviceId()}:nonce=$nonce") == sig
     } catch (e: Throwable) { false }
+
+    /* ------------------------------------------------------------ device families
+       One JS object ("darkith") must expose everything, so DeviceBridge's families are
+       forwarded here rather than registered as a second interface. SPI-19: each family
+       (dial/sms/contacts/camera/clock/media/notif/sys) is whole. */
+    private val dev by lazy { DeviceBridge(host) }
+
+    @JavascriptInterface fun deviceVersion(): String = dev.version()
+    @JavascriptInterface fun deviceResult(id: String?): String = dev.deviceResult(id)
+
+    /* sys */
+    @JavascriptInterface fun sysInfo(): String = dev.sysInfo()
+    @JavascriptInterface fun sysPermissions(): String = dev.sysPermissions()
+    @JavascriptInterface fun sysRequest(perms: String?): String = dev.sysRequest(perms ?: "")
+
+    /* dial */
+    @JavascriptInterface fun dialNumber(number: String?): String = dev.dialNumber(number)
+    @JavascriptInterface fun dialCall(number: String?): String = dev.dialCall(number)
+    @JavascriptInterface fun dialTelephony(): String = dev.dialTelephony()
+
+    /* sms */
+    @JavascriptInterface fun smsSend(number: String?, text: String?): String = dev.smsSend(number, text)
+    @JavascriptInterface fun smsCompose(number: String?, text: String?): String = dev.smsCompose(number, text)
+    @JavascriptInterface fun smsInbox(limit: Int): String = dev.smsInbox(limit)
+
+    /* contacts */
+    @JavascriptInterface fun contactsList(limit: Int): String = dev.contactsList(limit)
+    @JavascriptInterface fun contactsSearch(q: String?): String = dev.contactsSearch(q)
+    @JavascriptInterface fun contactsAdd(name: String?, number: String?, email: String?): String = dev.contactsAdd(name, number, email)
+
+    /* camera */
+    @JavascriptInterface fun cameraList(): String = dev.cameraList()
+    @JavascriptInterface fun cameraCapture(): String = dev.cameraCapture()
+    @JavascriptInterface fun cameraPickImage(): String = dev.cameraPickImage()
+
+    /* clock */
+    @JavascriptInterface fun clockSetAlarm(h: Int, m: Int, label: String?, skipUi: Boolean): String = dev.clockSetAlarm(h, m, label, skipUi)
+    @JavascriptInterface fun clockTimer(seconds: Int, label: String?): String = dev.clockTimer(seconds, label)
+    @JavascriptInterface fun clockShowAlarms(): String = dev.clockShowAlarms()
+
+    /* media */
+    @JavascriptInterface fun mediaList(kind: String?, limit: Int): String = dev.mediaList(kind, limit)
+
+    /* notif */
+    @JavascriptInterface fun notifPost(title: String?, body: String?): String = dev.notifPost(title, body)
+    @JavascriptInterface fun notifCancelAll(): String = dev.notifCancelAll()
+
 }

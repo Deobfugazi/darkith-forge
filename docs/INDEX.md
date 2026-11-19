@@ -9,18 +9,18 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**43 readable files across 6 registers.**
+**58 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 42,825 | `64acdc127dba` | AGENTS.md — Darkith |
+| `AGENTS.md` | 45,218 | `d2079e71ab87` | AGENTS.md — Darkith |
 | `DARKITH.md` | 65,141 | `a220f50aefe3` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `13453acc0410` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 64,277 | `750b199111d3` | DARKITH — README |
 | `RESUME.md` | 4,457 | `52ce56a89a58` | RESUME — read this first in any new session |
-| `TASKS.md` | 16,772 | `4e7c3002349f` | TASKS — the durable board |
+| `TASKS.md` | 18,977 | `b9d87290e476` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -48,7 +48,14 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith code studio.html` | 539,472 | `f706384c84db` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,318,719 | `cd298f710647` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 231,324 | `882eeb3e7d7b` | Darkith Inscriber — SAVF Lite Studio |
+| `darkith-omega-apps.html` | 7,073 | `428a803bf151` | DARKITH Ω — apps |
+| `darkith-omega-camera.html` | 10,016 | `425678dcb574` | DARKITH Ω — camera |
+| `darkith-omega-clock.html` | 13,690 | `c16768265a04` | DARKITH Ω — clock |
+| `darkith-omega-contacts.html` | 9,864 | `7f954c522108` | DARKITH Ω — contacts |
+| `darkith-omega-files.html` | 28,833 | `ac55dcbb4e8e` | DARKITH Ω — files |
 | `darkith-omega-media-player.html` | 60,965 | `afe4285205cb` | DARKITH Ω — media player |
+| `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
+| `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,568 | `622dc406953f` | Repository — A Unit in Four Registers |
 | `omega.html` | 41,959 | `a11d595c79b9` | DARKITH Ω — terminal + local assistant |
@@ -58,6 +65,14 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
+| `app/src/main/assets/darkith-omega-apps.html` | 11,465 | `370c4d805fa4` | DARKITH Ω — apps |
+| `app/src/main/assets/darkith-omega-camera.html` | 14,408 | `df105012ee67` | DARKITH Ω — camera |
+| `app/src/main/assets/darkith-omega-clock.html` | 18,082 | `36855cd22a42` | DARKITH Ω — clock |
+| `app/src/main/assets/darkith-omega-contacts.html` | 14,256 | `c6d386c47677` | DARKITH Ω — contacts |
+| `app/src/main/assets/darkith-omega-files.html` | 33,225 | `ec814dccd76a` | DARKITH Ω — files |
+| `app/src/main/assets/darkith-omega-media-player.html` | 65,357 | `8fa4059929da` | DARKITH Ω — media player |
+| `app/src/main/assets/darkith-omega-messages.html` | 13,791 | `c43b0d8585ce` | DARKITH Ω — messages |
+| `app/src/main/assets/darkith-omega-phone.html` | 12,478 | `2bccb0ab5978` | DARKITH Ω — phone |
 | `app/src/main/assets/darkith_ui.html` | 231,324 | `882eeb3e7d7b` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 473,721 | `e12c993c179c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,784 | `addc4f6d44b9` | SAVF-1 Universal Audit Engine |

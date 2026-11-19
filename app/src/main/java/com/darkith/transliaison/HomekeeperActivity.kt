@@ -43,6 +43,9 @@ class HomekeeperActivity : Activity() {
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private val FILE_CHOOSER_RESULT_CODE = 1
 
+    /** Set by DeviceBridge before a startActivityForResult call: (resultId, outputPath). */
+    var pendingDeviceIntent: Pair<String, String>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -205,10 +208,52 @@ class HomekeeperActivity : Activity() {
                 }
                 cb.onReceiveValue(results)
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
+            return
         }
+
+        // DeviceBridge families (camera capture / image pick) answer through deliver().
+        if (requestCode == DeviceBridge.REQ_CAMERA || requestCode == DeviceBridge.REQ_PICK_IMAGE) {
+            val pending = this.pendingDeviceIntent
+            this.pendingDeviceIntent = null
+            if (pending != null) {
+                val (id, outPath) = pending
+                val payload = when {
+                    resultCode != RESULT_OK -> "ERROR: cancelled"
+                    requestCode == DeviceBridge.REQ_CAMERA -> {
+                        val f = java.io.File(outPath)
+                        if (f.exists() && f.length() > 0) {
+                            org.json.JSONObject().apply {
+                                put("path", f.absolutePath)
+                                put("bytes", f.length())
+                                put("mime", "image/jpeg")
+                            }.toString()
+                        } else "ERROR: no image written"
+                    }
+                    else -> {
+                        val uri = data?.data
+                        if (uri == null) "ERROR: no image returned" else {
+                            org.json.JSONObject().apply {
+                                put("uri", uri.toString())
+                                put("path", uriToPath(uri))
+                            }.toString()
+                        }
+                    }
+                }
+                DeviceBridge.deliver(id, payload)
+            }
+            return
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
     }
+
+    /** Best-effort real path for a content:// uri so the file manager can act on it. */
+    private fun uriToPath(uri: Uri): String = try {
+        val proj = arrayOf(android.provider.MediaStore.MediaColumns.DATA)
+        contentResolver.query(uri, proj, null, null, null)?.use {
+            if (it.moveToFirst()) it.getString(0) ?: "" else ""
+        } ?: ""
+    } catch (e: Exception) { "" }
 
     // ------------------------------------------------------------------ native browser overlay
     private fun dp(n: Int): Int = (n * resources.displayMetrics.density + 0.5f).toInt()

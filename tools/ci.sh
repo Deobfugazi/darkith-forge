@@ -189,6 +189,21 @@ fi
     run "media player tests" node tools/test_media_player.js
   fi
 
+  # The Ω file manager (darkith-omega-files.html). Proves BOTH bridge fileList
+  # contracts normalise to one shape (DarkithBridge {name,dir,size} and
+  # HomekeeperBridge {name,type,bytes,mtime}), that fileRoots' U+0001 join is split
+  # correctly, and that a hostile filename never reaches innerHTML.
+  if have node && [ -f tools/test_files.js ]; then
+    run "file manager tests" node tools/test_files.js
+  fi
+
+  # The five Ω device apps (phone, messages, contacts, camera, clock). Proves honest
+  # degradation when a permission is missing (never a faked result), bounded polling
+  # for the async capture path, and no bridge value injected as HTML.
+  if have node && [ -f tools/test_device_apps.js ]; then
+    run "device app tests" node tools/test_device_apps.js
+  fi
+
   # The TermKit dual-register manual (help beginner / help dev). The invariant debugger
   # extracts the REAL shell core from the canonical page and executes every fixture the
   # manual prints, so documentation can never drift from the engine. No browser needed.

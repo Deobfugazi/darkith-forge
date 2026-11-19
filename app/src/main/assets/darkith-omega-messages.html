@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#050505">
+<title>DARKITH Ω — messages</title>
+<style>
+  :root{--bg:#050505;--panel:#0b0d10;--panel2:#12151a;--line:#1e232b;--ink:#e8ecf1;
+    --dim:#8a93a0;--faint:#5b6572;--acc:#39d3a0;--acc2:#7aa2ff;--bad:#ff5f5f;--warn:#ffb454}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Roboto,sans-serif;overscroll-behavior:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #app{display:flex;flex-direction:column;height:100%;max-width:620px;margin:0 auto}
+  header{display:flex;align-items:center;gap:9px;padding:10px 12px;border-bottom:1px solid var(--line)}
+  #who{flex:1;min-width:0}
+  #who .n{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #who .s{font-size:11px;color:var(--faint)}
+  .chip{font-size:11px;padding:4px 9px;border-radius:20px;background:var(--panel2);color:var(--dim)}
+  .chip.ok{color:var(--acc);background:rgba(57,211,160,.12)}
+  .chip.no{color:var(--bad);background:rgba(255,95,95,.12)}
+  #thread{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:7px}
+  .bub{max-width:82%;padding:9px 13px;border-radius:15px;font-size:13.5px;line-height:1.4;
+    word-break:break-word;white-space:pre-wrap}
+  .bub.in{align-self:flex-start;background:var(--panel2);border-bottom-left-radius:5px}
+  .bub.out{align-self:flex-end;background:rgba(57,211,160,.17);border-bottom-right-radius:5px}
+  .bub .t{display:block;font-size:10px;color:var(--faint);margin-top:4px}
+  #empty{padding:44px 20px;text-align:center;color:var(--dim);font-size:13px;line-height:1.7}
+  #compose{display:flex;gap:7px;padding:9px 12px calc(9px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:var(--panel)}
+  #num{width:104px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;
+    padding:10px;color:var(--ink);font-size:12.5px;outline:none}
+  #txt{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;
+    padding:10px;color:var(--ink);font-size:13.5px;outline:none;min-width:0}
+  #send{width:46px;border-radius:9px;background:var(--acc);color:#04120c;font-size:17px;
+    display:grid;place-items:center;font-weight:800}
+  #send:disabled{background:var(--panel2);color:var(--faint)}
+  #toast{position:fixed;left:50%;bottom:84px;transform:translate(-50%,12px);background:#161a20;
+    border:1px solid var(--line);padding:9px 15px;border-radius:9px;font-size:12.5px;opacity:0;
+    transition:.16s;pointer-events:none;z-index:50;max-width:88vw;text-align:center}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  #toast.bad{border-color:rgba(255,95,95,.5);color:#ffd9d9}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div id="who">
+      <div class="n">Inbox</div>
+      <div class="s" id="count">reading…</div>
+    </div>
+    <span class="chip" id="perm">SMS</span>
+  </header>
+  <div id="thread"></div>
+  <div id="compose">
+    <input id="num" placeholder="Number" inputmode="tel" autocomplete="off">
+    <input id="txt" placeholder="Message" autocomplete="off">
+    <button id="send" disabled aria-label="Send">➤</button>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+(function () {
+  "use strict";
+  var W = typeof window !== "undefined" ? window : globalThis;
+  var B = W.darkith || W.darkithNative || null;
+  var VERSION = "1.0.0";
+  var MAX = 300;
+
+  var S = { messages: [], number: "", text: "", granted: false, limit: MAX };
+
+  function has(fn) { return !!(B && typeof B[fn] === "function"); }
+  function call() {
+    var a = Array.prototype.slice.call(arguments), fn = a.shift();
+    if (!has(fn)) return null;
+    try { return B[fn].apply(B, a); } catch (e) { return null; }
+  }
+  function isError(r) { return typeof r === "string" && r.indexOf("ERROR") === 0; }
+  function json(r) {
+    if (!r) return null;
+    if (typeof r === "object") return r;
+    try { return JSON.parse(String(r)); } catch (e) { return null; }
+  }
+
+  function toast(msg, bad) {
+    var t = W.document.getElementById("toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.className = "show" + (bad ? " bad" : "");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.className = bad ? "bad" : ""; }, 2100);
+  }
+
+  function fmtTime(ms) {
+    if (!ms) return "";
+    var d = new Date(ms);
+    if (isNaN(d.getTime())) return "";
+    var now = new Date();
+    var same = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() &&
+               d.getDate() === now.getDate();
+    var hh = ("0" + d.getHours()).slice(-2), mm = ("0" + d.getMinutes()).slice(-2);
+    if (same) return hh + ":" + mm;
+    return ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + hh + ":" + mm;
+  }
+
+  /** SMS type constants: 1 = inbox, 2 = sent. */
+  function isOut(m) { return !!(m && m.type === 2); }
+
+  function render() {
+    var th = W.document.getElementById("thread");
+    if (!th) return;
+    th.textContent = "";
+
+    if (!S.granted) {
+      var e = W.document.createElement("div");
+      e.id = "empty";
+      e.appendChild(W.document.createTextNode("SMS access is not granted."));
+      var br = W.document.createElement("br");
+      e.appendChild(br);
+      e.appendChild(W.document.createTextNode("Darkith reports this honestly and will not fake a thread."));
+      th.appendChild(e);
+      setCount("no access");
+      return;
+    }
+
+    if (!S.messages.length) {
+      var e2 = W.document.createElement("div");
+      e2.id = "empty";
+      e2.textContent = "No messages.";
+      th.appendChild(e2);
+      setCount("0 messages");
+      return;
+    }
+
+    S.messages.forEach(function (m) {
+      var b = W.document.createElement("div");
+      b.className = "bub " + (isOut(m) ? "out" : "in");
+      b.appendChild(W.document.createTextNode(m.body || ""));
+      var t = W.document.createElement("span");
+      t.className = "t";
+      t.textContent = (m.address || "") + " · " + fmtTime(m.date);
+      b.appendChild(t);
+      th.appendChild(b);
+    });
+    setCount(S.messages.length + " message" + (S.messages.length === 1 ? "" : "s"));
+    th.scrollTop = th.scrollHeight;
+  }
+
+  function setCount(s) {
+    var c = W.document.getElementById("count");
+    if (c) c.textContent = s;
+  }
+
+  function renderPerm() {
+    var el = W.document.getElementById("perm");
+    if (!el) return;
+    el.textContent = S.granted ? "SMS ready" : "SMS denied";
+    el.className = "chip " + (S.granted ? "ok" : "no");
+  }
+
+  function load() {
+    var r = call("smsInbox", S.limit);
+    if (r === null) { S.granted = false; renderPerm(); render(); return []; }
+    if (isError(r)) {
+      S.granted = false;
+      renderPerm(); render();
+      return [];
+    }
+    var arr = json(r);
+    S.granted = true;
+    S.messages = Array.isArray(arr) ? arr : [];
+    renderPerm(); render();
+    return S.messages;
+  }
+
+  function requestAccess() {
+    var r = call("sysRequest", "android.permission.READ_SMS,android.permission.SEND_SMS");
+    if (r === null) { toast("Bridge unavailable", true); return false; }
+    toast("Grant SMS access, then reload");
+    return true;
+  }
+
+  function send() {
+    var n = (S.number || "").trim();
+    var t = (S.text || "").trim();
+    if (!n) { toast("Enter a number", true); return false; }
+    if (!t) { toast("Enter a message", true); return false; }
+
+    // Prefer a real send when SEND_SMS is held; otherwise hand off to the composer.
+    var r = call("smsSend", n, t);
+    if (!isError(r) && r !== null) {
+      var res = json(r);
+      if (res && res.sent) {
+        toast("Sent");
+        S.text = ""; syncInputs();
+        load();
+        return true;
+      }
+    }
+    var c = call("smsCompose", n, t);
+    if (isError(c)) { toast(String(c).replace("ERROR: ", ""), true); return false; }
+    if (c === null) { toast("Messaging bridge unavailable", true); return false; }
+    toast("Opened composer");
+    return true;
+  }
+
+  function syncInputs() {
+    var num = W.document.getElementById("num");
+    var txt = W.document.getElementById("txt");
+    var btn = W.document.getElementById("send");
+    if (num) num.value = S.number;
+    if (txt) txt.value = S.text;
+    if (btn) btn.disabled = !((S.number || "").trim() && (S.text || "").trim());
+  }
+
+  function boot() {
+    var on = function (id, ev, fn) {
+      var el = W.document.getElementById(id);
+      if (el) el.addEventListener(ev, fn);
+    };
+    on("num", "input", function (ev) { S.number = ev.target.value; syncInputs(); });
+    on("txt", "input", function (ev) { S.text = ev.target.value; syncInputs(); });
+    on("send", "click", send);
+    on("perm", "click", requestAccess);
+
+    load();
+    syncInputs();
+    return S;
+  }
+
+  var API = {
+    VERSION: VERSION, state: S, boot: boot, load: load, send: send,
+    fmtTime: fmtTime, isOut: isOut, requestAccess: requestAccess,
+    _render: render, _boot: boot
+  };
+  W.DarkithMessages = API;
+  if (W.document && W.document.readyState !== "loading") boot();
+  else if (W.document) W.document.addEventListener("DOMContentLoaded", boot);
+})();
+</script>
+<!-- BEGIN GENERATED synchrony (build/inject_synchrony.py) — DO NOT EDIT -->
+<script>
+/* omega-time — GENERATED by build/gen_synchrony.py. DO NOT HAND-EDIT.
+   Synchrony bylaw: every surface carries timestamp awareness so documents, logs and
+   artifacts sort diachronically. The clock AUTOCCOUPLES the edge device's own system
+   local time to the global clock (epoch), and classifies each instant against the
+   Operator's circadian cycle. Operator zone: Asia/Manila (UTC+8). */
+(function () {
+  "use strict";
+  var TZ_HOURS = 8, TZ_NAME = "Asia/Manila (UTC+8)";
+  /* the Operator's default cycle: wake/activity vs rest/digest/restore (deactivity) */
+  var CYCLE = { activeStart: 6, activeEnd: 22 };
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function local(d) { d = d || new Date(); return new Date(d.getTime() + (TZ_HOURS * 60 + d.getTimezoneOffset()) * 60000); }
+  function parts(d) { var t = local(d); return { y: t.getFullYear(), mo: t.getMonth() + 1, da: t.getDate(), h: t.getHours(), mi: t.getMinutes(), s: t.getSeconds() }; }
+  var omegaTime = {
+    tz: TZ_NAME,
+    cycle: CYCLE,
+    now: function () { return new Date(); },
+    parts: parts,
+    /* "YYYY-MM-DD HH:MM:SS" — human, Operator-local */
+    stamp: function (d) { var p = parts(d); return p.y + "-" + pad(p.mo) + "-" + pad(p.da) + " " + pad(p.h) + ":" + pad(p.mi) + ":" + pad(p.s); },
+    /* "YYYY-MM-DDTHH:MM:SS+08:00" — lexicographically sortable (diachronic sort key) */
+    iso: function (d) { var p = parts(d); return p.y + "-" + pad(p.mo) + "-" + pad(p.da) + "T" + pad(p.h) + ":" + pad(p.mi) + ":" + pad(p.s) + "+08:00"; },
+    key: function (d) { return this.iso(d); },
+    label: function (d) { return this.stamp(d) + " \u00b7 " + this.tz; },
+    /* diachronic sort: oldest first by default; pass true for newest first */
+    sortBy: function (items, getKey, newestFirst) {
+      return items.slice().sort(function (a, b) {
+        var ka = getKey(a), kb = getKey(b);
+        return newestFirst ? (ka < kb ? 1 : ka > kb ? -1 : 0) : (ka < kb ? -1 : ka > kb ? 1 : 0);
+      });
+    },
+    /* --- edge-device hardware coupling: the device's OWN local time vs the global clock --- */
+    deviceOffsetMin: function () { return -new Date().getTimezoneOffset(); },
+    /* autocouple: report the device's system local time beside the global epoch, and whether
+       the device's own zone agrees with the Operator's. A device set to the wrong zone shows
+       agrees=false — the drift the Operator must see (SPI-2: read the real bytes). */
+    relation: function (d) {
+      var dd = d || new Date();
+      var off = this.deviceOffsetMin();
+      return {
+        deviceLocal: this.stamp(dd),
+        deviceOffsetMin: off,
+        deviceZone: "UTC" + (off >= 0 ? "+" : "-") + pad(Math.floor(Math.abs(off) / 60)) + ":" + pad(Math.abs(off) % 60),
+        globalUtc: new Date(dd.getTime()).toISOString(),
+        globalEpochMs: dd.getTime(),
+        agrees: off === TZ_HOURS * 60
+      };
+    },
+    /* --- circadian cycle: wake/activity vs rest/digest/restore (deactivity) --- */
+    phase: function (d) { var h = parts(d).h; return (h >= CYCLE.activeStart && h < CYCLE.activeEnd) ? "wake/active" : "rest/digest/restore"; },
+    /* hours since a prior instant (last activity), as a number */
+    since: function (prior, d) {
+      var a = (prior instanceof Date) ? prior : new Date(prior);
+      return ((d ? d.getTime() : Date.now()) - a.getTime()) / 3600000;
+    },
+    /* classify an instant: which cycle phase, and whether it falls in the active window */
+    classify: function (d) { return { stamp: this.stamp(d), phase: this.phase(d), active: this.phase(d) === "wake/active" }; }
+  };
+  if (typeof window !== "undefined") { window.omegaTime = omegaTime; }
+  if (typeof module !== "undefined" && module.exports) { module.exports = omegaTime; }
+})();
+</script>
+<script>(function(){function tick(){var e=document.getElementById('omega-clock');if(e&&window.omegaTime)e.textContent=window.omegaTime.stamp();}tick();setInterval(tick,1000);})();</script>
+<span id="omega-clock" title="Operator time (Asia/Manila, UTC+8)" style="position:fixed;right:6px;bottom:6px;z-index:2147483647;font:11px/1.2 ui-monospace,monospace;color:#E8C268;background:rgba(5,5,5,.82);border:1px solid rgba(232,194,104,.35);border-radius:6px;padding:3px 7px;pointer-events:none">--</span>
+<!-- END GENERATED synchrony -->
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#050505">
+<title>DARKITH Ω — phone</title>
+<style>
+  :root{--bg:#050505;--panel:#0b0d10;--panel2:#12151a;--line:#1e232b;--ink:#e8ecf1;
+    --dim:#8a93a0;--faint:#5b6572;--acc:#39d3a0;--acc2:#7aa2ff;--bad:#ff5f5f;--warn:#ffb454}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Roboto,sans-serif;overscroll-behavior:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #app{display:flex;flex-direction:column;height:100%;max-width:520px;margin:0 auto}
+  header{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+  #display{flex:1;text-align:right;font:300 26px/1.2 ui-monospace,monospace;letter-spacing:.5px;
+    min-height:34px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chip{font-size:11px;padding:4px 9px;border-radius:20px;background:var(--panel2);color:var(--dim)}
+  .chip.ok{color:var(--acc);background:rgba(57,211,160,.12)}
+  .chip.no{color:var(--bad);background:rgba(255,95,95,.12)}
+  #pad{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 12px 14px;
+    align-content:start}
+  .key{min-height:58px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:21px;font-weight:500;user-select:none}
+  .key:active{background:#1a1f27;transform:scale(.97)}
+  .key.fn{font-size:14px;color:var(--dim);background:#0e1116}
+  .key.call{background:rgba(57,211,160,.16);color:var(--acc);border-color:rgba(57,211,160,.4)}
+  .key.del{color:var(--bad)}
+  #foot{display:flex;gap:8px;padding:0 12px calc(14px + env(safe-area-inset-bottom))}
+  #foot button{flex:1;min-height:52px;border-radius:12px;background:var(--panel2);
+    border:1px solid var(--line);font-size:14px;display:flex;align-items:center;justify-content:center;gap:7px}
+  #foot button.primary{background:var(--acc);color:#04120c;font-weight:800;border-color:var(--acc)}
+  #toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,12px);background:#161a20;
+    border:1px solid var(--line);padding:9px 15px;border-radius:9px;font-size:12.5px;opacity:0;
+    transition:.16s;pointer-events:none;z-index:50;max-width:88vw;text-align:center}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  #toast.bad{border-color:rgba(255,95,95,.5);color:#ffd9d9}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <span class="chip" id="sim">SIM</span>
+    <div id="display">Enter a number</div>
+  </header>
+  <div id="pad"></div>
+  <div id="foot">
+    <button id="sms">✉ Message</button>
+    <button class="primary" id="call">✆ Call</button>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+(function () {
+  "use strict";
+  var W = typeof window !== "undefined" ? window : globalThis;
+  var B = W.darkith || W.darkithNative || null;
+  var VERSION = "1.0.0";
+
+  var KEYS = [
+    { k: "1", sub: "" }, { k: "2", sub: "ABC" }, { k: "3", sub: "DEF" },
+    { k: "4", sub: "GHI" }, { k: "5", sub: "JKL" }, { k: "6", sub: "MNO" },
+    { k: "7", sub: "PQRS" }, { k: "8", sub: "TUV" }, { k: "9", sub: "WXYZ" },
+    { k: "*", sub: "", fn: true }, { k: "0", sub: "+" }, { k: "#", sub: "", fn: true }
+  ];
+
+  var S = { number: "", sim: null, canCall: false };
+
+  function has(fn) { return !!(B && typeof B[fn] === "function"); }
+  function call() {
+    var a = Array.prototype.slice.call(arguments), fn = a.shift();
+    if (!has(fn)) return null;
+    try { return B[fn].apply(B, a); } catch (e) { return null; }
+  }
+  function isError(r) { return typeof r === "string" && r.indexOf("ERROR") === 0; }
+  function json(r) {
+    if (!r) return null;
+    if (typeof r === "object") return r;
+    try { return JSON.parse(String(r)); } catch (e) { return null; }
+  }
+
+  function toast(msg, bad) {
+    var t = W.document.getElementById("toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.className = "show" + (bad ? " bad" : "");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.className = bad ? "bad" : ""; }, 2000);
+  }
+
+  /** Digits only for the dialer; + * # are legal in a number. */
+  function sanitize(n) {
+    return String(n || "").replace(/[^0-9+*#]/g, "");
+  }
+
+  function type(k) {
+    if (S.number.length >= 32) return S.number;
+    S.number = sanitize(S.number + k);
+    render();
+    return S.number;
+  }
+
+  function backspace() {
+    S.number = S.number.slice(0, -1);
+    render();
+    return S.number;
+  }
+
+  function clear() { S.number = ""; render(); return S.number; }
+
+  function render() {
+    var d = W.document.getElementById("display");
+    if (d) d.textContent = S.number || "Enter a number";
+  }
+
+  function renderSim() {
+    var el = W.document.getElementById("sim");
+    if (!el) return;
+    if (!S.sim) { el.textContent = "SIM —"; el.className = "chip"; return; }
+    var st = S.sim.simState;
+    var label = st === 5 ? "SIM ready" : (st === 1 ? "SIM absent" : "SIM state " + st);
+    el.textContent = label;
+    el.className = "chip " + (st === 5 ? "ok" : "no");
+  }
+
+  function dial() {
+    if (!S.number) { toast("No number", true); return false; }
+    var r = call("dialNumber", S.number);
+    if (isError(r)) { toast(String(r).replace("ERROR: ", ""), true); return false; }
+    if (r === null) { toast("Dialer bridge unavailable", true); return false; }
+    return true;
+  }
+
+  function callNow() {
+    if (!S.number) { toast("No number", true); return false; }
+    var r = call("dialCall", S.number);
+    if (isError(r)) { toast(String(r).replace("ERROR: ", ""), true); return false; }
+    return true;
+  }
+
+  function message() {
+    if (!S.number) { toast("No number", true); return false; }
+    var r = call("smsCompose", S.number, "");
+    if (isError(r)) { toast(String(r).replace("ERROR: ", ""), true); return false; }
+    return true;
+  }
+
+  function boot() {
+    var t = json(call("dialTelephony"));
+    if (t && !isError(t)) { S.sim = t; S.canCall = t.canDial === true; }
+    renderSim();
+    render();
+
+    var pad = W.document.getElementById("pad");
+    if (pad) {
+      pad.textContent = "";
+      KEYS.forEach(function (def) {
+        var b = W.document.createElement("button");
+        b.className = "key" + (def.fn ? " fn" : "");
+        b.dataset.key = def.k;
+        var main = W.document.createTextNode(def.k);
+        b.appendChild(main);
+        if (def.sub) {
+          var s = W.document.createElement("span");
+          s.style.fontSize = "9px"; s.style.letterSpacing = "1px";
+          s.style.color = "var(--faint)"; s.style.display = "block";
+          s.textContent = def.sub;
+          b.appendChild(s);
+        }
+        b.addEventListener("click", function () { type(def.k); });
+        pad.appendChild(b);
+      });
+    }
+
+    var on = function (id, fn) {
+      var el = W.document.getElementById(id);
+      if (el) el.addEventListener("click", fn);
+    };
+    on("call", function () { S.canCall ? callNow() : dial(); });
+    on("sms", message);
+
+    if (W.document) {
+      W.document.addEventListener("keydown", function (ev) {
+        if (/^[0-9*#+]$/.test(ev.key)) { ev.preventDefault(); type(ev.key); }
+        else if (ev.key === "Backspace") { ev.preventDefault(); backspace(); }
+        else if (ev.key === "Enter") { ev.preventDefault(); S.canCall ? callNow() : dial(); }
+        else if (ev.key === "Escape") { clear(); }
+      });
+    }
+    return S;
+  }
+
+  var API = {
+    VERSION: VERSION, state: S, boot: boot, type: type, backspace: backspace,
+    clear: clear, dial: dial, callNow: callNow, message: message,
+    sanitize: sanitize, _render: render, _boot: boot
+  };
+  W.DarkithPhone = API;
+  if (W.document && W.document.readyState !== "loading") boot();
+  else if (W.document) W.document.addEventListener("DOMContentLoaded", boot);
+})();
+</script>
+</body>
+</html>

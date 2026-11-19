@@ -85,6 +85,40 @@ that failure mode can no longer reach the raw chain.
   feature-detected and degrades honestly; a broken item is skipped, never a silent stall.
   Tested by `tools/test_media_player.js` (real script, DOM shim + bridge-contract stub).
 
+## §36 THE Ω DEFAULT-APP SUITE — handcoded Android apps (binding, 2026-11-10)
+
+The Operator is handcoding the Android default apps. Each app is ONE HTML file, offline,
+no build step, exposing a `window.Darkith<Name>` namespace, tested by a DOM-shim harness
+that executes the REAL script, and reachable from ONE surface (`darkith-omega-apps.html`).
+
+| app | file | namespace | bridge families |
+|---|---|---|---|
+| Files | `darkith-omega-files.html` | `DarkithFiles` | `file*`, `fileRoots`, `storageGranted` |
+| Player | `darkith-omega-media-player.html` | `DarkithMedia` | `fileRoots`, `fileList`, `fileRead` |
+| Phone | `darkith-omega-phone.html` | `DarkithPhone` | `dial*`, `sys*` |
+| Messages | `darkith-omega-messages.html` | `DarkithMessages` | `sms*`, `sysRequest` |
+| Contacts | `darkith-omega-contacts.html` | `DarkithContacts` | `contacts*`, `dialNumber`, `smsCompose` |
+| Camera | `darkith-omega-camera.html` | `DarkithCamera` | `camera*`, `mediaList`, `deviceResult` |
+| Clock | `darkith-omega-clock.html` | `DarkithClock` | `clock*` |
+| Launcher | `darkith-omega-apps.html` | `DarkithApps` | `version` |
+
+- **THE TWO fileList CONTRACTS.** `DarkithBridge.fileList` answers `[{name,dir,size}]`;
+  `HomekeeperBridge.fileList` answers `[{name,type,bytes,mtime}]`. `DarkithFiles.normEntry`
+  normalises both, so the UI never depends on which host it runs under. Any new file
+  consumer MUST go through `normEntry`/`normList`.
+- **BINARY_REFUSAL.** `HomekeeperBridge.fileRead` refuses archives and dex with
+  `ERROR: BINARY_REFUSAL` and caps text at 3 MB. The file manager surfaces that as a fact
+  ("Binary file — not shown as text"), never as a failure to hide.
+- **HONEST CAPABILITY.** No app fakes device access. A missing permission renders as
+  "not granted" with a request affordance; a denied query returns an empty list plus the
+  reason. `cameraCapture` answers `PENDING:<id>` and is collected by bounded polling of
+  `deviceResult(id)` — it gives up and says so, it never hangs.
+- **SPI-19, whole families.** `DeviceBridge.kt` adds dial/sms/contacts/camera/clock/media/
+  notif/sys as COMPLETE families, forwarded through `HomekeeperBridge` so the JS namespace
+  stays the single `darkith` object. Raw `android.*` only (SPI-13): zero `import androidx`.
+- Tested by `tools/test_files.js` (37) and `tools/test_device_apps.js` (40); both are wired
+  into `tools/ci.sh`.
+
 ## Multi-session gotcha
 DarkTerm has one global command table, so app commands resolve their context **per
 shell** via `sh._dtctx` (inherited by `fork`). Installing a second session must not
