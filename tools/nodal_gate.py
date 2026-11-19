@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -43,8 +44,17 @@ def run_python_suite() -> tuple[bool, str]:
     # result and make the proof file lie about what ran.
     combined = (r.stdout or "") + (r.stderr or "")
     lines = [ln for ln in combined.strip().splitlines() if ln.strip()]
-    ran = next((ln for ln in lines if ln.startswith("Ran ")), "")
-    tail = next((ln for ln in reversed(lines) if ln in ("OK",) or ln.startswith("FAILED")), lines[-1] if lines else "")
+    # Normalize the elapsed time out of unittest's summary: "Ran 43 tests in 0.013s" carries a
+    # wall-clock duration that differs on every run, which would rewrite this tracked proof
+    # file each pass and dirty the tree — the exact self-inflicted churn MUST #36 forbids.
+    # The durable facts are the count and the outcome.
+    ran = ""
+    for ln in lines:
+        if ln.startswith("Ran "):
+            ran = re.sub(r" in [0-9.]+s$", "", ln)
+            break
+    tail = next((ln for ln in reversed(lines) if ln == "OK" or ln.startswith("FAILED")),
+                lines[-1] if lines else "")
     summary = f"{ran} {tail}".strip()
     return r.returncode == 0, summary
 
