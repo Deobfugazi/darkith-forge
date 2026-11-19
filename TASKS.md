@@ -122,6 +122,7 @@ validation, contrast checks.
 | F15 | Escrow debt cleared to zero (homeokinesis flux down) | done | bounty 23.0 → 0: 5 `!!` guarded via elvis/let (`MainActivity`, `ProgressLedger`, `DonorUiConcat`); 18 empty catches resolved (12 logged actionable failures, 6 declared-intent `_`); ratchet flux −23.0; kotlinc 0 errors / 55 files; `proof/source_inspector.json` + `proof/source_inspector_baseline.json` |
 | F16 | Standing authority to publish — agents never ask to push (MUST #35) | done | Law in `DARKITH.md` MUST #35 + `AGENTS.md` §40 + `RESUME.md` §4. Removes the recurring stall where an agent held finished work for a go-ahead the Operator had already automated: commit/push and `tools/board_pulse.sh`/`continuity.sh`/`sync.sh`/`converge.sh` need no approval; force-push, history rewrites and secrets still do. Enforced socially by the reporting rule (never write "say the word") and by `tools/board_pulse.sh --check`, which already fails CI on unpushed work |
 | F17 | Stall measured as TIME, not a yes/no flag (MUST #36) | done | `tools/stall_clock.py` (wired into `tools/ci.sh`): `unpushed_dwell` = now − committer time of the oldest commit origin lacks; `dirty_dwell` = now − mtime of the oldest dirty path (floor). Budgets in `STALL_BUDGET.json` (Operator-owned, missing/malformed = FAIL); proof `proof/stall_clock.json`. Proven fail-closed at a 1s budget → exit 1 with the remedy printed. Companion: `tools/board_pulse.sh` push path now holds an exclusive `flock` so two tabs cannot race on `git add -A`, the commits, or the push. Churn loop found and killed while wiring it: `tools/synchrony_pulse.py` rewrote tracked `proof/synchrony_pulse.json` with `observedNow`/`gapHours` on every run, so CI dirtied the tree every pass and the dwell gate would have fired on CI's own byproduct. It now persists only when the durable identity (boot, lastActivity) changes. Proven: two consecutive full `tools/ci.sh` runs PASS with 0 real failures and 0 dirty paths after each |
+| F18 | Auto-Nodal Co-ordina-Sync substrate (MUST #37) | done | `nodal/` — `schema.py` (frozen content-addressed Receipt; DEGRADED without a named class is unrepresentable, so no undefined pass), `ledger.py` (append-only SQLite, per-lane hash chain anchored to GENESIS_WITNESS, BEFORE UPDATE/DELETE triggers, epoch fencing, upstream existence, `read_asof` barrier, `verify_chain` recomputing content hashes), `bot.py` (total function: missing upstream -> DEGRADED/UPSTREAM_MISSING, throwing decide() -> DEGRADED/INTERNAL_ERROR, seq recovered from the ledger), `engine.py` (Co-ordina-Sync: Tarjan SCC cycle rejection + Kahn order + sha256 tiebreak, `reconcile()` naming both clauses, `propagate_degraded()`). **Twin:** `app/src/main/assets/vendor/nodal.js` — UMD, dependency-free sha256, same laws, WebView-runnable. **Parity proven byte-exact** (same sha256 vectors, same GENESIS, same receipt_id, same fire order) by `tools/nodal_gate.py`, wired into `tools/ci.sh`; fail-closed verified by injecting a genesis drift (gate went red naming the field). Python suite: 43/43. Caught a real bug: `fire()` returned the draft receipt (witness="") whose id != the persisted id, so every downstream citation would have been a phantom dependency |
 
 ## G. INSTALL + RUNTIME GATES (the two failures a user feels)
 
@@ -141,10 +142,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 73 | named work = board 65 + deficits 8 |
+| W_in | 74 | named work = board 66 + deficits 8 |
 | E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 58 | returned = done 50 + closed 3 + descoped 5 |
-| E/W_in | 0.205 | the progress-deficit indicator; absolution at 0 |
+| S | 59 | returned = done 51 + closed 3 + descoped 5 |
+| E/W_in | 0.203 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

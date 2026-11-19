@@ -9,6 +9,14 @@ Repository-specific knowledge for future sessions. Read before acting.
 - **Save before session end:** `bash tools/continuity.sh "what changed"`
 - See `RESUME.md` for the full protocol. Secrets (the APK signing key) never enter git.
 
+## 0a. THE PAIR LAW (MUST #37) — Python ships its .js SAVF twin
+Python is the authority; the `.js` in `app/src/main/assets/vendor/` is its universally
+frontend webview html friendly accompaniment. Every Python surface that states a law must
+ship a WebView-runnable twin, and the two must agree **byte-exactly** on identity (sha256
+vectors, GENESIS anchor, receipt_id, fire order) — not merely "both work". `tools/nodal_gate.py`
+proves it and fails closed on divergence. First carrier: `nodal/` + `vendor/nodal.js`
+(Auto-Nodal Co-ordina-Sync).
+
 ## 0b. TWO TABS = TWO SANDBOXES (they share ONLY the git remote)
 Two OpenHands tabs run in **separate ephemeral sandboxes**. They do NOT share a
 filesystem; the remote branch `main` is the ONLY channel between them, and it is

@@ -191,6 +191,13 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
   if [ -f "$ROOT/tools/clearanceloop_gate.py" ]; then
     run "clearanceloop gate (ratchet laws + integration)" python3 tools/clearanceloop_gate.py
   fi
+  # Auto-Nodal Co-ordina-Sync: the receipt ledger, the total-function bot contract, and the
+  # coordination layer. Proves the Python suite AND that the .js SAVF twin enforces the same
+  # laws with byte-identical identity — a twin that hashes differently is a second system
+  # wearing the same name, so this fails closed on any divergence.
+  if [ -f "$ROOT/tools/nodal_gate.py" ]; then
+    run "nodal gate (Co-ordina-Sync + python/js parity)" python3 tools/nodal_gate.py
+  fi
   run "bridge contract audit" \
     python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
   run "doc consolidation check" \
