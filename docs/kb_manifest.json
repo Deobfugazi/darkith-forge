@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 61,
+  "count": 62,
   "files": [
     {
       "bytes": 69253,
@@ -73,6 +73,12 @@
       "path": "docs/UPDATES.md",
       "register": "B-knowledge",
       "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
+    },
+    {
+      "bytes": 4950,
+      "path": "docs/evidence/NODAL-ZIP-VS-OURS.md",
+      "register": "B-knowledge",
+      "sha256": "7b45fe6a3cf2a6e944ce6b767f97da645a06de145d3ad901e1e3286212c02ec8"
     },
     {
       "bytes": 5077,

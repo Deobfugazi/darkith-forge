@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**61 readable files across 6 registers.**
+**62 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -32,6 +32,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
+| `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
 | `docs/evidence/SECTOR-PAIN-LEDGER.md` | 5,077 | `9d6b452e87d8` | Sector pain ledger — primary-source observations |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
 | `docs/nt/NT-INDEX.md` | 4,329 | `c244fba77d05` | NT INDEX — the noveltreatise corpus, carried and reconciled |
