@@ -89,6 +89,13 @@ if have python3; then
       if [ -f tools/nt_gate.py ]; then
         run "nt corpus reconciliation (SAVF)" python3 tools/nt_gate.py
       fi
+      # Absolution admission: a noveltreatise enters the carried corpus only when it
+      # is truthful down to the verifiable bit — carried (not merely cited), every claim
+      # witnessed or derived, every contradiction resolved to a named EXPOSABLE boundary,
+      # its own corpus count true, and no unresolved mechanism smuggled as RESOLVED.
+      if [ -f tools/absolution_admission.py ]; then
+        run "absolution admission (NT XII)"  python3 tools/absolution_admission.py
+      fi
       # NT hardware-coupled sensor: the Healer repair example must name a symbol the
       # reference android.jar actually carries (raw android.*, not androidx.*). Reads the
       # compiler's own ground truth; a silent skip is announced (SPI-2/SPI-13).
@@ -127,6 +134,13 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
     # aapt2 (R.java for the compile proof) and zipalign live in aapt2d/; put them on PATH
     # so both the §19 proof and the install gate find real tools on a fresh runner.
     export PATH="$TOOLCHAIN/aapt2d:${JAVA_HOME:+$JAVA_HOME/bin:}$PATH"
+    # apksigner (the install gate's signature check) ships in the Android build-tools tree
+    # that build/refresh-host-artifacts.py stages under .tools/bt/. Stage it too, or the
+    # install gate skips even though every tool it needs is present.
+    if [ -d "$TOOLCHAIN/bt/android-14" ]; then
+      export PATH="$TOOLCHAIN/bt/android-14:$PATH"
+      [ -x "$TOOLCHAIN/bt/android-14/apksigner" ] && export APKSIGNER="$TOOLCHAIN/bt/android-14/apksigner"
+    fi
     run "§19 fork integrity gate (compile proof)" \
       bash tools/fork_integrity_gate.sh app/src/main/java/com/darkith/transliaison "$ANDROID_JAR" "$EXTRA_CP"
   else
@@ -137,6 +151,39 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
 
   run "delivery gate (source laws)" \
     bash tools/delivery_gate.sh . --source-only
+  # THE GATE THAT WOULD HAVE CAUGHT THE LAUNCH CRASH. classes.dex referenced
+  # kotlin-stdlib + apksig but defined neither, so the app died at runtime init
+  # while every other test stayed green. If a built APK is present, link it.
+  if [ -f "$ROOT/tools/dex_link_gate.py" ]; then
+    APKS=""
+    [ -f "$ROOT/app-signed.apk" ] && APKS="$ROOT/app-signed.apk"
+    [ -f "$ROOT/build/termkit_omega/app-signed.apk" ] && APKS="$APKS $ROOT/build/termkit_omega/app-signed.apk"
+    if [ -n "$APKS" ]; then
+      run "dex link gate (no unresolved classes)" python3 tools/dex_link_gate.py $APKS
+      run "apk gate (icon + store laws)"        python3 tools/apk_gate.py $APKS
+    else
+      echo "SKIP: no built APK on disk — dex link gate not run (build.sh produces one)"
+    fi
+  fi
+  # The terminal must never lie about its version (darkterm/darktools/termkit/savf
+  # each carried their own hardcoded string). This fails the moment one drifts.
+  if [ -f "$ROOT/tools/stamp_versions.py" ]; then
+    run "version surface gate (one version of record)" python3 tools/stamp_versions.py --check
+  fi
+  # savf.py and savf.html are two ports of ONE formulary; they must agree.
+  if [ -f "$ROOT/tools/savf_parity_gate.py" ]; then
+    run "savf py/js parity gate" python3 tools/savf_parity_gate.py
+  fi
+  # The pre-runner drives a real headless Chromium; lock its engine surface, its
+  # exit-code contract and its honest (deterministic) verdicts.
+  if [ -f "$ROOT/tools/prerunner_gate.py" ]; then
+    run "pre-runner gate (engine + exit contract)" python3 tools/prerunner_gate.py
+  fi
+  # The ClearanceLoop ratchet is the governing law; lock its four laws and assert
+  # the engines are wired into every surface, or a surface silently loses them.
+  if [ -f "$ROOT/tools/clearanceloop_gate.py" ]; then
+    run "clearanceloop gate (ratchet laws + integration)" python3 tools/clearanceloop_gate.py
+  fi
   run "bridge contract audit" \
     python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
   run "doc consolidation check" \
@@ -239,6 +286,12 @@ else
   echo "SKIP: node not found"; FAILED=1
 fi
 
+# The update watcher's decision logic (stale-vs-remote): pure, exercised with real
+# inputs and a stubbed transport, so the alerting cannot silently rot.
+if have node && [ -f tools/updater_test.mjs ]; then
+  run "update watcher logic" node tools/updater_test.mjs
+fi
+
 # Browser UI test needs playwright; run it only if importable, so a slim environment
 # skips it honestly instead of reporting a false failure.
 if have python3 && python3 -c 'import playwright' >/dev/null 2>&1; then
@@ -310,6 +363,13 @@ fi
 # OPEN, or worse PASSes a v1-only APK. Guard it directly, independent of any APK.
 if have python3 && [ -f tools/install_gate.py ]; then
   run "install gate selftest (I-03 v2 detector)" python3 tools/install_gate.py --selftest
+fi
+
+# C2: a forged child APK must be a working, self-forging app, not merely a clean build. The
+# host manifest sets extractNativeLibs for exactly this reason (L-17); the child template must
+# match or a forged app cannot exec the native forge tools and install_gate I-07 goes OPEN.
+if have python3 && [ -f tools/forge_child_gate.py ]; then
+  run "forge child gate (C2)" python3 tools/forge_child_gate.py
 fi
 
 printf '\n=== runtime render gate (the UI the OS hands to Zygote) ===\n'
@@ -432,6 +492,18 @@ if have python3 && [ -f build/make-oneshot.py ]; then
     FAILED=1
   fi
   rm -f /tmp/oneshot_check.$$
+fi
+
+# Version truth + update-watcher wiring: the version stamped in the page, the
+# app surface, the manifest and updater.js must all agree with VERSION.json, or a
+# stale install could be told it is current (or a current one told to update).
+if have python3 && [ -f tools/update_gate.py ]; then
+  run "version truth + update wiring" python3 tools/update_gate.py
+fi
+
+# The app surface must carry the CURRENT watcher block (idempotent injector).
+if have python3 && [ -f build/inject_updater.py ]; then
+  run "update watcher injected (app surface)" python3 build/inject_updater.py --check
 fi
 
 # The Operator's one-shot entrypoint (build&install.sh) must exist, be valid bash,

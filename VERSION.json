@@ -1,0 +1,24 @@
+{
+  "app": "darkith-forge",
+  "name": "DARKITH Forge",
+  "versionCode": 4,
+  "versionName": "2.1.0-omega",
+  "surfaceVersion": "v5.3.1",
+  "released": "2026-11-18T00:00:00Z",
+  "channel": "absolution/admission",
+  "repo": "Deobfugazi/darkith-forge",
+  "manifest_urls": [
+    "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/VERSION.json",
+    "https://raw.githubusercontent.com/Deobfugazi/darkith-forge/main/VERSION.json",
+    "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/VERSION.json"
+  ],
+  "manifest_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/VERSION.json",
+  "release_tag_prefix": "oneshot-",
+  "apk_urls": [
+    "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-forge.apk",
+    "https://github.com/Deobfugazi/darkith-forge/releases/latest/download/darkith-forge.apk"
+  ],
+  "apk_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-forge.apk",
+  "oneshot_url": "https://work-1-tzezyjthckczgvil.prod-runtime.all-hands.dev/darkith-one-shot.sh",
+  "notes": "Sovereign upliftment 1.3.0-omega. FIXES THE LAUNCH CRASH: the shipped classes.dex referenced kotlin-stdlib + apksig but defined neither, so the app died at runtime init. The dex now bundles them (verified by the new dex-link gate). Adds OMEGA TermKit standalone app, one version of record across every terminal surface, and gates so this can never recur."
+}

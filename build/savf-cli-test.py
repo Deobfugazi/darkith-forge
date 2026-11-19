@@ -53,10 +53,23 @@ check("axis: s outside [0,1] exits non-zero", r.returncode != 0)
 check("axis: s outside [0,1] has no traceback", "Traceback" not in r.stderr, r.stderr[-200:])
 check("axis: s outside [0,1] explains the range", "s must lie in [0,1]" in (r.stdout + r.stderr), r.stdout + r.stderr)
 
+# 5b. negative coordinates are ordinary data, not options
+r = run("axis", "--p0", "-4,-8", "--p1", "4,8", "--s", "0.5", "--tau", "1")
+check("axis: negative poles parse without a flag error", r.returncode == 0, r.stderr[-200:])
+check("axis: negative poles give the right point", "[0.0, 0.0]" in r.stdout, r.stdout.strip())
+r = run("axis", "--p0", "0,0", "--p1", "10,0", "--s", "0.5", "--tau", "-1")
+check("axis: a space-separated negative tau parses", r.returncode == 0 and "[10.0, 0.0]" in r.stdout, r.stdout.strip() + r.stderr[-120:])
+
 # 6. a missing scan target is an error, not a silent clean bill of health
 r = run("scan", "/tmp/savf-does-not-exist-xyz.py")
 check("scan: missing path exits non-zero", r.returncode != 0, r.stdout.strip())
 check("scan: missing path says so", "no such file" in (r.stdout + r.stderr), r.stdout + r.stderr)
+
+r = run("freeze", "definitely-not-here.py")
+check("freeze: a missing file exits non-zero", r.returncode != 0, r.stdout.strip())
+check("freeze: a missing file names the path, no traceback",
+      "no such file" in (r.stdout + r.stderr) and "Traceback" not in r.stderr,
+      (r.stdout + r.stderr)[-160:])
 
 # 7. scan on a real file with a phantom import flags it as high
 with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
@@ -94,6 +107,30 @@ with tempfile.TemporaryDirectory() as td:
     contract.write_text("THETA = 0.0\n")   # tamper
     r = run("check-freeze", cwd=td)
     check("check-freeze: detects tampering", r.returncode != 0, r.stdout.strip())
+
+# 11. reach/mutate with a --src that is not there is an error, never a silent
+#     "0 functions / nothing missed" -- a confident green that hides a missing
+#     path, exactly what the scan test above forbids.
+r = run("reach", "--root", ".", "--src", "/tmp/savf-does-not-exist-xyz",
+        "--test", "x")
+check("reach: missing --src exits non-zero", r.returncode != 0, r.stdout.strip())
+check("reach: missing --src says so, no traceback",
+      "no such file" in (r.stdout + r.stderr) and "Traceback" not in r.stderr,
+      (r.stdout + r.stderr)[-160:])
+r = run("mutate", "--root", ".", "--src", "/tmp/savf-does-not-exist-xyz",
+        "--test-cmd", "true")
+check("mutate: missing --src exits non-zero", r.returncode != 0, r.stdout.strip())
+check("mutate: missing --src says so, no traceback",
+      "no such file" in (r.stdout + r.stderr) and "Traceback" not in r.stderr,
+      (r.stdout + r.stderr)[-160:])
+
+# 12. a --src directory with no Python in it is an error too, not an empty pass.
+with tempfile.TemporaryDirectory() as td:
+    (pathlib.Path(td) / "note.txt").write_text("nothing to scan\n")
+    r = run("reach", "--root", td, "--src", td, "--test", "x")
+    check("reach: empty --src tree exits non-zero", r.returncode != 0, r.stdout.strip())
+    check("reach: empty --src tree says so", "no Python source" in (r.stdout + r.stderr),
+          (r.stdout + r.stderr)[-160:])
 
 fails = [x for x in results if not x[1]]
 for name, ok, detail in results:

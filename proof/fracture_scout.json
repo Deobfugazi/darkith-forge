@@ -80,6 +80,216 @@
       "title": "Andrew Ng says bottleneck in AI startups isn't coding – it's product management",
       "url": "https://www.businessinsider.com/andrew-ng-product-management-bottleneck-coding-ai-startups-2025-8",
       "when": "2025-08-27T19:43:22Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Anthropic AI model submits false tip on unsolved Philly murder, police say",
+      "url": "https://www.nbcphiladelphia.com/news/local/anthropic-ai-model-submits-false-tip-on-unsolved-philly-murder-police-say/4477051/",
+      "when": "2026-10-09T22:00:35Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Apple's M1 Ultra comes with a 32MB TLB bottleneck",
+      "url": "https://twitter.com/VadimYuryev/status/1514295682777059329",
+      "when": "2022-04-13T21:24:41Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Ask HN: Where can I find “unsolved problems” for various industries?",
+      "url": "https://news.ycombinator.com/item?id=10022691",
+      "when": "2015-08-07T14:35:06Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Bottleneck Bandwidth and RTT",
+      "url": "https://patchwork.ozlabs.org/patch/671069/",
+      "when": "2016-09-17T02:54:25Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Building software to identify trends in unsolved murders",
+      "url": "https://www.bloomberg.com/news/features/2017-02-08/serial-killers-should-fear-this-algorithm",
+      "when": "2017-02-08T13:33:44Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Case Study: Npm uses Rust for its CPU-bound bottlenecks [pdf]",
+      "url": "https://www.rust-lang.org/static/pdfs/Rust-npm-Whitepaper.pdf",
+      "when": "2019-03-03T14:17:54Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Context is the bottleneck for coding agents now",
+      "url": "https://runnercode.com/blog/context-is-the-bottleneck-for-coding-agents-now",
+      "when": "2025-09-26T15:06:42Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "DeepMind AI outdoes human mathematicians on unsolved problem",
+      "url": "https://www.nature.com/articles/d41586-023-04043-w",
+      "when": "2023-12-14T19:33:44Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Development speed is not a bottleneck",
+      "url": "https://pawelbrodzinski.substack.com/p/development-speed-is-not-a-bottleneck",
+      "when": "2025-09-05T13:13:41Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Disk I/O bottlenecks in GitHub Actions",
+      "url": "https://depot.dev/blog/uncovering-disk-io-bottlenecks-github-actions-ci",
+      "when": "2025-03-28T15:22:36Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Famous Unsolved Math Problems as Homework",
+      "url": "http://blogs.ams.org/matheducation/2015/05/01/famous-unsolved-math-problems-as-homework/",
+      "when": "2015-05-13T09:50:30Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Gas Town's agent patterns, design bottlenecks, and vibecoding at scale",
+      "url": "https://maggieappleton.com/gastown",
+      "when": "2026-01-23T16:19:18Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Great Unsolved Problem In Computer Science",
+      "url": "http://algeri-wong.com/yishan/great-unsolved-problems-in-computer-science.html",
+      "when": "2011-04-13T08:17:51Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Gridlock vs. Bottlenecks: A visual explanation",
+      "url": "http://setosa.io/blog/2014/09/02/gridlock/index.html",
+      "when": "2014-09-02T16:40:04Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Human Bottlenecks",
+      "url": "https://borretti.me/article/human-bottlenecks",
+      "when": "2026-05-24T04:19:23Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "I built a 2x faster lexer, then discovered I/O was the real bottleneck",
+      "url": "https://modulovalue.com/blog/syscall-overhead-tar-gz-io-performance/",
+      "when": "2026-01-20T16:10:01Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "I/O is no longer the bottleneck",
+      "url": "https://benhoyt.com/writings/io-is-no-longer-the-bottleneck/",
+      "when": "2022-11-26T09:24:01Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "I/O is no longer the bottleneck? (2022)",
+      "url": "https://stoppels.ch/2022/11/27/io-is-no-longer-the-bottleneck.html",
+      "when": "2026-01-06T00:02:18Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Intelligence Is Not the Main Bottleneck",
+      "url": "https://www.writingruxandrabio.com/p/intelligence-is-not-the-main-bottleneck",
+      "when": "2026-08-05T14:04:06Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "List of Unsolved Problems in Physics",
+      "url": "http://en.wikipedia.org/wiki/List_of_unsolved_problems_in_physics",
+      "when": "2015-01-22T20:34:24Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "List of Unsolved Scientific Problems with Large Monetary Prizes",
+      "url": "http://scienceprizes.org/",
+      "when": "2015-05-12T22:44:04Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "List of unsolved problems in computer science",
+      "url": "http://en.wikipedia.org/wiki/List_of_unsolved_problems_in_computer_science",
+      "when": "2013-05-27T03:38:27Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "List of unsolved problems in physics",
+      "url": "https://en.wikipedia.org/wiki/List_of_unsolved_problems_in_physics",
+      "when": "2016-08-13T20:19:01Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "MMO Architecture: Source of truth, Dataflows, I/O bottlenecks and how to solve",
+      "url": "https://prdeving.wordpress.com/2023/09/29/mmo-architecture-source-of-truth-dataflows-i-o-bottlenecks-and-how-to-solve-them/",
+      "when": "2023-09-29T12:09:04Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Nocturnal bottleneck",
+      "url": "https://en.wikipedia.org/wiki/Nocturnal_bottleneck",
+      "when": "2022-08-17T10:38:06Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Oak Island Money Pit: Unsolved Mystery",
+      "url": "http://www.oakislandmoneypit.com/",
+      "when": "2014-08-07T16:48:55Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "PigPaxos: Removing the Scalability Bottlenecks in Paxos",
+      "url": "https://muratbuffalo.blogspot.com/2020/03/pigpaxos-devouring-communication_18.html",
+      "when": "2020-03-18T14:17:22Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "PostgreSQL query performance bottlenecks",
+      "url": "https://pawelurbanek.com/postgresql-query-bottleneck",
+      "when": "2022-01-18T11:58:13Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Sorting in Japanese – An Unsolved Problem (2011)",
+      "url": "http://www.localizingjapan.com/blog/2011/02/13/sorting-in-japanese-%E2%80%94-an-unsolved-problem/",
+      "when": "2019-04-10T19:44:22Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
+      "title": "Student mistook examples of unsolved math problems for homework, solves them",
+      "url": "http://www.snopes.com/college/homework/unsolvable.asp",
+      "when": "2017-08-21T00:40:59Z"
     }
   ]
 }

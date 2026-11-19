@@ -58,7 +58,7 @@ class ApkInstaller(private val context: Context) {
                             return
                         }
                         Log.i(TAG, "install finished: status=$status message=$msg")
-                        try { context.unregisterReceiver(this) } catch (e: Exception) { }
+                        try { context.unregisterReceiver(this) } catch (_: Exception) {}
                     }
                 }
                 receiver = rcv
@@ -75,8 +75,8 @@ class ApkInstaller(private val context: Context) {
             }
             return "OK: confirm prompt requested"
         } catch (e: Throwable) {
-            try { receiver?.let { context.unregisterReceiver(it) } } catch (x: Exception) { }
-            try { if (sessionId >= 0) pi.abandonSession(sessionId) } catch (x: Exception) { }
+            try { receiver?.let { context.unregisterReceiver(it) } } catch (_: Exception) {}
+            try { if (sessionId >= 0) pi.abandonSession(sessionId) } catch (_: Exception) {}
             return "ERROR: install failed: ${e.javaClass.simpleName}: ${e.message}"
         }
     }

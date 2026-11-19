@@ -38,3 +38,22 @@ build/omega/*.png
 
 # ---- agent session memory (ephemeral, never tracked) ----
 .openhands/memory/
+
+# ---- savf runtime state (lock + manifest live in the CWD) ----
+.savf/
+
+# ---- agent scratch + built APKs + regenerable trees (never track) --------
+.agent_tmp/
+app-signed.apk
+app-signed.apk.idsig
+build/termkit_omega/
+app/libs/
+dist/
+tree_omega/
+darkith_omega_source.zip
+*.idsig
+
+# node deps (local test harness only)
+node_modules/
+package-lock.json
+prerun-out/

@@ -57,7 +57,7 @@ class DonorUiConcat {
             }
         }
 
-        val donorBody = donorHtml?.let { bodyOf(String(ui[it]!!, Charsets.UTF_8)) } ?: ""
+        val donorBody = donorHtml?.let { name -> ui[name]?.let { bodyOf(String(it, Charsets.UTF_8)) } } ?: ""
         val projectBody = bodyOf(payloadHtml)
 
         val sb = StringBuilder()

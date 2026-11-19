@@ -554,5 +554,494 @@
       "external": true
     },
     "note": "NT XII 14.2's Healer example is checked against reality's reference: the corpus names the raw import (android.widget.Button), the repo law forbids 'import androidx' (SPI-13), and the reference android.jar carries android/widget/Button.class with zero androidx symbols. This is the hardware-coupled sensor: the compiler's own ground truth, not an assertion."
+  },
+  {
+    "id": "XII-ONE-RULE-W",
+    "kind": "W",
+    "referent": "NT XII Part One (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClNob3cgdGhlIHBhdGguIExvZyB0aGUgaW5zdGFudC4gQ2FycnkgdGhlIGNpdGF0aW9uIHZlcmJhdGltLgpYSUktT05FLVJVTEUtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ONE-RULE-W",
+      "external": true
+    },
+    "note": "The one rule: source / transformation / falsifier, at every step."
+  },
+  {
+    "id": "XII-BFN-W",
+    "kind": "W",
+    "referent": "NT XII Part Five (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkJvbmQgRm9ybWF0aW9uIE51bWJlcgpYSUktQkZOLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BFN-W",
+      "external": true
+    },
+    "note": "The treatise states the Bond Formation Number."
+  },
+  {
+    "id": "XII-BFN-FORM-W",
+    "kind": "W",
+    "referent": "NT XII Part Five (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmlzIHRoZSBuZWNlc3NhcnkgYW5kIHN1ZmZpY2llbnQgY29uZGl0aW9uIGZvciBhIGR1cmFibGUgam9pbnQKWElJLUJGTi1GT1JNLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BFN-FORM-W",
+      "external": true
+    },
+    "note": "The universal bonding condition (B >= 1) is stated."
+  },
+  {
+    "id": "XII-CRIT-W",
+    "kind": "W",
+    "referent": "NT XII Part Six (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmlzIHRoZSBib3VuZGFyeSBiZXR3ZWVuIGEgYm9uZGVkIGpvaW50IGFuZCBhIG5vbi1ib25kZWQgaW50ZXJmYWNlClhJSS1DUklULVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-CRIT-W",
+      "external": true
+    },
+    "note": "The critical value is exactly 1 (the adhesive-cohesive transition)."
+  },
+  {
+    "id": "XII-ALPHAGEL-W",
+    "kind": "W",
+    "referent": "NT XII Part Six (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Cs6xX2dlbCDiiIggWzAuMTcsIDAuODBdClhJSS1BTFBIQUdFTC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ALPHAGEL-W",
+      "external": true
+    },
+    "note": "The critical conversion range is carried."
+  },
+  {
+    "id": "XII-RATIO-W",
+    "kind": "W",
+    "referent": "NT XII Part Six (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CihXX0EgLyBXX2NvaClfYyDiiIggWzEvMywgMS8yXQpYSUktUkFUSU8tVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-RATIO-W",
+      "external": true
+    },
+    "note": "The critical thermodynamic-ratio band is carried."
+  },
+  {
+    "id": "XII-NINE-W",
+    "kind": "W",
+    "referent": "NT XII Part Seven (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Ck5vIG1lY2hhbmlzbSBjbGFzcyBlc2NhcGVzIHRoZSBpbnZhcmlhbnQKWElJLU5JTkUtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-NINE-W",
+      "external": true
+    },
+    "note": "The nine mechanism classes close the invariant."
+  },
+  {
+    "id": "XII-TRIAD-W",
+    "kind": "W",
+    "referent": "NT XII Part Twelve (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClJvb3RpbmcgdW5kb2VzIHRoZSBiYXNlOyBsb2ctaW5nIHVuZG9lcyB0aGUgZXhwb25lbnQKWElJLVRSSUFELVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-TRIAD-W",
+      "external": true
+    },
+    "note": "The closed triple: R o F = pi_b and L o F = pi_n; one redundancy, 3-for-2."
+  },
+  {
+    "id": "XII-RESIDUAL-W",
+    "kind": "W",
+    "referent": "NT XII Part Twelve (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CnIgPSBsbiB4IOKIkiBuIGxuIGIKWElJLVJFU0lEVUFMLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-RESIDUAL-W",
+      "external": true
+    },
+    "note": "The residual r measures the distance off the surface; r = 0 on the relation."
+  },
+  {
+    "id": "XII-ANCHOR-W",
+    "kind": "W",
+    "referent": "NT XII Part Twelve (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkFuY2hvciBQYWlyIHswLCAxfQpYSUktQU5DSE9SLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ANCHOR-W",
+      "external": true
+    },
+    "note": "The anchor pair {0,1} and the refusal of the log leg at b=1."
+  },
+  {
+    "id": "XII-SIGMA-W",
+    "kind": "W",
+    "referent": "NT XII Part Fourteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Cs6jID0gzqNfUyArIM6jX0IgPSAwClhJSS1TSUdNQS1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-SIGMA-W",
+      "external": true
+    },
+    "note": "The closure criterion: substrate + bytecode residual must be zero."
+  },
+  {
+    "id": "XII-SIGMA-DEF-W",
+    "kind": "W",
+    "referent": "NT XII Part Fourteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClN1YnN0cmF0ZSByZXNpZHVhbApYSUktU0lHTUEtREVGLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-SIGMA-DEF-W",
+      "external": true
+    },
+    "note": "The two residuals (substrate, bytecode) are defined."
+  },
+  {
+    "id": "XII-RETENTION-W",
+    "kind": "W",
+    "referent": "NT XII Part Sixteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmxpbV97dCDihpIg4oiefSAoRSAvIFdfaW4pID0gMApYSUktUkVURU5USU9OLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-RETENTION-W",
+      "external": true
+    },
+    "note": "The retention equation; absolution as E/W_in -> 0."
+  },
+  {
+    "id": "XII-ASE-W",
+    "kind": "W",
+    "referent": "NT XII Part Sixteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSBBdXRvcGhhZ2ljIFNvdmVyZWlnbiBFY29ub215IChBU0UpClhJSS1BU0UtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-ASE-W",
+      "external": true
+    },
+    "note": "The ASE is stated with its survival constraints."
+  },
+  {
+    "id": "XII-PRIME-W",
+    "kind": "W",
+    "referent": "NT XII Part Fourteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0Ck5FVkVSIFdSSVRFIEEgU1RVQi4gRVZFUi4KWElJLVBSSU1FLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-PRIME-W",
+      "external": true
+    },
+    "note": "The Prime Directive forbids a stub that makes the build green."
+  },
+  {
+    "id": "XII-MANUFACTORY-W",
+    "kind": "W",
+    "referent": "NT XII Part Fifteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkdlbmVyYXRpdmUgTWFudWZhY3RvcnkKWElJLU1BTlVGQUNUT1JZLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-MANUFACTORY-W",
+      "external": true
+    },
+    "note": "The artifact is a generative manufactory, not an app."
+  },
+  {
+    "id": "XII-MINT-W",
+    "kind": "W",
+    "referent": "NT XII Part Fifteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSBNYW51ZmFjdG9yeSAoVGhlIEFydGlmYWN0KQpYSUktTUlOVC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-MINT-W",
+      "external": true
+    },
+    "note": "The mint is the codified harvest of the zeroed residual."
+  },
+  {
+    "id": "XII-BUILD-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmFhcHQyIGNvbXBpbGUKWElJLUJVSUxELVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-W",
+      "external": true
+    },
+    "note": "The seven-step forced chain begins at aapt2 compile."
+  },
+  {
+    "id": "XII-BUILD-SIGN-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmFwa3NpZ25lcgpYSUktQlVJTEQtU0lHTi1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-SIGN-W",
+      "external": true
+    },
+    "note": "The chain ends at apksigner (sign after align)."
+  },
+  {
+    "id": "XII-BUILD-CEIL-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CmFuZHJvaWQtMzQvYW5kcm9pZC5qYXIKWElJLUJVSUxELUNFSUwtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-CEIL-W",
+      "external": true
+    },
+    "note": "The one external artifact is android-34/android.jar (API 34 ceiling)."
+  },
+  {
+    "id": "XII-BUILD-API34-W",
+    "kind": "W",
+    "referent": "NT XII Part Thirteen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0CkFQSSAzNCAoQW5kcm9pZCAxNCkKWElJLUJVSUxELUFQSTM0LVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-BUILD-API34-W",
+      "external": true
+    },
+    "note": "The ceiling is stated empirically as API 34."
+  },
+  {
+    "id": "XII-COUNT-W",
+    "kind": "W",
+    "referent": "NT XII Runtime Log (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSBlbGV2ZW4gcHJlY2VkaW5nIG5vdmVsdHJlYXRpc2VzClhJSS1DT1VOVC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-COUNT-W",
+      "external": true
+    },
+    "note": "The treatise is truthful about its substrate: eleven preceding treatises."
+  },
+  {
+    "id": "XII-SET-W",
+    "kind": "W",
+    "referent": "NT XII Part Seventeen (corpus text)",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1YSUkudHh0ClRoZSB0d2VsdmUgbm92ZWx0cmVhdGlzZXMgZWFjaCB0ZXN0ZWQgYSBib25kClhJSS1TRVQtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-SET-W",
+      "external": true
+    },
+    "note": "The whole set (eleven carried + this one) is twelve."
+  },
+  {
+    "id": "XII-INDEX-W",
+    "kind": "W",
+    "referent": "docs/nt/NT-INDEX.md",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('ZG9jcy9udC9OVC1JTkRFWC5tZApOVCBJTkRFWApYSUktSU5ERVgtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-INDEX-W",
+      "external": true
+    },
+    "note": "The corpus index exists and enumerates the carried treatises."
+  },
+  {
+    "id": "XII-REPO-BUILD-W",
+    "kind": "W",
+    "referent": "build.sh",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('YnVpbGQuc2gKYWFwdDIKWElJLVJFUE8tQlVJTEQtVw==').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-BUILD-W",
+      "external": true
+    },
+    "note": "The repo build.sh realizes the no-Gradle chain."
+  },
+  {
+    "id": "XII-REPO-NOGRADLE-W",
+    "kind": "W",
+    "referent": "build.sh",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('YnVpbGQuc2gKR3JhZGxlClhJSS1SRVBPLU5PR1JBRExFLVc=').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-NOGRADLE-W",
+      "external": true
+    },
+    "note": "build.sh names Gradle only to forbid it (SPI-1)."
+  },
+  {
+    "id": "XII-REPO-NTGATE-W",
+    "kind": "W",
+    "referent": "tools/nt_gate.py",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('dG9vbHMvbnRfZ2F0ZS5weQpudF9nYXRlClhJSS1SRVBPLU5UR0FURS1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-NTGATE-W",
+      "external": true
+    },
+    "note": "The corpus reconciliation is gated by tools/nt_gate.py (SPI-15)."
+  },
+  {
+    "id": "XII-REPO-DEFICIT-W",
+    "kind": "W",
+    "referent": "tools/omega_deficit.py",
+    "evidence": {
+      "cmd": "python3 -c \"import base64,pathlib; b=base64.b64decode('dG9vbHMvb21lZ2FfZGVmaWNpdC5weQpFL1dfaW4KWElJLVJFUE8tREVGSUNJVC1X').decode('utf-8').split(chr(10)); s=pathlib.Path(b[0]).read_text(encoding='utf-8'); assert b[1] in s; print(b[2])\"",
+      "expect": "XII-REPO-DEFICIT-W",
+      "external": true
+    },
+    "note": "The retention law is gated as the project's own progress-deficit indicator."
+  },
+  {
+    "id": "XII-BFN",
+    "kind": "R",
+    "derived_from": [
+      "XII-BFN-W",
+      "XII-BFN-FORM-W"
+    ],
+    "note": "The Bond Formation Number B = (W_A/W_coh)(a_inf/a_gel)eta >= 1 is stated."
+  },
+  {
+    "id": "XII-CRIT",
+    "kind": "R",
+    "derived_from": [
+      "XII-CRIT-W"
+    ],
+    "note": "B_c = 1 is exact (the adhesive-cohesive transition)."
+  },
+  {
+    "id": "XII-BANDS",
+    "kind": "R",
+    "derived_from": [
+      "XII-ALPHAGEL-W",
+      "XII-RATIO-W"
+    ],
+    "note": "The numerical signatures: alpha_gel in [0.17,0.80]; W_A/W_coh in [1/3,1/2]."
+  },
+  {
+    "id": "XII-NINE",
+    "kind": "R",
+    "derived_from": [
+      "XII-NINE-W"
+    ],
+    "note": "The nine mechanism classes are limits of the invariant."
+  },
+  {
+    "id": "XII-TRIAD",
+    "kind": "R",
+    "derived_from": [
+      "XII-TRIAD-W",
+      "XII-RESIDUAL-W"
+    ],
+    "note": "b^n = x is a closed triple (3-for-2) with residual r = ln x - n ln b."
+  },
+  {
+    "id": "XII-ANCHOR",
+    "kind": "R",
+    "derived_from": [
+      "XII-ANCHOR-W"
+    ],
+    "note": "The anchor pair {0,1}; a collapse signals a stationary frame; do not force the log leg."
+  },
+  {
+    "id": "XII-SIGMA",
+    "kind": "R",
+    "derived_from": [
+      "XII-SIGMA-W",
+      "XII-SIGMA-DEF-W"
+    ],
+    "note": "Sigma = Sigma_S + Sigma_B = 0; a build is closed iff Sigma = 0."
+  },
+  {
+    "id": "XII-RETENTION",
+    "kind": "R",
+    "derived_from": [
+      "XII-RETENTION-W",
+      "XII-ASE-W"
+    ],
+    "note": "W_in - E = S != 0; absolution as E/W_in -> 0."
+  },
+  {
+    "id": "XII-PRIME",
+    "kind": "R",
+    "derived_from": [
+      "XII-PRIME-W"
+    ],
+    "note": "The Prime Directive: no stub; declare an unwritten artifact as a named boundary."
+  },
+  {
+    "id": "XII-MANUFACTORY",
+    "kind": "R",
+    "derived_from": [
+      "XII-MANUFACTORY-W",
+      "XII-MINT-W"
+    ],
+    "note": "The mints are zipped into a single generative manufactory file."
+  },
+  {
+    "id": "XII-BUILD",
+    "kind": "R",
+    "derived_from": [
+      "XII-BUILD-W",
+      "XII-BUILD-SIGN-W",
+      "XII-BUILD-CEIL-W",
+      "XII-BUILD-API34-W"
+    ],
+    "note": "The seven-step forced chain; API 34 ceiling; align before sign."
+  },
+  {
+    "id": "XII-COUNT",
+    "kind": "R",
+    "derived_from": [
+      "XII-COUNT-W",
+      "XII-SET-W",
+      "XII-INDEX-W"
+    ],
+    "note": "The treatise's corpus count is true: eleven preceding, twelve in the set."
+  },
+  {
+    "id": "XII-REPO-CHAIN",
+    "kind": "R",
+    "derived_from": [
+      "XII-REPO-BUILD-W",
+      "XII-REPO-NOGRADLE-W",
+      "XII-BUILD"
+    ],
+    "note": "The repo realizes the treatise's chain without Gradle."
+  },
+  {
+    "id": "XII-REPO-GATED",
+    "kind": "R",
+    "derived_from": [
+      "XII-REPO-NTGATE-W",
+      "XII-REPO-DEFICIT-W"
+    ],
+    "note": "The treatise's two closure laws are executable gates in this repo (SPI-15)."
+  },
+  {
+    "id": "XII-CROSSTREATISE-A",
+    "kind": "A",
+    "note": "INFERRED: the identification of every prior treatise's bond with B is the author's compression."
+  },
+  {
+    "id": "XII-DIACHRONIC-A",
+    "kind": "A",
+    "note": "INFERRED: the reading of birch-bark hafting as the first attestation of the bonding function is the author's."
+  },
+  {
+    "id": "XII-ONTOLOGY-A",
+    "kind": "A",
+    "note": "INFERRED: the ontological framing (truth as observed, the mint backed by exhaustion) is the author's."
+  },
+  {
+    "id": "XII-MANUFACTORY-A",
+    "kind": "A",
+    "note": "INFERRED: the SAVF Generative Manufactory is the author's synthesis of the derivation, execution, and mint."
+  },
+  {
+    "id": "XII-LAMINAR-A",
+    "kind": "A",
+    "note": "INFERRED: the lamination (the pen stroke and the motor gap) as the first material attestation is the author's analogy."
+  },
+  {
+    "id": "XII-DEMO-ECON-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the live economic demonstrations carry external figures (Harvard 718 firms/725k workers; Anthropic 27%->9%; GitClear 623M changes; Zylo 79%) not carried verbatim."
+  },
+  {
+    "id": "XII-MATERIALS-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the material-stream and diachronic dates (Campitello ~200 kya; ochre ~70 kya) are external archaeology not carried verbatim."
+  },
+  {
+    "id": "XII-API35-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the API-35 fracture rests on an external report (Termux issue #22667) not carried verbatim."
+  },
+  {
+    "id": "XII-NOVELTY-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the novelty boundary ('Bond Formation Number' absent from the literature) rests on an external literature search not carried verbatim."
+  },
+  {
+    "id": "XII-HEALER-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the Autophagic Healer (libllama.so / .gguf) is a design, not executed in this repo."
+  },
+  {
+    "id": "XII-ASE-PRAXIS-C",
+    "kind": "C",
+    "note": "CONTRADICTION: the ASE modules carry praxis actuals (external co-op/housing figures) not carried verbatim."
   }
 ]

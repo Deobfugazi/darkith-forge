@@ -1,197 +1,12 @@
 {
   "_law": "source_inspector: the routine trial of the source for loopholes",
   "autofixable": 0,
-  "bounty": [
-    {
-      "autofixable": false,
-      "class": "nonnull_assert",
-      "line": 60,
-      "note": "val donorBody = donorHtml?.let { bodyOf(String(ui[it]!!, Charsets.UTF_8)) } ?: \"\"",
-      "path": "app/src/main/java/com/darkith/transliaison/DonorUiConcat.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "nonnull_assert",
-      "line": 35,
-      "note": "val clip = data.clipData!!",
-      "path": "app/src/main/java/com/darkith/transliaison/MainActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "nonnull_assert",
-      "line": 38,
-      "note": "data?.data != null -> arrayOf(data.data!!)",
-      "path": "app/src/main/java/com/darkith/transliaison/MainActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "nonnull_assert",
-      "line": 30,
-      "note": "handler = Handler(thread!!.looper)",
-      "path": "app/src/main/java/com/darkith/transliaison/ProgressLedger.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "nonnull_assert",
-      "line": 31,
-      "note": "handler!!.post(tickRunnable)",
-      "path": "app/src/main/java/com/darkith/transliaison/ProgressLedger.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 57,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/AegisVM.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 61,
-      "note": "try { context.unregisterReceiver(this) } catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/ApkInstaller.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 78,
-      "note": "try { receiver?.let { context.unregisterReceiver(it) } } catch (x: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/ApkInstaller.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 79,
-      "note": "try { if (sessionId >= 0) pi.abandonSession(sessionId) } catch (x: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/ApkInstaller.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 130,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/ChimeraBuilder.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 200,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/ChimeraBuilder.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 66,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 69,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 79,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 142,
-      "note": "} catch (e2: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 327,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 357,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 387,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 469,
-      "note": "} catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 323,
-      "note": "host.runOnUiThread { try { host.startActivity(i) } catch (ex: Exception) { } }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 345,
-      "note": "host.runOnUiThread { try { host.startActivity(ch) } catch (ex: Exception) { } }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 360,
-      "note": "} catch (ex: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt",
-      "severity": "escrow"
-    },
-    {
-      "autofixable": false,
-      "class": "swallowed_exception",
-      "line": 417,
-      "note": "try { out.add(JSONObject(line)) } catch (e: Exception) { }",
-      "path": "app/src/main/java/com/darkith/transliaison/core/SubstrateIngestor.kt",
-      "severity": "escrow"
-    }
-  ],
-  "bounty_score": 23.0,
+  "bounty": [],
+  "bounty_score": 0,
   "by_severity": {
     "blocker": 0,
     "cosmetic": 0,
-    "escrow": 23
+    "escrow": 0
   },
   "charges": [
     "CH-01",
@@ -205,11 +20,8 @@
     "CH-09",
     "CH-10"
   ],
-  "files_examined": 58,
-  "open": {
-    "nonnull_assert": 5,
-    "swallowed_exception": 18
-  },
+  "files_examined": 57,
+  "open": {},
   "root": "app/src/main/java/com/darkith/transliaison",
   "trial": {
     "CH-01": {

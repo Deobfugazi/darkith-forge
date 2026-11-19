@@ -4,7 +4,7 @@
     "nonnull_assert": 0,
     "swallowed_exception": 0
   },
-  "delivery": 1,
+  "delivery": 2,
   "history": [
     {
       "delivery": 1,
@@ -13,11 +13,16 @@
         "swallowed_exception": 18
       },
       "score": 23.0
+    },
+    {
+      "delivery": 2,
+      "escrow": {},
+      "score": 0
     }
   ],
   "hwm": {
-    "nonnull_assert": 5,
-    "swallowed_exception": 18
+    "nonnull_assert": 0,
+    "swallowed_exception": 0
   },
   "justified": {}
 }
