@@ -189,7 +189,14 @@ def main() -> int:
 
     facts["converged"] = not fails
     facts["agent"] = "primary"
-    if write:
+    # A proof file is a claim about the tree, so it may only be written from a state that
+    # supports the claim. Persisting a diverged result records a transient as if it were the
+    # state: the tree gets fixed, the stale record stays, and a reader downstream trusts a
+    # false attestation. Refuse the write, leaving the last true record in place.
+    if write and fails:
+        print(f"convergence_gate: proof NOT written — {len(fails)} divergence(s) present; "
+              f"a record written now would attest a state that stops holding once fixed")
+    elif write:
         PROOF.parent.mkdir(parents=True, exist_ok=True)
         PROOF.write_text(json.dumps(facts, indent=2) + "\n", encoding="utf-8")
 
