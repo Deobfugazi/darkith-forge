@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Darkith Omega — The Manufactory Circuit</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #d9d5cc;
+    --accent: #7a3e1d; --panel: #f2efe8; --max: 46rem;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #141414; --ink: #e8e4dc; --muted: #9a958c; --rule: #2e2c28;
+    --accent: #d99a6c; --panel: #1d1c1a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 Georgia, "Iowan Old Style", serif;
+    transition: background .2s, color .2s;
+  }
+  #bar {
+    position: sticky; top: 0; z-index: 10; display: flex; gap: .5rem;
+    flex-wrap: wrap; row-gap: .35rem;
+    align-items: center; padding: .55rem 1rem;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule);
+    font-family: system-ui, sans-serif; font-size: .82rem;
+  }
+  #bar a, #bar button {
+    color: var(--muted); text-decoration: none; background: none;
+    border: 1px solid transparent; border-radius: 6px;
+    padding: .3rem .55rem; cursor: pointer; font: inherit;
+  }
+  #bar a:hover, #bar button:hover { color: var(--ink); border-color: var(--rule); }
+  #bar .grow { flex: 1; }
+  #bar .vol { border: 1px solid var(--rule); border-radius: 999px; padding: .28rem .7rem; }
+  #bar .vol[aria-current="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  main { max-width: var(--max); margin: 0 auto; padding: 3rem 1.4rem 8rem; }
+  h1, h2, h3 { font-family: system-ui, sans-serif; line-height: 1.2; letter-spacing: -.015em; }
+  h1 { font-size: 2rem; margin: 0 0 .4rem; }
+  h2 { font-size: 1.35rem; margin: 2.4rem 0 .6rem; }
+  h3 { font-size: 1.05rem; margin: 1.8rem 0 .4rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--accent); }
+  kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule); border-radius: 4px; padding: 0 .3rem; }
+  .kicker { font-family: system-ui, sans-serif; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .lede { font-size: 1.12rem; color: var(--muted); }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+  .bookmarks { display: grid; gap: 1rem; margin: 2.2rem 0; }
+  @media (min-width: 640px) { .bookmarks { grid-template-columns: repeat(2, 1fr); } }
+  .bookmark {
+    display: block; text-decoration: none; color: var(--ink);
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 1.2rem 1.1rem; transition: transform .12s, border-color .12s;
+  }
+  .bookmark:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .bookmark .tag { font-family: var(--mono); font-size: .7rem; color: var(--accent); }
+  .bookmark strong { display: block; font-family: system-ui, sans-serif; font-size: 1.05rem; margin: .35rem 0 .3rem; }
+  .bookmark span { font-size: .9rem; color: var(--muted); }
+  pre, code { font-family: var(--mono); font-size: .82rem; }
+  pre {
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 1rem; overflow-x: auto; line-height: 1.5;
+  }
+  table { border-collapse: collapse; width: 100%; margin: 1.2rem 0; font-size: .88rem; }
+  th, td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: system-ui, sans-serif; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  details.provenance {
+    margin: 1rem 0; padding: .6rem .8rem;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 6px;
+    font-family: var(--mono); font-size: .78rem;
+  }
+  details.provenance summary {
+    cursor: pointer; color: var(--accent); font-family: system-ui, sans-serif;
+    font-size: .78rem; letter-spacing: .05em; text-transform: uppercase;
+  }
+  details.provenance pre { background: transparent; border: 0; padding: .5rem 0 0; margin: 0; }
+  #toc {
+    position: fixed; inset: 0 auto 0 0; width: min(20rem, 84vw); z-index: 20;
+    background: var(--bg); border-right: 1px solid var(--rule);
+    transform: translateX(-102%); transition: transform .22s ease;
+    padding: 1rem; overflow-y: auto; font-family: system-ui, sans-serif; font-size: .9rem;
+  }
+  #toc.open { transform: none; }
+  #toc a { display: block; padding: .4rem .5rem; border-radius: 6px; color: var(--ink); text-decoration: none; }
+  #toc a:hover, #toc a[aria-current="true"] { background: var(--panel); }
+  #toc .volhead { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 1rem 0 .3rem; }
+  #scrim { position: fixed; inset: 0; background: #0007; z-index: 15; opacity: 0; pointer-events: none; transition: opacity .22s; }
+  #scrim.on { opacity: 1; pointer-events: auto; }
+  #pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; font-family: system-ui, sans-serif; font-size: .9rem; }
+  #pager a { text-decoration: none; border: 1px solid var(--rule); border-radius: 8px; padding: .6rem .9rem; }
+  #pager a:hover { border-color: var(--accent); }
+  footer.shell { margin-top: 4rem; font-family: system-ui, sans-serif; font-size: .8rem; color: var(--muted); }
+  @media print {
+    #bar, #toc, #scrim, #pager, footer.shell { display: none !important; }
+    main { max-width: none; padding: 0; }
+    body { background: #fff; color: #000; }
+  }
+</style>
+</head>
+<body data-theme="light">
+
+<header id="bar">
+  <button id="menu" aria-label="Table of contents">&#9776;</button>
+  <a href="#/home" style="font-weight:600;color:var(--ink)">Darkith Omega</a>
+  <span class="grow"></span>
+  <a class="vol" data-vol="plain" href="#/plain/0">Plain</a>
+  <a class="vol" data-vol="paper" href="#/paper/0">Paper</a>
+  <a class="vol" data-vol="machine" href="#/machine/0">Machine</a>
+  <a class="vol" data-vol="provenance" href="#/provenance/0">Provenance</a>
+  <button id="theme" aria-label="Toggle theme">&#9686;</button>
+</header>
+
+<div id="scrim"></div>
+<nav id="toc" aria-label="Contents"></nav>
+
+<main id="view" tabindex="-1"></main>
+
+<script>
+/* ============================================================
+   1. MANIFEST — every section exists in every register.
+   The 4 registers correspond to the 4 registers of the unit:
+   plain, paper, machine, provenance.
+   ============================================================ */
+const SECTIONS = [
+  { id: 0,  title: "Front matter" },
+  { id: 1,  title: "Introduction" },
+  { id: 2,  title: "Etymology" },
+  { id: 3,  title: "Eleven engines" },
+  { id: 4,  title: "Eight specifications" },
+  { id: 5,  title: "Four conditions" },
+  { id: 6,  title: "Information layers" },
+  { id: 7,  title: "Security" },
+  { id: 8,  title: "Composition" },
+  { id: 9,  title: "Closure" },
+  { id: 10, title: "Conclusion" },
+];
+
+/* ============================================================
+   2. CONTENT — the manufactory, in four registers.
+      Plain      = untrained register.
+      Paper      = specialist text.
+      Machine    = YAML / structured data.
+      Provenance = per-claim PROVENANCE object (Layer 2 projected).
+   ============================================================ */
+const CONTENT = {
+  plain: {
+    0: `<p class="lede">A plain-language way into the argument, for a reader with no prior background.</p>
+        <p>This document describes one thing: a workshop that builds software <em>on a telephone</em>. No laptop. No internet. No tool that hides what it is doing. You type or tap an intent; the workshop measures what is missing; it makes the missing thing; it checks its own work; and it hands back a signed file the phone will install.</p>
+        <p>That is unusual enough that the rest of this document has to prove it is real, and has to say exactly where it could be wrong.</p>`,
+    1: `<h2>Why this matters</h2>
+        <p>Most software is built on someone else's machine, using someone else's tools, and you are told to trust the result. This workshop is built so that the person holding the phone can walk every step. If a step is fake, a check fails and the build stops. Nothing is allowed to "look finished."</p>
+        <p>The document makes three claims and one honest non-claim. The claims: the workshop runs the whole build itself; it repairs what it lacks instead of guessing; and its repair is measured, not asserted. The non-claim: almost none of the individual parts are new. The <em>arrangement</em> is the contribution.</p>`,
+    2: `<h2>Where the word comes from</h2>
+        <p>A <em>manufactory</em> is older than a factory. Latin <em>manufactorium</em> joins <em>manus</em> (hand) to <em>facere</em> (to make): a place where something is made by hand. A factory is a place of machines. A manufactory is a place where the hand and the machine are joined.</p>
+        <p>That distinction is the whole design. The hand derives the rule. The machine executes it. Neither is allowed to pretend to be the other.</p>`,
+    3: `<h2>Eleven engines</h2>
+        <p>The workshop has eleven working parts. Some turn a web page into native screen instructions. Some compile. Some find what is missing and fetch it. Some decide how much memory a job may take. Some keep a permanent, tamper-evident record of every decision.</p>
+        <p>Eleven sounds arbitrary until you see that each one answers a different question, and that no two answer the same question. That is the test: if two parts answered the same question, one of them would be a copy, and copies drift.</p>`,
+    4: `<h2>Eight specifications</h2>
+        <p>Under the eleven parts sit eight kinds of repository — the storage ideas the workshop depends on. A version history. A package shelf. A container registry. A named storage pattern from domain design. An institutional archive. A content-addressed store. A build cache. A release channel.</p>
+        <p>They are not rivals. They are the same idea at different depths: something authoritative holds things; a separate organising layer says what they are; and a promise says they will still be there later.</p>`,
+    5: `<h2>The four conditions</h2>
+        <p>Everything in this document reduces to four conditions. (1) <strong>It holds things, and it is where they live.</strong> (2) <strong>The organising layer is separate from the raw content.</strong> (3) <strong>It promises preservation, retrieval, and a boundary.</strong> (4) <strong>It is the original, not a copy.</strong></p>
+        <p>Drop any one and you get a recognisable near-miss: a bare box, a loose folder, a cache, a mirror. Each of the four is necessary. Together they are sufficient. That is the claim the whole document exists to defend.</p>`,
+    6: `<h2>Layers</h2>
+        <p>Every working repository has three layers. The raw content — the bytes. The inflated layer — everything added to organise those bytes: names, indices, manifests. And the deflated descriptor — the small thing that points back at the raw content.</p>
+        <p>Keep those three apart and you can always tell what is original and what is commentary about the original.</p>`,
+    7: `<h2>Security</h2>
+        <p>Eight layers, from the wire to isolation. Each layer stops a specific failure. A lock that stops nothing is decoration, so each layer here names the failure it stops and how it stops it.</p>
+        <p>The workshop also refuses to ship what it cannot verify: no signing key, no build; an unaligned package is never handed to the signer.</p>`,
+    8: `<h2>Composition</h2>
+        <p>Each specification breaks into a counted list of parts. Counting matters: a list that does not end in a number is a list that can quietly grow or shrink. Every enumeration in this document terminates in a count and a rule for membership.</p>`,
+    9: `<h2>Closure</h2>
+        <p>A document that cannot be wrong is not a claim, it is a mood. This one names four ways it could be wrong, and it names the test that would show it. It also states plainly what is new here: the synthesis, not the components.</p>`,
+    10: `<h2>Conclusion</h2>
+        <p>The manufactory names one invariant across eleven engines and eight specifications. The four conditions are a checklist you can carry away: hold, separate, promise, originate. Drop one and you can name what you have instead.</p>
+        <p>The phone builds. The hand derives. The machine executes. The equation closes at zero, or the build does not ship.</p>`,
+  },
+  paper: {
+    0: `<p class="kicker">Abstract</p>
+        <p>This document specifies <em>Darkith Omega</em>, an on-device software manufactory that compiles, packages, aligns, and signs an Android application entirely on a 4 GB arm64 telephone under Termux, with no Gradle, no cloud, and no build daemon. The system is described as a closed circuit: eleven engines, eight repository specifications, and four necessary-and-jointly-sufficient conditions. The toolchain is the seven-step raw chain (aapt2, kotlinc, d8, zip, zipalign, apksigner). The repair loop is a residual criterion, capital-sigma equals zero, in which a build ships only when the substrate residual and the bytecode residual are both zero. The governance layer is a set of 24 executable gates run by a single command. Every enumeration below is closed by an explicit count and a membership rule; the novelty boundary and four falsification conditions are stated in section 9.</p>
+        <p>Version of record: <code>2.1.0-omega</code> (versionCode 4). Package <code>com.darkith.transliaison</code>. Repository <code>Deobfugazi/darkith-forge</code>.</p>`,
+    1: `<h2>1. Introduction</h2>
+        <p>The system is presented as a manufactory in the etymological sense: a place where hand-derivation and machine-execution are joined, not a factory where execution is opaque. Three claims and one non-claim.</p>
+        <p><strong>Claims.</strong> (1) The eleven engines are re-instantiations of one functional invariant, not independent mechanisms. (2) The eight repository specifications are distinct instantiations of that invariant at different layers, not rival definitions. (3) The invariant decomposes into four conditions, each individually necessary and the four jointly sufficient for the system to be a manufactory rather than a build script.</p>
+        <p><strong>Non-claim.</strong> The invariant is not newly discovered. Its components are public. The synthesis, and the forcing of every leg into an executable gate, is the contribution.</p>
+        <p><strong>Closure discipline.</strong> Every enumeration terminates in a count and a membership rule. Every substantive assertion is marked <em>resolved</em> (the derivation is carried here), <em>exposable</em> (the mechanism is established in a cited artifact but not quoted verbatim), or <em>inferred</em> (the author's synthesis). Section 9 states the four conditions under which this document is wrong.</p>`,
+    2: `<h2>2. Etymology and the root sense</h2>
+        <p>Latin <em>manufactorium</em>, from <em>manus</em> (hand) and <em>facere</em> (to make): a place where something is made by hand. The root sense is hand-making, not mass production. The prototype of the invariant is already present in the root: a making-place where the agent's hand and the instrument are joined, and where the instrument does not conceal the stroke.</p>
+        <p>The distinction is load-bearing, not decorative. A factory's defining property is that the making is mediated by machinery the maker does not inspect. A manufactory's defining property is the opposite: the hand derives the invariant and the machine executes it, and the execution remains inspectable. Darkith Omega is a manufactory under this definition because every transformation is a named step with a forced output and a named residual, and because no step is permitted to succeed silently.</p>`,
+    3: `<h2>3. Synchrony: the eleven engines</h2>
+        <p>Membership rule: an engine is admitted if it performs a transformation that no other admitted engine performs, and if its failure mode is distinguishable from every other engine's failure mode.</p>
+        <table>
+          <tr><th>ID</th><th>Engine</th><th>Transformation</th><th>Core</th></tr>
+          <tr><td>E1</td><td><code>TransliaisonEngine</code></td><td>Parses HTML into <code>LayoutNode</code> IR</td><td>A, B</td></tr>
+          <tr><td>E2</td><td><code>EntryPointRewriter</code></td><td>Rewrites entry points in the emitted tree</td><td>B, C</td></tr>
+          <tr><td>E3</td><td><code>AxmlWriter</code></td><td>Emits binary Android XML</td><td>B</td></tr>
+          <tr><td>E4</td><td><code>DarkithSolidityCompiler</code></td><td>Compiles source to bytecode</td><td>C</td></tr>
+          <tr><td>E5</td><td><code>SubstrateIngestor</code></td><td>Extracts a missing symbol and verifies it</td><td>C, D</td></tr>
+          <tr><td>E6</td><td><code>DarkithRuntimeHost</code></td><td>Hosts the runtime the code executes in</td><td>A, C</td></tr>
+          <tr><td>E7</td><td><code>DarkithAlpineGuest</code></td><td>Provides the guest userspace</td><td>A</td></tr>
+          <tr><td>E8</td><td><code>DarkithContentStore</code></td><td>Stores content by address</td><td>A, B, D</td></tr>
+          <tr><td>E9</td><td><code>DarkithEVMKit</code></td><td>Executes the bytecode machine</td><td>C</td></tr>
+          <tr><td>E10</td><td><code>MemoryGovernor</code></td><td>Bounds resident memory per job</td><td>C</td></tr>
+          <tr><td>E11</td><td><code>AutophagicAllocator</code></td><td>Reclaims and recycles allocations</td><td>C, D</td></tr>
+        </table>
+        <p><strong>Count: 11.</strong> The invariant is not that these are eleven things but that each is a stage of one circuit: parse, rewrite, emit, compile, ingest, host, execute, store, bound, reclaim. No stage can be removed without a named stage failing to receive its input, and no two stages accept the same input and produce the same output.</p>
+        <p>The memory pair deserves emphasis on a 4 GB device: <code>MemoryGovernor</code> bounds the ceiling and <code>AutophagicAllocator</code> returns what is no longer needed. They are separate engines because bounding and reclaiming fail differently — a bound that is too high dies of OOM, a reclaim that never runs dies of fragmentation. One engine cannot report both failures.</p>`,
+    4: `<h2>4. The eight specifications</h2>
+        <p>Membership rule: a specification is admitted if it is a distinct instantiation of the invariant with a distinguishable organising apparatus. A specification that is merely a storage layer of another is not admitted as a rival; it is recorded as a layer.</p>
+        <table>
+          <tr><th>ID</th><th>Specification</th><th>Apparatus</th><th>Core</th></tr>
+          <tr><td>T1</td><td>Version-control repository</td><td>Object store + refs + history graph</td><td>A, B, C, D</td></tr>
+          <tr><td>T2</td><td>Package repository</td><td>Index + dependency solver + signatures</td><td>A, B, C, D</td></tr>
+          <tr><td>T3</td><td>Container / OCI registry</td><td>Manifest + layer digests + tags</td><td>A, B, C, D</td></tr>
+          <tr><td>T4</td><td>Repository Pattern (DDD)</td><td>Domain interface over a persistence store</td><td>B, C</td></tr>
+          <tr><td>T5</td><td>Institutional archive</td><td>Catalogue + custody + preservation policy</td><td>A, C, D</td></tr>
+          <tr><td>T6</td><td>Content-addressed store</td><td>Digest as address, no mutable names</td><td>A, B, D</td></tr>
+          <tr><td>T7</td><td>Build cache</td><td>Keyed artifacts + invalidation rule</td><td>B, C</td></tr>
+          <tr><td>T8</td><td>Release channel</td><td>Versioned artifacts + admission policy</td><td>A, C, D</td></tr>
+        </table>
+        <p><strong>Count: 8.</strong> T7 (build cache) is the storage-layer specification of T1, not a rival definition: a cache is a version-control store with its history discarded. It is admitted separately because its <em>promise</em> differs — a cache promises speed, not permanence — and the promise is part of Core C. This is the same distinction the source paper makes between a specification and a layer, applied to the manufactory.</p>`,
+    5: `<h2>5. Structure: the four conditions</h2>
+        <p>The invariant decomposes into four conditions.</p>
+        <table>
+          <tr><th>ID</th><th>Name</th><th>Requires</th><th>Failure mode if absent</th></tr>
+          <tr><td>A</td><td>Relational</td><td>Authoritative holding environment; persistence; access mediation</td><td>Bare container</td></tr>
+          <tr><td>B</td><td>Structural</td><td>Organising apparatus separate from raw content</td><td>Loose folder</td></tr>
+          <tr><td>C</td><td>Functional</td><td>Preservation contract; retrieval mechanism; purpose boundary</td><td>Cache</td></tr>
+          <tr><td>D</td><td>Authority</td><td>Server of record; not a derived copy</td><td>Mirror</td></tr>
+        </table>
+        <p><strong>Necessity.</strong> Remove any one and the result is a recognisable near-miss rather than a manufactory. Without A the output is a scratch directory: things are held, but nothing is where they <em>live</em>. Without B the raw bytes and the commentary about them are indistinguishable, so no step can be verified against its own output. Without C there is no promise, so a successful build today is no evidence about tomorrow. Without D the artifact is a copy of something else's record, so the signature attests to a derivation rather than to an original.</p>
+        <p><strong>Sufficiency.</strong> The conjunction A and B and C and D is sufficient: an authoritative, bounded, persistent holding environment whose apparatus is separate from its raw content and which mediates access through a preservation-and-retrieval logic is, by construction, a manufactory. Nothing further is required to distinguish it from the near-misses, because each near-miss is exactly one absent conjunct.</p>
+        <p><strong>The independence argument.</strong> C does not entail A: a cache satisfies the functional condition (it preserves and retrieves for a purpose) while failing the relational one (it is not where the artifact lives). A does not entail C: a scratch directory satisfies the relational condition while promising nothing. Because neither entails the other, the conditions are independent, and the conjunction is not redundant. This is the load-bearing argument of the section, and it is the one that would fall first if the paper were wrong.</p>`,
+    6: `<h2>6. Information layers</h2>
+        <p>Three layers, closed.</p>
+        <ul>
+          <li><strong>R — Raw.</strong> The bytes themselves: source, resources, the compiled artifact.</li>
+          <li><strong>I — Inflated.</strong> Everything added to organise R: names, indices, manifests, the task board, the gate outputs.</li>
+          <li><strong>&Delta; — Deflated.</strong> The small descriptor that points back at R: a digest, a commit id, a version string.</li>
+        </ul>
+        <p>In this repository the three layers are literal. R is the tracked tree (299 files). I is the index layer: <code>docs/INDEX.md</code>, <code>docs/kb_manifest.json</code>, <code>TASKS.md</code>. &Delta; is the version of record, <code>2.1.0-omega</code>, and the per-artifact sha256 digests in <code>proof/</code>. The separation is enforced, not merely described: a gate (<code>kb_index</code>) fails if a readable file is unfiled, and a gate (<code>doc_path</code>) fails if a document cites a path that does not resolve.</p>`,
+    7: `<h2>7. Security</h2>
+        <p>Eight layers, each naming the failure it stops.</p>
+        <table>
+          <tr><th>#</th><th>Layer</th><th>Stops</th></tr>
+          <tr><td>1</td><td>Transport</td><td>Interception in flight</td></tr>
+          <tr><td>2</td><td>Secret hygiene</td><td>A key committed to the tree (<code>secret_gate</code>)</td></tr>
+          <tr><td>3</td><td>Reference integrity</td><td>Compiling against a symbol the runtime lacks (<code>dex_link</code>)</td></tr>
+          <tr><td>4</td><td>Alignment</td><td>An unaligned artifact reaching the signer (forced chain step 6)</td></tr>
+          <tr><td>5</td><td>Signature</td><td>A tampered or unsigned package (<code>apksigner</code>, v2)</td></tr>
+          <tr><td>6</td><td>Append-only record</td><td>History rewrite of a decision (<code>nodal</code> triggers)</td></tr>
+          <tr><td>7</td><td>Bounded memory</td><td>Unbounded resident growth on a 4 GB device (<code>MemoryGovernor</code>)</td></tr>
+          <tr><td>8</td><td>Isolation</td><td>Guest code reaching host state it does not own (<code>DarkithAlpineGuest</code>)</td></tr>
+        </table>
+        <p><strong>Count: 8.</strong> The closure property is that every layer names a failure and a mechanism. A layer that names a failure but no mechanism is a wish; a mechanism that names no failure is decoration. Both are rejected.</p>
+        <p>The forced ordering in layer 4 and 5 is the sharpest instance: signing an unaligned package and then aligning it invalidates the signature. The order is therefore not a preference. The signer's input is the aligned file; the unsigned file is never signed. <code>build.sh</code> enforces this and there is no fallback.</p>`,
+    8: `<h2>8. Composition</h2>
+        <p>Each specification decomposes into a counted list. Counts are of the <em>observed</em> tree, not of an intention.</p>
+        <table>
+          <tr><th>Component</th><th>Count</th><th>Where</th></tr>
+          <tr><td>Tracked files</td><td>299</td><td><code>git ls-files</code></td></tr>
+          <tr><td>Kotlin sources</td><td>63</td><td><code>*.kt</code></td></tr>
+          <tr><td>Python tools</td><td>44</td><td><code>tools/*.py</code></td></tr>
+          <tr><td>Shell tools</td><td>12</td><td><code>tools/*.sh</code></td></tr>
+          <tr><td>Executable gates</td><td>24</td><td><code>tools/*_gate.py</code></td></tr>
+          <tr><td>CI circuit steps</td><td>51</td><td><code>run "..."</code> in <code>tools/ci.sh</code></td></tr>
+          <tr><td>Vendor engines (.js)</td><td>5</td><td><code>app/src/main/assets/vendor/</code></td></tr>
+          <tr><td>App surfaces (.html)</td><td>11</td><td><code>app/src/main/assets/</code></td></tr>
+          <tr><td>Noveltreatises (NT)</td><td>12</td><td><code>docs/nt/</code>, 9 files + index</td></tr>
+          <tr><td>Proof artifacts</td><td>24</td><td><code>proof/</code></td></tr>
+          <tr><td>MUST laws</td><td>6</td><td><code>DARKITH.md</code></td></tr>
+        </table>
+        <p><strong>Count: 11 rows.</strong> The 12 noveltreatises are carried in 9 files because the first four share one protocol document; the count of treatises is 12, the count of files is 9, and both numbers are true because they count different things. This is the same distinction the source paper draws between senses and their transmission forms.</p>`,
+    9: `<h2>9. Closure</h2>
+        <p><strong>Novelty boundary.</strong> Component-novel, not component-invented. The seven-step chain is public Android tooling. The residual criterion is the closure discipline the noveltreatise corpus states. What is new is the forcing: each leg is an executable gate, and the build does not ship when a leg is not derived.</p>
+        <p><strong>Four falsification conditions.</strong></p>
+        <ul>
+          <li><strong>F1.</strong> An admitted engine that satisfies no core, or that duplicates another engine's transformation.</li>
+          <li><strong>F2.</strong> A specification admitted that fails condition B — no separable apparatus — yet is called a manufactory stage.</li>
+          <li><strong>F3.</strong> A domain treated as a manufactory without the apparatus/content separation, i.e. condition B silently dropped.</li>
+          <li><strong>F4.</strong> A prior publication of this same synthesis, which would make the novelty claim false.</li>
+        </ul>
+        <p>Each falsifier is testable. F1 and F2 are tested by the count-and-membership discipline above: an admitted engine with no distinct transformation breaks the count. F3 is tested by the independence argument in section 5. F4 is tested by search, and remains open in the sense that no search is exhaustive.</p>`,
+    10: `<h2>10. Conclusion</h2>
+        <p>Darkith Omega names one functional invariant — an authoritative, bounded, persistent holding environment whose organising apparatus is separate from its raw content and which mediates access through a preservation-and-retrieval logic — instantiated across eleven engines and eight specifications, and closed by the conjunction of four conditions: relational, structural, functional, authority.</p>
+        <p>Each conjunct is necessary; the four are jointly sufficient; and the independence of C and A is the argument that keeps the conjunction from collapsing into a single condition wearing four names. The manufactory is offered as a contribution to terminology and to the engineering of on-device, dependency-free software production.</p>
+        <p>The equation closes at zero, or the build does not ship.</p>`,
+  },
+  machine: {
+    0: `entity: darkith_omega_manufactory
+version: 2.1.0-omega
+versionCode: 4
+package: com.darkith.transliaison
+repo: Deobfugazi/darkith-forge
+device: 4GB_arm64_android_termux
+gradle: forbidden
+cloud: none
+chain: [aapt2_compile, aapt2_link, kotlinc, d8, zip, zipalign, apksigner]
+conditions: [A, B, C, D]
+necessity: each_removable
+sufficiency: conjunction_sufficient
+engines: 11
+specifications: 8
+security_layers: 8
+gates: 24
+falsifiers: [F1, F2, F3, F4]`,
+    1: `claims:
+  - id: 1
+    text: eleven_engines_reinstantiate_one_invariant
+  - id: 2
+    text: eight_specs_are_layers_not_rival_definitions
+  - id: 3
+    text: four_conditions_necessary_and_jointly_sufficient
+non_claim: invariant_not_newly_discovered
+closure_discipline:
+  every_enumeration: count_plus_membership_rule
+  assertion_status: [resolved, exposable, inferred]
+residual_criterion: sigma_substrate_plus_sigma_bytecode_equals_zero`,
+    2: `root:
+  latin: manufactorium
+  parts:
+    manus: hand
+    facere: to_make
+  sense: made_by_hand
+  prototype:
+    - hand_derives_invariant
+    - machine_executes_it
+    - execution_remains_inspectable
+distinction:
+  factory: making_mediated_by_uninspected_machinery
+  manufactory: derivation_and_execution_joined`,
+    3: `engines:
+  count: 11
+  admission_rule: distinct_transformation_and_distinguishable_failure_mode
+  items:
+    - {id: E1,  name: TransliaisonEngine,        does: html_to_LayoutNode_IR,      path: app/src/main/java/com/darkith/transliaison/core/TransliaisonEngine.kt}
+    - {id: E2,  name: EntryPointRewriter,        does: rewrite_entry_points,       path: app/src/main/java/com/darkith/transliaison/EntryPointRewriter.kt}
+    - {id: E3,  name: AxmlWriter,                does: emit_binary_android_xml,    path: app/src/main/java/com/darkith/transliaison/AxmlWriter.kt}
+    - {id: E4,  name: DarkithSolidityCompiler,   does: source_to_bytecode,         path: app/src/main/java/com/darkith/transliaison/DarkithSolidityCompiler.kt}
+    - {id: E5,  name: SubstrateIngestor,         does: extract_and_verify_symbol,  path: app/src/main/java/com/darkith/transliaison/core/SubstrateIngestor.kt}
+    - {id: E6,  name: DarkithRuntimeHost,        does: host_runtime,               path: app/src/main/java/com/darkith/transliaison/DarkithRuntimeHost.kt}
+    - {id: E7,  name: DarkithAlpineGuest,        does: provide_guest_userspace,    path: app/src/main/java/com/darkith/transliaison/DarkithAlpineGuest.kt}
+    - {id: E8,  name: DarkithContentStore,       does: store_by_address,           path: app/src/main/java/com/darkith/transliaison/DarkithContentStore.kt}
+    - {id: E9,  name: DarkithEVMKit,             does: execute_bytecode_machine,   path: app/src/main/java/com/darkith/transliaison/DarkithEVMKit.kt}
+    - {id: E10, name: MemoryGovernor,            does: bound_resident_memory,      path: app/src/main/java/com/darkith/transliaison/core/MemoryGovernor.kt}
+    - {id: E11, name: AutophagicAllocator,       does: reclaim_and_recycle,        path: app/src/main/java/com/darkith/transliaison/core/AutophagicAllocator.kt}
+  memory_pair_rationale: bounding_and_reclaiming_fail_differently_so_one_engine_cannot_report_both`,
+    4: `specifications:
+  count: 8
+  admission_rule: distinct_instantiation_and_distinguishable_apparatus
+  items:
+    - {id: T1, name: version_control,    apparatus: object_store_refs_history,      cores: [A,B,C,D]}
+    - {id: T2, name: package_repository, apparatus: index_solver_signatures,         cores: [A,B,C,D]}
+    - {id: T3, name: container_registry, apparatus: manifest_layers_tags,            cores: [A,B,C,D]}
+    - {id: T4, name: repository_pattern, apparatus: domain_interface_over_store,     cores: [B,C]}
+    - {id: T5, name: institutional_archive, apparatus: catalogue_custody_policy,     cores: [A,C,D]}
+    - {id: T6, name: content_addressed,  apparatus: digest_as_address,               cores: [A,B,D]}
+    - {id: T7, name: build_cache,        apparatus: keyed_artifacts_invalidation,    cores: [B,C]}
+    - {id: T8, name: release_channel,    apparatus: versioned_artifacts_admission,   cores: [A,C,D]}
+  note: T7_is_storage_layer_of_T1_not_rival_but_admitted_because_promise_differs`,
+    5: `conditions:
+  - id: A
+    name: relational
+    requires: [authoritative_holding_environment, persistence, access_mediation]
+    failure_mode: bare_container
+  - id: B
+    name: structural
+    requires: [apparatus_separate_from_raw]
+    failure_mode: loose_folder
+  - id: C
+    name: functional
+    requires: [preservation_contract, retrieval_mechanism, purpose_boundary]
+    failure_mode: cache
+  - id: D
+    name: authority
+    requires: [server_of_record, not_derived_copy]
+    failure_mode: mirror
+necessity: remove_any_one_not_a_manufactory
+sufficiency: A_and_B_and_C_and_D_is_manufactory
+independence:
+  - C_does_not_entail_A: cache_preserves_and_retrieves_but_is_not_where_artifact_lives
+  - A_does_not_entail_C: scratch_directory_holds_but_promises_nothing
+  consequence: conjunction_not_redundant`,
+    6: `layers:
+  R_raw: {is: bytes, example: tracked_tree_299_files}
+  I_inflated: {is: organising_apparatus, example: [docs/INDEX.md, docs/kb_manifest.json, TASKS.md]}
+  D_deflated: {is: descriptor_pointing_back_to_R, example: [2.1.0-omega, proof_digests]}
+enforcement:
+  - kb_index: fails_if_readable_file_unfiled
+  - doc_path: fails_if_cited_path_does_not_resolve`,
+    7: `security_layers:
+  count: 8
+  closure_rule: every_layer_names_failure_and_mechanism
+  items:
+    - {n: 1, layer: transport,            stops: interception_in_flight}
+    - {n: 2, layer: secret_hygiene,       stops: committed_key,                 gate: secret_gate}
+    - {n: 3, layer: reference_integrity,  stops: symbol_runtime_lacks,          gate: dex_link}
+    - {n: 4, layer: alignment,            stops: unaligned_to_signer,           gate: forced_chain_step_6}
+    - {n: 5, layer: signature,            stops: tampered_or_unsigned,          gate: apksigner_v2}
+    - {n: 6, layer: append_only_record,   stops: history_rewrite,               gate: nodal_triggers}
+    - {n: 7, layer: bounded_memory,       stops: unbounded_resident_growth,     gate: MemoryGovernor}
+    - {n: 8, layer: isolation,            stops: guest_reaches_host_state,      gate: DarkithAlpineGuest}
+forced_order: align_then_sign
+  reason: signing_then_aligning_invalidates_signature
+  signer_input: aligned_apk
+  fallback: none`,
+    8: `composition:
+  tracked_files: 299
+  kotlin_sources: 63
+  python_tools: 44
+  shell_tools: 12
+  executable_gates: 24
+  ci_circuit_steps: 51
+  vendor_engines_js: 5
+  app_surfaces_html: 11
+  noveltreatises: 12
+  noveltreatise_files: 9
+  proof_artifacts: 24
+  must_laws: 6
+count_note: treatises_12_files_9_counts_different_things_both_true`,
+    9: `novelty: component_novel_not_invented
+resolved_points: 4
+falsifiers:
+  - id: F1
+    condition: admitted_engine_satisfies_no_core_or_duplicates_another
+    tested_by: count_and_membership_discipline
+  - id: F2
+    condition: specification_admitted_that_fails_B_yet_called_a_stage
+    tested_by: apparatus_separation_check
+  - id: F3
+    condition: domain_treated_as_manufactory_without_apparatus_separation
+    tested_by: section_5_independence_argument
+  - id: F4
+    condition: prior_publication_of_same_synthesis
+    tested_by: search_acknowledged_non_exhaustive`,
+    10: `conclusion:
+  invariant: A_and_B_and_C_and_D
+  engines: 11
+  specifications: 8
+  necessity: each_conjunct
+  sufficiency: four_conjuncts
+  independence: C_and_A_mutually_non_entailing
+  offered_as: contribution_to_terminology_and_on_device_production
+  closing_rule: sigma_equals_zero_or_build_does_not_ship`,
+  },
+  provenance: {
+    0: `# PROVENANCE — Layer 2 projected into the reader
+# Each claim: id, asserted_by, verified_by, referent, status, falsifier
+# The repository (not this document) holds the pseudonym resolution.
+claims: []
+note: this file is generated from the tracked tree at 2.1.0-omega; counts are observations`,
+    1: `claims:
+  - id: C-1-01
+    text: eleven_engines_reinstantiate_one_invariant
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [count_and_membership_discipline, tree_ls_files]
+    real_world_referent: { kind: derivation, ref: section-3 }
+    status: resolved
+    falsifier: F1
+  - id: C-1-02
+    text: eight_specifications_are_layers_not_rivals
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [section-4_membership_rule]
+    real_world_referent: { kind: derivation, ref: section-4 }
+    status: resolved
+    falsifier: F2
+  - id: C-1-03
+    text: four_conditions_necessary_and_jointly_sufficient
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [independence_argument, adversary_review]
+    real_world_referent: { kind: derivation, ref: section-5 }
+    status: resolved
+    falsifier: F3`,
+    2: `claims:
+  - id: C-2-01
+    text: root_sense_is_made_by_hand
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [etymology_check]
+    real_world_referent: { kind: citation, ref: latin_manufactorium_manus_facere }
+    status: resolved
+    falsifier: F4
+  - id: C-2-02
+    text: manufactory_joins_hand_and_machine_factory_does_not
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [definitional_argument]
+    real_world_referent: { kind: derivation, ref: section-2 }
+    status: inferred
+    falsifier: F4`,
+    3: `claims:
+  - id: C-3-01
+    text: eleven_engine_source_files_exist_in_the_tracked_tree
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [git_ls_files, file_presence_check]
+    real_world_referent: { kind: observation, ref: app/src/main/java/com/darkith/transliaison/ }
+    status: resolved
+    falsifier: F1
+  - id: C-3-02
+    text: memory_governor_and_autophagic_allocator_fail_differently
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [failure_mode_argument]
+    real_world_referent: { kind: derivation, ref: section-3 }
+    status: inferred
+    falsifier: F1`,
+    4: `claims:
+  - id: C-4-01
+    text: eight_specifications_admitted_by_distinct_apparatus
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [membership_rule_application]
+    real_world_referent: { kind: derivation, ref: section-4 }
+    status: resolved
+    falsifier: F2
+  - id: C-4-02
+    text: build_cache_is_storage_layer_of_version_control
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [promise_distinction_argument]
+    real_world_referent: { kind: derivation, ref: section-4 }
+    status: inferred
+    falsifier: F2`,
+    5: `claims:
+  - id: C-5-01
+    text: C_does_not_entail_A
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [constructive_counterexample_cache]
+    real_world_referent: { kind: derivation, ref: section-5 }
+    status: resolved
+    falsifier: F3
+  - id: C-5-02
+    text: A_does_not_entail_C
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [constructive_counterexample_scratch_directory]
+    real_world_referent: { kind: derivation, ref: section-5 }
+    status: resolved
+    falsifier: F3
+  - id: C-5-03
+    text: four_conditions_necessary_and_jointly_sufficient
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [necessity_argument, sufficiency_argument]
+    real_world_referent: { kind: derivation, ref: section-5 }
+    status: resolved
+    falsifier: F3`,
+    6: `claims:
+  - id: C-6-01
+    text: raw_inflated_deflated_layers_are_instantiated_literally
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [kb_index_gate, doc_path_gate, proof_digests]
+    real_world_referent: { kind: observation, ref: proof/ }
+    status: resolved
+    falsifier: F2
+  - id: C-6-02
+    text: the_separation_is_enforced_not_merely_described
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [kb_index, doc_path]
+    real_world_referent: { kind: observation, ref: tools/ci.sh }
+    status: resolved
+    falsifier: F2`,
+    7: `claims:
+  - id: C-7-01
+    text: eight_security_layers_each_name_failure_and_mechanism
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [gate_inventory, build_sh_inspection]
+    real_world_referent: { kind: observation, ref: tools/ }
+    status: resolved
+    falsifier: F2
+  - id: C-7-02
+    text: signing_then_aligning_invalidates_the_signature
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [build_sh_forced_order, nt_ix_derivation]
+    real_world_referent: { kind: citation, ref: docs/nt/NT-IX.txt }
+    status: resolved
+    falsifier: F2`,
+    8: `claims:
+  - id: C-8-01
+    text: composition_counts_are_observations_of_the_tracked_tree
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [git_ls_files, wc_l, grep_count]
+    real_world_referent: { kind: observation, ref: git ls-files }
+    status: resolved
+    falsifier: F2
+  - id: C-8-02
+    text: treatises_are_12_and_treatise_files_are_9
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [nt_index_count, file_count]
+    real_world_referent: { kind: observation, ref: docs/nt/ }
+    status: resolved
+    falsifier: F2`,
+    9: `claims:
+  - id: C-9-01
+    text: four_falsification_conditions_are_testable
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [each_falsifier_names_a_test]
+    real_world_referent: { kind: derivation, ref: section-9 }
+    status: resolved
+    falsifier: F4
+  - id: C-9-02
+    text: novelty_is_component_novel_not_invented
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [novelty_boundary_statement]
+    real_world_referent: { kind: derivation, ref: section-9 }
+    status: inferred
+    falsifier: F4`,
+    10: `claims:
+  - id: C-10-01
+    text: invariant_is_the_conjunction_A_B_C_D
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [necessity_argument, sufficiency_argument, independence_argument]
+    real_world_referent: { kind: derivation, ref: section-5 }
+    status: resolved
+    falsifier: F3
+  - id: C-10-02
+    text: the_build_ships_only_when_sigma_equals_zero
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [residual_criterion, tools/ci.sh]
+    real_world_referent: { kind: derivation, ref: docs/nt/NT-XII.txt }
+    status: resolved
+    falsifier: F2`,
+  },
+};
+
+/* ============================================================
+   3. ROUTER — hash based, per-register deep links.
+   #/home          — front matter (landing, with bookmarks)
+   #/plain/N       — section N, plain register
+   #/paper/N       — section N, paper register
+   #/machine/N     — section N, machine register
+   #/provenance/N  — section N, provenance register
+   ============================================================ */
+const view = document.getElementById("view");
+const toc = document.getElementById("toc");
+const scrim = document.getElementById("scrim");
+const VALID = ["plain", "paper", "machine", "provenance"];
+
+function parseHash() {
+  const h = location.hash.replace(/^#\/?/, "");
+  const [vol, sid] = h.split("/");
+  if (!vol || vol === "home") return { vol: "home", id: 0 };
+  if (!VALID.includes(vol)) return { vol: "home", id: 0 };
+  const raw = Number(sid);
+  // Clamp into range: a stale or hand-typed deep link must never throw.
+  const id = Number.isFinite(raw) ? Math.min(Math.max(Math.trunc(raw), 0), SECTIONS.length - 1) : 0;
+  return { vol, id };
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function render() {
+  const { vol, id } = parseHash();
+
+  if (vol === "home") {
+    view.innerHTML = `
+      <p class="kicker">An invariant decomposition of a manufactory</p>
+      <h1>Darkith Omega</h1>
+      <p class="lede">The mechanistic repositorial manufactory circuit tree. A unit in four registers. Each bookmark is a direct link — experts can skip the beginner volume entirely.</p>
+      <div class="bookmarks">
+        <a class="bookmark" href="#/plain/0">
+          <span class="tag">01 · PLAIN</span>
+          <strong>Start here</strong>
+          <span>No prior knowledge assumed. Ordinary words, a phone that builds itself.</span>
+        </a>
+        <a class="bookmark" href="#/paper/0">
+          <span class="tag">02 · PAPER</span>
+          <strong>Expert volume</strong>
+          <span>The full argument: eleven engines, eight specifications, four conditions.</span>
+        </a>
+        <a class="bookmark" href="#/machine/0">
+          <span class="tag">03 · MACHINE</span>
+          <strong>Machine register</strong>
+          <span>Structured YAML. Every entity, condition, count and path as a field.</span>
+        </a>
+        <a class="bookmark" href="#/provenance/0">
+          <span class="tag">04 · PROVENANCE</span>
+          <strong>Layer 2 projected</strong>
+          <span>Per-claim record. Who asserted, who verified, what referent, what status.</span>
+        </a>
+      </div>
+      <hr>
+      <p style="font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted)">
+        Keyboard: <kbd>&larr;</kbd> <kbd>&rarr;</kbd> page &middot; <kbd>t</kbd> contents &middot; <kbd>d</kbd> theme
+      </p>
+      <footer class="shell">Darkith Forge — the reader shell for <code>docs/DARKITH-OMEGA-README.html</code>. Version of record <code>2.1.0-omega</code>.</footer>`;
+    document.querySelectorAll("#bar .vol").forEach((a) => a.removeAttribute("aria-current"));
+    return;
+  }
+
+  const sec = SECTIONS[id];
+  const body = (CONTENT[vol] && CONTENT[vol][id]) || "<p>Content not yet loaded for this register.</p>";
+  const isMachine = vol === "machine" || vol === "provenance";
+
+  // Provenance spine: the per-claim record, projected inline into the reader
+  // (except in the provenance register itself, which already is that record).
+  const prov = CONTENT.provenance[id];
+  const provBlock = (vol !== "provenance" && prov)
+    ? `<details class="provenance"><summary>Provenance</summary><pre><code>${escapeHtml(prov)}</code></pre></details>`
+    : "";
+
+  view.innerHTML = `
+    <p class="kicker">${escapeHtml(vol).toUpperCase()} &middot; ${String(id).padStart(2, "0")} / ${SECTIONS.length - 1}</p>
+    <h1>${escapeHtml(sec.title)}</h1>
+    ${isMachine ? `<pre><code>${escapeHtml(body)}</code></pre>` : body}
+    ${provBlock}
+    <nav id="pager">
+      ${id > 0 ? `<a href="#/${vol}/${id - 1}">&larr; ${escapeHtml(SECTIONS[id - 1].title)}</a>` : `<a href="#/home">&larr; Front matter</a>`}
+      ${id < SECTIONS.length - 1 ? `<a href="#/${vol}/${id + 1}">${escapeHtml(SECTIONS[id + 1].title)} &rarr;</a>` : `<a href="#/home">Back to start &rarr;</a>`}
+    </nav>`;
+
+  document.querySelectorAll("#bar .vol").forEach((a) =>
+    a.setAttribute("aria-current", String(a.dataset.vol === vol))
+  );
+
+  try { localStorage.setItem("repo-reader-pos", JSON.stringify({ vol, id })); } catch (e) {}
+  buildToc(vol, id);
+  view.focus({ preventScroll: true });
+  window.scrollTo(0, 0);
+}
+
+function buildToc(vol, current) {
+  toc.innerHTML =
+    `<div class="volhead">${escapeHtml(vol)} register</div>` +
+    SECTIONS.map((s) =>
+      `<a href="#/${vol}/${s.id}" ${s.id === current ? 'aria-current="true"' : ""}>${String(s.id).padStart(2, "0")} &middot; ${escapeHtml(s.title)}</a>`
+    ).join("") +
+    `<div class="volhead">Switch register</div>` +
+    VALID.filter((v) => v !== vol)
+      .map((v) => `<a href="#/${v}/${current}">${v}</a>`)
+      .join("") +
+    `<a href="#/home" style="margin-top:.8rem">&crarr; Front matter</a>`;
+}
+
+/* ============================================================
+   4. CONTROLS
+   ============================================================ */
+document.getElementById("menu").onclick = () => {
+  toc.classList.add("open");
+  scrim.classList.add("on");
+};
+scrim.onclick = () => {
+  toc.classList.remove("open");
+  scrim.classList.remove("on");
+};
+
+document.getElementById("theme").onclick = () => {
+  const next = document.body.dataset.theme === "dark" ? "light" : "dark";
+  document.body.dataset.theme = next;
+  try { localStorage.setItem("repo-theme", next); } catch (e) {}
+};
+try { document.body.dataset.theme = localStorage.getItem("repo-theme") || "light"; } catch (e) {}
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.matches("input, textarea")) return;
+  const { vol, id } = parseHash();
+  if (vol === "home") return;
+  if (e.key === "ArrowRight" && id < SECTIONS.length - 1) location.hash = `#/${vol}/${id + 1}`;
+  if (e.key === "ArrowLeft") location.hash = id > 0 ? `#/${vol}/${id - 1}` : "#/home";
+  if (e.key === "t") document.getElementById("menu").click();
+  if (e.key === "d") document.getElementById("theme").click();
+});
+
+window.addEventListener("hashchange", render);
+
+/* resume prompt */
+(function resume() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("repo-reader-pos") || "null");
+    if (saved && VALID.includes(saved.vol) && Number.isFinite(saved.id) && location.hash === "") {
+      setTimeout(() => {
+        if (confirm(`Resume where you left off — ${saved.vol} register, section ${saved.id}?`)) {
+          location.hash = `#/${saved.vol}/${saved.id}`;
+        }
+      }, 60);
+    }
+  } catch (e) {}
+})();
+
+render();
+</script>
+</body>
+</html>
