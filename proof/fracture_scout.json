@@ -182,6 +182,13 @@
     {
       "score": 16,
       "source": "hn",
+      "title": "Harvard researchers find AI coding agents shifted the bottleneck to code review",
+      "url": "https://complexdiscovery.com/harvard-researchers-find-ai-coding-agents-shifted-the-bottleneck-to-code-review/",
+      "when": "2026-11-17T21:16:12Z"
+    },
+    {
+      "score": 16,
+      "source": "hn",
       "title": "Human Bottlenecks",
       "url": "https://borretti.me/article/human-bottlenecks",
       "when": "2026-05-24T04:19:23Z"
@@ -262,13 +269,6 @@
       "title": "Oak Island Money Pit: Unsolved Mystery",
       "url": "http://www.oakislandmoneypit.com/",
       "when": "2014-08-07T16:48:55Z"
-    },
-    {
-      "score": 16,
-      "source": "hn",
-      "title": "PigPaxos: Removing the Scalability Bottlenecks in Paxos",
-      "url": "https://muratbuffalo.blogspot.com/2020/03/pigpaxos-devouring-communication_18.html",
-      "when": "2020-03-18T14:17:22Z"
     },
     {
       "score": 16,
