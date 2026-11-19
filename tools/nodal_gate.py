@@ -39,8 +39,14 @@ def run_python_suite() -> tuple[bool, str]:
     r = subprocess.run(
         [sys.executable, str(SUITE)], cwd=ROOT, capture_output=True, text=True
     )
-    tail = (r.stdout.strip().splitlines() or [""])[-1]
-    return r.returncode == 0, tail
+    # unittest writes its summary to stderr, so reading only stdout would report an empty
+    # result and make the proof file lie about what ran.
+    combined = (r.stdout or "") + (r.stderr or "")
+    lines = [ln for ln in combined.strip().splitlines() if ln.strip()]
+    ran = next((ln for ln in lines if ln.startswith("Ran ")), "")
+    tail = next((ln for ln in reversed(lines) if ln in ("OK",) or ln.startswith("FAILED")), lines[-1] if lines else "")
+    summary = f"{ran} {tail}".strip()
+    return r.returncode == 0, summary
 
 
 JS_HARNESS = r"""

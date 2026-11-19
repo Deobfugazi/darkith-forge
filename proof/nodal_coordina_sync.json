@@ -1,7 +1,7 @@
 {
   "python_suite": {
     "pass": true,
-    "summary": ""
+    "summary": "Ran 43 tests in 0.013s OK"
   },
   "js_suite": {
     "pass": true,
