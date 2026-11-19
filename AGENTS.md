@@ -745,9 +745,24 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   to degrade to a toast. Re-apply if the carrier is ever regenerated from a stale source.
 - GATES: `python3 tools/prerunner_gate.py` (engine surface + CLI exit contract + honest verdicts),
   `python3 tools/clearanceloop_gate.py` (the four ratchet laws + engines wired into every surface),
-  and `node tools/prerunner-cli.js --selftest` (8/8). All three in `tools/ci.sh`. Dogfood proof: all six
-  surfaces PASS with 0 page errors at 360×800 (`node tools/prerunner-cli.js <surface> --stress 15
-  --expect DarkithPreRunner,ClearanceLoop`).
+  `python3 tools/clearanceloop_ui_gate.py` (147 real-browser checks on the shipped
+  `clearanceloop.html`: every tab, observe→advance→verdict, waiver grant/expiry, in-app self-test,
+  keyboard, export, reload persistence, hostile stored state, denied storage, and MEASURED WCAG
+  contrast + 40px tap targets + clipping in both themes at 360px and 1280px; skips exit 0 when no
+  browser is installed), and `node tools/prerunner-cli.js --selftest` (8/8). All four in `tools/ci.sh`.
+  Dogfood proof: all six surfaces PASS with 0 page errors at 360×800 (`node tools/prerunner-cli.js
+  <surface> --stress 15 --expect DarkithPreRunner,ClearanceLoop`).
+- UNTRUSTED STATE IS A REAL BUG CLASS (fuzzer-found, fixed): `hwm`/`since`/`justified` missing from a
+  persisted or imported state made `report()` throw `Cannot read properties of undefined`. The throw
+  happened at boot, so the app went permanently blank AND the UI that would reset the state never
+  booted — an uncleanable brick from a hand-edited file. `normState()` now rebuilds every field from
+  scratch in `load()` and `restore()` (which also accepts a raw JSON string). Same class in the CLI:
+  JSON allows `1e309`/`NaN`, and `int(inf)`/`int(nan)` escaped as tracebacks; `_int()`/`_finite_int()`
+  now fail loudly on law-bearing counts and degrade to 0 on waiver bookkeeping. Guard any new
+  persisted field through the normaliser, and never `int()` a JSON number unguarded.
+- CONTRAST TRAP: raw `--ok`/`--bad` status hues are only legible on the DARK surfaces. On light panels
+  in the light theme they measure 3.15:1 (toast) and 3.54:1 (self-test tick) and fail WCAG AA. Use the
+  contrast-safe flux inks (`--flux-ok`/`--flux-bad`) for any status text on a light panel.
 
 ## §37 THE VISUAL-AFFORDANCE SPECIALIST — the Ω Icon Forge (binding, 2026-11-10)
 
