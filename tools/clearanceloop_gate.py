@@ -79,6 +79,20 @@ for (let i = 0; i < CL.WAIVER; i++) { CL.observe({waiting:6}); CL.advance(); }
 ok('L5 waiver expires -> regression again', CL.verdict() === 'FAIL' && cls(CL.report(),'waiting').status === 'regression');
 ok('L5 HWM never rose across the waiver', cls(CL.report(),'waiting').hwm === 3);
 
+// L5b REVOCATION: a waiver is a bounded exception, not a pardon. Ending it early
+// must return the class to its mark at once, keep the history, and fail closed.
+CL.reset(); CL.observe({waiting:3}); CL.advance();
+CL.observe({waiting:6}); CL.advance('temporary');
+ok('L5b waiver is live before revoke', cls(CL.report(),'waiting').waived === true);
+const deliveryBefore = CL.report().delivery;
+ok('L5b revoke reports success', CL.revoke('waiting') === true);
+ok('L5b revoke clears the waiver', cls(CL.report(),'waiting').waived === false);
+ok('L5b revoke never touches the HWM', cls(CL.report(),'waiting').hwm === 3);
+ok('L5b revoked debt is a regression', CL.verdict() === 'FAIL' && cls(CL.report(),'waiting').status === 'regression');
+ok('L5b revoke preserves history', CL.report().delivery === deliveryBefore);
+ok('L5b revoke is idempotent-safe', CL.revoke('waiting') === false);
+ok('L5b revoke rejects unknown class', CL.revoke('not-a-class') === false && CL.revoke(null) === false);
+
 // L6 STASIS: debt that does not flux down over the window is force-degraded
 CL.reset(); CL.observe({searching:2}); CL.advance();
 for (let i = 0; i < CL.WINDOW; i++) { CL.observe({searching:2}); CL.advance(); }

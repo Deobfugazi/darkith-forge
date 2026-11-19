@@ -2087,6 +2087,21 @@
 
   function reset() { state = { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] }; acc = {}; persist(state); return state; }
 
+  /* End a waiver before its window closes. Without this the only way to clear a
+     mistaken waiver was reset(), which destroys the high-water history that is the
+     whole value of the ratchet. Revoking fails CLOSED: the debt it was hiding is a
+     live regression again on the very next report, with no grace delivery. */
+  function revoke(cls) {
+    if (!cls) return false;
+    cls = String(cls).toLowerCase();
+    if (CLASSES.indexOf(cls) < 0) return false;
+    var had = !!(state.justified && state.justified[cls]);
+    if (!had) return false;
+    delete state.justified[cls];
+    persist(state);
+    return true;
+  }
+
   /* Adopt a previously exported state. This is how a ratchet travels between machines
      and how the in-app self-test exercises the law without destroying live history.
      Unknown/legacy waiver shapes normalise through the same fail-closed path as load(). */
@@ -2144,7 +2159,7 @@
     LAW: LAW, CLASSES: CLASSES, WINDOW: WINDOW, WAIVER: WAIVER,
     install: install, observe: observe, absorb: absorb, advance: advance,
     flux: flux, report: report, verdict: function () { return report().verdict; },
-    state: function () { return state; }, reset: reset, restore: restore, ui: ui
+    state: function () { return state; }, reset: reset, restore: restore, revoke: revoke, ui: ui
   };
 });
 

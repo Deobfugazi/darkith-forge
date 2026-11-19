@@ -969,6 +969,21 @@ python3 clearanceloop.py selftest</pre>
 
   function reset() { state = { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] }; acc = {}; persist(state); return state; }
 
+  /* End a waiver before its window closes. Without this the only way to clear a
+     mistaken waiver was reset(), which destroys the high-water history that is the
+     whole value of the ratchet. Revoking fails CLOSED: the debt it was hiding is a
+     live regression again on the very next report, with no grace delivery. */
+  function revoke(cls) {
+    if (!cls) return false;
+    cls = String(cls).toLowerCase();
+    if (CLASSES.indexOf(cls) < 0) return false;
+    var had = !!(state.justified && state.justified[cls]);
+    if (!had) return false;
+    delete state.justified[cls];
+    persist(state);
+    return true;
+  }
+
   /* Adopt a previously exported state. This is how a ratchet travels between machines
      and how the in-app self-test exercises the law without destroying live history.
      Unknown/legacy waiver shapes normalise through the same fail-closed path as load(). */
@@ -1026,7 +1041,7 @@ python3 clearanceloop.py selftest</pre>
     LAW: LAW, CLASSES: CLASSES, WINDOW: WINDOW, WAIVER: WAIVER,
     install: install, observe: observe, absorb: absorb, advance: advance,
     flux: flux, report: report, verdict: function () { return report().verdict; },
-    state: function () { return state; }, reset: reset, restore: restore, ui: ui
+    state: function () { return state; }, reset: reset, restore: restore, revoke: revoke, ui: ui
   };
 });
 
@@ -1498,6 +1513,17 @@ python3 clearanceloop.py selftest</pre>
     });
   }
 
+  /* Delegated so it keeps working after every re-render. A waiver is a bounded
+     exception, not a pardon: revoking it must return the class to its mark at once. */
+  document.addEventListener("click", function (ev) {
+    var b = ev.target && ev.target.closest ? ev.target.closest("[data-revoke]") : null;
+    if (!b) return;
+    var cls = b.getAttribute("data-revoke");
+    if (CL.revoke(cls)) toast("Waiver revoked: " + cls + " is bound by its mark again", "bad");
+    else toast("No live waiver for " + cls, "bad");
+    renderAll();
+  });
+
   function renderWaivers() {
     var r = CL.report();
     var live_ = r.classes.filter(function (c) { return c.waived; });
@@ -1515,7 +1541,9 @@ python3 clearanceloop.py selftest</pre>
         '<div class="cls-head"><span class="cls-name">' + esc(c.cls) + '</span><span class="badge">waived</span></div>' +
         '<div class="waiver-note">⚑ ' + esc(c.reason) + "</div>" +
         '<div class="cls-nums"><span>now <b>' + c.now + "</b></span><span>mark <b>" + c.hwm + "</b></span>" +
-        "<span>expires in <b>" + c.remaining + "</b> deliveries</span></div>";
+        "<span>expires in <b>" + c.remaining + "</b> deliveries</span></div>" +
+        '<div class="row" style="margin-top:10px"><button class="btn ghost sm" type="button" ' +
+        'data-revoke="' + esc(c.cls) + '">Revoke now</button></div>';
       host.appendChild(d);
     });
   }

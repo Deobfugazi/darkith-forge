@@ -760,6 +760,12 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   JSON allows `1e309`/`NaN`, and `int(inf)`/`int(nan)` escaped as tracebacks; `_int()`/`_finite_int()`
   now fail loudly on law-bearing counts and degrade to 0 on waiver bookkeeping. Guard any new
   persisted field through the normaliser, and never `int()` a JSON number unguarded.
+- WAIVERS ARE REVOCABLE (L5b, added after use): a waiver could be granted but never ended early —
+  the only escape was `reset()`, which destroys the high-water history that is the ratchet's whole
+  value. `ClearanceLoop.revoke(cls)` (engine), the "Revoke now" button on the Waivers tab, and
+  `clearanceloop.py revoke <cls>` all end it in place. Revoking FAILS CLOSED: the debt is a live
+  regression on the next report, the HWM is untouched and history is preserved. Covered by L5b in
+  `tools/clearanceloop_gate.py`, in the CLI selftest (10/10) and in the webapp gate (157 checks).
 - CONTRAST TRAP: raw `--ok`/`--bad` status hues are only legible on the DARK surfaces. On light panels
   in the light theme they measure 3.15:1 (toast) and 3.54:1 (self-test tick) and fail WCAG AA. Use the
   contrast-safe flux inks (`--flux-ok`/`--flux-bad`) for any status text on a light panel.

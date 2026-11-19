@@ -252,6 +252,23 @@ def run(shots_dir):
 
             go("waivers")
             g.ck("gate waiver" in page.inner_text("#waiverList"), "[" + label + "] waiver listed")
+            g.ck(page.is_visible('[data-revoke="waiting"]'), "[" + label + "] revoke control present")
+            page.click('[data-revoke="waiting"]')
+            page.wait_for_timeout(350)
+            rv = cls(page.evaluate("() => ClearanceLoop.report()"), "waiting")
+            g.ck(rv["waived"] is False, "[" + label + "] revoke ends waiver", json.dumps(rv))
+            g.ck(rv["hwm"] == 3, "[" + label + "] revoke keeps the mark")
+            g.ck(page.evaluate("() => ClearanceLoop.report().verdict") == "FAIL",
+                 "[" + label + "] revoked waiver FAILs again")
+            g.ck("No live waivers" in page.inner_text("#waiverList"),
+                 "[" + label + "] waived list empties after revoke")
+            # re-grant so the expiry path below still exercises a real waiver
+            page.evaluate("""() => {
+                ClearanceLoop.observe({waiting: 6});
+                ClearanceLoop.advance('gate waiver');
+                ClearanceLoopApp.renderAll();
+            }""")
+            page.wait_for_timeout(250)
 
             page.evaluate("""() => {
                 for (let i = 0; i < ClearanceLoop.WAIVER; i++) {

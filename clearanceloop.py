@@ -388,6 +388,20 @@ def selftest(verbose: bool = False) -> int:
         assert report(st)["verdict"] == "FAIL", "expired waiver still passing"
         assert c["hwm"] == 3, "HWM rose across the waiver"
 
+    @case("L5b revocation: ending a waiver early fails closed and keeps the mark")
+    def _():
+        st = fresh()
+        observe(st, {"waiting": 3}); advance(st)
+        observe(st, {"waiting": 6}); advance(st, "temporary")
+        before = report(st)["delivery"]
+        assert find(report(st), "waiting")["waived"], "waiver not live"
+        del st["justified"]["waiting"]
+        c = find(report(st), "waiting")
+        assert not c["waived"], "revoke left the waiver live"
+        assert c["hwm"] == 3, "revoke moved the HWM"
+        assert report(st)["verdict"] == "FAIL", "revoked waiver still passing"
+        assert report(st)["delivery"] == before, "revoke disturbed history"
+
     @case("L6 stasis: stagnant debt is force-degraded")
     def _():
         st = fresh()
@@ -484,6 +498,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("count", type=int)
     p.add_argument("reason", nargs="+", help="why the rise is justified")
 
+    p = sub.add_parser("revoke", help="end a live waiver early (the class is bound by its mark again)")
+    p.add_argument("cls", choices=CLASSES)
+
     p = sub.add_parser("reset", help="clear the ratchet (destroys the high-water history)")
 
     p = sub.add_parser("restore", help="adopt a state file produced by export")
@@ -533,6 +550,16 @@ def main(argv: list[str] | None = None) -> int:
         save_state(A.state, st)
         rep = report(st)
         print(json.dumps({"events": out["events"], "report": rep}, indent=2))
+        return EXIT[rep["verdict"]]
+
+    if A.cmd == "revoke":
+        had = bool((st.get("justified") or {}).get(A.cls))
+        if not had:
+            raise SystemExit(f"clearanceloop: no live waiver on '{A.cls}'")
+        del st["justified"][A.cls]
+        save_state(A.state, st)
+        rep = report(st)
+        print(json.dumps({"revoked": A.cls, "report": rep}, indent=2))
         return EXIT[rep["verdict"]]
 
     if A.cmd == "reset":
