@@ -1092,6 +1092,12 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   commit. The gate prints the remedy, because a gate that only says "no" wastes the Operator's
   time twice.
 
+  NO SELF-INFLICTED CHURN: a gate that dirties the tree on every run makes this law fire on its
+  own byproduct, so generators that write tracked proof files must be idempotent — they persist
+  only when the DURABLE identity changes, never merely because the clock advanced. Found in
+  `tools/synchrony_pulse.py` (rewrote `observedNow`/`gapHours` every run); fixed to persist only
+  on a (boot, lastActivity) change. Proven by two consecutive full CI runs with 0 dirty paths.
+
   ZERO-COLLISION COMPANION: the push path of `tools/board_pulse.sh` holds an exclusive `flock`,
   so two tabs firing a pulse cannot race on `git add -A`, on the two commits, or on the push. The
   lock blocks rather than skips — a skipped pulse is the very stall this law forbids.

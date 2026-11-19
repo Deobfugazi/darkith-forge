@@ -16,11 +16,11 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 68,705 | `a58f16cd24ea` | AGENTS.md — Darkith |
-| `DARKITH.md` | 69,470 | `049fb48ae1d7` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 69,949 | `160516519462` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 65,733 | `28534d40e74c` | DARKITH — README |
 | `RESUME.md` | 5,183 | `4e8c3eed2cd7` | RESUME — read this first in any new session |
-| `TASKS.md` | 20,756 | `b0d517411ddb` | TASKS — the durable board |
+| `TASKS.md` | 21,191 | `7759d6c60d51` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
