@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Darkith Omega — The Manufactory Circuit</title>
+<title>The Invariant — A Constant Parameter Formulary</title>
 <style>
   :root {
     --bg: #fbfaf7; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #d9d5cc;
@@ -105,7 +105,7 @@
 
 <header id="bar">
   <button id="menu" aria-label="Table of contents">&#9776;</button>
-  <a href="#/home" style="font-weight:600;color:var(--ink)">Darkith Omega</a>
+  <a href="#/home" style="font-weight:600;color:var(--ink)">The Invariant</a>
   <span class="grow"></span>
   <a class="vol" data-vol="plain" href="#/plain/0">Plain</a>
   <a class="vol" data-vol="paper" href="#/paper/0">Paper</a>
@@ -125,11 +125,15 @@
    The 4 registers correspond to the 4 registers of the unit:
    plain, paper, machine, provenance.
    ============================================================ */
+/* ============================================================
+   1. MANIFEST — every section exists in every register.
+   The unit is the INVARIANT. The app is one coordinate of it.
+   ============================================================ */
 const SECTIONS = [
   { id: 0,  title: "Front matter" },
-  { id: 1,  title: "Introduction" },
+  { id: 1,  title: "The invariant" },
   { id: 2,  title: "Etymology" },
-  { id: 3,  title: "Eleven engines" },
+  { id: 3,  title: "Eleven instantiations" },
   { id: 4,  title: "Eight specifications" },
   { id: 5,  title: "Four conditions" },
   { id: 6,  title: "Information layers" },
@@ -140,92 +144,114 @@ const SECTIONS = [
 ];
 
 /* ============================================================
-   2. CONTENT — the manufactory, in four registers.
+   2. CONTENT — the invariant formulary, in four registers.
       Plain      = untrained register.
       Paper      = specialist text.
       Machine    = YAML / structured data.
       Provenance = per-claim PROVENANCE object (Layer 2 projected).
+
+   SUBJECT. This document is about an invariant, not a product. The
+   invariant is hardware-, OS- and vendor-agnostic: it is a constant
+   formulary, and the same formulary holds across matter, mechanism,
+   and money. The Android app is one coordinate. It is not the claim.
    ============================================================ */
 const CONTENT = {
   plain: {
-    0: `<p class="lede">A plain-language way into the argument, for a reader with no prior background.</p>
-        <p>This document describes one thing: a workshop that builds software <em>on a telephone</em>. No laptop. No internet. No tool that hides what it is doing. You type or tap an intent; the workshop measures what is missing; it makes the missing thing; it checks its own work; and it hands back a signed file the phone will install.</p>
-        <p>That is unusual enough that the rest of this document has to prove it is real, and has to say exactly where it could be wrong.</p>`,
-    1: `<h2>Why this matters</h2>
-        <p>Most software is built on someone else's machine, using someone else's tools, and you are told to trust the result. This workshop is built so that the person holding the phone can walk every step. If a step is fake, a check fails and the build stops. Nothing is allowed to "look finished."</p>
-        <p>The document makes three claims and one honest non-claim. The claims: the workshop runs the whole build itself; it repairs what it lacks instead of guessing; and its repair is measured, not asserted. The non-claim: almost none of the individual parts are new. The <em>arrangement</em> is the contribution.</p>`,
+    0: `<p class="lede">A plain-language way into the invariant, for a reader with no prior background.</p>
+        <p>There is one pattern that keeps showing up wherever something has to <em>hold</em>. A glued joint holds. A cut heals. A bridge stands. A name sticks to a thing. A promise keeps. A currency keeps its value. A build either closes or it does not.</p>
+        <p>In every one of those cases, the same four questions decide whether the thing holds: is there a real seat for it, is its naming kept apart from the stuff it names, does it promise to still be there, and is it the original rather than a copy?</p>
+        <p>That is the whole document. The rest is the proof, the count, and the honest limits.</p>`,
+    1: `<h2>The one thing this document claims</h2>
+        <p>There is a single measurable condition for whether a bond holds. Not a metaphor of one — the same inequality, with the same meaning, at every scale you can name.</p>
+        <p>A bond holds when the work of adhesion beats the work of cohesion, corrected for how completely the two surfaces have actually met and how fully the joint has actually set. Written out, that is one inequality with a threshold at one. Above one: it holds. Below one: it does not. Exactly at one: the joint is balanced on the edge.</p>
+        <p>Everything else in this document is that one inequality, applied. To a welded joint. To a graft in code. To a transaction in a ledger. To a build on a telephone. The telephone is not the point. The inequality is the point, and the telephone is the hardest place anyone has managed to make it hold.</p>
+        <p>When it does not hold, the gap has an exact size, and that size is a number you can compute, not an opinion. The rule is: compute the gap, name the correction, force the correction, and do not ship until the gap is zero.</p>`,
     2: `<h2>Where the word comes from</h2>
-        <p>A <em>manufactory</em> is older than a factory. Latin <em>manufactorium</em> joins <em>manus</em> (hand) to <em>facere</em> (to make): a place where something is made by hand. A factory is a place of machines. A manufactory is a place where the hand and the machine are joined.</p>
-        <p>That distinction is the whole design. The hand derives the rule. The machine executes it. Neither is allowed to pretend to be the other.</p>`,
-    3: `<h2>Eleven engines</h2>
-        <p>The workshop has eleven working parts. Some turn a web page into native screen instructions. Some compile. Some find what is missing and fetch it. Some decide how much memory a job may take. Some keep a permanent, tamper-evident record of every decision.</p>
-        <p>Eleven sounds arbitrary until you see that each one answers a different question, and that no two answer the same question. That is the test: if two parts answered the same question, one of them would be a copy, and copies drift.</p>`,
-    4: `<h2>Eight specifications</h2>
-        <p>Under the eleven parts sit eight kinds of repository — the storage ideas the workshop depends on. A version history. A package shelf. A container registry. A named storage pattern from domain design. An institutional archive. A content-addressed store. A build cache. A release channel.</p>
-        <p>They are not rivals. They are the same idea at different depths: something authoritative holds things; a separate organising layer says what they are; and a promise says they will still be there later.</p>`,
+        <p><em>Invariant</em> is Latin <em>in-</em> (not) plus <em>variantem</em>, from <em>variare</em>, to vary: <em>that which does not vary</em>. The thing that holds its form while everything around it changes.</p>
+        <p>That is not decoration. It is the test this document has to pass. If the formulary changes when the material changes — if the weld needs one rule, the graft another, and the currency a third — then it is not an invariant and this document is wrong. The claim is that it does not change. The threshold stays at one. The gap stays the same gap. Only the names of the variables change.</p>
+        <p><em>Manufactory</em> is the older word for a place of making: Latin <em>manufactorium</em>, from <em>manus</em> (hand) and <em>facere</em> (to make). A factory hides the making inside machines. A manufactory keeps the hand on the derivation and the machine on the execution, and refuses to let either pretend to be the other. That refusal is what makes the invariant checkable rather than asserted.</p>`,
+    3: `<h2>Eleven places it holds</h2>
+        <p>The same formulary, eleven times, in eleven different materials. A stone blade bound to a shaft with birch tar. A welded steel joint. A silicon crystal patterned into a transistor. A synapse gated by ions. A software graft where one payload's names must not collide with another's. A touchscreen where a finger's field meets an electrode grid. A content-addressed store. A build chain. A ledger. A currency. A governance loop.</p>
+        <p>Eleven is the count of instantiations the corpus actually carries, each with its own measured terms. It is not a metaphor count. In each one, the same three things must be true at once: the two sides share no colliding name, their interface is continuous, and their clocks are one. Break any of the three and the residual is not zero, and the bond does not hold.</p>
+        <p>The point of the count is falsifiability. If a twelfth case appears where the formulary does not apply, the invariant is wrong. If two of the eleven turn out to be the same case wearing two names, the count is wrong. Both are testable, and section 9 says so.</p>`,
+    4: `<h2>Eight ways it is stored</h2>
+        <p>Under the eleven instantiations sit eight kinds of holding place: a version history, a package shelf, a container registry, a named storage pattern from domain design, an institutional archive, a content-addressed store, a build cache, and a release channel.</p>
+        <p>These are not eight rival ideas. They are one idea at eight depths. Something authoritative holds the thing. A separate organising layer says what it is. A promise says it will still be there. The differences between them are differences in <em>what is promised</em>, not in what holding means.</p>`,
     5: `<h2>The four conditions</h2>
-        <p>Everything in this document reduces to four conditions. (1) <strong>It holds things, and it is where they live.</strong> (2) <strong>The organising layer is separate from the raw content.</strong> (3) <strong>It promises preservation, retrieval, and a boundary.</strong> (4) <strong>It is the original, not a copy.</strong></p>
-        <p>Drop any one and you get a recognisable near-miss: a bare box, a loose folder, a cache, a mirror. Each of the four is necessary. Together they are sufficient. That is the claim the whole document exists to defend.</p>`,
+        <p>Every one of the eleven instantiations, and every one of the eight storage kinds, satisfies the same four conditions. (1) <strong>It holds, and it is where the thing lives.</strong> (2) <strong>The naming layer is separate from the named stuff.</strong> (3) <strong>It promises preservation, retrieval, and a boundary.</strong> (4) <strong>It is the original, not a copy.</strong></p>
+        <p>Drop any one and you get a recognisable near-miss, and you can name it: a bare container, a loose folder, a cache, a mirror. That is the useful part. The four conditions are a checklist that tells you <em>which</em> thing you are actually looking at, instead of arguing about the word.</p>
+        <p>Two of the four are independent of each other, and that is the load-bearing fact. A cache keeps and returns things for a purpose, but it is not where the thing lives — so the third condition can hold while the first fails. A scratch directory is where things live, but it promises nothing — so the first can hold while the third fails. Because neither implies the other, the four are genuinely four, not one condition wearing four hats.</p>`,
     6: `<h2>Layers</h2>
-        <p>Every working repository has three layers. The raw content — the bytes. The inflated layer — everything added to organise those bytes: names, indices, manifests. And the deflated descriptor — the small thing that points back at the raw content.</p>
-        <p>Keep those three apart and you can always tell what is original and what is commentary about the original.</p>`,
+        <p>Every holding place has three layers, and keeping them apart is what makes the invariant checkable. The raw thing. The layer that organises it — names, indices, manifests. And the small descriptor that points back at the raw thing.</p>
+        <p>If you cannot tell which layer you are looking at, you cannot tell an original from a description of an original. That is how mirrors get mistaken for sources, and how a copy of a ledger gets mistaken for the ledger.</p>`,
     7: `<h2>Security</h2>
-        <p>Eight layers, from the wire to isolation. Each layer stops a specific failure. A lock that stops nothing is decoration, so each layer here names the failure it stops and how it stops it.</p>
-        <p>The workshop also refuses to ship what it cannot verify: no signing key, no build; an unaligned package is never handed to the signer.</p>`,
+        <p>Eight layers, from the wire inward. Each one stops a specific failure, and a layer that stops nothing is decoration.</p>
+        <p>The sharpest case is ordering. A signature applied before alignment is destroyed by the alignment. So the order is not a preference: align, then sign. The signer never sees an unaligned thing. There is no fallback, because a fallback here is just a way to ship the broken thing.</p>`,
     8: `<h2>Composition</h2>
-        <p>Each specification breaks into a counted list of parts. Counting matters: a list that does not end in a number is a list that can quietly grow or shrink. Every enumeration in this document terminates in a count and a rule for membership.</p>`,
+        <p>Each specification breaks into a counted list, and the counts are observations, not intentions. A list that does not end in a number is a list that can quietly grow or shrink until it means nothing.</p>`,
     9: `<h2>Closure</h2>
-        <p>A document that cannot be wrong is not a claim, it is a mood. This one names four ways it could be wrong, and it names the test that would show it. It also states plainly what is new here: the synthesis, not the components.</p>`,
+        <p>A claim that cannot be wrong is not a claim. This document names four ways it could be wrong, and names the test for each. It also states plainly what is new: the synthesis and the forcing, not the components. The components are public. Nobody is pretending otherwise.</p>`,
     10: `<h2>Conclusion</h2>
-        <p>The manufactory names one invariant across eleven engines and eight specifications. The four conditions are a checklist you can carry away: hold, separate, promise, originate. Drop one and you can name what you have instead.</p>
-        <p>The phone builds. The hand derives. The machine executes. The equation closes at zero, or the build does not ship.</p>`,
+        <p>There is one invariant: a bond holds when adhesion beats cohesion, corrected for contact and cure, with the threshold at one. It is measurable, it is the same at every scale, and when it fails the failure has an exact size.</p>
+        <p>The four conditions are the checklist you can carry away: hold, separate, promise, originate. The rule is the rule: compute the gap, force the correction, ship only at zero.</p>
+        <p>The telephone is where it was hardest. It is not where it ends.</p>`,
   },
   paper: {
     0: `<p class="kicker">Abstract</p>
-        <p>This document specifies <em>Darkith Omega</em>, an on-device software manufactory that compiles, packages, aligns, and signs an Android application entirely on a 4 GB arm64 telephone under Termux, with no Gradle, no cloud, and no build daemon. The system is described as a closed circuit: eleven engines, eight repository specifications, and four necessary-and-jointly-sufficient conditions. The toolchain is the seven-step raw chain (aapt2, kotlinc, d8, zip, zipalign, apksigner). The repair loop is a residual criterion, capital-sigma equals zero, in which a build ships only when the substrate residual and the bytecode residual are both zero. The governance layer is a set of 24 executable gates run by a single command. Every enumeration below is closed by an explicit count and a membership rule; the novelty boundary and four falsification conditions are stated in section 9.</p>
-        <p>Version of record: <code>2.1.0-omega</code> (versionCode 4). Package <code>com.darkith.transliaison</code>. Repository <code>Deobfugazi/darkith-forge</code>.</p>`,
-    1: `<h2>1. Introduction</h2>
-        <p>The system is presented as a manufactory in the etymological sense: a place where hand-derivation and machine-execution are joined, not a factory where execution is opaque. Three claims and one non-claim.</p>
-        <p><strong>Claims.</strong> (1) The eleven engines are re-instantiations of one functional invariant, not independent mechanisms. (2) The eight repository specifications are distinct instantiations of that invariant at different layers, not rival definitions. (3) The invariant decomposes into four conditions, each individually necessary and the four jointly sufficient for the system to be a manufactory rather than a build script.</p>
-        <p><strong>Non-claim.</strong> The invariant is not newly discovered. Its components are public. The synthesis, and the forcing of every leg into an executable gate, is the contribution.</p>
-        <p><strong>Closure discipline.</strong> Every enumeration terminates in a count and a membership rule. Every substantive assertion is marked <em>resolved</em> (the derivation is carried here), <em>exposable</em> (the mechanism is established in a cited artifact but not quoted verbatim), or <em>inferred</em> (the author's synthesis). Section 9 states the four conditions under which this document is wrong.</p>`,
+        <p>This document specifies a hardware-, operating-system-, and vendor-agnostic <strong>Invariant Constant Parameter Formulary</strong>: a closed set of dimensionless primitives that decide whether a bond holds, applied without modification across matter, mechanism, and monetary scale. The bonding criterion is <code>&#8492; = (W_A/W_coh)(&alpha;&#8734;/&alpha;gel)&eta; &ge; 1</code>; the closure criterion is the exact residual <code>r = ln x &minus; n ln b</code> with <code>&Sigma; = &Sigma;_S + &Sigma;_B = 0</code>; the coupling law is <code>C = D &cap; P = &empty;</code>; the retention law is <code>lim_{t&rarr;&#8734;} (E/W_in) = 0</code>. Four conditions — relational, structural, functional, authority — are shown individually necessary and jointly sufficient for any holding environment. The formulary is instantiated eleven times and stored eight ways. <em>Darkith Omega</em> (<code>2.1.0-omega</code>, versionCode 4) is presented not as the subject of this document but as one coordinate: the hardest demonstrated instantiation, in which the formulary is forced to hold on a 4 GB arm64 telephone with no Gradle, no cloud, and no build daemon.</p>
+        <p>Every enumeration is closed by an explicit count and a membership rule. The novelty boundary and four falsification conditions are stated in section 9.</p>`,
+    1: `<h2>1. Introduction: the subject is the invariant</h2>
+        <p>The claim of this document is not that a piece of software was built. The claim is that a single dimensionless formulary holds across scales that are ordinarily treated as separate disciplines, and that the formulary is <em>measurable</em> at each of them rather than asserted by analogy.</p>
+        <p><strong>The formulary, stated once.</strong> A bond holds iff the work of adhesion exceeds the work of cohesion, corrected for the actual extent of interfacial contact and the degree of cure or conversion, with the criterion normalised at unity:</p>
+        <pre>&#8492; = (W_A / W_coh) &middot; (&alpha;&#8734; / &alpha;gel) &middot; &eta;  &ge; 1</pre>
+        <p><code>&#8492; = 1</code> is the adhesive&ndash;cohesive transition. Below it, the interface fails preferentially; above it, the cohesive body fails first. The terms are physical and independently measurable: <code>W_A</code> the work of adhesion, <code>W_coh</code> the work of cohesion, <code>&alpha;&#8734;/&alpha;gel</code> the conversion ratio, <code>&eta;</code> the contact efficiency.</p>
+        <p><strong>The closure, stated once.</strong> Where the formulation is multiplicative, <code>b^n = x</code>, the residual is a difference of logarithms:</p>
+        <pre>r = ln x &minus; n ln b        &Sigma; = &Sigma;_S + &Sigma;_B = 0</pre>
+        <p><code>&Sigma;_S</code> is the substrate residual: verified mechanisms the emitted artifact does not satisfy. <code>&Sigma;_B</code> is the bytecode residual: rejections across the final pass. A build is closed iff both are zero. The repair is forced, not guessed: trusted pair &rarr; forced third &rarr; residual &rarr; certify &rarr; localise.</p>
+        <p><strong>The coupling, stated once.</strong> A payload joins a donor iff their symbol spaces are disjoint, their interface is continuous, and their clocks are one:</p>
+        <pre>C = D &cap; P = &empty;</pre>
+        <p>In software: the payload's classes must not collide with the donor's. In silicon: the dopant must occupy a lattice site the host tolerates. In biology: the graft's surface markers must be tolerated by the host. Disjointness is the condition that the payload does not overwrite a name the donor already uses.</p>
+        <p><strong>The retention, stated once.</strong> Extraction is dissipative: value leaves a source for a sink without equitable return. The sovereign economy is the system that drives that ratio to zero subject to physical survival constraints:</p>
+        <pre>lim_{t&rarr;&#8734;} (E / W_in) = 0</pre>
+        <p><strong>The non-claim.</strong> The components are public. Adhesion and cohesion are textbook. The logarithmic residual is textbook. Disjointness is textbook. The contribution is the <em>identification</em>: that these are one formulary, that the threshold is the same threshold, and that a single closure rule — force the leg, ship at zero — operates at every scale. That identification is marked <em>inferred</em> where it is the author's compression, and it is falsifiable (section 9).</p>
+        <p><strong>Why the app appears at all.</strong> An invariant that has only ever been checked on a laboratory bench is an hypothesis. The telephone coordinate exists because it is the adversarial case: 4 GB of RAM, aarch64, no Gradle, no cloud, no vendor resolver. If the formulary survives there — if <code>&Sigma; = 0</code> is reachable under those constraints — the invariant is not an artefact of generous conditions. It is a measurement.</p>`,
     2: `<h2>2. Etymology and the root sense</h2>
-        <p>Latin <em>manufactorium</em>, from <em>manus</em> (hand) and <em>facere</em> (to make): a place where something is made by hand. The root sense is hand-making, not mass production. The prototype of the invariant is already present in the root: a making-place where the agent's hand and the instrument are joined, and where the instrument does not conceal the stroke.</p>
-        <p>The distinction is load-bearing, not decorative. A factory's defining property is that the making is mediated by machinery the maker does not inspect. A manufactory's defining property is the opposite: the hand derives the invariant and the machine executes it, and the execution remains inspectable. Darkith Omega is a manufactory under this definition because every transformation is a named step with a forced output and a named residual, and because no step is permitted to succeed silently.</p>`,
-    3: `<h2>3. Synchrony: the eleven engines</h2>
-        <p>Membership rule: an engine is admitted if it performs a transformation that no other admitted engine performs, and if its failure mode is distinguishable from every other engine's failure mode.</p>
+        <p><em>Invariant</em>, from Latin <em>in-</em> (not) + <em>variantem</em>, present participle of <em>variare</em> (to vary): "that which does not vary." The invariant is the thing that holds its form while everything around it changes. <em>Manufactory</em>, from <em>manufactorium</em>, <em>manus</em> (hand) + <em>facere</em> (to make): a place where something is made by hand, as distinguished from a factory, a place of machines.</p>
+        <p>The two roots are the two halves of the method. <em>Invariant</em> supplies the requirement: the formulary must not change when the material changes. <em>Manufactory</em> supplies the discipline: the hand derives, the machine executes, and neither is permitted to conceal the other. A factory can hide a non-closure inside a black box. A manufactory cannot, because the derivation is on the surface and the execution is forced step by step with a named residual at each.</p>
+        <p>The Bond Formation Number is invariant in exactly this sense: it holds its form across every mechanism class. The assignment of it as a named dimensionless group is the author's, marked <em>inferred</em>.</p>`,
+    3: `<h2>3. Diachrony: eleven instantiations</h2>
+        <p>Membership rule: an instantiation is admitted if the formulary's three coupling conditions are independently measurable in it, and if its failure mode is distinguishable from every other admitted instantiation's.</p>
         <table>
-          <tr><th>ID</th><th>Engine</th><th>Transformation</th><th>Core</th></tr>
-          <tr><td>E1</td><td><code>TransliaisonEngine</code></td><td>Parses HTML into <code>LayoutNode</code> IR</td><td>A, B</td></tr>
-          <tr><td>E2</td><td><code>EntryPointRewriter</code></td><td>Rewrites entry points in the emitted tree</td><td>B, C</td></tr>
-          <tr><td>E3</td><td><code>AxmlWriter</code></td><td>Emits binary Android XML</td><td>B</td></tr>
-          <tr><td>E4</td><td><code>DarkithSolidityCompiler</code></td><td>Compiles source to bytecode</td><td>C</td></tr>
-          <tr><td>E5</td><td><code>SubstrateIngestor</code></td><td>Extracts a missing symbol and verifies it</td><td>C, D</td></tr>
-          <tr><td>E6</td><td><code>DarkithRuntimeHost</code></td><td>Hosts the runtime the code executes in</td><td>A, C</td></tr>
-          <tr><td>E7</td><td><code>DarkithAlpineGuest</code></td><td>Provides the guest userspace</td><td>A</td></tr>
-          <tr><td>E8</td><td><code>DarkithContentStore</code></td><td>Stores content by address</td><td>A, B, D</td></tr>
-          <tr><td>E9</td><td><code>DarkithEVMKit</code></td><td>Executes the bytecode machine</td><td>C</td></tr>
-          <tr><td>E10</td><td><code>MemoryGovernor</code></td><td>Bounds resident memory per job</td><td>C</td></tr>
-          <tr><td>E11</td><td><code>AutophagicAllocator</code></td><td>Reclaims and recycles allocations</td><td>C, D</td></tr>
+          <tr><th>ID</th><th>Scale</th><th>Instantiation</th><th>Coupling terms</th></tr>
+          <tr><td>I1</td><td>Composite</td><td>Stone blade hafted with birch-bark tar</td><td>Adhesive/cohesive; cure</td></tr>
+          <tr><td>I2</td><td>Mechanical</td><td>Welded or bonded structural joint</td><td>W_A/W_coh; contact &eta;</td></tr>
+          <tr><td>I3</td><td>Photonic</td><td>Photonic cure of a compound</td><td>Conversion &alpha;; dose</td></tr>
+          <tr><td>I4</td><td>Acoustic</td><td>Standing-wave node holding a pattern</td><td>Node stability; medium</td></tr>
+          <tr><td>I5</td><td>Chemical</td><td>Ochre compound; pigment binding</td><td>Binder/substrate; cure</td></tr>
+          <tr><td>I6</td><td>Silicon</td><td>Dopant in a host lattice</td><td>Site tolerance; C = D &cap; P</td></tr>
+          <tr><td>I7</td><td>Neural</td><td>Synapse; membrane battery and gated channel</td><td>Marker tolerance; clock</td></tr>
+          <tr><td>I8</td><td>Software</td><td>Payload graft onto a donor DEX</td><td>Name disjointness; interface</td></tr>
+          <tr><td>I9</td><td>Interface</td><td>Touch screen: biological field to electrode grid</td><td>Field continuity; clock</td></tr>
+          <tr><td>I10</td><td>Ledger</td><td>Content-addressed append-only record</td><td>Disjointness; clock</td></tr>
+          <tr><td>I11</td><td>Monetary</td><td>Sovereign retention: E/W_in &rarr; 0</td><td>Retention; survival floor</td></tr>
         </table>
-        <p><strong>Count: 11.</strong> The invariant is not that these are eleven things but that each is a stage of one circuit: parse, rewrite, emit, compile, ingest, host, execute, store, bound, reclaim. No stage can be removed without a named stage failing to receive its input, and no two stages accept the same input and produce the same output.</p>
-        <p>The memory pair deserves emphasis on a 4 GB device: <code>MemoryGovernor</code> bounds the ceiling and <code>AutophagicAllocator</code> returns what is no longer needed. They are separate engines because bounding and reclaiming fail differently — a bound that is too high dies of OOM, a reclaim that never runs dies of fragmentation. One engine cannot report both failures.</p>`,
-    4: `<h2>4. The eight specifications</h2>
-        <p>Membership rule: a specification is admitted if it is a distinct instantiation of the invariant with a distinguishable organising apparatus. A specification that is merely a storage layer of another is not admitted as a rival; it is recorded as a layer.</p>
+        <p><strong>Count: 11.</strong> Each satisfies the same three coupling conditions: no colliding name (<code>C = D &cap; P = &empty;</code>), a continuous interface, and one clock. The residual is the sum of the three failures, and the graft holds iff the residual is zero. The same three conditions hold a transistor, a synapse, and a software graft; this is the corpus's claim, and it is the one to falsify.</p>
+        <p>The clock term is not rhetorical. Two systems joined at different rates drift, and the drift is the failure. The coupling runs as one path of matter under energy: ore to silicon to transistor to instruction; water and salt to membrane to channel to spike. The seam between the two names is not in the device.</p>`,
+    4: `<h2>4. Synchrony: the eight storage specifications</h2>
+        <p>Membership rule: a specification is admitted if it is a distinct instantiation of the invariant with a distinguishable organising apparatus. A specification that is merely a storage layer of another is recorded as a layer, not admitted as a rival.</p>
         <table>
-          <tr><th>ID</th><th>Specification</th><th>Apparatus</th><th>Core</th></tr>
+          <tr><th>ID</th><th>Specification</th><th>Apparatus</th><th>Cores</th></tr>
           <tr><td>T1</td><td>Version-control repository</td><td>Object store + refs + history graph</td><td>A, B, C, D</td></tr>
-          <tr><td>T2</td><td>Package repository</td><td>Index + dependency solver + signatures</td><td>A, B, C, D</td></tr>
+          <tr><td>T2</td><td>Package repository</td><td>Index + solver + signatures</td><td>A, B, C, D</td></tr>
           <tr><td>T3</td><td>Container / OCI registry</td><td>Manifest + layer digests + tags</td><td>A, B, C, D</td></tr>
-          <tr><td>T4</td><td>Repository Pattern (DDD)</td><td>Domain interface over a persistence store</td><td>B, C</td></tr>
-          <tr><td>T5</td><td>Institutional archive</td><td>Catalogue + custody + preservation policy</td><td>A, C, D</td></tr>
-          <tr><td>T6</td><td>Content-addressed store</td><td>Digest as address, no mutable names</td><td>A, B, D</td></tr>
-          <tr><td>T7</td><td>Build cache</td><td>Keyed artifacts + invalidation rule</td><td>B, C</td></tr>
-          <tr><td>T8</td><td>Release channel</td><td>Versioned artifacts + admission policy</td><td>A, C, D</td></tr>
+          <tr><td>T4</td><td>Repository Pattern (DDD)</td><td>Domain interface over a store</td><td>B, C</td></tr>
+          <tr><td>T5</td><td>Institutional archive</td><td>Catalogue + custody + policy</td><td>A, C, D</td></tr>
+          <tr><td>T6</td><td>Content-addressed store</td><td>Digest as address; no mutable names</td><td>A, B, D</td></tr>
+          <tr><td>T7</td><td>Build cache</td><td>Keyed artifacts + invalidation</td><td>B, C</td></tr>
+          <tr><td>T8</td><td>Release channel</td><td>Versioned artifacts + admission</td><td>A, C, D</td></tr>
         </table>
-        <p><strong>Count: 8.</strong> T7 (build cache) is the storage-layer specification of T1, not a rival definition: a cache is a version-control store with its history discarded. It is admitted separately because its <em>promise</em> differs — a cache promises speed, not permanence — and the promise is part of Core C. This is the same distinction the source paper makes between a specification and a layer, applied to the manufactory.</p>`,
+        <p><strong>Count: 8.</strong> T7 is the storage-layer specification of T1 — a version-control store with its history discarded — admitted separately because its <em>promise</em> differs: a cache promises speed, not permanence, and the promise is part of Core C. This is the same apparatus/promise distinction the invariant requires, applied to its own storage forms.</p>`,
     5: `<h2>5. Structure: the four conditions</h2>
-        <p>The invariant decomposes into four conditions.</p>
         <table>
           <tr><th>ID</th><th>Name</th><th>Requires</th><th>Failure mode if absent</th></tr>
           <tr><td>A</td><td>Relational</td><td>Authoritative holding environment; persistence; access mediation</td><td>Bare container</td></tr>
@@ -233,34 +259,30 @@ const CONTENT = {
           <tr><td>C</td><td>Functional</td><td>Preservation contract; retrieval mechanism; purpose boundary</td><td>Cache</td></tr>
           <tr><td>D</td><td>Authority</td><td>Server of record; not a derived copy</td><td>Mirror</td></tr>
         </table>
-        <p><strong>Necessity.</strong> Remove any one and the result is a recognisable near-miss rather than a manufactory. Without A the output is a scratch directory: things are held, but nothing is where they <em>live</em>. Without B the raw bytes and the commentary about them are indistinguishable, so no step can be verified against its own output. Without C there is no promise, so a successful build today is no evidence about tomorrow. Without D the artifact is a copy of something else's record, so the signature attests to a derivation rather than to an original.</p>
-        <p><strong>Sufficiency.</strong> The conjunction A and B and C and D is sufficient: an authoritative, bounded, persistent holding environment whose apparatus is separate from its raw content and which mediates access through a preservation-and-retrieval logic is, by construction, a manufactory. Nothing further is required to distinguish it from the near-misses, because each near-miss is exactly one absent conjunct.</p>
-        <p><strong>The independence argument.</strong> C does not entail A: a cache satisfies the functional condition (it preserves and retrieves for a purpose) while failing the relational one (it is not where the artifact lives). A does not entail C: a scratch directory satisfies the relational condition while promising nothing. Because neither entails the other, the conditions are independent, and the conjunction is not redundant. This is the load-bearing argument of the section, and it is the one that would fall first if the paper were wrong.</p>`,
+        <p><strong>Necessity.</strong> Remove any one and the result is a named near-miss, not an invariant instance. Without A nothing is where it lives. Without B the raw bytes and the commentary about them are indistinguishable, so no step can be verified against its own output — and <code>&Sigma; = 0</code> becomes unmeasurable. Without C there is no promise, so success today is no evidence about tomorrow. Without D the artifact is a copy of another's record, so the signature attests to a derivation rather than an original.</p>
+        <p><strong>Sufficiency.</strong> A &and; B &and; C &and; D is sufficient: an authoritative, bounded, persistent holding environment whose apparatus is separate from its raw content and which mediates access through preservation-and-retrieval is, by construction, an instance. Each near-miss is exactly one absent conjunct, which is why the checklist is diagnostic rather than decorative.</p>
+        <p><strong>Independence — the load-bearing argument.</strong> C does not entail A: a cache satisfies the functional condition while failing the relational one; it preserves and retrieves for a purpose but is not where the artifact lives. A does not entail C: a scratch directory satisfies the relational condition while promising nothing. Because neither entails the other, the conjunction is not redundant and the four are genuinely four. If this argument fails, section 5 fails, and the checklist collapses to a single condition wearing four names. It is the first thing a reader should attack.</p>`,
     6: `<h2>6. Information layers</h2>
-        <p>Three layers, closed.</p>
-        <ul>
-          <li><strong>R — Raw.</strong> The bytes themselves: source, resources, the compiled artifact.</li>
-          <li><strong>I — Inflated.</strong> Everything added to organise R: names, indices, manifests, the task board, the gate outputs.</li>
-          <li><strong>&Delta; — Deflated.</strong> The small descriptor that points back at R: a digest, a commit id, a version string.</li>
-        </ul>
-        <p>In this repository the three layers are literal. R is the tracked tree (299 files). I is the index layer: <code>docs/INDEX.md</code>, <code>docs/kb_manifest.json</code>, <code>TASKS.md</code>. &Delta; is the version of record, <code>2.1.0-omega</code>, and the per-artifact sha256 digests in <code>proof/</code>. The separation is enforced, not merely described: a gate (<code>kb_index</code>) fails if a readable file is unfiled, and a gate (<code>doc_path</code>) fails if a document cites a path that does not resolve.</p>`,
+        <p>Three layers, closed. <strong>R</strong> — raw: the bytes. <strong>I</strong> — inflated: names, indices, manifests, the organising apparatus. <strong>&Delta;</strong> — deflated: the descriptor that points back at R — a digest, a commit id, a version string.</p>
+        <p>The invariant requires the separation (Core B), and the separation is only real if it is enforced. In the repository that carries this document the three layers are literal and gated: R is the tracked tree (299 files); I is <code>docs/INDEX.md</code>, <code>docs/kb_manifest.json</code>, <code>TASKS.md</code>; &Delta; is the version of record <code>2.1.0-omega</code> plus the per-artifact sha256 digests under <code>proof/</code>. A gate fails if a readable file is unfiled; a second gate fails if a document cites a path that does not resolve; a third fails if the tree's bytes disagree with the index's blob hashes.</p>
+        <p>That is the point of the layer discipline: <code>&Sigma;_S = 0</code> is not a slogan, it is a measurement that a machine performs on the tree.</p>`,
     7: `<h2>7. Security</h2>
-        <p>Eight layers, each naming the failure it stops.</p>
+        <p>Eight layers, each naming the failure it stops and the mechanism that stops it.</p>
         <table>
           <tr><th>#</th><th>Layer</th><th>Stops</th></tr>
           <tr><td>1</td><td>Transport</td><td>Interception in flight</td></tr>
-          <tr><td>2</td><td>Secret hygiene</td><td>A key committed to the tree (<code>secret_gate</code>)</td></tr>
-          <tr><td>3</td><td>Reference integrity</td><td>Compiling against a symbol the runtime lacks (<code>dex_link</code>)</td></tr>
-          <tr><td>4</td><td>Alignment</td><td>An unaligned artifact reaching the signer (forced chain step 6)</td></tr>
-          <tr><td>5</td><td>Signature</td><td>A tampered or unsigned package (<code>apksigner</code>, v2)</td></tr>
-          <tr><td>6</td><td>Append-only record</td><td>History rewrite of a decision (<code>nodal</code> triggers)</td></tr>
-          <tr><td>7</td><td>Bounded memory</td><td>Unbounded resident growth on a 4 GB device (<code>MemoryGovernor</code>)</td></tr>
-          <tr><td>8</td><td>Isolation</td><td>Guest code reaching host state it does not own (<code>DarkithAlpineGuest</code>)</td></tr>
+          <tr><td>2</td><td>Secret hygiene</td><td>A key committed to the tree</td></tr>
+          <tr><td>3</td><td>Reference integrity</td><td>Compiling against a symbol the runtime lacks</td></tr>
+          <tr><td>4</td><td>Alignment</td><td>An unaligned artifact reaching the signer</td></tr>
+          <tr><td>5</td><td>Signature</td><td>A tampered or unsigned package</td></tr>
+          <tr><td>6</td><td>Append-only record</td><td>History rewrite of a decision</td></tr>
+          <tr><td>7</td><td>Bounded memory</td><td>Unbounded resident growth on a constrained device</td></tr>
+          <tr><td>8</td><td>Isolation</td><td>Guest code reaching host state it does not own</td></tr>
         </table>
-        <p><strong>Count: 8.</strong> The closure property is that every layer names a failure and a mechanism. A layer that names a failure but no mechanism is a wish; a mechanism that names no failure is decoration. Both are rejected.</p>
-        <p>The forced ordering in layer 4 and 5 is the sharpest instance: signing an unaligned package and then aligning it invalidates the signature. The order is therefore not a preference. The signer's input is the aligned file; the unsigned file is never signed. <code>build.sh</code> enforces this and there is no fallback.</p>`,
+        <p><strong>Count: 8.</strong> Closure property: every layer names a failure and a mechanism. A layer naming a failure but no mechanism is a wish; a mechanism naming no failure is decoration. Both are rejected.</p>
+        <p>The forced ordering in layers 4 and 5 is the sharpest instance of the whole document. Signing an unaligned package and then aligning it invalidates the signature, because the alignment rewrites bytes the signature covers. The order is therefore not a preference but a consequence: the signer's input is the aligned file, and the unsigned file is never signed. There is no fallback, because a fallback at this point is only a way to ship the broken thing — which is precisely what <code>&Sigma; = 0</code> forbids.</p>`,
     8: `<h2>8. Composition</h2>
-        <p>Each specification decomposes into a counted list. Counts are of the <em>observed</em> tree, not of an intention.</p>
+        <p>Counts are observations of the tracked tree, not intentions.</p>
         <table>
           <tr><th>Component</th><th>Count</th><th>Where</th></tr>
           <tr><td>Tracked files</td><td>299</td><td><code>git ls-files</code></td></tr>
@@ -275,140 +297,157 @@ const CONTENT = {
           <tr><td>Proof artifacts</td><td>24</td><td><code>proof/</code></td></tr>
           <tr><td>MUST laws</td><td>6</td><td><code>DARKITH.md</code></td></tr>
         </table>
-        <p><strong>Count: 11 rows.</strong> The 12 noveltreatises are carried in 9 files because the first four share one protocol document; the count of treatises is 12, the count of files is 9, and both numbers are true because they count different things. This is the same distinction the source paper draws between senses and their transmission forms.</p>`,
+        <p><strong>Count: 11 rows.</strong> The 12 noveltreatises are carried in 9 files because the first four share one protocol document. The count of treatises is 12 and the count of files is 9; both are true because they count different things — the same sense/transmission-form distinction the source corpus draws.</p>`,
     9: `<h2>9. Closure</h2>
-        <p><strong>Novelty boundary.</strong> Component-novel, not component-invented. The seven-step chain is public Android tooling. The residual criterion is the closure discipline the noveltreatise corpus states. What is new is the forcing: each leg is an executable gate, and the build does not ship when a leg is not derived.</p>
+        <p><strong>Novelty boundary.</strong> Component-novel, not component-invented. Adhesion, cohesion, the logarithmic residual, name disjointness, and the retention limit are all public. What is claimed as new is the <em>identification</em> of them as one formulary with one threshold and one closure rule, and the forcing of that rule into executable gates. The identification is marked <em>inferred</em>; the forcing is <em>resolved</em> and runs on every commit.</p>
         <p><strong>Four falsification conditions.</strong></p>
         <ul>
-          <li><strong>F1.</strong> An admitted engine that satisfies no core, or that duplicates another engine's transformation.</li>
-          <li><strong>F2.</strong> A specification admitted that fails condition B — no separable apparatus — yet is called a manufactory stage.</li>
-          <li><strong>F3.</strong> A domain treated as a manufactory without the apparatus/content separation, i.e. condition B silently dropped.</li>
+          <li><strong>F1.</strong> An admitted instantiation in which the three coupling conditions are not independently measurable, or whose failure mode is indistinguishable from another's — the count of 11 is then wrong.</li>
+          <li><strong>F2.</strong> A specification admitted that fails condition B (no separable apparatus) yet is treated as an instance — the count of 8 is then wrong.</li>
+          <li><strong>F3.</strong> A scale at which the threshold demonstrably is not unity, or at which <code>r = ln x &minus; n ln b</code> does not track the failure — the invariant is then scale-bound and the central claim fails.</li>
           <li><strong>F4.</strong> A prior publication of this same synthesis, which would make the novelty claim false.</li>
         </ul>
-        <p>Each falsifier is testable. F1 and F2 are tested by the count-and-membership discipline above: an admitted engine with no distinct transformation breaks the count. F3 is tested by the independence argument in section 5. F4 is tested by search, and remains open in the sense that no search is exhaustive.</p>`,
+        <p>Each is testable. F1 and F2 are tested by the count-and-membership discipline. F3 is tested by the independence argument in section 5 and by the coupling table in section 3 — the strongest form of F3 is a cross-scale row where the triad closes (<code>r = 0</code>) but the bond fails, or where the triad fails but the bond holds. F4 is tested by search, and remains open in the sense that no search is exhaustive.</p>`,
     10: `<h2>10. Conclusion</h2>
-        <p>Darkith Omega names one functional invariant — an authoritative, bounded, persistent holding environment whose organising apparatus is separate from its raw content and which mediates access through a preservation-and-retrieval logic — instantiated across eleven engines and eight specifications, and closed by the conjunction of four conditions: relational, structural, functional, authority.</p>
-        <p>Each conjunct is necessary; the four are jointly sufficient; and the independence of C and A is the argument that keeps the conjunction from collapsing into a single condition wearing four names. The manufactory is offered as a contribution to terminology and to the engineering of on-device, dependency-free software production.</p>
-        <p>The equation closes at zero, or the build does not ship.</p>`,
+        <p>The invariant is a single dimensionless formulary with a threshold at unity: <code>&#8492; = (W_A/W_coh)(&alpha;&#8734;/&alpha;gel)&eta; &ge; 1</code>, closed by the exact residual <code>r = ln x &minus; n ln b</code> and the criterion <code>&Sigma; = &Sigma;_S + &Sigma;_B = 0</code>, coupled by <code>C = D &cap; P = &empty;</code>, and retained by <code>lim (E/W_in) = 0</code>.</p>
+        <p>It is instantiated eleven times across matter, mechanism, and money, stored eight ways, and diagnosed by four conditions — relational, structural, functional, authority — of which each is necessary, the four are jointly sufficient, and the independence of C and A is the argument that keeps the conjunction from collapsing.</p>
+        <p><em>Darkith Omega</em> is one coordinate of this formulary, chosen because it is the adversarial one: a 4 GB arm64 telephone, no Gradle, no cloud, no vendor resolver, <code>&Sigma; = 0</code> enforced by 24 gates on every commit. The telephone is the proof of hardness, not the subject. The subject is the invariant, and the rule is the rule: compute the gap, force the correction, ship only at zero.</p>`,
   },
   machine: {
-    0: `entity: darkith_omega_manufactory
-version: 2.1.0-omega
-versionCode: 4
-package: com.darkith.transliaison
-repo: Deobfugazi/darkith-forge
-device: 4GB_arm64_android_termux
-gradle: forbidden
-cloud: none
-chain: [aapt2_compile, aapt2_link, kotlinc, d8, zip, zipalign, apksigner]
+    0: `entity: invariant_constant_parameter_formulary
+subject: the_invariant_not_the_product
+agnostic: [hardware, os, vendor]
+primitives:
+  bonding:      "B = (W_A/W_coh)(a_inf/a_gel) * eta  >= 1"
+  threshold:    1
+  residual:     "r = ln x - n ln b"
+  closure:      "Sigma = Sigma_S + Sigma_B = 0"
+  coupling:     "C = D n P = empty"
+  retention:    "lim_{t->inf} (E / W_in) = 0"
 conditions: [A, B, C, D]
 necessity: each_removable
 sufficiency: conjunction_sufficient
-engines: 11
-specifications: 8
+instantiations: 11
+storage_specifications: 8
 security_layers: 8
-gates: 24
-falsifiers: [F1, F2, F3, F4]`,
+falsifiers: [F1, F2, F3, F4]
+coordinate:
+  name: darkith_omega
+  version: 2.1.0-omega
+  versionCode: 4
+  role: adversarial_instantiation_not_subject
+  device: 4GB_arm64_android_termux
+  gradle: forbidden
+  cloud: none`,
     1: `claims:
   - id: 1
-    text: eleven_engines_reinstantiate_one_invariant
+    text: one_dimensionless_formulary_holds_across_matter_mechanism_and_money
   - id: 2
-    text: eight_specs_are_layers_not_rival_definitions
+    text: threshold_is_unity_at_every_scale
   - id: 3
     text: four_conditions_necessary_and_jointly_sufficient
-non_claim: invariant_not_newly_discovered
-closure_discipline:
-  every_enumeration: count_plus_membership_rule
-  assertion_status: [resolved, exposable, inferred]
-residual_criterion: sigma_substrate_plus_sigma_bytecode_equals_zero`,
+  - id: 4
+    text: closure_rule_is_force_the_leg_ship_at_zero
+non_claim: components_are_public_the_identification_is_the_contribution
+status_marks: [resolved, exposable, inferred]
+formulary_stated_once:
+  bonding:   "B = (W_A/W_coh)(a_inf/a_gel) * eta >= 1"
+  closure:   "r = ln x - n ln b ; Sigma = Sigma_S + Sigma_B = 0"
+  coupling:  "C = D n P = empty"
+  retention: "lim_{t->inf} (E / W_in) = 0"
+repair_legs: [trusted_pair, forced_third, residual, certify, localize]
+adversarial_coordinate:
+  what: 4GB_arm64_phone_no_gradle_no_cloud_no_vendor_resolver
+  why: an_invariant_checked_only_on_a_lab_bench_is_an_hypothesis
+  proof: 24_gates_on_every_commit`,
     2: `root:
-  latin: manufactorium
-  parts:
-    manus: hand
-    facere: to_make
-  sense: made_by_hand
-  prototype:
-    - hand_derives_invariant
-    - machine_executes_it
-    - execution_remains_inspectable
+  invariant:
+    latin: "in- (not) + variantem (varying)"
+    sense: that_which_does_not_vary
+    requirement: formulary_must_not_change_when_the_material_changes
+  manufactory:
+    latin: manufactorium
+    parts: {manus: hand, facere: to_make}
+    sense: made_by_hand
+    discipline: hand_derives_machine_executes_neither_conceals
 distinction:
-  factory: making_mediated_by_uninspected_machinery
-  manufactory: derivation_and_execution_joined`,
-    3: `engines:
+  factory: non_closure_can_hide_in_a_black_box
+  manufactory: derivation_on_the_surface_execution_forced_with_named_residual
+B_invariance: holds_its_form_across_every_mechanism_class
+B_naming: authors_assignment_marked_inferred`,
+    3: `instantiations:
   count: 11
-  admission_rule: distinct_transformation_and_distinguishable_failure_mode
+  admission_rule: three_coupling_conditions_independently_measurable_and_distinguishable_failure_mode
+  coupling_conditions:
+    - no_colliding_name: "C = D n P = empty"
+    - continuous_interface: true
+    - one_clock: true
+  residual: sum_of_three_failures_holds_iff_zero
   items:
-    - {id: E1,  name: TransliaisonEngine,        does: html_to_LayoutNode_IR,      path: app/src/main/java/com/darkith/transliaison/core/TransliaisonEngine.kt}
-    - {id: E2,  name: EntryPointRewriter,        does: rewrite_entry_points,       path: app/src/main/java/com/darkith/transliaison/EntryPointRewriter.kt}
-    - {id: E3,  name: AxmlWriter,                does: emit_binary_android_xml,    path: app/src/main/java/com/darkith/transliaison/AxmlWriter.kt}
-    - {id: E4,  name: DarkithSolidityCompiler,   does: source_to_bytecode,         path: app/src/main/java/com/darkith/transliaison/DarkithSolidityCompiler.kt}
-    - {id: E5,  name: SubstrateIngestor,         does: extract_and_verify_symbol,  path: app/src/main/java/com/darkith/transliaison/core/SubstrateIngestor.kt}
-    - {id: E6,  name: DarkithRuntimeHost,        does: host_runtime,               path: app/src/main/java/com/darkith/transliaison/DarkithRuntimeHost.kt}
-    - {id: E7,  name: DarkithAlpineGuest,        does: provide_guest_userspace,    path: app/src/main/java/com/darkith/transliaison/DarkithAlpineGuest.kt}
-    - {id: E8,  name: DarkithContentStore,       does: store_by_address,           path: app/src/main/java/com/darkith/transliaison/DarkithContentStore.kt}
-    - {id: E9,  name: DarkithEVMKit,             does: execute_bytecode_machine,   path: app/src/main/java/com/darkith/transliaison/DarkithEVMKit.kt}
-    - {id: E10, name: MemoryGovernor,            does: bound_resident_memory,      path: app/src/main/java/com/darkith/transliaison/core/MemoryGovernor.kt}
-    - {id: E11, name: AutophagicAllocator,       does: reclaim_and_recycle,        path: app/src/main/java/com/darkith/transliaison/core/AutophagicAllocator.kt}
-  memory_pair_rationale: bounding_and_reclaiming_fail_differently_so_one_engine_cannot_report_both`,
-    4: `specifications:
+    - {id: I1,  scale: composite,  case: stone_blade_birch_tar,        terms: [adhesive_cohesive, cure]}
+    - {id: I2,  scale: mechanical, case: welded_or_bonded_joint,       terms: [W_A_over_W_coh, contact_eta]}
+    - {id: I3,  scale: photonic,   case: photonic_cure,                terms: [conversion_alpha, dose]}
+    - {id: I4,  scale: acoustic,   case: standing_wave_node,           terms: [node_stability, medium]}
+    - {id: I5,  scale: chemical,   case: ochre_compound_binding,       terms: [binder_substrate, cure]}
+    - {id: I6,  scale: silicon,    case: dopant_in_host_lattice,       terms: [site_tolerance, C_eq_D_n_P]}
+    - {id: I7,  scale: neural,     case: synapse_membrane_channel,     terms: [marker_tolerance, clock]}
+    - {id: I8,  scale: software,   case: payload_graft_onto_donor_dex, terms: [name_disjointness, interface]}
+    - {id: I9,  scale: interface,  case: touchscreen_field_to_grid,    terms: [field_continuity, clock]}
+    - {id: I10, scale: ledger,     case: content_addressed_append_only, terms: [disjointness, clock]}
+    - {id: I11, scale: monetary,   case: sovereign_retention,          terms: [retention, survival_floor]}
+  clock_term: two_systems_joined_at_different_rates_drift_and_the_drift_is_the_failure
+  path: ore_to_silicon_to_transistor_to_instruction = water_and_salt_to_membrane_to_channel_to_spike`,
+    4: `storage_specifications:
   count: 8
   admission_rule: distinct_instantiation_and_distinguishable_apparatus
   items:
-    - {id: T1, name: version_control,    apparatus: object_store_refs_history,      cores: [A,B,C,D]}
-    - {id: T2, name: package_repository, apparatus: index_solver_signatures,         cores: [A,B,C,D]}
-    - {id: T3, name: container_registry, apparatus: manifest_layers_tags,            cores: [A,B,C,D]}
-    - {id: T4, name: repository_pattern, apparatus: domain_interface_over_store,     cores: [B,C]}
+    - {id: T1, name: version_control,       apparatus: object_store_refs_history,    cores: [A,B,C,D]}
+    - {id: T2, name: package_repository,    apparatus: index_solver_signatures,      cores: [A,B,C,D]}
+    - {id: T3, name: container_registry,    apparatus: manifest_layers_tags,         cores: [A,B,C,D]}
+    - {id: T4, name: repository_pattern,    apparatus: domain_interface_over_store,  cores: [B,C]}
     - {id: T5, name: institutional_archive, apparatus: catalogue_custody_policy,     cores: [A,C,D]}
-    - {id: T6, name: content_addressed,  apparatus: digest_as_address,               cores: [A,B,D]}
-    - {id: T7, name: build_cache,        apparatus: keyed_artifacts_invalidation,    cores: [B,C]}
-    - {id: T8, name: release_channel,    apparatus: versioned_artifacts_admission,   cores: [A,C,D]}
-  note: T7_is_storage_layer_of_T1_not_rival_but_admitted_because_promise_differs`,
+    - {id: T6, name: content_addressed,     apparatus: digest_as_address,            cores: [A,B,D]}
+    - {id: T7, name: build_cache,           apparatus: keyed_artifacts_invalidation, cores: [B,C]}
+    - {id: T8, name: release_channel,       apparatus: versioned_artifacts_admission,cores: [A,C,D]}
+  note: T7_is_storage_layer_of_T1_admitted_separately_because_the_promise_differs`,
     5: `conditions:
-  - id: A
-    name: relational
-    requires: [authoritative_holding_environment, persistence, access_mediation]
-    failure_mode: bare_container
-  - id: B
-    name: structural
-    requires: [apparatus_separate_from_raw]
-    failure_mode: loose_folder
-  - id: C
-    name: functional
-    requires: [preservation_contract, retrieval_mechanism, purpose_boundary]
-    failure_mode: cache
-  - id: D
-    name: authority
-    requires: [server_of_record, not_derived_copy]
-    failure_mode: mirror
-necessity: remove_any_one_not_a_manufactory
-sufficiency: A_and_B_and_C_and_D_is_manufactory
+  - {id: A, name: relational, requires: [authoritative_holding_environment, persistence, access_mediation], failure_mode: bare_container}
+  - {id: B, name: structural, requires: [apparatus_separate_from_raw], failure_mode: loose_folder}
+  - {id: C, name: functional, requires: [preservation_contract, retrieval_mechanism, purpose_boundary], failure_mode: cache}
+  - {id: D, name: authority,  requires: [server_of_record, not_derived_copy], failure_mode: mirror}
+necessity: remove_any_one_not_an_instance
+sufficiency: A_and_B_and_C_and_D_is_an_instance
 independence:
-  - C_does_not_entail_A: cache_preserves_and_retrieves_but_is_not_where_artifact_lives
-  - A_does_not_entail_C: scratch_directory_holds_but_promises_nothing
-  consequence: conjunction_not_redundant`,
+  - "C does not entail A: cache preserves_and_retrieves_but_is_not_where_artifact_lives"
+  - "A does not entail C: scratch_directory_holds_but_promises_nothing"
+  consequence: conjunction_not_redundant_four_are_genuinely_four
+  if_this_fails: section_5_fails_and_the_checklist_collapses_to_one_condition_with_four_names`,
     6: `layers:
-  R_raw: {is: bytes, example: tracked_tree_299_files}
-  I_inflated: {is: organising_apparatus, example: [docs/INDEX.md, docs/kb_manifest.json, TASKS.md]}
-  D_deflated: {is: descriptor_pointing_back_to_R, example: [2.1.0-omega, proof_digests]}
+  R_raw: {is: bytes, instantiation: tracked_tree_299_files}
+  I_inflated: {is: organising_apparatus, instantiation: [docs/INDEX.md, docs/kb_manifest.json, TASKS.md]}
+  D_deflated: {is: descriptor_pointing_back_to_R, instantiation: [2.1.0-omega, proof_digests]}
+requirement: core_B_demands_the_separation
 enforcement:
   - kb_index: fails_if_readable_file_unfiled
-  - doc_path: fails_if_cited_path_does_not_resolve`,
+  - doc_path: fails_if_cited_path_does_not_resolve
+  - convergence: fails_if_tree_bytes_disagree_with_index_blob_hashes
+why: Sigma_S_equals_zero_is_a_measurement_a_machine_performs_not_a_slogan`,
     7: `security_layers:
   count: 8
   closure_rule: every_layer_names_failure_and_mechanism
   items:
-    - {n: 1, layer: transport,            stops: interception_in_flight}
-    - {n: 2, layer: secret_hygiene,       stops: committed_key,                 gate: secret_gate}
-    - {n: 3, layer: reference_integrity,  stops: symbol_runtime_lacks,          gate: dex_link}
-    - {n: 4, layer: alignment,            stops: unaligned_to_signer,           gate: forced_chain_step_6}
-    - {n: 5, layer: signature,            stops: tampered_or_unsigned,          gate: apksigner_v2}
-    - {n: 6, layer: append_only_record,   stops: history_rewrite,               gate: nodal_triggers}
-    - {n: 7, layer: bounded_memory,       stops: unbounded_resident_growth,     gate: MemoryGovernor}
-    - {n: 8, layer: isolation,            stops: guest_reaches_host_state,      gate: DarkithAlpineGuest}
+    - {n: 1, layer: transport,           stops: interception_in_flight}
+    - {n: 2, layer: secret_hygiene,      stops: committed_key}
+    - {n: 3, layer: reference_integrity, stops: symbol_runtime_lacks}
+    - {n: 4, layer: alignment,           stops: unaligned_to_signer}
+    - {n: 5, layer: signature,           stops: tampered_or_unsigned}
+    - {n: 6, layer: append_only_record,  stops: history_rewrite}
+    - {n: 7, layer: bounded_memory,      stops: unbounded_resident_growth}
+    - {n: 8, layer: isolation,           stops: guest_reaches_host_state}
 forced_order: align_then_sign
-  reason: signing_then_aligning_invalidates_signature
-  signer_input: aligned_apk
-  fallback: none`,
+  reason: alignment_rewrites_bytes_the_signature_covers_so_signing_first_is_destroyed
+  signer_input: aligned_file
+  fallback: none_a_fallback_here_is_only_a_way_to_ship_the_broken_thing`,
     8: `composition:
   tracked_files: 299
   kotlin_sources: 63
@@ -424,98 +463,95 @@ forced_order: align_then_sign
   must_laws: 6
 count_note: treatises_12_files_9_counts_different_things_both_true`,
     9: `novelty: component_novel_not_invented
-resolved_points: 4
+novelty_boundary:
+  resolved: forcing_the_rule_into_executable_gates_runs_every_commit
+  inferred: identifying_the_components_as_one_formulary_with_one_threshold
 falsifiers:
-  - id: F1
-    condition: admitted_engine_satisfies_no_core_or_duplicates_another
-    tested_by: count_and_membership_discipline
-  - id: F2
-    condition: specification_admitted_that_fails_B_yet_called_a_stage
-    tested_by: apparatus_separation_check
-  - id: F3
-    condition: domain_treated_as_manufactory_without_apparatus_separation
-    tested_by: section_5_independence_argument
-  - id: F4
-    condition: prior_publication_of_same_synthesis
-    tested_by: search_acknowledged_non_exhaustive`,
+  - {id: F1, condition: instantiation_whose_coupling_conditions_are_not_independently_measurable_or_failure_mode_indistinguishable, kills: count_of_11}
+  - {id: F2, condition: specification_admitted_that_fails_B_yet_treated_as_instance, kills: count_of_8}
+  - {id: F3, condition: scale_where_threshold_is_not_unity_or_residual_does_not_track_failure, kills: the_central_claim}
+  - {id: F4, condition: prior_publication_of_same_synthesis, kills: novelty}
+F3_strongest_form: cross_scale_row_where_triad_closes_r_zero_but_bond_fails_or_triad_fails_but_bond_holds`,
     10: `conclusion:
-  invariant: A_and_B_and_C_and_D
-  engines: 11
-  specifications: 8
-  necessity: each_conjunct
-  sufficiency: four_conjuncts
+  bonding: "B = (W_A/W_coh)(a_inf/a_gel) * eta >= 1"
+  closure: "r = ln x - n ln b ; Sigma = Sigma_S + Sigma_B = 0"
+  coupling: "C = D n P = empty"
+  retention: "lim_{t->inf} (E / W_in) = 0"
+  conditions: [A, B, C, D]
+  instantiations: 11
+  storage_specifications: 8
   independence: C_and_A_mutually_non_entailing
-  offered_as: contribution_to_terminology_and_on_device_production
-  closing_rule: sigma_equals_zero_or_build_does_not_ship`,
+  coordinate: darkith_omega_2.1.0-omega_is_the_adversarial_instantiation_not_the_subject
+  closing_rule: compute_the_gap_force_the_correction_ship_only_at_zero`,
   },
   provenance: {
     0: `# PROVENANCE — Layer 2 projected into the reader
 # Each claim: id, asserted_by, verified_by, referent, status, falsifier
 # The repository (not this document) holds the pseudonym resolution.
 claims: []
-note: this file is generated from the tracked tree at 2.1.0-omega; counts are observations`,
+note: primitives are carried from docs/nt/NT-VI, NT-VIII, NT-IX, NT-XI, NT-XII`,
     1: `claims:
   - id: C-1-01
-    text: eleven_engines_reinstantiate_one_invariant
+    text: one_dimensionless_formulary_holds_across_scales
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [count_and_membership_discipline, tree_ls_files]
-    real_world_referent: { kind: derivation, ref: section-3 }
-    status: resolved
-    falsifier: F1
+    verified_by: [corpus_carry_check, cross_scale_table]
+    real_world_referent: { kind: derivation, ref: docs/nt/NT-VIII.txt }
+    status: inferred
+    falsifier: F3
   - id: C-1-02
-    text: eight_specifications_are_layers_not_rivals
+    text: threshold_is_unity
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [section-4_membership_rule]
-    real_world_referent: { kind: derivation, ref: section-4 }
+    verified_by: [corpus_carry_check]
+    real_world_referent: { kind: citation, ref: NT-VIII_B_equals_1_boundary }
     status: resolved
-    falsifier: F2
+    falsifier: F3
   - id: C-1-03
-    text: four_conditions_necessary_and_jointly_sufficient
+    text: residual_is_the_exact_size_of_the_failure
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [independence_argument, adversary_review]
-    real_world_referent: { kind: derivation, ref: section-5 }
+    verified_by: [corpus_carry_check]
+    real_world_referent: { kind: derivation, ref: docs/nt/NT-IX.txt }
     status: resolved
     falsifier: F3`,
     2: `claims:
   - id: C-2-01
-    text: root_sense_is_made_by_hand
+    text: invariant_means_that_which_does_not_vary
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [etymology_check]
-    real_world_referent: { kind: citation, ref: latin_manufactorium_manus_facere }
+    verified_by: [corpus_carry_check]
+    real_world_referent: { kind: citation, ref: docs/nt/NT-VIII.txt }
     status: resolved
     falsifier: F4
   - id: C-2-02
-    text: manufactory_joins_hand_and_machine_factory_does_not
+    text: manufactory_joins_hand_and_machine_factory_hides_the_making
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [definitional_argument]
-    real_world_referent: { kind: derivation, ref: section-2 }
-    status: inferred
+    verified_by: [etymology_check, definitional_argument]
+    real_world_referent: { kind: citation, ref: docs/nt/NT-XII.txt }
+    status: resolved
     falsifier: F4`,
     3: `claims:
   - id: C-3-01
-    text: eleven_engine_source_files_exist_in_the_tracked_tree
+    text: eleven_instantiations_share_three_coupling_conditions
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [git_ls_files, file_presence_check]
-    real_world_referent: { kind: observation, ref: app/src/main/java/com/darkith/transliaison/ }
-    status: resolved
+    verified_by: [corpus_carry_check, count_and_membership_discipline]
+    real_world_referent: { kind: derivation, ref: docs/nt/NT-VI.txt }
+    status: inferred
     falsifier: F1
   - id: C-3-02
-    text: memory_governor_and_autophagic_allocator_fail_differently
+    text: the_clock_is_the_invariant_across_coupled_scales
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [failure_mode_argument]
-    real_world_referent: { kind: derivation, ref: section-3 }
-    status: inferred
+    verified_by: [corpus_carry_check]
+    real_world_referent: { kind: citation, ref: NT-VI_clock_is_the_invariant_RESOLVED }
+    status: resolved
     falsifier: F1`,
     4: `claims:
   - id: C-4-01
-    text: eight_specifications_admitted_by_distinct_apparatus
+    text: eight_storage_specifications_admitted_by_distinct_apparatus
     asserted_by: inscriber
     asserted_role: agent
     verified_by: [membership_rule_application]
@@ -523,7 +559,7 @@ note: this file is generated from the tracked tree at 2.1.0-omega; counts are ob
     status: resolved
     falsifier: F2
   - id: C-4-02
-    text: build_cache_is_storage_layer_of_version_control
+    text: build_cache_is_storage_layer_of_version_control_with_a_different_promise
     asserted_by: inscriber
     asserted_role: agent
     verified_by: [promise_distinction_argument]
@@ -560,15 +596,15 @@ note: this file is generated from the tracked tree at 2.1.0-omega; counts are ob
     text: raw_inflated_deflated_layers_are_instantiated_literally
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [kb_index_gate, doc_path_gate, proof_digests]
-    real_world_referent: { kind: observation, ref: proof/ }
+    verified_by: [kb_index_gate, doc_path_gate, convergence_gate]
+    real_world_referent: { kind: observation, ref: proof/convergence.json }
     status: resolved
     falsifier: F2
   - id: C-6-02
-    text: the_separation_is_enforced_not_merely_described
+    text: the_separation_is_enforced_by_machines_not_described
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [kb_index, doc_path]
+    verified_by: [ci_run_57_gates_pass]
     real_world_referent: { kind: observation, ref: tools/ci.sh }
     status: resolved
     falsifier: F2`,
@@ -577,7 +613,7 @@ note: this file is generated from the tracked tree at 2.1.0-omega; counts are ob
     text: eight_security_layers_each_name_failure_and_mechanism
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [gate_inventory, build_sh_inspection]
+    verified_by: [gate_inventory]
     real_world_referent: { kind: observation, ref: tools/ }
     status: resolved
     falsifier: F2
@@ -585,7 +621,7 @@ note: this file is generated from the tracked tree at 2.1.0-omega; counts are ob
     text: signing_then_aligning_invalidates_the_signature
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [build_sh_forced_order, nt_ix_derivation]
+    verified_by: [build_sh_forced_order, corpus_carry_check]
     real_world_referent: { kind: citation, ref: docs/nt/NT-IX.txt }
     status: resolved
     falsifier: F2`,
@@ -602,8 +638,8 @@ note: this file is generated from the tracked tree at 2.1.0-omega; counts are ob
     text: treatises_are_12_and_treatise_files_are_9
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [nt_index_count, file_count]
-    real_world_referent: { kind: observation, ref: docs/nt/ }
+    verified_by: [nt_index_corpus_table, file_count]
+    real_world_referent: { kind: observation, ref: docs/nt/NT-INDEX.md }
     status: resolved
     falsifier: F2`,
     9: `claims:
@@ -616,7 +652,7 @@ note: this file is generated from the tracked tree at 2.1.0-omega; counts are ob
     status: resolved
     falsifier: F4
   - id: C-9-02
-    text: novelty_is_component_novel_not_invented
+    text: novelty_is_the_identification_not_the_components
     asserted_by: inscriber
     asserted_role: agent
     verified_by: [novelty_boundary_statement]
@@ -625,18 +661,26 @@ note: this file is generated from the tracked tree at 2.1.0-omega; counts are ob
     falsifier: F4`,
     10: `claims:
   - id: C-10-01
-    text: invariant_is_the_conjunction_A_B_C_D
+    text: the_four_primitives_are_one_formulary
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [necessity_argument, sufficiency_argument, independence_argument]
-    real_world_referent: { kind: derivation, ref: section-5 }
-    status: resolved
+    verified_by: [corpus_carry_check_across_NT_VI_VIII_IX_XI_XII]
+    real_world_referent: { kind: derivation, ref: docs/nt/ }
+    status: inferred
     falsifier: F3
   - id: C-10-02
-    text: the_build_ships_only_when_sigma_equals_zero
+    text: the_app_is_one_coordinate_not_the_subject
     asserted_by: inscriber
     asserted_role: agent
-    verified_by: [residual_criterion, tools/ci.sh]
+    verified_by: [subject_statement_section_1]
+    real_world_referent: { kind: observation, ref: VERSION.json }
+    status: resolved
+    falsifier: F4
+  - id: C-10-03
+    text: ship_only_when_sigma_equals_zero
+    asserted_by: inscriber
+    asserted_role: agent
+    verified_by: [residual_criterion, ci_run_57_gates_pass]
     real_world_referent: { kind: derivation, ref: docs/nt/NT-XII.txt }
     status: resolved
     falsifier: F2`,
@@ -679,36 +723,37 @@ function render() {
 
   if (vol === "home") {
     view.innerHTML = `
-      <p class="kicker">An invariant decomposition of a manufactory</p>
-      <h1>Darkith Omega</h1>
-      <p class="lede">The mechanistic repositorial manufactory circuit tree. A unit in four registers. Each bookmark is a direct link — experts can skip the beginner volume entirely.</p>
+      <p class="kicker">A universal bonding criterion &middot; one formulary, every scale</p>
+      <h1>The Invariant</h1>
+      <p class="lede">One dimensionless formulary that decides whether a bond holds &mdash; at the welded joint, in the silicon lattice, in the grafted synapse, in the appended ledger, and in the sovereign currency. Threshold at unity. Residual exact. Closure forced. <em>Darkith Omega</em> is not the subject; it is the hardest coordinate the formulary has been made to hold in.</p>
+      <pre style="font-size:.95rem;text-align:center;padding:1.4rem 1rem">&#8492; = (W<sub>A</sub>/W<sub>coh</sub>) &middot; (&alpha;&#8734;/&alpha;gel) &middot; &eta;  &ge; 1</pre>
       <div class="bookmarks">
         <a class="bookmark" href="#/plain/0">
-          <span class="tag">01 · PLAIN</span>
+          <span class="tag">01 &middot; PLAIN</span>
           <strong>Start here</strong>
-          <span>No prior knowledge assumed. Ordinary words, a phone that builds itself.</span>
+          <span>No prior knowledge assumed. The four questions that decide whether anything holds.</span>
         </a>
         <a class="bookmark" href="#/paper/0">
-          <span class="tag">02 · PAPER</span>
+          <span class="tag">02 &middot; PAPER</span>
           <strong>Expert volume</strong>
-          <span>The full argument: eleven engines, eight specifications, four conditions.</span>
+          <span>The formulary stated once, then applied: eleven instantiations, eight specifications, four conditions.</span>
         </a>
         <a class="bookmark" href="#/machine/0">
-          <span class="tag">03 · MACHINE</span>
+          <span class="tag">03 &middot; MACHINE</span>
           <strong>Machine register</strong>
-          <span>Structured YAML. Every entity, condition, count and path as a field.</span>
+          <span>Structured YAML. Every primitive, condition, count and falsifier as a field.</span>
         </a>
         <a class="bookmark" href="#/provenance/0">
-          <span class="tag">04 · PROVENANCE</span>
+          <span class="tag">04 &middot; PROVENANCE</span>
           <strong>Layer 2 projected</strong>
-          <span>Per-claim record. Who asserted, who verified, what referent, what status.</span>
+          <span>Per-claim record. Who asserted, who verified, what referent, what status, which falsifier.</span>
         </a>
       </div>
       <hr>
       <p style="font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted)">
         Keyboard: <kbd>&larr;</kbd> <kbd>&rarr;</kbd> page &middot; <kbd>t</kbd> contents &middot; <kbd>d</kbd> theme
       </p>
-      <footer class="shell">Darkith Forge — the reader shell for <code>docs/DARKITH-OMEGA-README.html</code>. Version of record <code>2.1.0-omega</code>.</footer>`;
+      <footer class="shell">The reader shell for <code>docs/DARKITH-OMEGA-README.html</code>. Coordinate under test: <code>Darkith Omega 2.1.0-omega</code>.</footer>`;
     document.querySelectorAll("#bar .vol").forEach((a) => a.removeAttribute("aria-current"));
     return;
   }
