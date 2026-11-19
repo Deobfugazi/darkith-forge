@@ -113,6 +113,13 @@ if have python3; then
     if [ -f tools/board_pulse.sh ]; then
       run "board pulse (real-time push)"    bash tools/board_pulse.sh --check
     fi
+    # MUST #36 — the same fact measured as TIME, not a yes/no. board_pulse only asks "is it
+    # pushed?"; this asks "for how long was it NOT?" and fails when the dwell exceeds the
+    # Operator's budget in STALL_BUDGET.json. Without it, work sits unpushed for an hour with
+    # every gate green, because no gate ever measured latency.
+    if [ -f tools/stall_clock.py ]; then
+      run "stall clock (off-schedule dwell)" python3 tools/stall_clock.py
+    fi
   fi
 else
   echo "SKIP: python3 not found"; FAILED=1

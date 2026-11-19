@@ -72,6 +72,9 @@ catches that. An uncommitted edit is invisible to the other tab, so commit often
   with no approval. Never end a turn holding unpushed work, and never say "say the
   word". Force-push, history rewrites, and anything touching secrets still need
   explicit approval. (DARKITH.md MUST #35, AGENTS.md §40.)
+- **Stall is measured as time.** `tools/stall_clock.py` fails CI when unpushed or
+  uncommitted work dwells past the Operator's budget in `STALL_BUDGET.json`. Do not
+  edit the budget to pass; push or commit. (DARKITH.md MUST #36, AGENTS.md §41.)
 
 ## 5. If a session is lost mid-work
 

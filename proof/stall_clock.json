@@ -1,0 +1,20 @@
+{
+  "verdict": "PASS",
+  "measured_at": 1795059765,
+  "measured_at_iso": "2026-11-19T03:42:45+0000",
+  "branch": "main",
+  "remote": "origin",
+  "unpushed": {
+    "count": 0,
+    "dwell_seconds": 0,
+    "budget_seconds": 900,
+    "oldest": null
+  },
+  "dirty": {
+    "count": 11,
+    "dwell_seconds_floor": 61,
+    "budget_seconds": 1800,
+    "oldest_path": "DARKITH.md"
+  },
+  "breaches": []
+}

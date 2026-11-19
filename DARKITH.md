@@ -1066,3 +1066,32 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
   REPORTING RULE: never write "ready to push — say the word", "awaiting your approval", or
   "I'll push on your go-ahead" when the standing grant covers it. Push, then report the SHA.
+
+  ─── MUST #36 (NO OFF-SCHEDULE DWELL — STALL IS MEASURED AS TIME) ───
+  GATE: tools/stall_clock.py
+  A yes/no gate is blind to the dimension that actually costs the Operator. `board_pulse --check`
+  answers "is the board on the remote?"; it cannot answer "for how long was it not?" — so work can
+  sit unpushed for an hour with every gate green. This law makes dwell itself the defect.
+
+  DWELL IS MEASURED FROM GIT, NOT GUESSED:
+  - unpushed_dwell = now - committer time of the OLDEST commit the remote does not have.
+  - dirty_dwell    = now - mtime of the OLDEST dirty path (a floor: the true age is at least this).
+  Both are exact, deterministic, and need no wall-clock agreement between tabs.
+
+  THE SCHEDULE IS THE OPERATOR'S, NEVER THE AGENT'S: budgets live in `STALL_BUDGET.json`
+  (`unpushed_seconds`, `dirty_seconds`). A missing or malformed budget is a FAIL — a gate that
+  invents its own tolerance cannot be trusted to hold a promise.
+
+  WHY THIS IS A LAW AND NOT A STYLE RULE: an unpushed commit, an uncommitted edit, and a held
+  push are not neutral states. Each one accumulates as latency, and latency is the mechanism by
+  which a committed deadline rots: the parallel tab goes blind, the Operator repeats himself, the
+  promise slips, and the cost lands on real people and real earnings. A stall that looks like
+  diligence (W-046) is worse than a lie. Dwell past budget is therefore a CI failure, not a note.
+
+  REMEDY, IN THE FAILURE ITSELF: unpushed breach -> `tools/board_pulse.sh`. dirty breach ->
+  commit. The gate prints the remedy, because a gate that only says "no" wastes the Operator's
+  time twice.
+
+  ZERO-COLLISION COMPANION: the push path of `tools/board_pulse.sh` holds an exclusive `flock`,
+  so two tabs firing a pulse cannot race on `git add -A`, on the two commits, or on the push. The
+  lock blocks rather than skips — a skipped pulse is the very stall this law forbids.

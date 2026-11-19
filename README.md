@@ -629,6 +629,13 @@ and never ends a turn holding unpushed work. Force-pushes, history rewrites, and
 anything touching secrets still require explicit approval. Law: `DARKITH.md` MUST #35,
 `AGENTS.md` §40, `RESUME.md` §4.
 
+**Stall is measured as time, not as a flag.** `tools/stall_clock.py` (in `tools/ci.sh`)
+fails CI when unpushed or uncommitted work dwells past the budget in
+`STALL_BUDGET.json` — the schedule is the Operator's, and a missing budget fails
+closed. `board_pulse` asks *is it pushed?*; this asks *for how long was it not?*, which
+is the question that actually defends a deadline. Law: `DARKITH.md` MUST #36,
+`AGENTS.md` §41.
+
 ---
 
 ## 9. The gates (what runs and why)

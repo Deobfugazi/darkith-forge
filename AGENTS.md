@@ -908,3 +908,31 @@ when the grant covers it. Push, then report the SHA. If you catch yourself about
 this section and push instead.
 
 Law text: DARKITH.md MUST #35.
+
+## §41 STALL IS MEASURED AS TIME — NO OFF-SCHEDULE DWELL (binding, 2026-11-19)
+
+§40 removed the social stall (an agent asking permission it already had). §41 removes the
+mechanical one: work that sits unpushed or uncommitted while every gate stays green.
+
+**The blind spot this closes.** `board_pulse --check` is a yes/no: *is the board on the remote?*
+It cannot say *for how long was it not?* So an agent could hold finished work indefinitely and CI
+would pass the whole time. A gate that never measures latency cannot defend a deadline.
+
+**The gate.** `tools/stall_clock.py`, wired into `tools/ci.sh`. It measures dwell from git:
+
+- `unpushed_dwell` = now − committer time of the oldest commit `origin` does not have.
+- `dirty_dwell` = now − mtime of the oldest dirty path (a floor, not an estimate).
+
+Over budget → **CI FAIL**, with the remedy printed in the failure itself.
+
+**The budget is the Operator's.** `STALL_BUDGET.json` at the repo root. Never edit it to make a
+gate pass, and never assume a default — a missing or malformed budget fails closed.
+
+**Zero-collision.** The push path of `tools/board_pulse.sh` takes an exclusive `flock`, so two
+tabs pulsing at once cannot race on `git add -A`, on the two commits, or on the push. The lock
+blocks rather than skips: a skipped pulse is the stall this law forbids.
+
+**What an agent does when it sees a dwell failure:** push (`tools/board_pulse.sh`) or commit.
+Never wait, never explain, never ask. Dwell is the defect.
+
+Law text: DARKITH.md MUST #36.
