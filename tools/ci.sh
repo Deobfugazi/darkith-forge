@@ -198,6 +198,12 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
   if [ -f "$ROOT/tools/nodal_gate.py" ]; then
     run "nodal gate (Co-ordina-Sync + python/js parity)" python3 tools/nodal_gate.py
   fi
+  # The webapp gate drives the shipped file in a real headless Chromium: function,
+  # measured a11y/layout, persistence, hostile state and denied storage. It SKIPS
+  # (never fails) when no browser is installed, so a bare CI box stays green.
+  if [ -f "$ROOT/tools/clearanceloop_ui_gate.py" ]; then
+    run "clearanceloop webapp gate (headless browser)" python3 tools/clearanceloop_ui_gate.py
+  fi
   run "bridge contract audit" \
     python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
   run "doc consolidation check" \

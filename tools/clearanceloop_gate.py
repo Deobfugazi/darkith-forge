@@ -32,6 +32,7 @@ ENGINE = ROOT / "app/src/main/assets/vendor/clearanceloop.js"
 SURFACES = [
     ROOT / "omega.html",
     ROOT / "savf.html",
+    ROOT / "clearanceloop.html",
     ROOT / "darkith-inscriber.html",
     ROOT / "darkith code studio.html",
     ROOT / "darkith home forge.html",
@@ -39,38 +40,66 @@ SURFACES = [
 ]
 
 LAW_HARNESS = r"""
-const CL = require(%s);
+const path = %s;
 let pass = 0, fail = 0;
 const ok = (n, c) => { if (c) pass++; else { fail++; console.log('   FAIL ' + n); } };
+const cls = (r, c) => r.classes.find(x => x.cls === c);
 
-// seed
+/* Storage stub: lets a reload be simulated, which is the only way to prove the HWM
+   actually survives one. Without it a persistence bug is invisible. */
+let disk = null;
+global.localStorage = { getItem: () => disk, setItem: (k, v) => { disk = v; } };
+const fresh = () => { delete require.cache[require.resolve(path)]; return require(path); };
+let CL = fresh();
+
+// L1 SEED: a first delivery seeds the HWM at the current level (no false regression)
 CL.reset(); CL.observe({switching:5, correcting:3}); CL.advance();
-ok('seed does not fail', CL.verdict() !== 'FAIL');
-ok('HWM seeded at current level', CL.report().classes.find(c=>c.cls==='switching').hwm === 5);
+ok('L1 seed does not fail', CL.verdict() !== 'FAIL');
+ok('L1 HWM seeded at current level', cls(CL.report(),'switching').hwm === 5);
 
-// flux down
+// L2 FLUX DOWN: less debt clears, the HWM ratchets down
 CL.observe({switching:2, correcting:0}); const a1 = CL.advance();
-ok('flux down clears the class', a1.events.some(e => /cleared switching: 5 -> 2/.test(e)));
-ok('HWM moved down', CL.report().classes.find(c=>c.cls==='switching').hwm === 2);
+ok('L2 flux down clears the class', a1.events.some(e => /cleared switching: 5 -> 2/.test(e)));
+ok('L2 HWM moved down', cls(CL.report(),'switching').hwm === 2);
 
-// regression
+// L3 REGRESSION: more debt than the HWM FAILs, and the HWM is NOT raised
 CL.observe({switching:4}); CL.advance();
-ok('net addition FAILs', CL.verdict() === 'FAIL');
-ok('HWM NOT raised on regression', CL.report().classes.find(c=>c.cls==='switching').hwm === 2);
+ok('L3 net addition FAILs', CL.verdict() === 'FAIL');
+ok('L3 HWM NOT raised on regression', cls(CL.report(),'switching').hwm === 2);
 
-// waiver
+// L4 WAIVER: permits the debt for a bounded window and NEVER raises the HWM
 CL.reset(); CL.observe({waiting:3}); CL.advance();
 CL.observe({waiting:6}); const a2 = CL.advance('spike: migration');
-ok('waiver justifies a rise', CL.verdict() !== 'FAIL' && a2.events.some(e => /JUSTIFIED waiver waiting/.test(e)));
-ok('waiver is recorded', CL.report().classes.find(c=>c.cls==='waiting').waived === true);
+ok('L4 waiver justifies the debt', CL.verdict() !== 'FAIL' && a2.events.some(e => /JUSTIFIED waiver waiting/.test(e)));
+ok('L4 waiver is recorded', cls(CL.report(),'waiting').waived === true);
+ok('L4 waiver does NOT raise the HWM', cls(CL.report(),'waiting').hwm === 3);
 
-// force-degradation
+// L5 TIME-BOX: the waiver expires, and the debt becomes a plain regression again
+for (let i = 0; i < CL.WAIVER; i++) { CL.observe({waiting:6}); CL.advance(); }
+ok('L5 waiver expires -> regression again', CL.verdict() === 'FAIL' && cls(CL.report(),'waiting').status === 'regression');
+ok('L5 HWM never rose across the waiver', cls(CL.report(),'waiting').hwm === 3);
+
+// L6 STASIS: debt that does not flux down over the window is force-degraded
 CL.reset(); CL.observe({searching:2}); CL.advance();
 for (let i = 0; i < CL.WINDOW; i++) { CL.observe({searching:2}); CL.advance(); }
-ok('stasis force-degraded to FAIL', CL.verdict() === 'FAIL');
-ok('degradation names the class', CL.report().reason.includes('searching'));
+ok('L6 stasis force-degraded to FAIL', CL.verdict() === 'FAIL');
+ok('L6 degradation names the class', CL.report().reason.includes('searching'));
 
-// absorb a pre-runner report
+// L7 PERSISTENCE: the HWM must survive a reload, or the ratchet is unenforceable
+CL = fresh();
+CL.reset(); CL.observe({waiting:8}); CL.advance(); CL.observe({waiting:3}); CL.advance();
+CL = fresh();
+ok('L7 HWM survives a reload', cls(CL.report(),'waiting').hwm === 3 && CL.report().delivery === 2);
+CL.observe({waiting:5}); CL.advance();
+ok('L7 regression still enforced after reload', CL.verdict() === 'FAIL' && cls(CL.report(),'waiting').hwm === 3);
+
+// L8 FAIL-CLOSED: a legacy bare-string waiver carried no expiry; it must not grant immunity
+disk = JSON.stringify({hwm:{waiting:3}, justified:{waiting:'old migration'}, since:{}, delivery:4,
+  history:[{delivery:4, now:{waiting:9}, score:9}]});
+CL = fresh(); const lr = CL.report();
+ok('L8 legacy waiver fails closed', cls(lr,'waiting').waived === false && lr.verdict === 'FAIL');
+
+// LOOP: absorb a pre-runner report (errors -> correcting, long tasks -> waiting)
 CL.reset(); CL.absorb({errors:['a','b'], metrics:{longTasks:4}});
 const st = CL.observe();
 ok('absorb maps errors -> correcting', st.correcting === 2);

@@ -1,0 +1,1745 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-no-fab>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#08090c">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f6fa">
+<meta name="description" content="ClearanceLoop — the Homeokinetic Debt Ratchet. Friction debt may only flux downward.">
+<title>ClearanceLoop — Homeokinetic Debt Ratchet</title>
+<style>
+:root{
+  --bg:#08090c;--bg-2:#0d0f14;--panel:#12151c;--panel-2:#171b24;--panel-3:#1e2330;
+  --line:#232836;--line-2:#2e3546;--line-3:#3b4457;
+  --fg:#eef1f7;--fg-2:#a8b1c4;--fg-3:#8492a8;
+  --accent:#74a0ff;--accent-2:#8b5cf6;--accent-soft:rgba(116,160,255,.14);--accent-fill:#3a66d6;
+  --ok:#34d399;--ok-soft:rgba(52,211,153,.13);
+  --warn:#fbbf24;--warn-soft:rgba(251,191,36,.13);
+  --bad:#f87171;--bad-soft:rgba(248,113,113,.13);
+  --info:#a78bfa;--info-soft:rgba(167,139,250,.13);
+  --on-status:#0a0d12;--ink-on-chip:#0a0d12;--ink-info:#0a0d12;--ink-bad:#0a0d12;--ink-warn:#0a0d12;--flux-ok:var(--ok);--flux-bad:var(--bad);
+  --r:14px;--r-sm:9px;--r-xs:6px;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,"Noto Sans",sans-serif;
+  --shadow:0 18px 44px rgba(0,0,0,.45);
+  --focus:0 0 0 3px var(--accent-soft);
+}
+@media (prefers-color-scheme:light){
+  :root{--bg:#f4f6fa;--bg-2:#eef1f7;--panel:#ffffff;--panel-2:#f7f9fc;--panel-3:#eef2f8;
+    --line:#dfe4ee;--line-2:#ccd4e2;--line-3:#b6c0d2;
+    --fg:#11151d;--fg-2:#3f4a5e;--fg-3:#57627a;
+    --accent:#2f5fd0;--accent-2:#6d3fd4;--accent-soft:rgba(47,95,208,.12);--accent-fill:#2f5fd0;
+    --ok:#0f9b6c;--ok-soft:rgba(15,155,108,.12);
+    --warn:#a86a00;--warn-soft:rgba(168,106,0,.12);
+    --bad:#c93a3a;--bad-soft:rgba(201,58,58,.12);
+    --info:#6d3fd4;--info-soft:rgba(109,63,212,.12);
+    --on-status:#ffffff;--shadow:0 16px 40px rgba(20,30,50,.12);
+    --ink-on-chip:#0a0d12;--ink-info:#ffffff;--ink-bad:#ffffff;--ink-warn:#0a0d12;--flux-ok:#0a7a54;--flux-bad:#b02a2a;}
+}
+:root[data-theme="dark"]{--bg:#08090c;--bg-2:#0d0f14;--panel:#12151c;--panel-2:#171b24;--panel-3:#1e2330;
+  --line:#232836;--line-2:#2e3546;--line-3:#3b4457;--fg:#eef1f7;--fg-2:#a8b1c4;--fg-3:#8492a8;
+  --accent:#74a0ff;--accent-2:#8b5cf6;--accent-soft:rgba(116,160,255,.14);--accent-fill:#3a66d6;
+  --ok:#34d399;--ok-soft:rgba(52,211,153,.13);--warn:#fbbf24;--warn-soft:rgba(251,191,36,.13);
+  --bad:#f87171;--bad-soft:rgba(248,113,113,.13);--info:#a78bfa;--info-soft:rgba(167,139,250,.13);
+  --on-status:#0a0d12;--ink-on-chip:#0a0d12;--ink-info:#0a0d12;--ink-bad:#0a0d12;--ink-warn:#0a0d12;--flux-ok:var(--ok);--flux-bad:var(--bad);--shadow:0 18px 44px rgba(0,0,0,.45);}
+:root[data-theme="light"]{--bg:#f4f6fa;--bg-2:#eef1f7;--panel:#ffffff;--panel-2:#f7f9fc;--panel-3:#eef2f8;
+  --line:#dfe4ee;--line-2:#ccd4e2;--line-3:#b6c0d2;--fg:#11151d;--fg-2:#3f4a5e;--fg-3:#57627a;
+  --accent:#2f5fd0;--accent-2:#6d3fd4;--accent-soft:rgba(47,95,208,.12);--accent-fill:#2f5fd0;
+  --ok:#0f9b6c;--ok-soft:rgba(15,155,108,.12);--warn:#a86a00;--warn-soft:rgba(168,106,0,.12);
+  --bad:#c93a3a;--bad-soft:rgba(201,58,58,.12);--info:#6d3fd4;--info-soft:rgba(109,63,212,.12);
+  --on-status:#ffffff;--shadow:0 16px 40px rgba(20,30,50,.12);
+    --ink-on-chip:#0a0d12;--ink-info:#ffffff;--ink-bad:#ffffff;--ink-warn:#0a0d12;--flux-ok:#0a7a54;--flux-bad:#b02a2a;}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 620px at 12% -10%, var(--accent-soft), transparent 60%),
+    radial-gradient(900px 520px at 100% 0%, var(--info-soft), transparent 55%),
+    var(--bg);
+  color:var(--fg);font:14px/1.55 var(--sans);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:18px 16px 72px}
+
+/* ---------- header ---------- */
+header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:6px 0 16px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.mark{
+  width:38px;height:38px;border-radius:11px;flex:0 0 auto;
+  background:linear-gradient(145deg,var(--accent-fill),var(--accent-2));
+  display:grid;place-items:center;box-shadow:0 8px 22px rgba(80,110,255,.32);
+}
+.mark svg{width:21px;height:21px;display:block}
+.brand h1{margin:0;font-size:17px;letter-spacing:-.2px;font-weight:680;line-height:1.2}
+.brand .sub{margin:1px 0 0;font-size:11.5px;color:var(--fg-3);letter-spacing:.24px;text-transform:uppercase;font-weight:600}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ---------- verdict banner ---------- */
+.verdict{
+  display:flex;align-items:center;gap:13px;padding:15px 16px;margin-bottom:16px;
+  border:1px solid var(--line);border-radius:var(--r);background:var(--panel);
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.verdict::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--fg-3)}
+.verdict[data-v="PASS"]::before{background:var(--ok)}
+.verdict[data-v="WARN"]::before{background:var(--warn)}
+.verdict[data-v="FAIL"]::before{background:var(--bad)}
+.pill{
+  font:700 12px/1 var(--mono);letter-spacing:.7px;padding:8px 11px;border-radius:999px;
+  background:var(--fg-3);color:#fff;flex:0 0 auto;
+}
+.verdict[data-v="PASS"] .pill,
+.verdict[data-v="WARN"] .pill{color:#0a0d12}
+.verdict[data-v="PASS"] .pill{background:var(--ok)}
+.verdict[data-v="WARN"] .pill{background:var(--warn)}
+.verdict[data-v="FAIL"] .pill{background:var(--bad)}
+.verdict .why{min-width:0}
+.verdict .why b{display:block;font-size:13.5px;font-weight:640;letter-spacing:-.1px}
+.verdict .why span{display:block;color:var(--fg-2);font-size:12.5px;margin-top:2px}
+.verdict .meta{margin-left:auto;display:flex;gap:18px;flex:0 0 auto;text-align:right}
+.kv{font:600 11px/1.35 var(--mono);color:var(--fg-3);letter-spacing:.4px;text-transform:uppercase}
+.kv b{display:block;font:700 17px/1.2 var(--mono);color:var(--fg);letter-spacing:-.4px;margin-top:2px}
+.kv b.flux{color:var(--fg)}
+.kv b.neg{color:var(--flux-ok)}
+.kv b.pos{color:var(--flux-bad)}
+
+/* ---------- tabs ---------- */
+nav.tabs{
+  display:flex;gap:4px;padding:5px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  position:sticky;top:8px;z-index:20;backdrop-filter:blur(10px);
+}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  appearance:none;border:0;background:transparent;color:var(--fg-2);cursor:pointer;
+  font:600 13px/1 var(--sans);padding:11px 14px;border-radius:8px;white-space:nowrap;
+  min-height:44px;display:inline-flex;align-items:center;gap:7px;transition:background .14s,color .14s;
+}
+nav.tabs button:hover{background:var(--panel-2);color:var(--fg)}
+nav.tabs button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px var(--line-2)}
+nav.tabs button:focus-visible{outline:0;box-shadow:var(--focus)}
+
+/* ---------- panels ---------- */
+.panel{display:none;animation:fade .18s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.card > h2{margin:0 0 4px;font-size:14px;font-weight:660;letter-spacing:-.1px}
+.card > p.hint{margin:0 0 14px;color:var(--fg-3);font-size:12.5px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+label.f{display:flex;flex-direction:column;gap:5px;font:600 11px/1.3 var(--mono);color:var(--fg-3);letter-spacing:.5px;text-transform:uppercase}
+input[type=number],input[type=text],select{
+  appearance:none;background:var(--panel-2);border:1px solid var(--line-2);color:var(--fg);
+  border-radius:var(--r-sm);padding:11px 12px;font:600 14px/1 var(--mono);min-height:44px;
+  min-width:0;width:100%;transition:border-color .14s,box-shadow .14s;
+}
+input[type=text]{font-family:var(--sans);font-weight:500}
+input:focus,select:focus{outline:0;border-color:var(--accent);box-shadow:var(--focus)}
+input::placeholder{color:var(--fg-3);font-weight:400}
+.btn{
+  appearance:none;cursor:pointer;border:1px solid var(--line-2);background:var(--panel-2);color:var(--fg);
+  border-radius:var(--r-sm);padding:11px 16px;font:640 13px/1 var(--sans);min-height:44px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:background .14s,border-color .14s,transform .08s;
+}
+.btn:hover{background:var(--panel-3);border-color:var(--line-3)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:0;box-shadow:var(--focus)}
+.btn.pri{background:var(--accent-fill);border-color:transparent;color:#fff}
+.btn.pri:hover{filter:brightness(1.09)}
+.btn.bad{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.wide{width:100%}
+
+/* ---------- class grid ---------- */
+.classes{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(196px,1fr))}
+.cls{
+  border:1px solid var(--line-2);border-radius:var(--r-sm);padding:12px;background:var(--panel-2);
+  display:flex;flex-direction:column;gap:9px;transition:border-color .14s;
+}
+.cls[data-s="regression"]{border-color:var(--bad);background:var(--bad-soft)}
+.cls[data-s="stale"]{border-color:var(--warn);background:var(--warn-soft)}
+.cls[data-s="waived"]{border-color:var(--info);background:var(--info-soft)}
+.cls-head{display:flex;align-items:center;gap:7px;justify-content:space-between}
+.cls-name{font:700 12.5px/1 var(--mono);letter-spacing:.4px;text-transform:uppercase}
+.badge{font:700 9.5px/1 var(--mono);letter-spacing:.6px;text-transform:uppercase;padding:4px 7px;border-radius:5px;background:var(--panel-3);color:var(--fg-3)}
+.cls[data-s="regression"] .badge{background:var(--bad);color:var(--ink-bad)}
+.cls[data-s="stale"] .badge{background:var(--warn);color:var(--ink-warn)}
+.cls[data-s="waived"] .badge{background:var(--info);color:var(--ink-info)}
+.cls[data-s="tracked"] .badge{background:var(--accent-soft);color:var(--accent)}
+.gauge{height:7px;border-radius:99px;background:var(--panel-3);overflow:hidden;position:relative}
+.gauge i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .3s ease}
+.cls[data-s="regression"] .gauge i{background:var(--bad)}
+.cls[data-s="stale"] .gauge i{background:var(--warn)}
+.cls[data-s="waived"] .gauge i{background:var(--info)}
+.cls[data-s="clear"] .gauge i{background:var(--ok)}
+.cls-nums{display:flex;gap:12px;font:600 11px/1 var(--mono);color:var(--fg-3)}
+.cls-nums b{color:var(--fg);font-size:13px}
+.waiver-note{font:500 11px/1.4 var(--sans);color:var(--info);word-break:break-word}
+
+/* ---------- history ---------- */
+.spark{width:100%;height:76px;display:block;border-radius:var(--r-sm);background:var(--panel-2);border:1px solid var(--line)}
+table.hist{width:100%;border-collapse:collapse;font:600 12px/1.4 var(--mono)}
+table.hist th,table.hist td{padding:8px 9px;text-align:right;border-bottom:1px solid var(--line)}
+table.hist th{color:var(--fg-3);font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;text-align:right}
+table.hist th:first-child,table.hist td:first-child{text-align:left}
+table.hist td{color:var(--fg-2)}
+table.hist td b{color:var(--fg)}
+.scroll-x{overflow-x:auto;margin:0 -4px;padding:0 4px}
+
+/* ---------- events ---------- */
+.events{font:500 12px/1.7 var(--mono);max-height:290px;overflow:auto;margin:0;padding:0;list-style:none}
+.events li{padding:6px 9px;border-left:2px solid var(--line-2);margin-bottom:3px;color:var(--fg-2);word-break:break-word}
+.events li.ok{border-color:var(--ok);color:var(--fg)}
+.events li.bad{border-color:var(--bad);color:var(--fg)}
+.events li.warn{border-color:var(--warn);color:var(--fg)}
+.events li.info{border-color:var(--info);color:var(--fg)}
+.empty{color:var(--fg-3);font-size:12.5px;padding:14px;text-align:center;border:1px dashed var(--line-2);border-radius:var(--r-sm)}
+
+/* ---------- output ---------- */
+pre.out{
+  background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:13px;font:500 12px/1.6 var(--mono);color:var(--fg-2);overflow:auto;max-height:340px;margin:0;
+  white-space:pre-wrap;word-break:break-word;
+}
+.grid2{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media (max-width:760px){
+  .grid2{grid-template-columns:1fr}
+  .verdict{flex-wrap:wrap;row-gap:10px}
+  .verdict .why{flex:1 1 100%;min-width:0}
+  .verdict .meta{width:100%;margin:0;justify-content:space-between;text-align:left;gap:10px}
+  .verdict .meta .kv{flex:1 1 0;min-width:0}
+}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,140%);
+  background:var(--panel-3);color:var(--fg);border:1px solid var(--line-3);border-radius:10px;
+  padding:11px 16px;font:600 12.5px/1.4 var(--sans);box-shadow:var(--shadow);z-index:9999;
+  transition:transform .22s cubic-bezier(.2,.9,.3,1);max-width:min(90vw,420px);text-align:center;
+}
+#toast.show{transform:translate(-50%,0)}
+#toast.bad{border-color:var(--bad);color:var(--flux-bad)}
+#toast.ok{border-color:var(--ok);color:var(--flux-ok)}
+
+/* ---------- selftest ---------- */
+.test{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.test:last-child{border-bottom:0}
+.test .tick{flex:0 0 auto;font:700 11px/1.6 var(--mono);width:44px;text-align:center;border-radius:5px;padding:2px 0}
+.test .tick.p{background:var(--ok-soft);color:var(--flux-ok)}
+.test .tick.f{background:var(--bad-soft);color:var(--flux-bad)}
+.test .body{min-width:0}
+.test .body b{display:block;font-weight:620}
+.test .body span{color:var(--fg-3);font-family:var(--mono);font-size:11.5px;word-break:break-word}
+.sum{display:flex;gap:14px;align-items:center;padding:11px 14px;border-radius:var(--r-sm);background:var(--panel-2);border:1px solid var(--line-2);margin-bottom:12px}
+.sum b{font:700 20px/1 var(--mono)}
+kbd{font:600 11px/1 var(--mono);background:var(--panel-3);border:1px solid var(--line-3);border-bottom-width:2px;border-radius:5px;padding:3px 6px;color:var(--fg-2)}
+code{font:600 12px/1 var(--mono);background:var(--panel-3);border-radius:4px;padding:2px 5px;color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 18 9.5 6.5 15 15 20 9"/><circle cx="20" cy="9" r="1.6" fill="#fff" stroke="none"/>
+        </svg>
+      </div>
+      <div>
+        <h1>ClearanceLoop</h1>
+        <p class="sub">Homeokinetic Debt Ratchet</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn ghost" id="themeBtn" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">◐ Theme</button>
+      <button class="btn ghost" id="exportBtn" type="button">⤓ Export</button>
+      <button class="btn ghost" id="importBtn" type="button">⤒ Import</button>
+      <input type="file" id="importFile" accept=".json,application/json" class="sr" aria-label="Import a ratchet state file">
+    </div>
+  </header>
+
+  <section class="verdict" id="verdict" data-v="PASS" aria-live="polite" aria-atomic="true">
+    <span class="pill" id="vPill">PASS</span>
+    <div class="why">
+      <b id="vReason">no friction debt</b>
+      <span id="vLaw">health is a rate of clearance, not a static tolerance</span>
+    </div>
+    <div class="meta">
+      <div class="kv">Flux<b id="vFlux" class="flux">0</b></div>
+      <div class="kv">Delivery<b id="vDelivery">0</b></div>
+      <div class="kv">Outstanding<b id="vOut">0</b></div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" aria-selected="true"  aria-controls="p-observe" id="t-observe" data-tab="observe">◉ Observe</button>
+    <button role="tab" aria-selected="false" aria-controls="p-ratchet" id="t-ratchet" data-tab="ratchet">⧗ Ratchet</button>
+    <button role="tab" aria-selected="false" aria-controls="p-waivers" id="t-waivers" data-tab="waivers">⚑ Waivers</button>
+    <button role="tab" aria-selected="false" aria-controls="p-report"  id="t-report"  data-tab="report">▤ Report</button>
+    <button role="tab" aria-selected="false" aria-controls="p-self"    id="t-self"    data-tab="self">✓ Self-test</button>
+    <button role="tab" aria-selected="false" aria-controls="p-help"    id="t-help"    data-tab="help">? Help</button>
+  </nav>
+
+  <!-- ───────────── OBSERVE ───────────── -->
+  <section class="panel active" id="p-observe" role="tabpanel" aria-labelledby="t-observe" tabindex="0">
+    <div class="card">
+      <h2>Friction debt this delivery</h2>
+      <p class="hint">Enter what the working surface actually cost, per class. These are counts, not opinions — the ratchet compares them against the high-water mark it has already seen.</p>
+      <div class="row" id="observeInputs"></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn pri" id="observeSeed" type="button">Observe</button>
+        <button class="btn" id="observeClear" type="button">Clear inputs</button>
+        <button class="btn ghost" id="observeDemo" type="button">Load a demo delivery</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Live signals <span class="badge" id="liveBadge" style="margin-left:6px">armed</span></h2>
+      <p class="hint">Observed from the browser itself, offline — no telemetry leaves this device. A blurred tab is a context switch; a long task is a wait; an uncaught error is a correction. <b id="liveCount">0</b> signals captured since load.</p>
+      <div class="classes" id="liveClasses"></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="liveAbsorb" type="button">Absorb live signals into inputs</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Current state</h2>
+      <p class="hint">What the ratchet holds right now. Each class shows its live count against the high-water mark it may never exceed.</p>
+      <div class="classes" id="stateClasses"></div>
+    </div>
+  </section>
+
+  <!-- ───────────── RATCHET ───────────── -->
+  <section class="panel" id="p-ratchet" role="tabpanel" aria-labelledby="t-ratchet" tabindex="0">
+    <div class="card">
+      <h2>Advance a delivery</h2>
+      <p class="hint">One delivery applies the law: anything below its high-water mark ratchets the mark down; anything above it fails unless a recorded waiver is live. Stasis across <b id="winN">5</b> deliveries is force-degraded to a blocker.</p>
+      <div class="row">
+        <button class="btn pri" id="advanceBtn" type="button">Advance delivery</button>
+        <label class="f" style="flex:1;min-width:200px">
+          Waiver reason (optional)
+          <input type="text" id="advanceJustify" placeholder="e.g. migration spike, expires with the release" autocomplete="off">
+        </label>
+      </div>
+      <p class="hint" style="margin:12px 0 0">A waiver never raises the high-water mark — it only lets debt exist for a bounded window. When it expires, the debt is a plain regression again.</p>
+    </div>
+
+    <div class="card">
+      <h2>Clearance history</h2>
+      <p class="hint">Total friction per delivery. A downward line is health; a flat line is the malefactor.</p>
+      <canvas class="spark" id="spark" width="900" height="76" role="img" aria-label="Friction per delivery over time"></canvas>
+      <div class="scroll-x" style="margin-top:12px">
+        <table class="hist" id="histTable">
+          <thead><tr><th>Delivery</th><th>Total</th><th>Δ flux</th><th>Top class</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Last delivery</h2>
+      <p class="hint">Every event the law produced, in order. Seeding, clearance, waiver and expiry are all named.</p>
+      <ul class="events" id="events"></ul>
+    </div>
+  </section>
+
+  <!-- ───────────── WAIVERS ───────────── -->
+  <section class="panel" id="p-waivers" role="tabpanel" aria-labelledby="t-waivers" tabindex="0">
+    <div class="card">
+      <h2>Live waivers</h2>
+      <p class="hint">An apoptotic exception: a named, bounded permission for a class to sit above its mark. It expires automatically after its budget. A waiver is never a way to loosen the ratchet.</p>
+      <div id="waiverList"></div>
+    </div>
+    <div class="card">
+      <h2>How a waiver works</h2>
+      <div class="grid2">
+        <div>
+          <p class="hint" style="margin-top:0"><b>Granted</b></p>
+          <pre class="out">advance("migration spike")
+→ JUSTIFIED waiver waiting: 3 → 6
+  for 5 deliveries; HWM stays 3</pre>
+        </div>
+        <div>
+          <p class="hint" style="margin-top:0"><b>Expired</b></p>
+          <pre class="out">after 5 deliveries
+→ EXPIRED waiver waiting
+→ verdict FAIL: net addition of debt</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── REPORT ───────────── -->
+  <section class="panel" id="p-report" role="tabpanel" aria-labelledby="t-report" tabindex="0">
+    <div class="card">
+      <h2>Machine-readable report</h2>
+      <p class="hint">The same object <code>clearanceloop.py report</code> emits. Feed it to CI, a dashboard, or the gate.</p>
+      <div class="row" style="margin-bottom:12px">
+        <button class="btn" id="copyReport" type="button">Copy JSON</button>
+        <button class="btn" id="dlReport" type="button">Download JSON</button>
+      </div>
+      <pre class="out" id="reportOut"></pre>
+    </div>
+    <div class="card">
+      <h2>Command line equivalent</h2>
+      <p class="hint">The Python CLI is parity-locked to this page: same classes, same verdicts, same JSON.</p>
+      <pre class="out">python3 clearanceloop.py report
+python3 clearanceloop.py observe waiting=6
+python3 clearanceloop.py advance --justify "migration spike"
+python3 clearanceloop.py selftest</pre>
+    </div>
+  </section>
+
+  <!-- ───────────── SELF-TEST ───────────── -->
+  <section class="panel" id="p-self" role="tabpanel" aria-labelledby="t-self" tabindex="0">
+    <div class="card">
+      <h2>Law self-test</h2>
+      <p class="hint">Runs every law against a throwaway state, then restores yours untouched. If any law fails, the engine is not fit to gate a delivery.</p>
+      <div class="row" style="margin-bottom:12px">
+        <button class="btn pri" id="runSelf" type="button">Run self-test</button>
+      </div>
+      <div class="sum" id="selfSum" hidden>
+        <b id="selfPass">0</b><span style="color:var(--fg-3)">passed</span>
+        <b id="selfFail">0</b><span style="color:var(--fg-3)">failed</span>
+      </div>
+      <div id="selfList"></div>
+    </div>
+  </section>
+
+  <!-- ───────────── HELP ───────────── -->
+  <section class="panel" id="p-help" role="tabpanel" aria-labelledby="t-help" tabindex="0">
+    <div class="card">
+      <h2>What this is</h2>
+      <p class="hint">ClearanceLoop measures whether a team's friction is actually clearing. Health is not a tolerance you sit inside; it is a rate. The high-water mark of friction debt may only move down, stasis is scheduled to become fatal, and a rise needs a named, expiring waiver.</p>
+      <div class="classes">
+        <div class="cls"><div class="cls-head"><span class="cls-name">switching</span><span class="badge">cost</span></div><div class="waiver-note">Context switches: leaving and returning to a task.</div></div>
+        <div class="cls"><div class="cls-head"><span class="cls-name">waiting</span><span class="badge">cost</span></div><div class="waiver-note">Blocked time: builds, long tasks, queues.</div></div>
+        <div class="cls"><div class="cls-head"><span class="cls-name">searching</span><span class="badge">cost</span></div><div class="waiver-note">Hunting: finding the right file, doc or signal.</div></div>
+        <div class="cls"><div class="cls-head"><span class="cls-name">correcting</span><span class="badge">cost</span></div><div class="waiver-note">Rework: errors, failed runs, redone steps.</div></div>
+        <div class="cls"><div class="cls-head"><span class="cls-name">review</span><span class="badge">cost</span></div><div class="waiver-note">Review burden: validating output before merge.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>The four laws</h2>
+      <ol style="margin:0;padding-left:20px;color:var(--fg-2);font-size:13px;line-height:1.9">
+        <li><b>Monotone clearance</b> — when debt drops, the mark drops with it, and never rises back.</li>
+        <li><b>Regression fails</b> — debt above the mark is a net addition, and the verdict fails.</li>
+        <li><b>Stasis degrades</b> — debt that does not clear across the window is force-degraded to a blocker.</li>
+        <li><b>Apoptotic waiver</b> — a rise is permitted only by a recorded, reasoned, expiring exception.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Using it</h2>
+      <p class="hint" style="margin-bottom:8px">This file is one offline page. It stores the ratchet in this browser and never touches the network. Export the JSON to move the ratchet between machines, or to gate CI with <code>clearanceloop.py</code>.</p>
+      <p class="hint" style="margin:0">Keyboard: <kbd>1</kbd>–<kbd>6</kbd> switch tabs, <kbd>a</kbd> advances a delivery, <kbd>t</kbd> toggles the theme.</p>
+    </div>
+  </section>
+
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+
+<script>
+/* Injection anchor. build/integrate-engines.py inserts the engines immediately after
+   the document's FIRST script; this empty one exists so that block lands BEFORE the
+   app shell below, which needs window.ClearanceLoop at boot. */
+</script>
+<!-- PRERUNNER:START -->
+<script>
+/* darkith · pre-runner v1
+   Ephemeral "silent race before the race".
+   One report contract, two engines:
+     browser : sandboxed offscreen iframe (works inside the app/WebView, no deps)
+     node    : real headless Chromium via Playwright OR Puppeteer (desktop/Termux/CI)
+   Usage (browser):  DarkithPreRunner.run({files:{'a.js':src}, entry:'a.js', shots:4, interval:600, stress:25}).then(report)
+   Usage (node):     node darkith-prerunner.js app.html --shots 5 --ms 800 --stress 40 --out ./pr
+   Language support is an adapter registry: register(lang, fn) -> {html}|{js}. Nothing is "magic". */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(root);
+  else root.DarkithPreRunner = factory(root);
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
+  'use strict';
+  var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  var sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var NEEDS = function (l, w) { var e = new Error('NEEDS_ADAPTER: ' + l + ' needs ' + w); e.needs = true; return e; };
+  /* Script tags, assembled at runtime. The forge build round-trips its embedded
+     studio through a `text/plain` carrier that escapes then unescapes the raw
+     closing-script sequence, so this file must never contain that sequence (nor
+     its backslash-escaped form) — the tags are built here instead of written. */
+  var SE = '<' + '/script>';
+  var SEE = '<' + '\\' + '/script';
+
+
+  /* ---------- ADAPTERS (virtual transpile, in memory only) ---------- */
+  var AD = {
+    html: function (s) { return { html: s }; },
+    js: function (s) { return { js: s }; },
+    mjs: function (s) { return { js: s, module: true }; },
+    css: function (s) { return { html: '<style>' + s + '</style><div>css loaded</div>' }; },
+    json: function (s) { JSON.parse(s); return { html: '<pre>' + esc(s) + '</pre>' }; },
+    md: function (s) { return { html: '<pre style="white-space:pre-wrap">' + esc(s) + '</pre>' }; }
+  };
+  function viaCompiler(s, l) {
+    if (root.Sucrase) return { js: root.Sucrase.transform(s, { transforms: ['typescript', 'jsx'] }).code };
+    if (root.ts) return { js: root.ts.transpileModule(s, { compilerOptions: { jsx: 1, target: 7 } }).outputText };
+    if (root.Babel) return { js: root.Babel.transform(s, { presets: ['typescript', 'react'], filename: 'x.' + l }).code };
+    throw NEEDS(l, 'Sucrase, TypeScript or Babel on the page (load one first)');
+  }
+  ['ts', 'tsx', 'jsx'].forEach(function (l) { AD[l] = function (s) { return viaCompiler(s, l); }; });
+  function register(lang, fn) { AD[lang] = fn; }
+  function extOf(n) { var m = /\.([a-z0-9]+)$/i.exec(n || ''); return m ? m[1].toLowerCase() : 'js'; }
+
+
+  async function transpile(files, entry) {
+    var t0 = Date.now(), notes = [], pre = [], ent = null;
+    for (var n in files) {
+      var l = extOf(n), a = AD[l];
+      if (!a) throw NEEDS(l, 'register("' + l + '", fn) adapter');
+      var out = await a(files[n], l);
+      notes.push(n + ' -> ' + (out.html ? 'html' : 'js'));
+      if (n === entry) ent = out; else if (out.js) pre.push(out.js);
+    }
+    if (!ent) throw new Error('entry not found: ' + entry);
+    return { ent: ent, pre: pre, notes: notes, ms: Date.now() - t0 };
+  }
+
+
+  /* ---------- PROBE (runs inside the page under test) ---------- */
+  var PROBE = '(' + function (T) {
+    var D = window.__dpr = { log: [], errs: [], lt: 0, ltMax: 0, frames: 0, t0: performance.now() };
+    ['log', 'info', 'warn', 'error'].forEach(function (k) {
+      var o = console[k]; console[k] = function () {
+        var m = [].slice.call(arguments).map(function (a) { try { return typeof a === 'string' ? a : JSON.stringify(a); } catch (e) { return String(a); } }).join(' ');
+        if (D.log.length < 500) D.log.push({ k: k, m: m }); try { o.apply(console, arguments); } catch (e) {}
+      };
+    });
+    window.addEventListener('error', function (e) { D.errs.push((e.message || 'error') + (e.lineno ? ' @' + e.lineno + ':' + e.colno : '')); });
+    window.addEventListener('unhandledrejection', function (e) { D.errs.push('rejection: ' + (e.reason && e.reason.message || e.reason)); });
+    try { new PerformanceObserver(function (l) { l.getEntries().forEach(function (x) { D.lt++; D.ltMax = Math.max(D.ltMax, x.duration); }); }).observe({ entryTypes: ['longtask'] }); } catch (e) {}
+    (function f() { D.frames++; requestAnimationFrame(f); })();
+    window.__dprSnap = async function () {
+      var w = innerWidth, h = innerHeight, s = new XMLSerializer().serializeToString(document.documentElement);
+      var u = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '"><foreignObject width="100%" height="100%">' + s + '</foreignObject></svg>');
+      try {
+        var im = new Image(); await new Promise(function (r, j) { im.onload = r; im.onerror = j; im.src = u; });
+        var c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(im, 0, 0); return c.toDataURL('image/png');
+      } catch (e) { return u; }
+    };
+    window.__dprFuzz = function (n, seed) {
+      var keys = ['a', 'Enter', 'Tab', 'Backspace', 'ArrowDown', ' ', '{', '"'];
+      /* mulberry32 — seeded so a run is reproducible: same seed -> same fuzz -> same report. */
+      var s = (seed >>> 0) || 1;
+      var rnd = function () { s = (s + 0x6D2B79F5) | 0; var t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+      for (var i = 0; i < n; i++) {
+        var els = [].slice.call(document.querySelectorAll('button,a,input,select,textarea,[onclick],[tabindex],canvas'));
+        var e = els.length ? els[rnd() * els.length | 0] : document.body, r = e.getBoundingClientRect();
+        var x = r.left + r.width / 2, y = r.top + r.height / 2;
+        try {
+          ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'].forEach(function (t) { e.dispatchEvent(new MouseEvent(t, { bubbles: true, clientX: x, clientY: y })); });
+          if (/^(INPUT|TEXTAREA)$/.test(e.tagName)) {
+            /* setting .value is OUR action: a file/color input may reject it. Swallow that —
+               it is harness misuse, not a page fault, so it must not be reported as an error. */
+            try { e.value = rnd().toString(36).slice(2); e.dispatchEvent(new Event('input', { bubbles: true })); } catch (_) {}
+          }
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: keys[rnd() * keys.length | 0], bubbles: true }));
+          if (i % 9 === 0) window.dispatchEvent(new Event('resize'));
+        } catch (er) { D.errs.push('fuzz: ' + er.message); }
+      }
+    };
+    window.__dprDump = function () {
+      var s = (performance.now() - D.t0) / 1000;
+      return { console: D.log, errors: D.errs, metrics: { fps: Math.round(D.frames / s), longTasks: D.lt, maxLongMs: Math.round(D.ltMax), nodes: document.getElementsByTagName('*').length, heapMB: performance.memory ? +(performance.memory.usedJSHeapSize / 1048576).toFixed(1) : null } };
+    };
+    window.addEventListener('message', function (e) {
+      if (e.source === window) return; /* ignore our own posts (top-level/node engine) — avoids a self-loop */
+      var d = e.data; if (!d || d.t !== T) return;
+      Promise.resolve(d.cmd === 'snap' ? window.__dprSnap() : d.cmd === 'fuzz' ? window.__dprFuzz(d.n, d.seed) : window.__dprDump())
+        .then(function (v) { parent.postMessage({ t: T, id: d.id, v: v }, '*'); });
+    });
+    addEventListener('load', function () { parent.postMessage({ t: T, ready: 1 }, '*'); });
+  }.toString() + ')(' + JSON.stringify('__TOKEN__') + ')';
+
+
+  function buildHtml(tp, token) {
+    var probe = '<script>' + PROBE.replace('__TOKEN__', token) + SE;
+    var safe = function (s) { return String(s).replace(new RegExp(SEE, 'gi'), SEE + '>'); };
+    if (tp.ent.html) {
+      var h = tp.ent.html;
+      return /<head[^>]*>/i.test(h) ? h.replace(/<head[^>]*>/i, function (m) { return m + probe; }) : probe + h;
+    }
+    return '<!doctype html><meta charset="utf-8">' + probe + '<body>' +
+      tp.pre.map(function (s) { return '<script>' + safe(s) + SE; }).join('') +
+      '<script' + (tp.ent.module ? ' type="module"' : '') + '>' + safe(tp.ent.js) + SE + '</body>';
+  }
+
+
+  function verdict(r) {
+    if (r.errors.length) return 'FAIL';
+    var m = r.metrics;
+    return (m.fps && m.fps < 20) || m.longTasks > 5 ? 'WARN' : 'PASS';
+  }
+
+
+  /* ---------- BROWSER ENGINE ---------- */
+  async function runBrowser(o) {
+    var tp = await transpile(o.files, o.entry), token = 'dpr' + Math.random().toString(36).slice(2);
+    var fr = document.createElement('iframe'), w = o.width || 390, h = o.height || 780, pend = {}, ready, n = 0;
+    var readyP = new Promise(function (r) { ready = r; });
+    function onMsg(e) { var d = e.data; if (!d || d.t !== token) return; if (d.ready) ready(); else if (pend[d.id]) { pend[d.id](d.v); delete pend[d.id]; } }
+    function rpc(cmd, extra) { return new Promise(function (res) { var id = ++n; pend[id] = res; fr.contentWindow.postMessage(Object.assign({ t: token, id: id, cmd: cmd }, extra || {}), '*'); setTimeout(function () { if (pend[id]) { delete pend[id]; res(null); } }, 5000); }); }
+    window.addEventListener('message', onMsg);
+    fr.setAttribute('sandbox', 'allow-scripts');
+    fr.style.cssText = 'position:fixed;left:-9999px;top:0;border:0;width:' + w + 'px;height:' + h + 'px';
+    fr.srcdoc = buildHtml(tp, token);
+    document.body.appendChild(fr);
+    var shots = [], t0 = Date.now();
+    try {
+      await Promise.race([readyP, sleep(o.timeout || 8000)]);
+      for (var i = 0; i < (o.shots || 4); i++) {
+        await sleep(o.interval || 600);
+        if (o.stress) await rpc('fuzz', { n: o.stress, seed: (o.seed || 1) + i });
+        shots.push({ t: Date.now() - t0, png: await rpc('snap') });
+      }
+      var d = await rpc('dump') || { console: [], errors: ['no response from page (hung?)'], metrics: {} };
+      return finish('browser', o, tp, d, shots);
+    } finally { window.removeEventListener('message', onMsg); fr.remove(); }
+  }
+
+
+  /* ---------- NODE ENGINE (real headless Chromium) ---------- */
+  async function runNode(o) {
+    var lib = o.lib || (function () { try { return require('playwright'); } catch (e) { try { return require('playwright-core'); } catch (e2) { return require('puppeteer-core'); } } })();
+    var tp = await transpile(o.files, o.entry), html = buildHtml(tp, 'node');
+    var launchOpts = { headless: true, args: ['--no-sandbox'] };
+    /* A system Chromium (no browser download) may be supplied directly or by env,
+       mirroring the python render gate's fallback so CI never needs a fetch. */
+    var env = (root && root.process && root.process.env) || {};
+    var exe = o.executablePath || env.PRERUNNER_CHROME || env.CHROME_PATH;
+    if (exe) launchOpts.executablePath = exe;
+    var br = await (lib.chromium || lib).launch(launchOpts);
+    var shots = [], t0 = Date.now();
+    try {
+      var pg = await br.newPage(), vp = { width: o.width || 390, height: o.height || 780 };
+      await (pg.setViewportSize ? pg.setViewportSize(vp) : pg.setViewport(vp));
+      await pg.setContent(html);
+      for (var i = 0; i < (o.shots || 4); i++) {
+        await sleep(o.interval || 600);
+        if (o.stress) await pg.evaluate('window.__dprFuzz(' + (o.stress | 0) + ',' + ((o.seed || 1) + i) + ')');
+        shots.push({ t: Date.now() - t0, png: 'data:image/png;base64,' + Buffer.from(await pg.screenshot({ type: 'png' })).toString('base64') });
+      }
+      return finish('node', o, tp, await pg.evaluate('window.__dprDump()'), shots,
+                    o.expect ? await pg.evaluate(function (ks) { var o = {}; ks.forEach(function (k) { o[k] = typeof window[k]; }); return o; }, o.expect) : null);
+    } finally { await br.close(); }
+  }
+
+
+  function finish(engine, o, tp, d, shots, globals) {
+    var r = { engine: engine, entry: o.entry, ok: true, verdict: 'PASS',
+              console: d.console, errors: d.errors, metrics: d.metrics, shots: shots,
+              target: { width: o.width || 390, height: o.height || 780, shots: o.shots || 4,
+                        interval: o.interval || 600, stress: o.stress || 0, seed: o.seed || 1 },
+              transpile: { ms: tp.ms, notes: tp.notes } };
+    if (globals) {
+      r.globals = globals;
+      Object.keys(globals).forEach(function (k) {
+        if (globals[k] === 'undefined') r.errors = r.errors.concat('expected global missing: ' + k);
+      });
+    }
+    r.verdict = verdict(r); r.ok = r.verdict !== 'FAIL'; return r;
+  }
+
+
+  async function run(o) {
+    o = o || {};
+    if (!o.files) throw new Error('files required: {name: source}');
+    o.entry = o.entry || Object.keys(o.files)[0];
+    try { return await (o.engine === 'node' || typeof document === 'undefined' ? runNode(o) : runBrowser(o)); }
+    catch (e) {
+      return { engine: o.engine === 'node' ? 'node' : 'browser', entry: o.entry, ok: false,
+               verdict: e.needs ? 'NEEDS_ADAPTER' : 'ERROR', errors: [e.message],
+               console: [], metrics: {}, shots: [], transpile: {} };
+    }
+  }
+
+
+  /* ---------- UI (optional): a self-contained report overlay ---------- */
+  var VC = { PASS: '#3fb950', WARN: '#d29922', FAIL: '#f85149', NEEDS_ADAPTER: '#58a6ff', ERROR: '#8b949e' };
+  function el(tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; }
+  function ui(opts) {
+    if (typeof document === 'undefined') return run(opts);
+    opts = opts || {};
+    var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    var card = el('div', 'width:min(560px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    host.appendChild(card); document.body.appendChild(host);
+    var close = function () { if (host.parentNode) host.remove(); };
+    host.addEventListener('click', function (e) { if (e.target === host) close(); });
+    var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
+    head.appendChild(el('span', 'color:#ff8a3d;font-weight:700', '\u25b6 Pre-runner'));
+    var pill = el('span', 'padding:2px 9px;border-radius:999px;font-weight:700;font-size:12px;background:#161a20;color:#8b949e', 'running\u2026');
+    head.appendChild(pill);
+    var x = el('button', 'margin-left:auto;background:transparent;border:0;color:#8b949e;font-size:16px;cursor:pointer', '\u2715');
+    x.addEventListener('click', close); head.appendChild(x); card.appendChild(head);
+    var body = el('div', 'padding:12px 14px'); card.appendChild(body);
+    body.appendChild(el('div', 'color:#8b949e', 'racing the race before the race\u2026'));
+    Promise.resolve(run(opts)).then(function (r) {
+      pill.textContent = r.verdict; pill.style.color = '#05070a'; pill.style.background = VC[r.verdict] || '#8b949e';
+      body.innerHTML = '';
+      var m = r.metrics || {}, t = r.target || {}, mrow = el('div', 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px');
+      [['fps', m.fps], ['long', m.longTasks], ['max ms', m.maxLongMs], ['nodes', m.nodes], ['heap MB', m.heapMB]].forEach(function (kv) {
+        if (kv[1] == null) return;
+        mrow.appendChild(el('span', 'padding:3px 8px;border:1px solid #262a31;border-radius:8px;color:#c9d1d9', kv[0] + ' ' + kv[1]));
+      });
+      body.appendChild(mrow);
+      body.appendChild(el('div', 'color:#8b949e;margin-bottom:4px', 'errors: ' + r.errors.length));
+      if (r.errors.length) {
+        var eb = el('div', 'max-height:130px;overflow:auto;background:#140a0c;border:1px solid #3d1d22;border-radius:8px;padding:8px;color:#ffb4ad;white-space:pre-wrap;margin-bottom:10px');
+        eb.textContent = r.errors.slice(0, 20).join('\n'); body.appendChild(eb);
+      }
+      if (r.shots && r.shots.length) {
+        var strip = el('div', 'display:flex;gap:8px;overflow:auto;padding-bottom:6px');
+        r.shots.forEach(function (s, i) {
+          if (!s.png) return;
+          var im = el('img', 'height:150px;border:1px solid #262a31;border-radius:8px;background:#fff');
+          im.src = s.png; im.alt = 'shot ' + (i + 1); im.title = 't=' + s.t + 'ms'; strip.appendChild(im);
+        });
+        body.appendChild(strip);
+      }
+      var foot = el('div', 'display:flex;align-items:center;gap:8px;margin-top:10px;color:#8b949e;font-size:12px');
+      foot.appendChild(el('span', null, 'seed ' + (t.seed || 1) + ' \u00b7 shots ' + (t.shots || 4) + ' \u00b7 stress ' + (t.stress || 0) + ' \u00b7 ' + r.engine));
+      var again = el('button', 'margin-left:auto;background:#161a20;border:1px solid #262a31;color:#e8edf3;border-radius:8px;padding:5px 10px;cursor:pointer', '\u21bb Re-run');
+      again.addEventListener('click', function () { close(); ui(opts); });
+      foot.appendChild(again); body.appendChild(foot);
+    });
+    return host;
+  }
+
+
+  /* ---------- CLI ---------- */
+  if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+    var fs = require('fs'), path = require('path'), a = process.argv.slice(2), file = a[0];
+    var opt = function (k, d) { var i = a.indexOf('--' + k); return i > -1 ? a[i + 1] : d; };
+    var out = opt('out', './prerun-out');
+    if (!file) { console.log('usage: node darkith-prerunner.js <file> [--shots 5 --ms 800 --stress 40 --out dir]'); process.exit(2); }
+    var f = {}; f[path.basename(file)] = fs.readFileSync(file, 'utf8');
+    run({ engine: 'node', files: f, shots: +opt('shots', 5), interval: +opt('ms', 800), stress: +opt('stress', 30) }).then(function (r) {
+      fs.mkdirSync(out, { recursive: true });
+      r.shots.forEach(function (s, i) { if (s.png) { fs.writeFileSync(path.join(out, 'shot' + (i + 1) + '.png'), Buffer.from(s.png.split(',')[1], 'base64')); s.png = 'shot' + (i + 1) + '.png'; } });
+      fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(r, null, 2));
+      console.log(r.verdict, JSON.stringify(r.metrics), r.errors.length + ' errors ->', out);
+      process.exit(r.ok ? 0 : 1);
+    });
+  }
+
+
+  return { run: run, ui: ui, register: register, transpile: transpile, adapters: AD };
+});
+
+</script>
+<!-- PRERUNNER:START -->
+<script>
+/* ClearanceLoop — the Homeokinetic Debt Ratchet, as a runtime engine.
+ *
+ * One law, the same one tools/source_inspector.py proves on source bytes: health
+ * is a RATE of clearance, not a static tolerance. Debt (friction) is measured per
+ * class; the per-class high-water mark (HWM) may only ever move DOWN; any class
+ * above its HWM is a net addition of debt = a regression = FAIL; debt that does
+ * not flux downward over a delivery window is FORCE-DEGRADED to a blocker; a rise
+ * is permitted only by a recorded, reasoned, time-boxed waiver.
+ *
+ * This is the runtime half of the pair: the pre-runner produces diagnostic truth
+ * (errors, long tasks), ClearanceLoop turns that truth into a clearance verdict and
+ * refuses to let the number settle. `absorb(report)` closes the loop between them.
+ *
+ * Offline, dependency-free, OS-agnostic: it runs in any browser or WebView, and in
+ * Node it degrades to a pure function (no DOM, no storage).
+ *
+ * UMD-ish: browser global `ClearanceLoop`; Node module.
+ */
+;(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports) module.exports = factory(root);
+  else root.ClearanceLoop = factory(root);
+})(typeof self !== 'undefined' ? self : this, function (root) {
+  'use strict';
+
+  var CLASSES = ['switching', 'waiting', 'searching', 'correcting', 'review'];
+  var WINDOW = 5;                 // deliveries of non-clearance before force-degradation
+  var WAIVER = 5;                 // a waiver's budget: it expires after this many deliveries
+  var KEY = 'darkith.clearanceloop.v1';
+  var LAW = 'homeokinesis: debt may only flux downward; stasis is force-degraded';
+
+  /* Resolve the actual global. `root` is the UMD receiver, which is `module.exports`
+     under CommonJS — it carries no localStorage. Using it directly would make storage
+     silently dead everywhere except a browser, so the ratchet would reset on every
+     reload and the law could never hold across sessions. */
+  var G = (typeof globalThis !== 'undefined') ? globalThis : root;
+  var store = function () { try { return G && G.localStorage; } catch (e) { return null; } };
+  /* A waiver is {reason, at, expires}. Older builds stored a bare reason string, which
+     carried no expiry and so granted permanent immunity. Such a record is normalised to
+     an ALREADY-EXPIRED waiver: the operator must re-justify. Failing closed here is the
+     only safe direction — a stale waiver must never silently keep hiding a regression. */
+  function normWaiver(w) {
+    if (!w) return null;
+    if (typeof w === 'string') return { reason: w, at: 0, expires: 0 };
+    if (typeof w === 'object') return { reason: String(w.reason || 'waiver'), at: w.at || 0, expires: w.expires || 0 };
+    return null;
+  }
+  /* Any state that reaches us from storage, a file or another build is untrusted:
+     it may be truncated, hand-edited or written by an older schema. Every field is
+     rebuilt from scratch so a missing or hostile value can only ever cost history,
+     never throw. A ratchet that cannot read its own file must still run. */
+  function normState(st) {
+    var out = { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] }, k, v;
+    if (!st || typeof st !== 'object' || Array.isArray(st)) return out;
+    if (st.state && typeof st.state === 'object') st = st.state;   // wrapped {state, report}
+    for (k in (st.hwm || {})) {
+      if (!Object.prototype.hasOwnProperty.call(st.hwm, k)) continue;
+      v = Number(st.hwm[k]);
+      if (isFinite(v) && v >= 0) out.hwm[k] = Math.floor(v);
+    }
+    for (k in (st.since || {})) {
+      if (!Object.prototype.hasOwnProperty.call(st.since, k)) continue;
+      v = Number(st.since[k]);
+      if (isFinite(v) && v >= 0) out.since[k] = Math.floor(v);
+    }
+    for (k in (st.justified || {})) {
+      if (!Object.prototype.hasOwnProperty.call(st.justified, k)) continue;
+      var nw = normWaiver(st.justified[k]);
+      if (nw) out.justified[k] = nw;
+    }
+    v = Number(st.delivery);
+    out.delivery = isFinite(v) && v > 0 ? Math.floor(v) : 0;
+    if (Array.isArray(st.history)) {
+      out.history = st.history.filter(function (h) {
+        return h && typeof h === 'object' && isFinite(Number(h.score));
+      }).map(function (h) {
+        return { delivery: Number(h.delivery) || 0, now: h.now && typeof h.now === 'object' ? h.now : {}, score: Number(h.score) };
+      }).slice(-40);
+    }
+    return out;
+  }
+  function load() {
+    try {
+      var j = store() && store().getItem(KEY); if (!j) return null;
+      var st = JSON.parse(j);
+      if (!st || typeof st !== 'object') return null;
+      return normState(st);
+    } catch (e) { return null; }
+  }
+  var persist = function (st) { try { var s = store(); if (s) s.setItem(KEY, JSON.stringify(st)); } catch (e) { /* file:// may deny storage; memory still holds */ } };
+  var cp = function (o) { var r = {}; for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) r[k] = o[k]; return r; };
+
+  var state = load() || { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] };
+  var acc = {};                    // friction accrued since the last delivery
+  var hooks = false;
+
+  function bump(cls, n) { acc[cls] = (acc[cls] || 0) + (n == null ? 1 : n); }
+
+  /* Real, offline signals — no self-report. Every hook is guarded: a missing API
+     costs a signal, never an exception. */
+  function install() {
+    if (hooks || typeof window === 'undefined' || !window.addEventListener) return;
+    hooks = true;
+    var d = window.document;
+    window.addEventListener('blur', function () { bump('switching'); });
+    window.addEventListener('focus', function () { bump('switching'); });
+    if (d && d.addEventListener) d.addEventListener('visibilitychange', function () { bump('switching'); });
+    window.addEventListener('hashchange', function () { bump('searching'); });
+    window.addEventListener('error', function () { bump('correcting'); });
+    window.addEventListener('unhandledrejection', function () { bump('correcting'); });
+    try {
+      if (window.PerformanceObserver) {
+        new window.PerformanceObserver(function (l) {
+          var e = l.getEntries(); for (var i = 0; i < e.length; i++) bump('waiting');
+        }).observe({ entryTypes: ['longtask'] });
+      }
+    } catch (e) { /* not all engines expose longtask */ }
+  }
+
+  function sample() { var o = {}; for (var i = 0; i < CLASSES.length; i++) o[CLASSES[i]] = acc[CLASSES[i]] || 0; return o; }
+  function score(now) { var s = 0; for (var i = 0; i < CLASSES.length; i++) s += now[CLASSES[i]] || 0; return s; }
+
+  /* Absorb a pre-runner report: its errors and long tasks are friction debt. */
+  function absorb(report) {
+    if (!report) return acc;
+    var m = report.metrics || {};
+    bump('waiting', m.longTasks || 0);
+    bump('correcting', (report.errors || []).length);
+    return acc;
+  }
+
+  function observe(partial) {
+    if (partial) for (var k in partial) if (Object.prototype.hasOwnProperty.call(partial, k) && CLASSES.indexOf(k) >= 0) acc[k] = partial[k];
+    return acc;
+  }
+
+  /* One delivery: apply the law, advance the HWM, report events + degradations. */
+  function advance(justify) {
+    install();
+    var now = sample();
+    var hwm = cp(state.hwm), since = cp(state.since), justified = cp(state.justified);
+    var events = [], expired = [], i, cls, n, prev, w;
+
+    /* Expire first: a waiver's budget is a fixed number of deliveries, never forever. */
+    for (cls in justified) {
+      if (!Object.prototype.hasOwnProperty.call(justified, cls)) continue;
+      if ((state.delivery || 0) >= justified[cls].expires) {
+        events.push('EXPIRED waiver ' + cls + ' (' + justified[cls].reason + '): the apoptotic exception ended');
+        expired.push(cls);
+        delete justified[cls];
+      }
+    }
+
+    for (i = 0; i < CLASSES.length; i++) {
+      cls = CLASSES[i]; n = now[cls] || 0;
+      if (!(cls in hwm)) { hwm[cls] = n; since[cls] = 0; events.push('seeded ' + cls + ': HWM ' + n); continue; }
+      prev = hwm[cls];
+      if (n < prev) { events.push('cleared ' + cls + ': ' + prev + ' -> ' + n + ' (flux down)'); hwm[cls] = n; since[cls] = 0; }
+      else if (n === prev) { since[cls] = (since[cls] || 0) + 1; }
+      else if (justify) {
+        /* A waiver permits the debt to EXIST for a bounded window; it never raises the
+           HWM. Raising it would loosen the gate permanently, and the ratchet only ever
+           tightens. The class keeps reporting above its HWM, so the moment the waiver
+           expires the debt is a plain regression again — nothing was ever forgiven. */
+        justified[cls] = { reason: String(justify), at: (state.delivery || 0), expires: (state.delivery || 0) + WAIVER };
+        events.push('JUSTIFIED waiver ' + cls + ': ' + prev + ' -> ' + n + ' for ' + WAIVER + ' deliveries (' + justify + '); HWM stays ' + prev);
+        since[cls] = 0;
+      }
+      /* else: net addition left in place; the HWM is NOT raised and the verdict fails. */
+    }
+    for (cls in hwm) {
+      if (Object.prototype.hasOwnProperty.call(hwm, cls) && (now[cls] || 0) === 0 && hwm[cls] !== 0) {
+        events.push('cleared ' + cls + ': ' + hwm[cls] + ' -> 0 (flux down)'); hwm[cls] = 0; since[cls] = 0;
+      }
+    }
+    var degraded = [];
+    for (cls in since) {
+      if (Object.prototype.hasOwnProperty.call(since, cls) && (now[cls] || 0) > 0 && since[cls] >= WINDOW && !justified[cls]) degraded.push(cls);
+    }
+
+    var delivery = (state.delivery || 0) + 1;
+    state = {
+      hwm: hwm, justified: justified, since: since, delivery: delivery,
+      history: (state.history || []).concat([{ delivery: delivery, now: now, score: score(now) }]).slice(-40)
+    };
+    acc = {}; persist(state);
+    return { events: events, degraded: degraded, expired: expired, now: now, delivery: delivery };
+  }
+
+  function last() { var h = state.history || []; return h.length ? h[h.length - 1] : null; }
+  function flux() { var h = state.history || []; if (h.length < 2) return 0; return h[h.length - 1].score - h[h.length - 2].score; }
+
+  function report() {
+    var now = (last() && last().now) || sample();
+    var classes = [], outstanding = 0, i, cls, n, h, since, status, w, left;
+    for (i = 0; i < CLASSES.length; i++) {
+      cls = CLASSES[i]; n = now[cls] || 0; h = (state.hwm || {})[cls] == null ? n : state.hwm[cls]; since = (state.since || {})[cls] || 0;
+      w = (state.justified || {})[cls] || null;
+      /* A waiver that has outlived its budget is dead even before the next advance()
+         sweeps it, so the report can never show a live waiver past its expiry. */
+      if (w && (state.delivery || 0) >= w.expires) w = null;
+      left = w ? Math.max(0, w.expires - (state.delivery || 0)) : 0;
+      status = 'clear';
+      if (n > h && !w) status = 'regression';
+      else if (n > 0 && since >= WINDOW && !w) status = 'stale';
+      else if (n > 0) status = w ? 'waived' : 'tracked';
+      if (n > 0) outstanding += n;
+      classes.push({ cls: cls, now: n, hwm: h, since: since, waived: !!w,
+                     reason: w ? w.reason : null, expires: w ? w.expires : null, remaining: left, status: status });
+    }
+    var regress = [], stale = [];
+    for (i = 0; i < classes.length; i++) { if (classes[i].status === 'regression') regress.push(classes[i].cls); if (classes[i].status === 'stale') stale.push(classes[i].cls); }
+    var v, reason;
+    if (regress.length) { v = 'FAIL'; reason = 'net addition of debt: ' + regress.join(', '); }
+    else if (stale.length) { v = 'FAIL'; reason = 'stasis force-degraded to blocker: ' + stale.join(', '); }
+    else if (outstanding > 0 && flux() === 0) { v = 'WARN'; reason = 'stasis: debt outstanding and not clearing'; }
+    else { v = 'PASS'; reason = outstanding ? 'debt fluxing down' : 'no friction debt'; }
+    return { law: LAW, verdict: v, reason: reason, flux: flux(), delivery: state.delivery || 0, outstanding: outstanding, window: WINDOW, classes: classes };
+  }
+
+  function reset() { state = { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] }; acc = {}; persist(state); return state; }
+
+  /* Adopt a previously exported state. This is how a ratchet travels between machines
+     and how the in-app self-test exercises the law without destroying live history.
+     Unknown/legacy waiver shapes normalise through the same fail-closed path as load(). */
+  function restore(st) {
+    if (typeof st === 'string') { try { st = JSON.parse(st); } catch (e) { return false; } }
+    if (!st || typeof st !== 'object') return false;
+    state = normState(st);
+    acc = {}; persist(state);
+    return true;
+  }
+
+  /* ---------- UI: a self-contained, sleek ratchet report ---------- */
+  var VC = { PASS: '#3fb950', WARN: '#d29922', FAIL: '#f85149' };
+  function el(tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; }
+  function ui() {
+    if (typeof document === 'undefined') return report();
+    var r = report();
+    var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    var card = el('div', 'width:min(600px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    host.appendChild(card); document.body.appendChild(host);
+    var close = function () { if (host.parentNode) host.remove(); };
+    host.addEventListener('click', function (e) { if (e.target === host) close(); });
+    var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
+    head.appendChild(el('span', 'color:#7ee787;font-weight:700', '\u25c9 ClearanceLoop'));
+    head.appendChild(el('span', 'padding:2px 9px;border-radius:999px;font-weight:700;font-size:12px;color:#05070a;background:' + (VC[r.verdict] || '#8b949e'), r.verdict));
+    var x = el('button', 'margin-left:auto;background:transparent;border:0;color:#8b949e;font-size:16px;cursor:pointer', '\u2715');
+    x.addEventListener('click', close); head.appendChild(x); card.appendChild(head);
+    var body = el('div', 'padding:12px 14px'); card.appendChild(body);
+    body.appendChild(el('div', 'color:#8b949e;margin-bottom:10px', r.reason + ' \u00b7 flux ' + r.flux + ' \u00b7 delivery ' + r.delivery));
+    var tbl = el('div', 'display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr;gap:4px 8px;font-size:12px');
+    ['class', 'now', 'hwm', 'stasis'].forEach(function (h) { tbl.appendChild(el('div', 'color:#8b949e', h)); });
+    r.classes.forEach(function (c) {
+      var col = c.status === 'regression' ? '#ffb4ad' : c.status === 'stale' ? '#ffd28a' : '#c9d1d9';
+      tbl.appendChild(el('div', 'color:' + col, c.cls + (c.waived ? ' (waived)' : '')));
+      tbl.appendChild(el('div', 'color:' + col, String(c.now)));
+      tbl.appendChild(el('div', 'color:#8b949e', String(c.hwm)));
+      tbl.appendChild(el('div', 'color:#8b949e', c.since + '/' + r.window));
+    });
+    body.appendChild(tbl);
+    var foot = el('div', 'display:flex;align-items:center;gap:8px;margin-top:12px');
+    var adv = el('button', 'background:#161a20;border:1px solid #262a31;color:#e8edf3;border-radius:8px;padding:6px 12px;cursor:pointer', 'Advance delivery');
+    adv.addEventListener('click', function () { advance(); close(); ui(); });
+    var jst = el('button', 'background:#161a20;border:1px solid #262a31;color:#e8edf3;border-radius:8px;padding:6px 12px;cursor:pointer', 'Waive (justify)');
+    jst.addEventListener('click', function () {
+      var w = (root.prompt && root.prompt('Reason for the waiver (an apoptotic exception):')) || 'manual waiver';
+      advance(w); close(); ui();
+    });
+    var rst = el('button', 'margin-left:auto;background:transparent;border:1px solid #262a31;color:#8b949e;border-radius:8px;padding:6px 12px;cursor:pointer', 'Reset');
+    rst.addEventListener('click', function () { reset(); close(); ui(); });
+    foot.appendChild(adv); foot.appendChild(jst); foot.appendChild(rst); body.appendChild(foot);
+    return host;
+  }
+
+  return {
+    LAW: LAW, CLASSES: CLASSES, WINDOW: WINDOW, WAIVER: WAIVER,
+    install: install, observe: observe, absorb: absorb, advance: advance,
+    flux: flux, report: report, verdict: function () { return report().verdict; },
+    state: function () { return state; }, reset: reset, restore: restore, ui: ui
+  };
+});
+
+</script>
+<!-- PRERUNNER:END -->
+<!-- PRERUN-SHIM:START -->
+<script>
+(function () {
+  "use strict";
+  function ready(fn) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+    else fn();
+  }
+  var DEMO = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+    + '<body style="margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0b0c0e;color:#e8edf3;padding:18px">'
+    + '<h3 style="color:#ff8a3d;margin:0 0 6px">pre-runner self-check</h3>'
+    + '<p id="s" style="color:#8b949e">booting\u2026</p>'
+    + '<button id="b" style="font:inherit;padding:9px 14px;border-radius:10px;border:1px solid #2a2e35;background:#161a20;color:#e8edf3;cursor:pointer">tap me</button>'
+    + '<script>var n=0,b=document.getElementById("b"),s=document.getElementById("s");'
+    + 'b.onclick=function(){s.textContent="tapped "+(++n)+" time"+(n===1?"":"s")};s.textContent="ready \u2014 tap the button";'
+    + '<' + '/script>';
+  function editorText() {
+    var ids = ["input", "pasteBox", "payload-editor"];
+    for (var i = 0; i < ids.length; i++) { var e = document.getElementById(ids[i]); if (e && e.value && e.value.trim()) return e.value; }
+    return "";
+  }
+  function target(extra) {
+    var t = editorText();
+    var looksHtml = /<\s*(!doctype|html|body|div|script|style|button|canvas|svg|table|form)/i.test(t);
+    var files = looksHtml ? { "surface.html": t } : { "selfcheck.html": DEMO };
+    var o = { files: files, entry: Object.keys(files)[0], shots: 4, interval: 500, stress: 20, seed: 1 };
+    if (extra) for (var k in extra) if (Object.prototype.hasOwnProperty.call(extra, k)) o[k] = extra[k];
+    return o;
+  }
+  function api() {
+    if (!window.DarkithPreRunner) return null;
+    if (!window.DarkithPrerun) {
+      window.DarkithPrerun = {
+        run: function (o) { return window.DarkithPreRunner.run(target(o)); },
+        ui: function (o) { return window.DarkithPreRunner.ui(target(o)); },
+        target: target, demo: DEMO
+      };
+    }
+    return window.DarkithPrerun;
+  }
+  function clApi() {
+    if (!window.ClearanceLoop) return null;
+    if (!window.DarkithCL) {
+      window.ClearanceLoop.install();
+      window.DarkithCL = {
+        /* Advance the ratchet one delivery, folding in the friction the last
+           pre-run exposed (its errors + long tasks) before the law is applied. */
+        advance: function (justify) {
+          var last = window.__darkithLastRun;
+          if (last) window.ClearanceLoop.absorb(last);
+          var r = window.ClearanceLoop.advance(justify);
+          if (window.__darkithToast) window.__darkithToast('ClearanceLoop: ' + window.ClearanceLoop.verdict() + ' (flux ' + window.ClearanceLoop.flux() + ')');
+          return r;
+        },
+        ui: function () { return window.ClearanceLoop.ui(); },
+        report: function () { return window.ClearanceLoop.report(); }
+      };
+    }
+    return window.DarkithCL;
+  }
+  function fab() {
+    if (document.getElementById("prerun-fab")) return;
+    /* A surface that IS the ratchet does not need a floating launcher onto itself. */
+    if (document.documentElement.hasAttribute("data-no-fab")) return;
+    var b = document.createElement("button");
+    b.id = "prerun-fab"; b.type = "button";
+    b.title = "Pre-runner \u2014 race the race before the race";
+    b.setAttribute("aria-label", "Pre-runner");
+    b.textContent = "\u25b6";
+    var SIZE = 44, M = 12;
+    b.style.cssText = "position:fixed;z-index:2147483000;width:" + SIZE + "px;height:" + SIZE + "px;border-radius:50%;" +
+      "border:1px solid #2a2e35;background:#14171c;color:#ff8a3d;font-size:18px;line-height:1;cursor:pointer;" +
+      "box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:.55;-webkit-tap-highlight-color:transparent;touch-action:none;" +
+      "right:" + M + "px;bottom:" + M + "px;transition:opacity .18s ease";
+    b.addEventListener("mouseenter", function () { b.style.opacity = "1"; });
+    b.addEventListener("mouseleave", function () { b.style.opacity = ".55"; });
+    b.addEventListener("focus", function () { b.style.opacity = "1"; });
+    b.addEventListener("blur", function () { b.style.opacity = ".55"; });
+    b.addEventListener("click", function () { if (!b.__dragged) { var p = api(); if (p) p.ui(); } b.__dragged = false; });
+
+    /* The launcher must never sit on a real control. Some surfaces put their
+       primary button in this corner (omega's Send, the studio belt), so we move
+       out of any control's way, and let the Operator drag it anywhere. */
+    function overlapArea(el, f) {
+      var r = el.getBoundingClientRect();
+      if (r.width <= 0 || r.height <= 0) return 0;
+      var ox = Math.max(0, Math.min(r.right, f.right) - Math.max(r.left, f.left));
+      var oy = Math.max(0, Math.min(r.bottom, f.bottom) - Math.max(r.top, f.top));
+      return ox * oy;
+    }
+    function scoreAt(left, top) {
+      var f = { left: left, top: top, right: left + SIZE, bottom: top + SIZE };
+      /* Actions (buttons/links) must never be covered — that is what broke omega's
+         Send. Text fields are content, and a floating launcher over content is the
+         normal FAB pattern, so they are weighted low. */
+      var actions = document.querySelectorAll("button,a[href],[role=button],input[type=submit],input[type=button]");
+      var fields = document.querySelectorAll("input,textarea,select,[contenteditable=true]");
+      var s = 0, i;
+      for (i = 0; i < actions.length; i++) { if (actions[i] !== b && !b.contains(actions[i])) s += 1000 * overlapArea(actions[i], f); }
+      for (i = 0; i < fields.length; i++) { if (fields[i] !== b && !b.contains(fields[i])) s += overlapArea(fields[i], f); }
+      return s;
+    }
+    function setPos(left, top) {
+      b.style.left = left + "px"; b.style.top = top + "px";
+      b.style.right = "auto"; b.style.bottom = "auto";
+    }
+    function place() {
+      if (b.__moved) return;
+      var w = window.innerWidth, h = window.innerHeight;
+      var xs = [w - SIZE - M, M];
+      var ys = [h - SIZE - M, M, Math.round(h * 0.5 - SIZE / 2), Math.round(h * 0.72), Math.round(h * 0.28)];
+      var best = null, bestScore = Infinity;
+      for (var xi = 0; xi < xs.length; xi++) {
+        for (var yi = 0; yi < ys.length; yi++) {
+          var s = scoreAt(xs[xi], ys[yi]);
+          if (s === 0) { setPos(xs[xi], ys[yi]); return; }
+          if (s < bestScore) { bestScore = s; best = [xs[xi], ys[yi]]; }
+        }
+      }
+      if (best) setPos(best[0], best[1]);
+    }
+
+    var dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+    function down(e) {
+      var t = e.touches ? e.touches[0] : e;
+      var f = b.getBoundingClientRect();
+      dragging = true; moved = false; b.__dragged = false; sx = t.clientX; sy = t.clientY; ox = f.left; oy = f.top;
+      b.style.left = f.left + "px"; b.style.top = f.top + "px"; b.style.right = "auto"; b.style.bottom = "auto";
+      b.style.cursor = "grabbing";
+      e.preventDefault();
+    }
+    function move(e) {
+      if (!dragging) return;
+      var t = e.touches ? e.touches[0] : e;
+      var nx = ox + (t.clientX - sx), ny = oy + (t.clientY - sy);
+      nx = Math.max(4, Math.min(window.innerWidth - SIZE - 4, nx));
+      ny = Math.max(4, Math.min(window.innerHeight - SIZE - 4, ny));
+      b.style.left = nx + "px"; b.style.top = ny + "px";
+      if (Math.abs(t.clientX - sx) > 3 || Math.abs(t.clientY - sy) > 3) { moved = true; b.__dragged = true; }
+      e.preventDefault();
+    }
+    function up() { if (!dragging) return; dragging = false; b.style.cursor = "pointer"; b.__moved = moved || b.__moved; }
+    b.addEventListener("mousedown", down); b.addEventListener("touchstart", down, { passive: false });
+    window.addEventListener("mousemove", move, { passive: false }); window.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("mouseup", up); window.addEventListener("touchend", up);
+
+    (document.body || document.documentElement).appendChild(b);
+    place();
+    setTimeout(place, 300); setTimeout(place, 1200);
+    window.addEventListener("resize", function () { b.__moved = false; place(); });
+    window.addEventListener("scroll", function () { if (!b.__moved) place(); }, { passive: true });
+  }
+  function register() {
+    var p = api(), c = clApi(); fab();
+    /* Remember the last pre-run report so ClearanceLoop can absorb its friction. */
+    if (p && !window.__prerunWrapped) {
+      window.__prerunWrapped = true;
+      var orig = p.run;
+      p.run = function (o) { return Promise.resolve(orig(o)).then(function (r) { window.__darkithLastRun = r; return r; }); };
+    }
+    if (window.Omega && window.Omega.BUILTINS) {
+      if (!window.Omega.BUILTINS.prerun) window.Omega.BUILTINS.prerun = function () { if (p) p.ui(); return "(pre-running \u2014 see the overlay)"; };
+      if (!window.Omega.BUILTINS.clearance) window.Omega.BUILTINS.clearance = function () { if (c) c.ui(); return null; };
+    }
+    if (typeof window.CMD_REGISTRY === "object" && window.CMD_REGISTRY) {
+      if (!window.CMD_REGISTRY.prerun) window.CMD_REGISTRY.prerun = { icon: "\u25b6", label: "Pre-run", group: "Audit" };
+      if (!window.CMD_REGISTRY.clearance) window.CMD_REGISTRY.clearance = { icon: "\u25c9", label: "ClearanceLoop", group: "Audit" };
+    }
+    if (typeof window.dispatchCommand === "function" && !window.__prerunPatched) {
+      window.__prerunPatched = true;
+      var origD = window.dispatchCommand;
+      window.dispatchCommand = function (cmd) {
+        if (cmd === "prerun") { if (p) p.ui(); return; }
+        if (cmd === "clearance") { if (c) c.ui(); return; }
+        return origD.apply(this, arguments);
+      };
+    }
+  }
+  ready(function () { setTimeout(register, 0); });
+  window.DarkithPrerunReady = register;
+})();
+</script>
+<!-- PRERUN-SHIM:END -->
+<script>
+/* ClearanceLoop app shell. All state lives in window.ClearanceLoop (injected above). */
+(function () {
+  "use strict";
+  var CL = window.ClearanceLoop;
+  if (!CL || typeof CL.report !== "function") {
+    document.body.innerHTML =
+      '<div style="padding:24px;font:14px system-ui;color:#f87171">' +
+      'ClearanceLoop engine did not load. Re-run <code>python3 build/integrate-engines.py</code> ' +
+      'to inject it into this file.</div>';
+    return;
+  }
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  var CLASSES = (CL && CL.CLASSES) || ["switching", "waiting", "searching", "correcting", "review"];
+  var WINDOW = (CL && CL.WINDOW) || 5;
+  var WAIVER = (CL && CL.WAIVER) || 5;
+
+  /* ---------- toast ---------- */
+  var toastEl = $("#toast"), toastT = null;
+  function toast(msg, kind) {
+    toastEl.textContent = msg;
+    toastEl.className = "show" + (kind ? " " + kind : "");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.className = ""; }, 2600);
+  }
+
+  /* ---------- theme ---------- */
+  var THEME_KEY = "darkith.clearanceloop.theme";
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* file:// may deny storage */ }
+    renderSpark();
+  }
+  (function initTheme() {
+    var t = null;
+    try { t = localStorage.getItem(THEME_KEY); } catch (e) { /* ignore */ }
+    if (!t) t = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+  $("#themeBtn").addEventListener("click", function () {
+    var cur = document.documentElement.getAttribute("data-theme");
+    applyTheme(cur === "dark" ? "light" : "dark");
+  });
+
+  /* ---------- tabs ---------- */
+  var tabs = $$("nav.tabs button");
+  function show(tab) {
+    tabs.forEach(function (b) {
+      var on = b.dataset.tab === tab;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      var p = document.getElementById("p-" + b.dataset.tab);
+      if (p) p.classList.toggle("active", on);
+    });
+    if (tab === "report") renderReport();
+    if (tab === "ratchet") { renderHist(); renderSpark(); }
+    if (tab === "waivers") renderWaivers();
+    if (tab === "observe") renderState();
+    try { localStorage.setItem("darkith.clearanceloop.tab", tab); } catch (e) { /* ignore */ }
+  }
+  tabs.forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.tab); }); });
+
+  /* ---------- observe inputs ---------- */
+  var inputs = {};
+  CLASSES.forEach(function (c) {
+    var l = document.createElement("label");
+    l.className = "f"; l.style.flex = "1"; l.style.minWidth = "132px";
+    l.textContent = c;
+    var i = document.createElement("input");
+    i.type = "number"; i.min = "0"; i.step = "1"; i.value = "0";
+    i.id = "in-" + c; i.setAttribute("inputmode", "numeric");
+    i.setAttribute("aria-label", c + " friction count");
+    l.appendChild(i);
+    $("#observeInputs").appendChild(l);
+    inputs[c] = i;
+  });
+
+  function readInputs() {
+    var o = {};
+    CLASSES.forEach(function (c) {
+      var v = parseInt(inputs[c].value, 10);
+      o[c] = isFinite(v) && v > 0 ? v : 0;
+    });
+    return o;
+  }
+  function writeInputs(o) { CLASSES.forEach(function (c) { inputs[c].value = String((o && o[c]) || 0); }); }
+
+  $("#observeSeed").addEventListener("click", function () {
+    var o = readInputs();
+    var total = CLASSES.reduce(function (s, c) { return s + o[c]; }, 0);
+    if (total === 0) { toast("Nothing to observe — every class is 0", "bad"); return; }
+    CL.observe(o);
+    toast("Observed " + total + " friction. Now advance a delivery.", "ok");
+    renderAll();
+    show("ratchet");
+  });
+  $("#observeClear").addEventListener("click", function () { writeInputs({}); renderState(); });
+  $("#observeDemo").addEventListener("click", function () {
+    writeInputs({ switching: 7, waiting: 4, searching: 5, correcting: 3, review: 6 });
+    toast("Demo delivery loaded");
+    renderState();
+  });
+
+  /* ---------- live signals ---------- */
+  var live = { switching: 0, waiting: 0, searching: 0, correcting: 0, review: 0 };
+  var liveTotal = 0;
+  function bumpLive(c) {
+    live[c] = (live[c] || 0) + 1; liveTotal++;
+    renderLive();
+  }
+  (function wireLive() {
+    window.addEventListener("blur", function () { bumpLive("switching"); });
+    window.addEventListener("focus", function () { bumpLive("switching"); });
+    document.addEventListener("visibilitychange", function () { bumpLive("switching"); });
+    window.addEventListener("hashchange", function () { bumpLive("searching"); });
+    window.addEventListener("error", function () { bumpLive("correcting"); });
+    window.addEventListener("unhandledrejection", function () { bumpLive("correcting"); });
+    try {
+      if (window.PerformanceObserver) {
+        new window.PerformanceObserver(function (l) {
+          bumpLive("waiting"); bumpLive("waiting");
+          void l;
+        }).observe({ entryTypes: ["longtask"] });
+      }
+    } catch (e) { /* longtask is not exposed everywhere; a missing signal is not an error */ }
+  })();
+
+  function renderLive() {
+    $("#liveCount").textContent = String(liveTotal);
+    var host = $("#liveClasses");
+    host.innerHTML = "";
+    CLASSES.forEach(function (c) {
+      var d = document.createElement("div");
+      d.className = "cls"; d.dataset.s = live[c] > 0 ? "tracked" : "clear";
+      d.innerHTML = '<div class="cls-head"><span class="cls-name">' + c +
+        '</span><span class="badge">' + live[c] + "</span></div>" +
+        '<div class="cls-nums"><span>live <b>' + live[c] + "</b></span></div>";
+      host.appendChild(d);
+    });
+  }
+
+  $("#liveAbsorb").addEventListener("click", function () {
+    if (liveTotal === 0) { toast("No live signals captured yet", "bad"); return; }
+    CLASSES.forEach(function (c) {
+      var cur = parseInt(inputs[c].value, 10) || 0;
+      inputs[c].value = String(cur + live[c]);
+    });
+    toast("Absorbed " + liveTotal + " live signals into the inputs", "ok");
+    renderState();
+  });
+
+  /* ---------- rendering ---------- */
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (m) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m];
+    });
+  }
+
+  function renderVerdict() {
+    var r = CL.report();
+    var v = $("#verdict");
+    v.dataset.v = r.verdict;
+    $("#vPill").textContent = r.verdict;
+    $("#vReason").textContent = r.reason;
+    $("#vLaw").textContent = r.outstanding
+      ? "health is a rate of clearance — outstanding " + r.outstanding + " across " + r.classes.filter(function (c) { return c.now > 0; }).length + " class(es)"
+      : "health is a rate of clearance, not a static tolerance";
+    var f = $("#vFlux");
+    f.textContent = (r.flux > 0 ? "+" : "") + r.flux;
+    f.className = "flux" + (r.flux < 0 ? " neg" : (r.flux > 0 ? " pos" : ""));
+    $("#vDelivery").textContent = String(r.delivery);
+    $("#vOut").textContent = String(r.outstanding);
+  }
+
+  function renderState() {
+    var r = CL.report();
+    var host = $("#stateClasses");
+    host.innerHTML = "";
+    r.classes.forEach(function (c) {
+      var scale = Math.max(c.hwm, c.now, 1);
+      var pct = Math.min(100, Math.round((c.now / scale) * 100));
+      var d = document.createElement("div");
+      d.className = "cls"; d.dataset.s = c.status;
+      var note = "";
+      if (c.waived) note = '<div class="waiver-note">⚑ ' + esc(c.reason) + " · " + c.remaining + " of " + WAIVER + " deliveries left</div>";
+      else if (c.status === "stale") note = '<div class="waiver-note" style="color:var(--warn)">stagnant ' + c.since + "/" + WINDOW + " deliveries — will degrade</div>";
+      else if (c.status === "regression") note = '<div class="waiver-note" style="color:var(--bad)">above the mark by ' + (c.now - c.hwm) + "</div>";
+      d.innerHTML =
+        '<div class="cls-head"><span class="cls-name">' + esc(c.cls) + '</span><span class="badge">' + esc(c.status) + "</span></div>" +
+        '<div class="gauge"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="cls-nums"><span>now <b>' + c.now + "</b></span><span>mark <b>" + c.hwm + "</b></span><span>stasis <b>" + c.since + "</b></span></div>" +
+        note;
+      host.appendChild(d);
+    });
+  }
+
+  function renderEvents(lastRun) {
+    var ul = $("#events");
+    ul.innerHTML = "";
+    var ev = (lastRun && lastRun.events) || [];
+    if (!ev.length) { ul.innerHTML = '<li class="info" style="border-color:var(--line-2)">No delivery advanced yet in this session.</li>'; return; }
+    ev.forEach(function (e) {
+      var li = document.createElement("li");
+      li.textContent = e;
+      if (/EXPIRED/.test(e)) li.className = "warn";
+      else if (/JUSTIFIED/.test(e)) li.className = "info";
+      else if (/cleared|seeded/.test(e)) li.className = "ok";
+      else if (/degraded|FAIL/.test(e)) li.className = "bad";
+      ul.appendChild(li);
+    });
+    var dg = (lastRun && lastRun.degraded) || [];
+    dg.forEach(function (c) {
+      var li = document.createElement("li");
+      li.className = "bad";
+      li.textContent = "FORCE-DEGRADED " + c + ": stasis crossed the " + WINDOW + "-delivery window";
+      ul.appendChild(li);
+    });
+  }
+
+  function renderHist() {
+    var st = CL.state() || {};
+    var h = (st.history || []).slice().reverse();
+    var tb = $("#histTable tbody");
+    tb.innerHTML = "";
+    if (!h.length) {
+      tb.innerHTML = '<tr><td colspan="4" style="color:var(--fg-3);text-align:center;padding:14px">No deliveries yet.</td></tr>';
+      return;
+    }
+    h.forEach(function (row, i) {
+      var prev = h[i + 1];
+      var delta = prev ? row.score - prev.score : 0;
+      var top = "—", topN = -1;
+      for (var k in row.now) if (Object.prototype.hasOwnProperty.call(row.now, k) && row.now[k] > topN) { topN = row.now[k]; top = k; }
+      var tr = document.createElement("tr");
+      var dcol = delta < 0 ? "var(--flux-ok)" : (delta > 0 ? "var(--flux-bad)" : "var(--fg-3)");
+      tr.innerHTML = "<td><b>#" + row.delivery + "</b></td><td>" + row.score + "</td>" +
+        '<td style="color:' + dcol + '">' + (delta > 0 ? "+" : "") + delta + "</td><td>" + (topN > 0 ? esc(top) + " " + topN : "—") + "</td>";
+      tb.appendChild(tr);
+    });
+  }
+
+  function renderSpark() {
+    var cv = $("#spark");
+    if (!cv || !cv.getContext) return;
+    var st = CL.state() || {};
+    var h = st.history || [];
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = cv.clientWidth || 600, H = 76;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    var g = cv.getContext("2d");
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, W, H);
+    if (h.length < 2) {
+      g.fillStyle = "rgba(140,150,170,.55)";
+      g.font = "11px ui-monospace,Menlo,monospace";
+      g.textAlign = "center";
+      g.fillText("advance two deliveries to see the clearance curve", W / 2, H / 2 + 4);
+      return;
+    }
+    var max = 1;
+    h.forEach(function (r) { if (r.score > max) max = r.score; });
+    var pad = 8, iw = W - pad * 2, ih = H - pad * 2;
+    var ok = getComputedStyle(document.documentElement).getPropertyValue("--flux-ok").trim() || "#34d399";
+    var bad = getComputedStyle(document.documentElement).getPropertyValue("--flux-bad").trim() || "#f87171";
+    var accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#74a0ff";
+    function pt(i, v) { return [pad + (iw * i) / (h.length - 1), pad + ih - (ih * v) / max]; }
+    g.beginPath();
+    h.forEach(function (r, i) { var p = pt(i, r.score); i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); });
+    g.strokeStyle = accent; g.lineWidth = 2; g.lineJoin = "round"; g.stroke();
+    g.lineTo(pad + iw, H - pad); g.lineTo(pad, H - pad); g.closePath();
+    var grad = g.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, "rgba(116,160,255,.28)"); grad.addColorStop(1, "rgba(116,160,255,0)");
+    g.fillStyle = grad; g.fill();
+    h.forEach(function (r, i) {
+      var p = pt(i, r.score);
+      var prev = h[i - 1];
+      g.beginPath(); g.arc(p[0], p[1], 2.6, 0, Math.PI * 2);
+      g.fillStyle = !prev ? accent : (r.score < prev.score ? ok : (r.score > prev.score ? bad : accent));
+      g.fill();
+    });
+  }
+
+  function renderWaivers() {
+    var r = CL.report();
+    var live_ = r.classes.filter(function (c) { return c.waived; });
+    var host = $("#waiverList");
+    if (!live_.length) {
+      host.innerHTML = '<div class="empty">No live waivers. Every class is bound by its mark.</div>';
+      return;
+    }
+    host.innerHTML = "";
+    live_.forEach(function (c) {
+      var d = document.createElement("div");
+      d.className = "cls"; d.dataset.s = "waived";
+      d.style.marginBottom = "10px";
+      d.innerHTML =
+        '<div class="cls-head"><span class="cls-name">' + esc(c.cls) + '</span><span class="badge">waived</span></div>' +
+        '<div class="waiver-note">⚑ ' + esc(c.reason) + "</div>" +
+        '<div class="cls-nums"><span>now <b>' + c.now + "</b></span><span>mark <b>" + c.hwm + "</b></span>" +
+        "<span>expires in <b>" + c.remaining + "</b> deliveries</span></div>";
+      host.appendChild(d);
+    });
+  }
+
+  function renderReport() {
+    var r = CL.report();
+    var st = CL.state() || {};
+    var out = {
+      law: r.law, verdict: r.verdict, reason: r.reason,
+      flux: r.flux, delivery: r.delivery, outstanding: r.outstanding, window: r.window,
+      waiverBudget: WAIVER,
+      classes: r.classes.map(function (c) {
+        return { cls: c.cls, now: c.now, hwm: c.hwm, since: c.since, status: c.status,
+                 waived: c.waived, reason: c.reason, remaining: c.remaining };
+      }),
+      history: (st.history || []).slice(-12)
+    };
+    $("#reportOut").textContent = JSON.stringify(out, null, 2);
+    return out;
+  }
+
+  function renderAll(lastRun) {
+    renderVerdict(); renderState(); renderHist(); renderSpark(); renderWaivers(); renderLive();
+    if (lastRun) renderEvents(lastRun);
+    else renderEvents(window.__clLast);
+  }
+
+  /* ---------- advance ---------- */
+  $("#advanceBtn").addEventListener("click", function () {
+    var j = ($("#advanceJustify").value || "").trim();
+    var r = CL.advance(j || undefined);
+    window.__clLast = r;
+    if (j) $("#advanceJustify").value = "";
+    renderAll(r);
+    var v = CL.report();
+    var kind = v.verdict === "PASS" ? "ok" : (v.verdict === "FAIL" ? "bad" : "");
+    toast("Delivery #" + r.delivery + " — " + v.verdict + (r.expired.length ? " · waiver expired" : ""), kind);
+  });
+
+  /* ---------- export / import ---------- */
+  $("#exportBtn").addEventListener("click", function () {
+    var r = CL.report();
+    var st = CL.state() || {};
+    var payload = { _law: r.law, _exported: new Date().toISOString(), state: st, report: renderReport() };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "clearanceloop-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast("Ratchet exported", "ok");
+  });
+
+  $("#importBtn").addEventListener("click", function () { $("#importFile").click(); });
+  $("#importFile").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      var ok = false;
+      try {
+        var j = JSON.parse(String(rd.result));
+        var st = j && j.state ? j.state : j;
+        ok = CL.restore(st);
+      } catch (err) { ok = false; }
+      if (ok) { toast("Ratchet imported", "ok"); renderAll(); show("observe"); }
+      else toast("Not a ClearanceLoop state file", "bad");
+      e.target.value = "";
+    };
+    rd.onerror = function () { toast("Could not read that file", "bad"); e.target.value = ""; };
+    rd.readAsText(f);
+  });
+
+  /* ---------- report copy / download ---------- */
+  $("#copyReport").addEventListener("click", function () {
+    var txt = $("#reportOut").textContent || "";
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function () { toast("Report copied", "ok"); },
+                                               function () { toast("Copy blocked — select the text instead", "bad"); });
+    } else {
+      toast("Copy unavailable here — select the text instead", "bad");
+    }
+  });
+  $("#dlReport").addEventListener("click", function () {
+    var txt = $("#reportOut").textContent || "";
+    var blob = new Blob([txt], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "clearanceloop-report.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast("Report downloaded", "ok");
+  });
+
+  /* ---------- self-test ---------- */
+  /* Every assertion runs against a throwaway state that is restored afterwards, so a
+     self-test can never damage the operator's real ratchet history. */
+  function runSelftest() {
+    var saved = JSON.parse(JSON.stringify(CL.state() || {}));
+    var results = [];
+    function t(name, fn) {
+      try { fn(); results.push({ ok: true, name: name, detail: "" }); }
+      catch (e) { results.push({ ok: false, name: name, detail: String(e && e.message || e) }); }
+    }
+    function eq(a, b, msg) { if (a !== b) throw new Error((msg || "expected") + " " + JSON.stringify(b) + ", got " + JSON.stringify(a)); }
+    var find = function (r, c) { return r.classes.filter(function (x) { return x.cls === c; })[0]; };
+
+    try {
+      t("seed: first delivery does not fail", function () {
+        CL.reset(); CL.observe({ switching: 5, correcting: 3 }); CL.advance();
+        if (CL.report().verdict === "FAIL") throw new Error("seed failed");
+        eq(find(CL.report(), "switching").hwm, 5, "seeded HWM");
+      });
+      t("clearance: less debt ratchets the mark down", function () {
+        CL.observe({ switching: 2, correcting: 0 }); CL.advance();
+        eq(find(CL.report(), "switching").hwm, 2, "HWM after clearance");
+      });
+      t("regression: debt above the mark fails", function () {
+        CL.observe({ switching: 4 }); CL.advance();
+        eq(CL.report().verdict, "FAIL", "verdict");
+        eq(find(CL.report(), "switching").hwm, 2, "mark must not rise");
+      });
+      t("waiver: permits debt without raising the mark", function () {
+        CL.reset(); CL.observe({ waiting: 3 }); CL.advance();
+        CL.observe({ waiting: 6 }); CL.advance("selftest spike");
+        var c = find(CL.report(), "waiting");
+        if (!c.waived) throw new Error("waiver not recorded");
+        eq(c.hwm, 3, "mark must stay");
+        if (CL.report().verdict === "FAIL") throw new Error("waived debt must not fail");
+      });
+      t("time-box: the waiver expires and debt fails again", function () {
+        for (var i = 0; i < WAIVER; i++) { CL.observe({ waiting: 6 }); CL.advance(); }
+        var c = find(CL.report(), "waiting");
+        eq(c.waived, false, "waiver must expire");
+        eq(CL.report().verdict, "FAIL", "verdict after expiry");
+        eq(c.hwm, 3, "mark never rose");
+      });
+      t("stasis: stagnant debt is force-degraded", function () {
+        CL.reset(); CL.observe({ searching: 2 }); CL.advance();
+        for (var i = 0; i < WINDOW; i++) { CL.observe({ searching: 2 }); CL.advance(); }
+        eq(CL.report().verdict, "FAIL", "stasis verdict");
+        if (CL.report().reason.indexOf("searching") < 0) throw new Error("reason does not name the class");
+      });
+      t("persistence: the mark survives a state round-trip", function () {
+        CL.reset(); CL.observe({ review: 9 }); CL.advance();
+        var snap = JSON.parse(JSON.stringify(CL.state()));
+        CL.reset();
+        eq(find(CL.report(), "review").hwm, 0, "cleared by reset");
+        CL.restore(snap);
+        eq(find(CL.report(), "review").hwm, 9, "restored mark");
+      });
+      t("fail-closed: a legacy waiver grants no immunity", function () {
+        CL.restore({ hwm: { waiting: 3 }, justified: { waiting: "legacy" }, since: {}, delivery: 4,
+                     history: [{ delivery: 4, now: { waiting: 9 }, score: 9 }] });
+        var c = find(CL.report(), "waiting");
+        eq(c.waived, false, "legacy waiver must not be live");
+        eq(CL.report().verdict, "FAIL", "verdict must fail closed");
+      });
+      t("verdict is total: every verdict is one of PASS/WARN/FAIL", function () {
+        var seen = {};
+        CL.reset();
+        for (var a = 0; a <= 2; a++) for (var b = 0; b <= 2; b++) {
+          CL.observe({ switching: a, waiting: b }); CL.advance();
+          seen[CL.report().verdict] = true;
+        }
+        Object.keys(seen).forEach(function (v) {
+          if (["PASS", "WARN", "FAIL"].indexOf(v) < 0) throw new Error("unknown verdict " + v);
+        });
+      });
+    } finally {
+      CL.restore(saved);
+    }
+
+    var pass = results.filter(function (r) { return r.ok; }).length;
+    var fail = results.length - pass;
+    $("#selfSum").hidden = false;
+    $("#selfPass").textContent = String(pass);
+    $("#selfFail").textContent = String(fail);
+    $("#selfFail").style.color = fail ? "var(--bad)" : "var(--fg-3)";
+    var host = $("#selfList");
+    host.innerHTML = "";
+    results.forEach(function (r) {
+      var d = document.createElement("div");
+      d.className = "test";
+      d.innerHTML = '<span class="tick ' + (r.ok ? "p" : "f") + '">' + (r.ok ? "PASS" : "FAIL") + "</span>" +
+        '<div class="body"><b>' + esc(r.name) + "</b>" + (r.detail ? "<span>" + esc(r.detail) + "</span>" : "") + "</div>";
+      host.appendChild(d);
+    });
+    renderAll();
+    toast(fail ? fail + " law(s) failed" : "All " + pass + " laws hold", fail ? "bad" : "ok");
+    return { pass: pass, fail: fail, results: results };
+  }
+  $("#runSelf").addEventListener("click", function () { runSelftest(); });
+
+  /* ---------- keyboard ---------- */
+  document.addEventListener("keydown", function (e) {
+    var tag = (e.target && e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea" || tag === "select") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var order = tabs.map(function (b) { return b.dataset.tab; });
+    if (e.key >= "1" && e.key <= String(order.length)) { show(order[+e.key - 1]); e.preventDefault(); }
+    else if (e.key === "a") { $("#advanceBtn").click(); e.preventDefault(); }
+    else if (e.key === "t") { $("#themeBtn").click(); e.preventDefault(); }
+  });
+
+  /* ---------- boot ---------- */
+  $("#winN").textContent = String(WINDOW);
+  renderLive();
+  (function boot() {
+    try {
+      var t = localStorage.getItem("darkith.clearanceloop.tab");
+      if (t && document.getElementById("p-" + t)) show(t); else show("observe");
+    } catch (e) { show("observe"); }
+  })();
+  renderAll();
+  window.addEventListener("resize", function () { renderSpark(); });
+
+  /* exposed for the headless pre-run, so the harness drives the real UI */
+  window.ClearanceLoopApp = {
+    show: show, renderAll: renderAll, renderReport: renderReport,
+    runSelftest: runSelftest, inputs: inputs, readInputs: readInputs, writeInputs: writeInputs,
+    live: live, selftestResult: null
+  };
+})();
+</script>
+</body>
+</html>

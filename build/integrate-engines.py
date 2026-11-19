@@ -48,6 +48,7 @@ ENGINES = [
 SHELLS = [
     ROOT / "omega.html",
     ROOT / "savf.html",
+    ROOT / "clearanceloop.html",
     ROOT / "darkith-inscriber.html",
     ROOT / "app/src/main/assets/darkith_ui.html",
 ]
@@ -120,6 +121,8 @@ SHIM = r"""
   }
   function fab() {
     if (document.getElementById("prerun-fab")) return;
+    /* A surface that IS the ratchet does not need a floating launcher onto itself. */
+    if (document.documentElement.hasAttribute("data-no-fab")) return;
     var b = document.createElement("button");
     b.id = "prerun-fab"; b.type = "button";
     b.title = "Pre-runner \u2014 race the race before the race";

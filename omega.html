@@ -1169,20 +1169,75 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
  * UMD-ish: browser global `ClearanceLoop`; Node module.
  */
 ;(function (root, factory) {
-  if (typeof module !== 'undefined' && module.exports) module.exports = factory();
-  else root.ClearanceLoop = factory();
-})(typeof self !== 'undefined' ? self : this, function () {
+  if (typeof module !== 'undefined' && module.exports) module.exports = factory(root);
+  else root.ClearanceLoop = factory(root);
+})(typeof self !== 'undefined' ? self : this, function (root) {
   'use strict';
 
   var CLASSES = ['switching', 'waiting', 'searching', 'correcting', 'review'];
   var WINDOW = 5;                 // deliveries of non-clearance before force-degradation
+  var WAIVER = 5;                 // a waiver's budget: it expires after this many deliveries
   var KEY = 'darkith.clearanceloop.v1';
   var LAW = 'homeokinesis: debt may only flux downward; stasis is force-degraded';
 
-  var store = function () { try { return root && root.localStorage; } catch (e) { return null; } };
-  var load = function () {
-    try { var j = store() && store().getItem(KEY); return j ? JSON.parse(j) : null; } catch (e) { return null; }
-  };
+  /* Resolve the actual global. `root` is the UMD receiver, which is `module.exports`
+     under CommonJS — it carries no localStorage. Using it directly would make storage
+     silently dead everywhere except a browser, so the ratchet would reset on every
+     reload and the law could never hold across sessions. */
+  var G = (typeof globalThis !== 'undefined') ? globalThis : root;
+  var store = function () { try { return G && G.localStorage; } catch (e) { return null; } };
+  /* A waiver is {reason, at, expires}. Older builds stored a bare reason string, which
+     carried no expiry and so granted permanent immunity. Such a record is normalised to
+     an ALREADY-EXPIRED waiver: the operator must re-justify. Failing closed here is the
+     only safe direction — a stale waiver must never silently keep hiding a regression. */
+  function normWaiver(w) {
+    if (!w) return null;
+    if (typeof w === 'string') return { reason: w, at: 0, expires: 0 };
+    if (typeof w === 'object') return { reason: String(w.reason || 'waiver'), at: w.at || 0, expires: w.expires || 0 };
+    return null;
+  }
+  /* Any state that reaches us from storage, a file or another build is untrusted:
+     it may be truncated, hand-edited or written by an older schema. Every field is
+     rebuilt from scratch so a missing or hostile value can only ever cost history,
+     never throw. A ratchet that cannot read its own file must still run. */
+  function normState(st) {
+    var out = { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] }, k, v;
+    if (!st || typeof st !== 'object' || Array.isArray(st)) return out;
+    if (st.state && typeof st.state === 'object') st = st.state;   // wrapped {state, report}
+    for (k in (st.hwm || {})) {
+      if (!Object.prototype.hasOwnProperty.call(st.hwm, k)) continue;
+      v = Number(st.hwm[k]);
+      if (isFinite(v) && v >= 0) out.hwm[k] = Math.floor(v);
+    }
+    for (k in (st.since || {})) {
+      if (!Object.prototype.hasOwnProperty.call(st.since, k)) continue;
+      v = Number(st.since[k]);
+      if (isFinite(v) && v >= 0) out.since[k] = Math.floor(v);
+    }
+    for (k in (st.justified || {})) {
+      if (!Object.prototype.hasOwnProperty.call(st.justified, k)) continue;
+      var nw = normWaiver(st.justified[k]);
+      if (nw) out.justified[k] = nw;
+    }
+    v = Number(st.delivery);
+    out.delivery = isFinite(v) && v > 0 ? Math.floor(v) : 0;
+    if (Array.isArray(st.history)) {
+      out.history = st.history.filter(function (h) {
+        return h && typeof h === 'object' && isFinite(Number(h.score));
+      }).map(function (h) {
+        return { delivery: Number(h.delivery) || 0, now: h.now && typeof h.now === 'object' ? h.now : {}, score: Number(h.score) };
+      }).slice(-40);
+    }
+    return out;
+  }
+  function load() {
+    try {
+      var j = store() && store().getItem(KEY); if (!j) return null;
+      var st = JSON.parse(j);
+      if (!st || typeof st !== 'object') return null;
+      return normState(st);
+    } catch (e) { return null; }
+  }
   var persist = function (st) { try { var s = store(); if (s) s.setItem(KEY, JSON.stringify(st)); } catch (e) { /* file:// may deny storage; memory still holds */ } };
   var cp = function (o) { var r = {}; for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) r[k] = o[k]; return r; };
 
@@ -1235,7 +1290,17 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
     install();
     var now = sample();
     var hwm = cp(state.hwm), since = cp(state.since), justified = cp(state.justified);
-    var events = [], i, cls, n, prev;
+    var events = [], expired = [], i, cls, n, prev, w;
+
+    /* Expire first: a waiver's budget is a fixed number of deliveries, never forever. */
+    for (cls in justified) {
+      if (!Object.prototype.hasOwnProperty.call(justified, cls)) continue;
+      if ((state.delivery || 0) >= justified[cls].expires) {
+        events.push('EXPIRED waiver ' + cls + ' (' + justified[cls].reason + '): the apoptotic exception ended');
+        expired.push(cls);
+        delete justified[cls];
+      }
+    }
 
     for (i = 0; i < CLASSES.length; i++) {
       cls = CLASSES[i]; n = now[cls] || 0;
@@ -1243,7 +1308,15 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
       prev = hwm[cls];
       if (n < prev) { events.push('cleared ' + cls + ': ' + prev + ' -> ' + n + ' (flux down)'); hwm[cls] = n; since[cls] = 0; }
       else if (n === prev) { since[cls] = (since[cls] || 0) + 1; }
-      else if (justify) { justified[cls] = justify; events.push('JUSTIFIED waiver ' + cls + ': ' + prev + ' -> ' + n + ' (' + justify + ')'); hwm[cls] = n; since[cls] = 0; }
+      else if (justify) {
+        /* A waiver permits the debt to EXIST for a bounded window; it never raises the
+           HWM. Raising it would loosen the gate permanently, and the ratchet only ever
+           tightens. The class keeps reporting above its HWM, so the moment the waiver
+           expires the debt is a plain regression again — nothing was ever forgiven. */
+        justified[cls] = { reason: String(justify), at: (state.delivery || 0), expires: (state.delivery || 0) + WAIVER };
+        events.push('JUSTIFIED waiver ' + cls + ': ' + prev + ' -> ' + n + ' for ' + WAIVER + ' deliveries (' + justify + '); HWM stays ' + prev);
+        since[cls] = 0;
+      }
       /* else: net addition left in place; the HWM is NOT raised and the verdict fails. */
     }
     for (cls in hwm) {
@@ -1262,7 +1335,7 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
       history: (state.history || []).concat([{ delivery: delivery, now: now, score: score(now) }]).slice(-40)
     };
     acc = {}; persist(state);
-    return { events: events, degraded: degraded, now: now, delivery: delivery };
+    return { events: events, degraded: degraded, expired: expired, now: now, delivery: delivery };
   }
 
   function last() { var h = state.history || []; return h.length ? h[h.length - 1] : null; }
@@ -1270,15 +1343,21 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
 
   function report() {
     var now = (last() && last().now) || sample();
-    var classes = [], outstanding = 0, i, cls, n, h, since, status;
+    var classes = [], outstanding = 0, i, cls, n, h, since, status, w, left;
     for (i = 0; i < CLASSES.length; i++) {
-      cls = CLASSES[i]; n = now[cls] || 0; h = state.hwm[cls] == null ? n : state.hwm[cls]; since = state.since[cls] || 0;
+      cls = CLASSES[i]; n = now[cls] || 0; h = (state.hwm || {})[cls] == null ? n : state.hwm[cls]; since = (state.since || {})[cls] || 0;
+      w = (state.justified || {})[cls] || null;
+      /* A waiver that has outlived its budget is dead even before the next advance()
+         sweeps it, so the report can never show a live waiver past its expiry. */
+      if (w && (state.delivery || 0) >= w.expires) w = null;
+      left = w ? Math.max(0, w.expires - (state.delivery || 0)) : 0;
       status = 'clear';
-      if (n > h && !state.justified[cls]) status = 'regression';
-      else if (n > 0 && since >= WINDOW && !state.justified[cls]) status = 'stale';
-      else if (n > 0) status = state.justified[cls] ? 'waived' : 'tracked';
+      if (n > h && !w) status = 'regression';
+      else if (n > 0 && since >= WINDOW && !w) status = 'stale';
+      else if (n > 0) status = w ? 'waived' : 'tracked';
       if (n > 0) outstanding += n;
-      classes.push({ cls: cls, now: n, hwm: h, since: since, waived: !!state.justified[cls], status: status });
+      classes.push({ cls: cls, now: n, hwm: h, since: since, waived: !!w,
+                     reason: w ? w.reason : null, expires: w ? w.expires : null, remaining: left, status: status });
     }
     var regress = [], stale = [];
     for (i = 0; i < classes.length; i++) { if (classes[i].status === 'regression') regress.push(classes[i].cls); if (classes[i].status === 'stale') stale.push(classes[i].cls); }
@@ -1291,6 +1370,17 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
   }
 
   function reset() { state = { hwm: {}, justified: {}, since: {}, delivery: 0, history: [] }; acc = {}; persist(state); return state; }
+
+  /* Adopt a previously exported state. This is how a ratchet travels between machines
+     and how the in-app self-test exercises the law without destroying live history.
+     Unknown/legacy waiver shapes normalise through the same fail-closed path as load(). */
+  function restore(st) {
+    if (typeof st === 'string') { try { st = JSON.parse(st); } catch (e) { return false; } }
+    if (!st || typeof st !== 'object') return false;
+    state = normState(st);
+    acc = {}; persist(state);
+    return true;
+  }
 
   /* ---------- UI: a self-contained, sleek ratchet report ---------- */
   var VC = { PASS: '#3fb950', WARN: '#d29922', FAIL: '#f85149' };
@@ -1335,10 +1425,10 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
   }
 
   return {
-    LAW: LAW, CLASSES: CLASSES, WINDOW: WINDOW,
+    LAW: LAW, CLASSES: CLASSES, WINDOW: WINDOW, WAIVER: WAIVER,
     install: install, observe: observe, absorb: absorb, advance: advance,
     flux: flux, report: report, verdict: function () { return report().verdict; },
-    state: function () { return state; }, reset: reset, ui: ui
+    state: function () { return state; }, reset: reset, restore: restore, ui: ui
   };
 });
 
@@ -1406,6 +1496,8 @@ select,input[type=file]{font:12px var(--mono);color:var(--ink);background:rgba(2
   }
   function fab() {
     if (document.getElementById("prerun-fab")) return;
+    /* A surface that IS the ratchet does not need a floating launcher onto itself. */
+    if (document.documentElement.hasAttribute("data-no-fab")) return;
     var b = document.createElement("button");
     b.id = "prerun-fab"; b.type = "button";
     b.title = "Pre-runner \u2014 race the race before the race";
