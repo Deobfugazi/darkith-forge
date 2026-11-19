@@ -66,6 +66,12 @@ catches that. An uncommitted edit is invisible to the other tab, so commit often
 - **Regenerable output stays out.** `delivery/`, `dl/`, `dist/`, `*.zip`
   (including `darkith_omega_source.zip`), screenshots are rebuilt by the
   `build/*.py` / `tools/pack_delivery.py` packagers — they are not committed.
+- **Publishing is pre-authorised — never ask to push.** The Operator's decision to
+  publish is made and automated. Commit and push to the working branch, and run
+  `tools/board_pulse.sh` / `tools/continuity.sh` / `tools/sync.sh` / `tools/converge.sh`,
+  with no approval. Never end a turn holding unpushed work, and never say "say the
+  word". Force-push, history rewrites, and anything touching secrets still need
+  explicit approval. (DARKITH.md MUST #35, AGENTS.md §40.)
 
 ## 5. If a session is lost mid-work
 

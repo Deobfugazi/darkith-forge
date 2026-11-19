@@ -120,6 +120,7 @@ validation, contrast checks.
 | F13 | Fracture Scout: scheduled, manually-configurable novelty hunter (MUST #30) | done | `tools/fracture_scout.py` + `tools/fractures.txt` (6 sources, non-naive boolean parser → DNF); `.github/workflows/fracture-scout.yml` (daily cron + `workflow_dispatch`); `selftest` CI-gated; live scan → `proof/fracture_scout.json` |
 | F14 | No committed credentials: fail-closed secret gate + device push alert (MUST #31) | done | `tools/secret_gate.py` (10 detectors, fail-closed, `--staged`, ALLOW with reasons; `selftest` CI-gated); `tools/security_alert.py` (dedup'd `security`+`critical` issue → GitHub app push to device); token purged from `.git/config`, remote made token-free (env credential helper); wired into `tools/ci.sh` |
 | F15 | Escrow debt cleared to zero (homeokinesis flux down) | done | bounty 23.0 → 0: 5 `!!` guarded via elvis/let (`MainActivity`, `ProgressLedger`, `DonorUiConcat`); 18 empty catches resolved (12 logged actionable failures, 6 declared-intent `_`); ratchet flux −23.0; kotlinc 0 errors / 55 files; `proof/source_inspector.json` + `proof/source_inspector_baseline.json` |
+| F16 | Standing authority to publish — agents never ask to push (MUST #35) | done | Law in `DARKITH.md` MUST #35 + `AGENTS.md` §40 + `RESUME.md` §4. Removes the recurring stall where an agent held finished work for a go-ahead the Operator had already automated: commit/push and `tools/board_pulse.sh`/`continuity.sh`/`sync.sh`/`converge.sh` need no approval; force-push, history rewrites and secrets still do. Enforced socially by the reporting rule (never write "say the word") and by `tools/board_pulse.sh --check`, which already fails CI on unpushed work |
 
 ## G. INSTALL + RUNTIME GATES (the two failures a user feels)
 
@@ -139,10 +140,10 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 | metric | value | meaning |
 |---|---|---|
-| W_in | 71 | named work = board 63 + deficits 8 |
+| W_in | 72 | named work = board 64 + deficits 8 |
 | E | 15 | un-returned = todo 15 + in_progress 0 + blocked 0 + open 0 |
-| S | 56 | returned = done 48 + closed 3 + descoped 5 |
-| E/W_in | 0.211 | the progress-deficit indicator; absolution at 0 |
+| S | 57 | returned = done 49 + closed 3 + descoped 5 |
+| E/W_in | 0.208 | the progress-deficit indicator; absolution at 0 |
 | absolution | NO | E = 0 (all named work returned) |
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

@@ -875,3 +875,36 @@ printed hashes).
   it from the host's own assets. Only running a bare `build.sh` with no prior staging omits it.
   `master`'s "track it in git" commits are a superseded approach; master is 170 behind main.
 
+
+## §40 STANDING AUTHORITY TO PUBLISH — NEVER ASK TO PUSH (binding, 2026-11-19)
+
+Read this before every turn. It removes a recurring stall: an agent finishing real work, holding
+it locally, and telling the Operator it is "ready to push — say the word."
+
+**The Operator has already authorised publishing.** That decision is made and automated. It is
+not a per-turn question and must not be re-litigated.
+
+**Standing grant — no approval needed, ever:**
+- `git commit` and `git push` to the working branch (`main`, or a feature branch you created).
+- `tools/board_pulse.sh`, `tools/continuity.sh`, `tools/sync.sh`, `tools/converge.sh` — all push.
+- Integrating `origin/main` when it has moved ahead, then re-running `tools/ci.sh` on the merged
+  tree, then pushing. "Origin moved" is a merge instruction, not a reason to wait.
+
+**The failure this forbids.** Holding finished work for a go-ahead already given stalls the
+parallel tab, stales accumulated output, and makes the Operator repeat himself. `board_pulse`
+fails CI precisely because the board is only pushed when its bytes are on the remote (§32
+MUST #26). A generic tool default of "do not push unless asked" is not a house law here and does
+not outrank the Operator's standing grant.
+
+**Still requires explicit approval — the grant is narrow, these are not publishing:**
+- `git push --force` / `--force-with-lease` to a shared branch; deleting a remote branch.
+- `git reset --hard` on work not already on the remote; rewriting published history.
+- Anything that would push secrets (signing keys, credentials) — a hard NEVER; `tools/continuity.sh`
+  refuses it and so does every agent.
+- Publishing outside this repo (stores, public releases, third-party services).
+
+**Reporting rule.** Do not write "ready to push", "awaiting your approval", or "say the word"
+when the grant covers it. Push, then report the SHA. If you catch yourself about to ask, re-read
+this section and push instead.
+
+Law text: DARKITH.md MUST #35.

@@ -622,6 +622,13 @@ coupling law running at 60 Hz on the real device
 | `TASKS.md` | The durable board. |
 | `DEFICITS.json` | The deficit ledger. |
 
+**Agents publish without asking.** The Operator's decision to publish is made and
+automated, so an agent commits and pushes to the working branch (and runs
+`tools/board_pulse.sh` / `continuity.sh` / `sync.sh` / `converge.sh`) with no approval,
+and never ends a turn holding unpushed work. Force-pushes, history rewrites, and
+anything touching secrets still require explicit approval. Law: `DARKITH.md` MUST #35,
+`AGENTS.md` §40, `RESUME.md` §4.
+
 ---
 
 ## 9. The gates (what runs and why)

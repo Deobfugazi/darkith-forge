@@ -1034,3 +1034,35 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   records the device directory in the ledger; a build without one downloads the ZIP
   and says "local mode". The four-state gate is the honest sensor: absence is a
   state, never a pass.
+
+  ─── MUST #35 (STANDING AUTHORITY TO PUBLISH — NEVER ASK TO PUSH) ───
+  GATE: tools/board_pulse.sh --check
+  The Operator has ALREADY authorised publishing. That decision is made, automated, and not
+  re-litigated per turn. An agent MUST commit and push without asking, and MUST NOT end a turn
+  holding unpushed work on the branch.
+
+  STANDING GRANT: an agent may `git commit` and `git push` to the working branch (`main` or a
+  feature branch it created) and may run `tools/board_pulse.sh`, `tools/continuity.sh`,
+  `tools/sync.sh` and `tools/converge.sh` — all of which push — with NO further approval.
+
+  THE FAILURE THIS FORBIDS: holding finished work locally to await a "go-ahead" the Operator
+  already gave. It stalls the parallel tab (SPI/§32 MUST #26 — the board is only pushed when its
+  bytes are on the remote), stales accumulated output, and forces the Operator to repeat himself.
+  That is the exact harm the real-time board push exists to prevent. A generic tool default of
+  "do not push unless asked" is NOT a house law and does NOT survive contact with this repo;
+  the Operator's standing grant outranks it.
+
+  WHAT STILL REQUIRES EXPLICIT APPROVAL (the grant is narrow — these are NOT publishing):
+  - `git push --force` / `--force-with-lease` to a shared branch, or deleting a remote branch.
+  - `git reset --hard` on work not already on the remote, or rewriting published history.
+  - Pushing secrets: signing keys (`release_key`/`release_cert`) and any credential. This is a
+    hard NEVER — `tools/continuity.sh` refuses it, and so does every agent.
+  - Publishing outside this repo (app stores, public releases, third-party services).
+  - `main` is the Operator's own branch: publishing TO it is granted above; rewriting it is not.
+
+  IF THE REMOTE IS AHEAD: integrate first (`tools/sync.sh` / `tools/converge.sh`, never forced),
+  re-run `tools/ci.sh` on the MERGED tree, then push. "Origin moved" is a merge instruction,
+  never a reason to wait for permission.
+
+  REPORTING RULE: never write "ready to push — say the word", "awaiting your approval", or
+  "I'll push on your go-ahead" when the standing grant covers it. Push, then report the SHA.
