@@ -562,7 +562,7 @@ class Pipeline:
             clause = governed.get("governing_clause", "UNCONFIRMED")
             # Confirmed causes share one task even when several gates expose the same
             # underlying defect. Unconfirmed symptoms stay separate until evidence joins them.
-            signature = ([root_cause, clause, governing_file] if root_cause != "UNCONFIRMED"
+            signature = ([root_cause] if root_cause != "UNCONFIRMED"
                          else ["UNCONFIRMED", defect["probe"], governing_file])
             key = tuple(signature)
             grouped.setdefault(key, {"signature": signature, "routes": [], "defects": []})
@@ -595,10 +595,14 @@ class Pipeline:
             task.update({
                 "probes": probes,
                 "probe_commands": probe_commands,
-                "governing_file": first.get("governing_file", "UNCONFIRMED"),
-                "governing_clause": first.get("governing_clause", "UNCONFIRMED"),
-                "generator": first.get("generator", "UNCONFIRMED"),
-                "repair_boundary": first.get("repair_boundary", "UNCONFIRMED"),
+                "governing_file": " | ".join(sorted({r.get("governing_file", "UNCONFIRMED")
+                                                       for r in routes})),
+                "governing_clause": " | ".join(sorted({r.get("governing_clause", "UNCONFIRMED")
+                                                         for r in routes})),
+                "generator": " | ".join(sorted({r.get("generator", "UNCONFIRMED")
+                                                  for r in routes})),
+                "repair_boundary": " | ".join(sorted({r.get("repair_boundary", "UNCONFIRMED")
+                                                        for r in routes})),
                 "root_cause": first.get("root_cause", "UNCONFIRMED"),
                 "baseline_commit": self.receipts["S01"]["details"]["commit"],
                 "acceptance_criteria": [
