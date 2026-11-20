@@ -351,6 +351,12 @@ if have python3 && [ -f tools/toolchain_gate.py ]; then
   run "toolchain integrity" python3 tools/toolchain_gate.py --check
 fi
 
+if have python3 && [ -f tools/board_header_gate.py ]; then
+  # A generated block must never delete a board's title or governance prose. This is the
+  # gate for the class that let 340 lines of TASKS.md vanish while every gate stayed green.
+  run "board header intact" python3 tools/board_header_gate.py --check
+fi
+
 if have python3 && [ -f tools/kb_index.py ]; then
   # Universal index of the readable knowledge-skill base (SPI-15). Fails if the index is
   # stale, if a readable file is unfiled, if two files share a hash without a declared

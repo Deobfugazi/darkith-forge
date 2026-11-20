@@ -144,6 +144,15 @@ CLASSES = [
            "ci: toolchain integrity",
            "a compiler without its runtime makes every compile gate blame the code"),
 
+    # Found 2026-11-20: commit 67ea976 dropped 340 lines from TASKS.md, including the title
+    # and the whole STANDING-AUTHORITY section. Every gate stayed green because the generator
+    # that replaced the file was the thing being trusted.
+    Class_("board header intact",
+           "python3 tools/board_header_gate.py --check",
+           "git checkout HEAD -- TASKS.md AGENTS.md RESUME.md",
+           "ci: board header intact",
+           "a generator that deletes governance prose is a silent loss no diff reviewer sees"),
+
 ]
 
 
