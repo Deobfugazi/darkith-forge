@@ -35,16 +35,16 @@ def java_available() -> bool:
 
 
 def kotlinc_available() -> bool:
-    if shutil.which("kotlinc"):
-        return True
-    return (ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc").is_file()
+    return kotlinc_path() is not None
 
 
 def kotlinc_path() -> str | None:
-    return shutil.which("kotlinc") or (
-        str(ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc")
-        if (ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc").is_file() else None
-    )
+    # Match controller_gate.py and the raw-chain build: the repository-pinned compiler
+    # takes precedence over whatever unrelated kotlinc happens to be installed on PATH.
+    bundled = ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc"
+    if bundled.is_file():
+        return str(bundled)
+    return shutil.which("kotlinc")
 
 
 def kotlinc_runs() -> tuple[bool, str]:
