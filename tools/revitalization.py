@@ -954,9 +954,10 @@ class Pipeline:
         s16_status = "PASS" if can_close else "FAIL"
         block = self.board_block(can_close, task_queue, skips,
                                  s16_status=s16_status)
+        board_hash = self.apply_board_block(block)
         input_obj = {"closed": can_close,
                      "task_ids": sorted(t["id"] for t in tasks),
-                     "skip_count": len(skips)}
+                     "skip_count": len(skips), "board_sha256": board_hash}
         rec = self.emit("S16", "PASS" if can_close else "FAIL", input_obj,
                         {"closed": can_close, "task_queue": task_queue,
                          "regression_queue": [],
@@ -965,10 +966,34 @@ class Pipeline:
                                                   .get("manifest", [])
                                                   if m.get("applied")}),
                          "skips": skips, "newly_skipped": newly_skipped,
-                         "board_block": block},
+                         "board_block": block, "board_sha256": board_hash},
+                        evidence=["TASKS.md"],
                         reason=(None if can_close else closure_reason(
                             open_tasks, newly_skipped, clean, ok_local, ok_blast)))
         return rec, can_close
+
+    def apply_board_block(self, block: str) -> str:
+        """Write the S16-generated board block as part of S16, then hash the bytes."""
+        heading = (f"## REVITALIZATION - the sixteen-stage corrective cycle "
+                   f"(cycle `{self.cycle}`, "
+                   f"{'closed' if self.receipts.get('S16', {}).get('details', {}).get('closed') else 'open'})")
+        section = f"{heading}\\n\\n{block}\\n"
+        text = BOARD.read_text(encoding="utf-8")
+        if BOARD_BEGIN in text:
+            pre, rest = text.split(BOARD_BEGIN, 1)
+            if BOARD_END not in rest:
+                raise ValueError("TASKS.md has an unclosed REVITALIZATION marker")
+            _, post = rest.split(BOARD_END, 1)
+            new_text = pre + BOARD_BEGIN + "\\n" + section + "\\n" + BOARD_END + post
+        else:
+            idx = text.find("<!-- CHAT-GATE:BEGIN")
+            if idx == -1:
+                new_text = text.rstrip("\\n") + "\\n\\n" + BOARD_BEGIN + "\\n" + section + "\\n" + BOARD_END + "\\n"
+            else:
+                new_text = text[:idx] + BOARD_BEGIN + "\\n" + section + "\\n" + BOARD_END + "\\n\\n" + text[idx:]
+        if new_text != text:
+            BOARD.write_text(new_text, encoding="utf-8")
+        return sha(BOARD.read_bytes())
 
     def board_block(self, closed: bool, task_queue, skips,
                     s16_status: str = "PASS") -> str:
@@ -1234,6 +1259,8 @@ def verify_chain(root: pathlib.Path) -> tuple:
                 fails.append(f"I9: governing source disappeared after baseline: {path}")
                 continue
             expected = authorized_changes.get(path, baseline_hash)
+            if path == "TASKS.md":
+                expected = receipts["S16"].get("details", {}).get("board_sha256", expected)
             if sha(current_path.read_bytes()) != expected:
                 fails.append(f"I9: governing source changed outside its sealed repair: {path}")
 
@@ -1262,6 +1289,10 @@ def verify_chain(root: pathlib.Path) -> tuple:
                 fails.append("I8: S15 bundle does not include every S01-S14 receipt")
             if s16.get("status") != "PASS" or s16.get("details", {}).get("closed") is not True:
                 fails.append("I8: S16 does not carry a PASS closure")
+            board_path = root / "TASKS.md"
+            expected_board = s16.get("details", {}).get("board_sha256")
+            if not expected_board or not board_path.is_file() or sha(board_path.read_bytes()) != expected_board:
+                fails.append("I8/I9: TASKS.md does not match the board bytes sealed by S16")
             open_tasks = [t["id"] for t in s16.get("details", {}).get("task_queue", [])
                           if t.get("status") != "closed"]
             if open_tasks:
