@@ -1067,3 +1067,28 @@ than the same file one character shorter.
 A browser engine that parses where another gives up is a capability gap, not a
 disagreement. Gates over multiple engines must assert the shared findings and the absence
 of a false high-severity accusation, not an exact rule list.
+
+## A seal is only a seal if its evidence can leave the machine
+
+The revitalization seal cited `S16_POST_SEAL.log` as evidence while `.gitignore` dropped
+`*.log`. The gate passed in the working tree and failed in every fresh clone, because the
+cited file was never committed. Local green is not evidence of anything until it survives
+`git clone`. When adding a seal, verify it from a clean checkout, not from the tree that
+produced it. `proof/revitalization/*/S*.log` is now re-included for exactly this reason,
+and I8 rejects any citation git ignores so the next unlucky extension cannot reproduce it.
+
+## Check the premise before running the script
+
+A briefing listed 19 Kotlin files whose opening `/*` had been stripped, with exact line
+numbers. At those line numbers 18 of 19 already read `/**` or `/*`, and the nineteenth
+(`HomekeeperBridge.kt:282`) is a `catch` block, not a comment. All 58 `.kt` files scan
+balanced, confirmed twice with independent parsers. A repair script run against that
+description would have inserted a second `/*` into 18 healthy files and broken them.
+
+Read the target bytes first (SPI-2). A bug report is a hypothesis about the tree, not a
+description of it, and line numbers go stale as the tree moves under them.
+
+Two scanner bugs worth remembering, both of which produced false "unclosed comment"
+findings that looked like real defects: ignoring backslash escapes in `"..."` (so `"\""`
+desynchronises string state), and ignoring `"""` raw strings. A parser that disagrees with
+the project gate should be suspected before the project is.
