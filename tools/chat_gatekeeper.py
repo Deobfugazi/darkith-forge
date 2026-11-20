@@ -306,14 +306,14 @@ def merge(board_text: str, block: str) -> str:
 
     # Insert immediately before the first directive/section heading, but after every byte of
     # the authored preamble. Normalise only the seam so repeated merges remain byte-identical.
-    m = re.search(r"^##\\s*★", board_text, re.MULTILINE)
+    m = re.search(r"^##\s*★", board_text, re.MULTILINE)
     if m:
-        pre = board_text[:m.start()].rstrip("\\n")
-        post = board_text[m.start():].lstrip("\\n")
+        pre = board_text[:m.start()].rstrip("\n")
+        post = board_text[m.start():].lstrip("\n")
         if pre:
-            return pre + "\\n\\n" + block + "\\n\\n" + post.rstrip("\\n") + "\\n"
-        return block + "\\n\\n" + post.rstrip("\\n") + "\\n"
-    return board_text.rstrip("\\n") + "\\n\\n" + block + "\\n"
+            return pre + "\n\n" + block + "\n\n" + post.rstrip("\n") + "\n"
+        return block + "\n\n" + post.rstrip("\n") + "\n"
+    return board_text.rstrip("\n") + "\n\n" + block + "\n"
 
 
 def block_of(board_text: str) -> str:
