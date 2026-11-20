@@ -121,3 +121,27 @@ curl -sL -o /tmp/apksig.jar \
 `tools/` is committed. `dist/` is **generated and ignored** — it holds built
 artifacts when a session produces one (`tools/pack_delivery.py` rebuilds it),
 so it is never tracked (see §4).
+
+## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
+
+The Operator's standing demand, codified so it is a property of the apparatus and not of any
+one agent's memory:
+
+1. **The product is an installable, agnostic artifact.** Every completion report states, in
+   plain sight, whether the deliverable is a runnable/installable thing on any account or
+   host — and if it is not, that is the headline, not a footnote. No hunting.
+
+2. **No defect may be reported as an emergent surprise.** A defect that was *possible* is a
+   codification failure. Every fix lands as a class fix: a detector, a deterministic repair,
+   and a prevention gate in CI. `tools/autophagy.py` is that registry. A repair with no
+   prevention gate is refused at load.
+
+3. **The tree must always be a newborn.** `tools/autophagy.py` detects every registered
+   defect class, repairs it, re-runs the detector to prove the repair took, and loops to
+   convergence. A tree that requires watching is a patient, not an apparatus.
+
+4. **Only evolutionary progress is reported.** Against the omega endpoint: what class was
+   ended, what gate now prevents its return, what the tree can do that it could not before.
+
+5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
+   what the installable artifact is. Evidence after.

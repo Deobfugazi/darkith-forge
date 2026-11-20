@@ -640,6 +640,20 @@ else
   FAILED=1
 fi
 
+  # ── the CNS directive: one order, every board, every peripheral ────────────────
+  # A directive that lives in one conversation leaves the other agents working a superseded
+  # order. The board copy is the durable record; this gate proves it is on every board.
+  if have python3 && [ -f tools/cns_directive.py ]; then
+    run "cns directive (one order, every board)" python3 tools/cns_directive.py --check
+  fi
+
+  # ── autophagy: the tree consumes its own defects and returns to newborn ────────
+  # --check repairs nothing and must exit non-zero if ANY registered class is dirty. This is
+  # the gate that makes "a defect was possible" a build failure rather than a later surprise.
+  if have python3 && [ -f tools/autophagy.py ]; then
+    run "autophagy (defect classes are impossible, not absent)" python3 tools/autophagy.py --check
+  fi
+
 # Bind this run to the hash-chained ledger. The terminal forgets; the ledger does not.
 # Each receipt attests "this named program, over these bytes, returned this verdict", so a
 # later claim of green can be checked against evidence instead of trusted. Emitting must
