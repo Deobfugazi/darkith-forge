@@ -1467,6 +1467,14 @@ def selftest() -> int:
     r7 = sandbox("auth")
     registry(r7, [{"name": "p-bad", "cmd": "python3 -c \"import sys; sys.exit("
                    "0 if 'fixed' in open('repairable.txt').read() else 2)\""}])
+    (r7 / "proof/revitalization/trace_rules.json").write_text(json.dumps({
+        "route": {"p-bad": {"root_cause": "ROOT-CAUSE-1",
+                            "governing_file": "README.md",
+                            "governing_clause": "TEST-LAW-1",
+                            "generator": "none",
+                            "repair_boundary": "repairable.txt",
+                            "parent_task": "ROOT"}}
+    }, indent=1))
     (r7 / "repairable.txt").write_text("block-a\n")
     commit_all(r7, "add repairable")
     plan_dir = r7 / "proof/revitalization"
