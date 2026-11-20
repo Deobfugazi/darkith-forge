@@ -1302,3 +1302,38 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   Loopholes are not edge cases. A loophole is a rule that can be satisfied without doing the
   work, and every one of them leaks an untracked signal: the tree drifts, no gate reports it,
   and the next session spends its energy rediscovering what a gate was supposed to say.
+
+  ---
+
+  §36 — THE UNFALSIFIABLE GATE LAW (2026-11-18)
+
+  ─── SPI-33 (A GATE THAT CANNOT FAIL IS A NOTE) ───
+  GATE: tools/loophole_gate.py
+  A law's GATE line must name something that can return non-zero. Two ways it cannot, both
+  found live in this repo:
+
+  A GENERATOR IS NOT A CHECKER. MUST #17 and MUST #18 named `tools/pack_delivery.py`, which
+  writes dist/ and had no `--check` at all — it could only ever succeed. A law pointing at a
+  packer is a law pointing at a function with no failure branch. It now has one: it packs
+  twice in two independent processes and requires byte-identical output.
+
+  A CHECK THAT SHARES STATE WITH ITS SUBJECT CANNOT SEE THE BUG. The first version of that
+  check ran both packs in ONE process. `FIXED`, the deterministic zip timestamp, is computed
+  once at import, so both runs agreed by construction and the check passed. Calibration
+  caught it: injecting `random.randint(0,58)` into `FIXED` still printed PASS. Determinism is
+  a claim about independent runs, so it must be tested by independent runs. The check now
+  shells out twice, and the same injection fails with five artifacts differing.
+
+  ─── SPI-34 (CALIBRATE WITH A TRIAL THAT CAN SUCCEED) ───
+  GATE: tools/loophole_gate.py
+  MUST #33 requires a positive and a negative trial. This law adds the harder half: the
+  positive trial must be one the gate is genuinely able to catch. A trial whose injected
+  defect cannot reach the detector is not a sensitivity proof, it is a second specificity
+  proof wearing the name of the first. Measured: the praxis and law gates calibrate cleanly,
+  but the pack check's first "positive" trial was inert, and only re-running it against a
+  live nondeterminism exposed that the gate was blind.
+
+  A gatekeeper that skips headings, a gate that passes on an empty set, a skip reported as a
+  pass, a generator standing in for a checker, and a trial that cannot fire: five faces of one
+  defect. Each lets a rule be satisfied without the work, and each leaks the same untracked
+  signal — the tree drifts and nothing says so.

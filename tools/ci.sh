@@ -95,6 +95,11 @@ if have python3; then
     if [ -f tools/loophole_gate.py ]; then
       run "loophole closure (SPI-31/32)"  python3 tools/loophole_gate.py
     fi
+    # MUST #17/#18 were gated by tools/pack_delivery.py, which had no --check and was never
+    # invoked: a gate that cannot fail. It now proves idempotence by packing twice.
+    if [ -f tools/pack_delivery.py ] && [ -d app ]; then
+      run "packaging idempotence (MUST #18)" python3 tools/pack_delivery.py --check
+    fi
     # Law gate: SPI-15 — a law that is not an executable gate is a note. Enforces the
     # prime directive (DARKITH.md §30) and that every declared NEVER/MUST/SPI names a
     # gate that exists, or is explicitly marked as not-yet-gated.
