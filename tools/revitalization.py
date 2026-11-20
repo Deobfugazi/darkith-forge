@@ -181,14 +181,25 @@ def is_exempt(path: str) -> bool:
 
 
 def strip_generated_board(text: str) -> str:
-    """Remove only the machine-owned REVITALIZATION block from TASKS content."""
-    if BOARD_BEGIN not in text:
-        return text
-    pre, rest = text.split(BOARD_BEGIN, 1)
-    if BOARD_END not in rest:
-        return text
-    _, post = rest.split(BOARD_END, 1)
-    return pre + post
+    """Remove the machine-owned REVITALIZATION block, leaving the authored board.
+
+    The seam is collapsed, not merely cut. The block is inserted with a blank line on
+    either side, so cutting it out leaves "# T\n\n\n" where the author wrote "# T\n".
+    Two boards that differ only by the generated block must compare equal, or every
+    consumer of this function sees spurious drift: S14 called TASKS.md unexplained and
+    the idempotency key changed on every rerun, so no cycle could ever close.
+    """
+    if BOARD_BEGIN in text:
+        pre, rest = text.split(BOARD_BEGIN, 1)
+        if BOARD_END in rest:
+            _, post = rest.split(BOARD_END, 1)
+            text = pre + post
+    out: list[str] = []
+    for line in (ln.rstrip() for ln in text.splitlines()):
+        if not line and out and not out[-1]:
+            continue  # collapse blank-line runs: the generated seam is only blank lines
+        out.append(line)
+    return "\n".join(out).strip("\n")
 
 
 def board_only_dirty(root: pathlib.Path) -> bool:
