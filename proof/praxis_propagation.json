@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "2972515cf533be9d068d957ab08dd595aa2d07c3553656d2d6e70daaf88131e6",
-  "board_sha256": "1e210c1870b4fb4f4ebedc0cfa553b29cf165797cef67d89d16ee8c4efac535c",
+  "board_sha256": "2c60b87b9adfd54adaa3e89f388cb797984ec8de52ba643d47e94eddd627739d",
   "laws": {
     "declared": [
       "MUST #20",
@@ -40,9 +40,39 @@
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/github__Deobfugazi__darkith-forge/TASKS.md",
-      "status": "updated",
-      "detail": "22047->22046 B"
+      "path": "/workspace/project/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "worktree:failwt",
+      "path": "/tmp/failwt/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "worktree:fixwt",
+      "path": "/tmp/fixwt/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "worktree:pristine",
+      "path": "/tmp/pristine/TASKS.md",
+      "status": "current",
+      "detail": ""
     }
   ],
   "mode": "apply",
