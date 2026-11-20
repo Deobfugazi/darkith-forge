@@ -146,7 +146,9 @@ LAYERS = {
 }
 
 GOVERNING_SOURCES = ("DARKITH.md", "AGENTS.md", "TASKS.md", "STALL_BUDGET.json",
-                     "DEFICITS.json", "tools/ci.sh", "tools/revitalization.py")
+                     "DEFICITS.json", "tools/ci.sh", "tools/revitalization.py",
+                     "tools/praxis_propagate.py", "tools/omega_deficit.py",
+                     "tools/kb_index.py", "tools/board_gate.py", "tools/doc_path_gate.py")
 
 DECLARED_EDGES = (
     ("L6", "L1", "backward", "laws bind gates; a law that is not a gate is a note"),
