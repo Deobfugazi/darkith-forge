@@ -159,6 +159,25 @@ CLASSES = [
            "ci: board header intact",
            "a generator that deletes governance prose is a silent loss no diff reviewer sees"),
 
+    # Found 2026-11-21: the board's durable-title frames multiplied while every gate
+    # stayed green — the PRAXIS propagation quoted the directive's body, which contained
+    # the previous mirror, one frame per pass (DARKITH.md NEVER #22). The mirror feeds
+    # on itself; five frames before anyone looked.
+    Class_("self-consuming board mirror",
+           "python3 tools/praxis_propagate.py --sanitize-check",
+           "python3 tools/praxis_propagate.py --sanitize",
+           "ci: praxis propagation gate",
+           "a generator that quotes its own output grows a frame per pass, unbounded"),
+
+    # Found 2026-11-21: committed receipts carried the authoring host's absolute paths,
+    # so any other clone disagreed with them BY CONSTRUCTION and went dirty at birth
+    # (DARKITH.md SPI-40: a path crossed a host without its host marker).
+    Class_("host-bound receipt path",
+           "python3 tools/praxis_propagate.py --portable-check",
+           "python3 tools/praxis_propagate.py",
+           "ci: praxis propagation gate",
+           "a fact true only on the author's machine is not written as if true everywhere"),
+
 ]
 
 

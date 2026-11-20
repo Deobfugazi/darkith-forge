@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "2972515cf533be9d068d957ab08dd595aa2d07c3553656d2d6e70daaf88131e6",
-  "board_sha256": "2c60b87b9adfd54adaa3e89f388cb797984ec8de52ba643d47e94eddd627739d",
+  "directive_sha256": "9ea0c6cd4e7dc94872e94153a90390c1166f6adbdec56bef76ad29cc9f0665e7",
+  "board_sha256": "3f0b65468234d45ae48fb32e06fa0258ec1943cba986c860c1b0eef102723a35",
   "laws": {
     "declared": [
       "MUST #20",
@@ -14,8 +14,10 @@
       "MUST #33",
       "MUST #35",
       "MUST #36",
+      "MUST #11",
       "NEVER #19",
       "NEVER #21",
+      "NEVER #18",
       "SPI-15",
       "SPI-2",
       "SPI-25",
@@ -28,49 +30,14 @@
     "derived_advisory": [
       "MUST #38",
       "MUST #40",
-      "SPI-16",
-      "SPI-19",
-      "SPI-29",
-      "SPI-30",
-      "SPI-32",
-      "SPI-33",
-      "SPI-34"
+      "MUST #43",
+      "SPI-17"
     ]
   },
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "session:f947e4b540c24d1c97125691f3d14707",
-      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
-    },
-    {
-      "target": "session:f947e4b540c24d1c97125691f3d14707",
-      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
-    },
-    {
-      "target": "worktree:failwt",
-      "path": "/tmp/failwt/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "worktree:fixwt",
-      "path": "/tmp/fixwt/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "worktree:pristine",
-      "path": "/tmp/pristine/TASKS.md",
+      "path": "TASKS.md",
       "status": "current",
       "detail": ""
     }

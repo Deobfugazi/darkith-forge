@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 66,
+  "count": 67,
   "files": [
     {
       "bytes": 75905,
@@ -9,10 +9,10 @@
       "sha256": "27da0a07834f69ec2cf4ca762fa1df27b8217da258c86dc211e43fab31b6b3b7"
     },
     {
-      "bytes": 101928,
+      "bytes": 110033,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "b2af0a14fd3104b61a92979e27e4627e8ebfffb405db6295aa9abce57c8106e2"
+      "sha256": "54b833bd714d14f65d60402ef08fac8085cbf617298f08c13802d3f3c2bd7ad3"
     },
     {
       "bytes": 3356,
@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 15410,
+      "bytes": 8588,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "2c60b87b9adfd54adaa3e89f388cb797984ec8de52ba643d47e94eddd627739d"
+      "sha256": "3f0b65468234d45ae48fb32e06fa0258ec1943cba986c860c1b0eef102723a35"
     },
     {
       "bytes": 9608,
@@ -241,6 +241,12 @@
       "path": "omega.html",
       "register": "C-skillbase",
       "sha256": "0bebef245cf4788e327c4ee0670dc39537d43be44f60e4aa750c1f635e9313a8"
+    },
+    {
+      "bytes": 128981,
+      "path": "repo-holostream.html",
+      "register": "C-skillbase",
+      "sha256": "19b65ef35d88c856b62f8e246edd0cf4c112333e8466fb82c882c1ecc549d443"
     },
     {
       "bytes": 463190,

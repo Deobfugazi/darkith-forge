@@ -38,6 +38,26 @@ SOURCES = ["AutophagicAllocator.kt", "Allocation.kt", "LayoutNode.kt", "IRBuilde
 HARNESS = ROOT / "tools/controller_harness.kt"
 
 
+def bundled_jdk() -> pathlib.Path | None:
+    """The JDK this tree vetted (fetch_toolchain stages it), if present."""
+    hits = sorted((ROOT / ".tools").glob("jdk-*")) if (ROOT / ".tools").is_dir() else []
+    return hits[0] if hits else None
+
+
+def pinned_env() -> dict:
+    """kotlinc honours JAVA_HOME before PATH, and a runner's preinstalled JAVA_HOME may
+    point at a JVM this kotlinc cannot run on: the harness then fails to compile on a
+    machine that HAS a good toolchain, and the gate blamed the code for an environment
+    fact (the exact defect MUST #41 forbids). The compiler consumes the JVM the tree
+    vetted — a tool crosses a boundary with its runtime (SPI-37), or it does not run."""
+    env = dict(os.environ)
+    jdk = bundled_jdk()
+    if jdk:
+        env["JAVA_HOME"] = str(jdk)
+        env["PATH"] = str(jdk / "bin") + os.pathsep + env.get("PATH", "")
+    return env
+
+
 def find_kotlinc() -> str | None:
     for c in (os.environ.get("KOTLINC"), str(ROOT / ".tools/kotlinc/bin/kotlinc"), "kotlinc"):
         if c and (shutil.which(c) or pathlib.Path(c).exists()):
@@ -65,25 +85,31 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory() as td:
         jar = pathlib.Path(td) / "h.jar"
+        env = pinned_env()
+        java = env["JAVA_HOME"] + "/bin/java" if env.get("JAVA_HOME") else "java"
         cmd = [kotlinc, "-J-Xmx2g", "-cp", ajar, "-nowarn", "-include-runtime", "-d", str(jar)]
         cmd += [str(CORE / s) for s in SOURCES] + [str(HARNESS)]
         try:
-            cc = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
+            cc = subprocess.run(cmd, capture_output=True, text=True, timeout=900, env=env)
         except (OSError, subprocess.TimeoutExpired) as e:
             print(f"controller_gate: SKIP — could not compile harness: {e}")
             return 3
         if cc.returncode != 0 or not jar.exists():
+            # SPI-6: the WHOLE log, not a remembered filter. Publishing only `error:` lines
+            # shipped a failure the runner could not diagnose — UnsupportedClassVersionError
+            # carries no lowercase `error:` at all, so a mute gate cost a full delivery
+            # cycle. Every failure names its command, its exit, its compiler's words, and
+            # whether the jar appeared; a compiler that printed nothing says so itself.
             output = (cc.stdout or "") + (cc.stderr or "")
             print("controller_gate: FAIL — harness did not compile, so the law was not run")
-            print(f"  compiler exit={cc.returncode}; jar_exists={jar.exists()}; compiler={kotlinc}")
+            print(f"  cmd: {kotlinc} (exit {cc.returncode}; jar_exists={jar.exists()})")
             lines = output.splitlines()
-            for line in lines[-40:]:
-                print("  " + line)
-            if not lines:
-                print("  compiler produced no stdout/stderr; inspect process exit and runner memory")
+            for l in (lines[-30:] if lines else ["(compiler produced no output; inspect process exit and runner memory)"]):
+                print("  | " + l)
             return 1
         try:
-            r = subprocess.run(["java", "-jar", str(jar)], capture_output=True, text=True, timeout=300)
+            r = subprocess.run([java, "-jar", str(jar)], capture_output=True,
+                               text=True, timeout=300, env=env)
         except (OSError, subprocess.TimeoutExpired) as e:
             print(f"controller_gate: SKIP — could not run harness: {e}")
             return 3

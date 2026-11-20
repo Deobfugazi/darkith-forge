@@ -677,6 +677,15 @@ if have python3 && [ -f build/inject_updater.py ]; then
   run "update watcher injected (app surface)" python3 build/inject_updater.py --check
 fi
 
+# The holostream: the Operator's navigable map of this tree. MUST #42 — the map is derived
+# (build/gen_holostream.py from ci.sh suites, the autophagy registry, the law corpus, git
+# history), never hand-drawn; a stale map fails like a stale index. Determinism is a law:
+# two derivations over the same HEAD must be byte-identical.
+if have python3 && [ -f tools/holostream_gate.py ]; then
+  run "repo holostream (map is derived, fresh)" python3 tools/holostream_gate.py --check
+  run "holostream determinism (MUST #18)"        python3 tools/holostream_gate.py --selftest
+fi
+
 # The Operator's one-shot entrypoint (build&install.sh) must exist, be valid bash,
 # invoke the raw chain (never Gradle: SPI-1), and be reachable. It is the "drop
 # Termux" surface; it has silently gone missing before, so it is gated.

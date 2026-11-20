@@ -161,16 +161,24 @@ def directive_section(text: str) -> tuple[str, str] | None:
     by the task table that carries it out; mirroring the table too would copy every task into
     every worker's board, which is not propagation — it is duplication, and it would make the
     mirror fight the worker's own board for ownership of the same rows.
+
+    The body also stops at any generated block marker and at a table row. When the ★ heading
+    lives inside the gatekeeper's CHAT-GATE block, the block's own END bounds it: nothing past
+    it is directive. Without that bound the body swallowed the whole board frame — the durable
+    title, the earlier mirror, the task table — and quoting it back grew the board on every
+    pass: the mirror quoting the mirror quoting the mirror (NEVER #22).
     """
     m = DIRECTIVE_HEADING.search(text)
     if not m:
         return None
     start = m.end()
-    nxt = re.search(r"^##\s", text[start:], re.MULTILINE)
-    body = text[start:start + nxt.start()] if nxt else text[start:]
-    table = re.search(r"^\s*\|", body, re.MULTILINE)
-    if table:
-        body = body[:table.start()]
+    bounds = [mm.start() for mm in [
+        re.search(r"^##\s", text[start:], re.MULTILINE),
+        re.search(r"^<!--\s*(?:PRAXIS|CHAT-GATE):\S?", text[start:], re.MULTILINE),
+        re.search(r"^\s*\|", text[start:], re.MULTILINE),
+    ] if mm]
+    end = min(bounds) if bounds else len(text[start:])
+    body = text[start:start + end]
     return m.group(1), body
 
 
@@ -233,10 +241,18 @@ def render_block(title: str, body: str, declared: list[str], derived: list[str],
     # Strip ownership markers before quoting. A block-quoted marker pair is still a marker
     # pair: quoting CHAT-GATE:BEGIN/END into this block made a second owner of the same region,
     # and each propagation pass then found two more copies of it. Markers are addresses, not
-    # content — they do not survive being quoted.
+    # content — they do not survive being quoted. The board frame (its durable title) is frame,
+    # not order: quoting it back let the blockquote accumulate one more title per pass (NEVER
+    # #22), so it is dropped wherever it is found.
     quoted = [ln for ln in body.strip("\n").splitlines()
-              if not ln.strip().startswith(("<!-- CHAT-GATE:", "<!-- PRAXIS:"))]
-    lines += [("> " + ln).rstrip() for ln in quoted]
+              if not ln.strip().startswith(("<!-- CHAT-GATE:", "<!-- PRAXIS:"))
+              and not re.match(r"^#\s+TASKS\b", ln)]
+    collapsed: list[str] = []
+    for ln in quoted:
+        if ln.strip() == "" and collapsed and collapsed[-1].strip() == "":
+            continue
+        collapsed.append(ln)
+    lines += [("> " + ln).rstrip() for ln in collapsed]
     lines += ["", f"**Coupled laws (declared by the directive):** "
                   + (", ".join(f"`{l}`" for l in declared) if declared else "_none declared_"), ""]
     if declared:
@@ -308,7 +324,66 @@ def merge(board_text: str, block: str) -> str:
     return "\n".join(out).rstrip("\n") + "\n"
 
 
+def portable_path(p: pathlib.Path) -> str:
+    """(SPI-40) A receipt is read on another host, so it carries no absolute host path.
+
+    A path under this repo root is stored as root-relative; a path outside it (a session log,
+    a sibling worktree on the author's machine) exists only on THAT host, so storing it as an
+    absolute path committed a fact about one machine into the tree — and every other machine's
+    regeneration then disagreed with the committed bytes and dirtied the clone on checkout
+    (the WARN in the discrepancy detectors). Foreign targets are recorded by identity only.
+    """
+    try:
+        return str(p.resolve().relative_to(ROOT))
+    except ValueError:
+        return f"<host>/{p.name}"
+
+
+def receipt_paths_portable() -> tuple[bool, list[str]]:
+    """True when the receipt on disk carries no absolute or root-escaping path."""
+    if not RECEIPT.is_file():
+        return True, []
+    try:
+        data = json.loads(RECEIPT.read_text(encoding="utf-8"))
+    except (ValueError, OSError) as exc:
+        return False, [f"receipt unreadable: {str(exc)[:60]}"]
+    bad = []
+    for t in data.get("targets", []):
+        rel = str(t.get("path", ""))
+        if rel.startswith("/") or re.match(r"^[A-Za-z]:\\", rel) or rel.startswith("../"):
+            bad.append(rel)
+    return not bad, bad
+
+
+BOARD_TITLE = "# TASKS — the durable board"
+
+
+def sanitize_board(text: str) -> tuple[str, bool]:
+    """Collapse the frame duplication the old self-quoting mirror left behind.
+
+    Deterministic and converging: keep the first durable-title line, drop every later
+    byte-identical copy, and collapse blank-line runs the removal opens. Two runs produce
+    the same bytes (MUST #18); the title count can only decrease.
+    """
+    lines = text.splitlines(keepends=True)
+    seen_title = False
+    out = []
+    removed = False
+    for ln in lines:
+        if ln.rstrip("\n") == BOARD_TITLE:
+            if seen_title:
+                removed = True
+                continue
+            seen_title = True
+        out.append(ln)
+    cleaned = re.sub(r"\n{3,}", "\n\n", "".join(out))
+    if not cleaned.endswith("\n"):
+        cleaned += "\n"
+    return cleaned, removed
+
+
 def discover_targets() -> list[tuple[str, pathlib.Path]]:
+    """Every board that can steer work. Read off disk, never assumed to exist."""
     """Every board that can steer work. Read off disk, never assumed to exist."""
     targets: list[tuple[str, pathlib.Path]] = [("durable", BOARD)]
 
@@ -434,8 +509,46 @@ def selftest() -> int:
     check("normalise 'never 19' -> 'NEVER #19'", normalise_law("never 19") == "NEVER #19")
     check("normalise 'SPI-2' -> 'SPI-2'", normalise_law("SPI-2") == "SPI-2")
 
+    # --- (NEVER #22) the mirror must not quote the board frame back into itself. A directive
+    # section sat inside the gatekeeper block ABOVE a propagated block; the body once swallowed
+    # the block, the title, and its own previous quote, and every run grew the board by one
+    # more title. The body must stop at the block markers, and the rendered quote must carry
+    # no frame line.
+    nested = ("# TASKS — the durable board\n\n"
+              + BEGIN + "\n## ✐ PRAXIS — order in force\n"
+              + "> # TASKS — the durable board\n>\n> old quote\n\n"
+              + END + "\n\n## ★ DIRECTIVE PRIME TASK\n\nbody prose\n\n"
+              + "**Coupled laws:** SPI-29\n\n<!-- CHAT-GATE:END -->\n\n"
+              + "# TASKS — the durable board\n\n## CNS-DIRECTIVE\n\nprose\n")
+    title, body = directive_section(nested)
+    inner_block = render_block(title, body, ["SPI-29"], [], corpus)
+    check("NEVER #22: quote carries no board-frame title",
+          "# TASKS — the durable board" not in inner_block)
+    check("NEVER #22: body bounded by generated markers",
+          "## CNS-DIRECTIVE" not in body and "## ✐ PRAXIS" not in body)
+    round1 = merge(nested, inner_block)
+    round2 = merge(round1, render_block(*directive_section(round1), declared_laws(
+        directive_section(round1)[1]), [], corpus))
+    check("NEVER #22: re-propagation of a propagated board is byte-stable", round1 == round2)
+    check("NEVER #22: title count never grows",
+          round1.count("# TASKS — the durable board") <= nested.count("# TASKS — the durable board"))
+
+    # --- (SPI-40) receipts carry no absolute host path
+    under = portable_path(ROOT / "TASKS.md")
+    outside = portable_path(pathlib.Path("/var/opt/elsewhere") / "TASKS.json")
+    check("SPI-40: repo-internal path is root-relative", not under.startswith("/") and ".." not in under)
+    check("SPI-40: foreign path recorded by identity, not location", outside == "<host>/TASKS.json")
+
+    # --- frame sanitisation is deterministic and converging
+    junk = "# TASKS — the durable board\n\nprose\n\n# TASKS — the durable board\n\nmore\n\n# TASKS — the durable board\n"
+    once, removed = sanitize_board(junk)
+    twice, removed2 = sanitize_board(once)
+    check("frame: duplicates collapsed", removed and once.count(BOARD_TITLE) == 1)
+    check("frame: sanitation idempotent", twice == once and not removed2)
+
+    total = 10 + 4 + 2 + 2
     print(f"praxis selftest: {'PASS' if not fails else 'FAIL'} — "
-          f"{10 - len(fails)}/10 trials")
+          f"{total - len(fails)}/{total} trials")
     return 0 if not fails else 1
 
 
@@ -446,10 +559,46 @@ def main() -> int:
     ap.add_argument("--receipt", action="store_true")
     ap.add_argument("--targets", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--sanitize", action="store_true",
+                    help="collapse duplicated board-frame title lines, then propagate")
+    ap.add_argument("--sanitize-check", action="store_true",
+                    help="gate: fail if the board carries duplicated frame titles")
+    ap.add_argument("--portable-check", action="store_true",
+                    help="gate: fail if the receipt carries an absolute host path")
     args = ap.parse_args()
 
     if args.selftest:
         return selftest()
+
+    if args.portable_check:
+        ok, bad = receipt_paths_portable()
+        if ok:
+            print("praxis: PASS — receipt carries no absolute host path")
+            return 0
+        print(f"praxis: FAIL — receipt names {len(bad)} host-bound path(s): {bad[:3]}")
+        print("        run tools/praxis_propagate.py to rewrite the receipt portably")
+        return 1
+
+    if not BOARD.is_file():
+        print("praxis: FAIL — no TASKS.md, so there is no directive to propagate")
+        return 1
+
+    if args.sanitize or args.sanitize_check:
+        text = BOARD.read_text(encoding="utf-8")
+        titles = sum(1 for ln in text.splitlines() if ln.rstrip() == BOARD_TITLE)
+        if args.sanitize_check:
+            if titles > 1:
+                print(f"praxis: FAIL — board carries {titles} durable-title frames; "
+                      "run tools/praxis_propagate.py --sanitize")
+                return 1
+            print("praxis: PASS — board frame appears once")
+            return 0
+        cleaned, removed = sanitize_board(text)
+        if removed:
+            BOARD.write_text(cleaned, encoding="utf-8")
+            print(f"praxis: sanitized — {titles - 1} duplicate frame(s) collapsed")
+        else:
+            print("praxis: sanitize — nothing to remove")
 
     if args.receipt:
         print(RECEIPT.read_text(encoding="utf-8") if RECEIPT.exists()
@@ -521,7 +670,8 @@ def main() -> int:
                 status, detail = write_md(path, block, dry)
         except Exception as exc:  # a target we cannot write must be named, never skipped
             status, detail = "error", str(exc)[:80]
-        results.append({"target": name, "path": str(path), "status": status, "detail": detail})
+        results.append({"target": name, "path": portable_path(path), "status": status,
+                        "detail": detail})
 
     stale = [r for r in results if r["status"] not in ("current", "updated", "created")
              or r["status"].startswith("would-")]
