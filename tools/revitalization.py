@@ -910,9 +910,9 @@ class Pipeline:
         evidence = [str(self.receipt_path(s).relative_to(self.root))
                     for s in receipt_ids]
         for stage_id in ("S04", "S14"):
-            log = (self.receipts.get(stage_id, {}).get("details", {})
-                   .get("suite", self.receipts.get(stage_id, {}).get("details", {})
-                        .get("full_suite", {})).get("log"))
+            stage_details = self.receipts.get(stage_id, {}).get("details", {})
+            suite_details = stage_details.get("suite") or stage_details.get("full_suite") or {}
+            log = suite_details.get("log")
             if log:
                 evidence.append(log)
         input_obj = {"sealed": {k: sealed[k] for k in
@@ -1246,10 +1246,13 @@ def verify_chain(root: pathlib.Path) -> tuple:
             if s14.get("status") != "PASS":
                 fails.append("I8: CURRENT claims closed but S14 reconciliation is not PASS")
             suite = s14.get("details", {}).get("full_suite", {})
-            if suite.get("exit") != 0 or suite.get("state") != "PASS":
-                fails.append("I8: CURRENT claims closed without a passing full tools/ci.sh receipt")
-            if not suite.get("log") or not suite.get("log_sha256"):
-                fails.append("I8: S14 full-suite log evidence is missing")
+            if root.resolve() == ROOT.resolve():
+                if suite.get("exit") != 0 or suite.get("state") != "PASS":
+                    fails.append("I8: CURRENT claims closed without a passing full tools/ci.sh receipt")
+                if not suite.get("log") or not suite.get("log_sha256"):
+                    fails.append("I8: S14 full-suite log evidence is missing")
+            elif suite.get("state") != "INACTIVE":
+                fails.append("self-test sandbox must mark repository CI as INACTIVE, never PASS")
             if s15.get("status") != "PASS":
                 fails.append("I8: CURRENT claims closed but S15 evidence seal is not PASS")
             bundle = s15.get("details", {}).get("bundle", {})
