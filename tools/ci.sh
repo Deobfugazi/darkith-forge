@@ -17,6 +17,16 @@ set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT" || exit 2
 
+# A bundled JVM is part of the toolchain: kotlinc cannot run without one, and a gate that
+# cannot run its harness reports a code defect that does not exist. Export it here so every
+# compile gate tells the truth on a machine with no system java.
+if [ -x "$ROOT/.tools/jdk-17.0.12+7/bin/java" ]; then
+  case ":$PATH:" in
+    *":$ROOT/.tools/jdk-17.0.12+7/bin:"*) ;;
+    *) PATH="$ROOT/.tools/jdk-17.0.12+7/bin:$PATH"; export PATH ;;
+  esac
+fi
+
 FAILED=0
 SKIPPED=0
 
@@ -319,6 +329,15 @@ fi
 # under app/), so the contaminant can never ride in ungated again.
 if have python3 && [ -f tools/blueprint_gate.py ]; then
   run "blueprint gate (no injection)" python3 tools/blueprint_gate.py
+fi
+
+if have python3 && [ -f tools/autophagy.py ]; then
+  # The defect-class registry. Every class found by hand must land as detector + repair +
+  # prevention gate; this runs the detectors so a repaired class cannot silently return.
+  # It runs BEFORE kb_index so a generator-order inversion is reported as itself rather
+  # than as an anonymous stale index.
+  run "autophagy (defect-class registry)" python3 tools/autophagy.py --selftest
+  run "autophagy (defect-class registry)" python3 tools/autophagy.py --check
 fi
 
 if have python3 && [ -f tools/kb_index.py ]; then
