@@ -508,7 +508,13 @@ def selftest() -> int:
     b2 = render_orders("c1", o1, m1["occupation"])
     chk("render is deterministic", b1 == b2)
 
-    # replace, never append, and preserve the board's authored title on repeated runs
+    # A block at the very top must be a fixed point, not accumulate leading blank lines.
+    bare_board = "## ★ OLD\n\nbody\n"
+    bare_merged = merge(bare_board, b1)
+    bare_merged2 = merge(bare_merged, b2)
+    chk("top-level merge is idempotent", bare_merged.count(BEGIN) == 1 and bare_merged == bare_merged2)
+
+    # Replacing an existing block must preserve the authored board title.
     board = "# TASKS — the durable board\n\n## ★ OLD\n\nbody\n"
     merged = merge(board, b1)
     merged2 = merge(merged, b2)
