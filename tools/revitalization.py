@@ -144,7 +144,7 @@ LAYERS = {
 }
 
 GOVERNING_SOURCES = ("DARKITH.md", "AGENTS.md", "TASKS.md", "STALL_BUDGET.json",
-                     "DEFICITS.json", "tools/ci.sh")
+                     "DEFICITS.json", "tools/ci.sh", "tools/revitalization.py")
 
 DECLARED_EDGES = (
     ("L6", "L1", "backward", "laws bind gates; a law that is not a gate is a note"),
@@ -241,6 +241,14 @@ class Pipeline:
                 self.parent = old["receipt_sha256"]
                 self.receipts[stage_id] = old
                 return old
+        evidence_refs = [str(ref) for ref in (evidence or [])]
+        evidence_hashes = {}
+        for ref in evidence_refs:
+            path_ref = (self.root / ref).resolve(strict=True)
+            path_ref.relative_to(self.root.resolve())
+            if not path_ref.is_file():
+                raise ValueError(f"{stage_id}: evidence is not a file: {ref}")
+            evidence_hashes[ref] = sha(path_ref.read_bytes())
         rec = {
             "repo": self.root.name,
             "cycle_id": self.cycle,
@@ -251,7 +259,8 @@ class Pipeline:
             "status": status,
             "reason": reason,
             "details": details or {},
-            "evidence": evidence or [],
+            "evidence": evidence_refs,
+            "evidence_sha256": evidence_hashes,
             "uncertainty": uncertainty or [],
             "written_at_utc": now_utc(),
             "operator": self.operator,
@@ -1152,27 +1161,82 @@ def verify_chain(root: pathlib.Path) -> tuple:
                              f"exit={probe.get('exit')} state={st} "
                              f"(SKIP is never PASS)")
         for task in receipts["S08"]["details"].get("tasks", []):
-            missing = [k for k in ("id", "defects", "governing_file",
-                                   "baseline_commit", "acceptance_criteria",
-                                   "evidence") if not task.get(k)]
+            missing = [k for k in ("id", "defects", "parent_task", "governing_file",
+                                   "governing_clause", "root_cause", "baseline_commit",
+                                   "acceptance_criteria", "evidence") if not task.get(k)]
             if missing:
                 fails.append(f"I2: task {task.get('id')} lacks {', '.join(missing)}")
+            if task.get("governing_clause") == "UNCONFIRMED" or task.get("root_cause") == "UNCONFIRMED":
+                if current.get("closed"):
+                    fails.append(f"I2/I7: closed cycle contains unconfirmed root cause/governance for {task.get('id')}")
         for sid, rec in receipts.items():
             for ref in rec.get("evidence", []):
-                if not (root / ref).exists():
+                evidence_path = root / ref
+                if not evidence_path.is_file():
                     fails.append(f"I8: {sid} evidence does not resolve: {ref}")
+                    continue
+                expected = rec.get("evidence_sha256", {}).get(ref)
+                if not expected or sha(evidence_path.read_bytes()) != expected:
+                    fails.append(f"I9: {sid} evidence changed since receipt: {ref}")
+
+        # Governing-source hashes are temporal anchors. A repair may change one only
+        # when S10 records the exact before/after bytes for that target.
+        baseline_governing = receipts["S01"]["details"].get("governing", {})
+        authorized_changes = {
+            m.get("target"): m.get("after_sha256")
+            for m in receipts["S10"]["details"].get("manifest", [])
+            if m.get("applied")
+        }
+        for path, baseline_hash in baseline_governing.items():
+            current_path = root / path
+            if not current_path.is_file():
+                fails.append(f"I9: governing source disappeared after baseline: {path}")
+                continue
+            expected = authorized_changes.get(path, baseline_hash)
+            if sha(current_path.read_bytes()) != expected:
+                fails.append(f"I9: governing source changed outside its sealed repair: {path}")
+
+        # A sealed cycle is closed only when the actual reconciliation, evidence seal,
+        # and board-rotation receipts all PASS and their own payloads agree.
         if current.get("closed"):
-            if not (d / "S15_SEAL.json").is_file():
-                fails.append("I8: cycle claims closed but S15 seal is missing")
-            open_tasks = [t["id"] for t
-                          in receipts["S16"]["details"].get("task_queue", [])
+            s14 = receipts["S14"]
+            s15 = receipts["S15"]
+            s16 = receipts["S16"]
+            if s14.get("status") != "PASS":
+                fails.append("I8: CURRENT claims closed but S14 reconciliation is not PASS")
+            suite = s14.get("details", {}).get("full_suite", {})
+            if suite.get("exit") != 0 or suite.get("state") != "PASS":
+                fails.append("I8: CURRENT claims closed without a passing full tools/ci.sh receipt")
+            if not suite.get("log") or not suite.get("log_sha256"):
+                fails.append("I8: S14 full-suite log evidence is missing")
+            if s15.get("status") != "PASS":
+                fails.append("I8: CURRENT claims closed but S15 evidence seal is not PASS")
+            bundle = s15.get("details", {}).get("bundle", {})
+            if bundle.get("open_defects"):
+                fails.append(f"I8: S15 bundle still has open defects: {bundle['open_defects']}")
+            if len(bundle.get("stage_files", [])) != 14:
+                fails.append("I8: S15 bundle does not include every S01-S14 receipt")
+            if s16.get("status") != "PASS" or s16.get("details", {}).get("closed") is not True:
+                fails.append("I8: S16 does not carry a PASS closure")
+            open_tasks = [t["id"] for t in s16.get("details", {}).get("task_queue", [])
                           if t.get("status") != "closed"]
             if open_tasks:
                 fails.append(f"I8: cycle claims closed with open task(s) {open_tasks}")
-            hangs = receipts["S16"]["details"].get("newly_skipped", [])
-            if hangs:
-                fails.append(f"I3: cycle claims closed but introduced new SKIP(s): "
-                             f"{hangs}")
+            newly_skipped = s16.get("details", {}).get("newly_skipped", [])
+            if newly_skipped:
+                fails.append(f"I3: cycle claims closed but introduced new SKIP(s): {newly_skipped}")
+            tasks = receipts["S08"]["details"].get("tasks", [])
+            if tasks:
+                if receipts["S09"].get("status") != "PASS":
+                    fails.append("I10: tasks exist but S09 authorization is not PASS")
+                for stage_id in ("S10", "S11", "S12", "S13"):
+                    if receipts[stage_id].get("status") != "PASS":
+                        fails.append(f"I4: tasks exist but {stage_id} is not PASS")
+            else:
+                for stage_id in ("S09", "S10", "S11", "S12", "S13"):
+                    if receipts[stage_id].get("status") not in ("INACTIVE", "PASS"):
+                        fails.append(f"I3: no-task cycle has invalid {stage_id} state "
+                                     f"{receipts[stage_id].get('status')}")
     return (1 if fails else 0), fails
 
 
