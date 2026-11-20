@@ -120,6 +120,23 @@ CLASSES = [
            "ci: kb_index",
            "docs/INDEX.md + kb_manifest.json are generated; a stale index is a lie about the tree"),
 
+    # Found 2026-11-20: tree_omega/ sat gitignored in the working directory holding a second
+    # app/src. The unit ledger judged a Kotlin file that is not in the repository at all, so
+    # the defect was invisible to every reviewer and loud in CI.
+    Class_("phantom source tree",
+           "python3 tools/phantom_tree_gate.py --check",
+           "python3 tools/phantom_tree_gate.py --fix",
+           "ci: phantom source tree",
+           "a gitignored duplicate tree is judged by gates that scan the working directory"),
+
+    # Found 2026-11-20: kotlinc was present without a JVM, so controller_gate reported
+    # "harness did not compile" — a code-defect message for an absent runtime.
+    Class_("half a toolchain",
+           "python3 tools/toolchain_gate.py --check",
+           "python3 tools/toolchain_gate.py --fix",
+           "ci: toolchain integrity",
+           "a compiler without its runtime makes every compile gate blame the code"),
+
 ]
 
 

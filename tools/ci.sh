@@ -340,6 +340,17 @@ if have python3 && [ -f tools/autophagy.py ]; then
   run "autophagy (defect-class registry)" python3 tools/autophagy.py --check
 fi
 
+if have python3 && [ -f tools/phantom_tree_gate.py ]; then
+  # A gitignored duplicate source tree is invisible to every reviewer but is judged by
+  # gates that scan the working directory (the unit ledger did exactly that).
+  run "phantom source tree" python3 tools/phantom_tree_gate.py --check
+fi
+
+if have python3 && [ -f tools/toolchain_gate.py ]; then
+  # A compiler with no runtime makes a compile gate blame the code for an absent JVM.
+  run "toolchain integrity" python3 tools/toolchain_gate.py --check
+fi
+
 if have python3 && [ -f tools/kb_index.py ]; then
   # Universal index of the readable knowledge-skill base (SPI-15). Fails if the index is
   # stale, if a readable file is unfiled, if two files share a hash without a declared
