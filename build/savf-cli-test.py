@@ -84,7 +84,9 @@ with tempfile.TemporaryDirectory() as td:
 # token rules, and never exit 1 on its own depth limit.
 with tempfile.TemporaryDirectory() as td:
     deep = pathlib.Path(td) / "deep.py"
-    deep.write_text("import notreal_pkg\n# TODO: fix\nx = " + "1+" * 9995 + "1\n")
+    # CPython 3.15 accepts a long addition chain as a normal AST. Prefix operators
+    # reliably exhaust the parser stack and exercise the intended depth fallback.
+    deep.write_text("import notreal_pkg\n# TODO: fix\nx = " + "not " * 20000 + "True\n")
     r = run("scan", str(deep), "--json")
     F = json.loads(r.stdout) if r.returncode in (0, 1) else []
     rules = {f["rule"] for f in F}
@@ -100,7 +102,7 @@ with tempfile.TemporaryDirectory() as td:
     # The exit code here is 1 because of the phantom import above, which is a real
     # high finding.  A separate file proves the depth limit alone never fails a scan.
     clean = pathlib.Path(td) / "deep_only.py"
-    clean.write_text("x = " + "1+" * 9995 + "1\n")
+    clean.write_text("x = " + "not " * 20000 + "True\n")
     r2 = run("scan", str(clean), "--json")
     F2 = json.loads(r2.stdout) if r2.returncode in (0, 1) else []
     check("scan: depth limit alone does not fail the scan",

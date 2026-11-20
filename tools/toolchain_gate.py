@@ -35,16 +35,16 @@ def java_available() -> bool:
 
 
 def kotlinc_available() -> bool:
-    if shutil.which("kotlinc"):
-        return True
-    return (ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc").is_file()
+    return kotlinc_path() is not None
 
 
 def kotlinc_path() -> str | None:
-    return shutil.which("kotlinc") or (
-        str(ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc")
-        if (ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc").is_file() else None
-    )
+    # Match controller_gate.py and the raw-chain build: use the repository-pinned compiler
+    # before any unrelated kotlinc installed on the runner.
+    bundled = ROOT / ".tools" / "kotlinc" / "bin" / "kotlinc"
+    if bundled.is_file():
+        return str(bundled)
+    return shutil.which("kotlinc")
 
 
 def kotlinc_runs() -> tuple[bool, str]:
@@ -58,7 +58,8 @@ def kotlinc_runs() -> tuple[bool, str]:
     env = dict(os.environ)
     if (BUNDLED_JDK_BIN / "java").is_file():
         env["PATH"] = f"{BUNDLED_JDK_BIN}{os.pathsep}{env.get('PATH', '')}"
-        env.setdefault("JAVA_HOME", str(BUNDLED_JDK_BIN.parent))
+        # JAVA_HOME overrides PATH in several kotlinc launchers; force the pinned runtime.
+        env["JAVA_HOME"] = str(BUNDLED_JDK_BIN.parent)
     try:
         p = subprocess.run([exe, "-version"], capture_output=True, text=True, timeout=180,
                            env=env)

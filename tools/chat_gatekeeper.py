@@ -515,11 +515,19 @@ def selftest() -> int:
     b2 = render_orders("c1", o1, m1["occupation"])
     chk("render is deterministic", b1 == b2)
 
-    # replace, never append
-    board = "## ★ OLD\n\nbody\n"
+    # A block at the very top must be a fixed point, not accumulate leading blank lines.
+    bare_board = "## ★ OLD\n\nbody\n"
+    bare_merged = merge(bare_board, b1)
+    bare_merged2 = merge(bare_merged, b2)
+    chk("top-level merge is idempotent", bare_merged.count(BEGIN) == 1 and bare_merged == bare_merged2)
+
+    # Replacing an existing block must preserve the authored board title.
+    board = "# TASKS — the durable board\n\n## ★ OLD\n\nbody\n"
     merged = merge(board, b1)
     merged2 = merge(merged, b2)
-    chk("merge replaces", merged.count(BEGIN) == 1 and merged == merged2)
+    chk("merge preserves board title", merged.splitlines()[0] == "# TASKS — the durable board")
+    chk("replacement preserves board title", merged2.splitlines()[0] == "# TASKS — the durable board")
+    chk("merge replaces idempotently", merged.count(BEGIN) == 1 and merged == merged2)
 
     # A single pass cannot tell a stable seam from a slow leak, so assert a third pass.
     # Empty and CRLF boards are the shapes where a separator still crept in per run.
