@@ -592,6 +592,14 @@ files = subprocess.run(["git","ls-files","-z"], capture_output=True, text=True).
 # basename across them is not a fork — only divergence WITHIN a tree is. Scope
 # the comparison per tree; shared/root files use the "" tree.
 def tree_of(f):
+    # A sealed cycle's receipt directory is its own tree for the same reason app/
+    # and omega-app/ are: each cycle is independent evidence, so S01_BASELINE.json
+    # in cycle A and in cycle B are two records, not two copies of one file.
+    # Comparing them would report every successive cycle as a fork of the last.
+    if f.startswith("proof/revitalization/"):
+        rest = f.split("/", 2)
+        if len(rest) == 3 and rest[1] != "":
+            return "proof/revitalization/" + rest[1]
     head = f.split("/",1)[0]
     return head if head in ("app","omega-app") else ""
 by = collections.defaultdict(list)

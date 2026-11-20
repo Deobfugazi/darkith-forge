@@ -99,6 +99,27 @@ def is_generated_target(path: str) -> bool:
                    for prefix in GENERATED_PREFIXES))
 
 
+_IGNORED_CACHE: dict = {}
+
+
+def ignored(rel: str) -> bool:
+    """True when git ignores this repo-relative path. One `git ls-files` call, cached.
+
+    git is the only authority on its own ignore rules; re-deriving them here would fork
+    the definition and the two would disagree about which bytes are source.
+    """
+    key = str(ROOT)
+    if key not in _IGNORED_CACHE:
+        try:
+            cp = subprocess.run(["git", "ls-files", "--others", "--ignored",
+                                 "--exclude-standard", "-z"],
+                                cwd=str(ROOT), capture_output=True, text=True)
+            _IGNORED_CACHE[key] = set(cp.stdout.split("\0")) if cp.returncode == 0 else set()
+        except OSError:
+            _IGNORED_CACHE[key] = set()
+    return rel in _IGNORED_CACHE[key]
+
+
 def tree_snapshot(root: pathlib.Path) -> dict:
     """Hash every repository file except VCS/cache and the current cycle's own receipts."""
     out = {}
@@ -109,6 +130,10 @@ def tree_snapshot(root: pathlib.Path) -> dict:
         rel = path.relative_to(root).as_posix()
         if rel.startswith("proof/revitalization/") or rel == "proof/praxis_propagation.json":
             continue  # the propagation receipt records per-run target states, not generated tissue
+        if ignored(rel):
+            continue  # Runtime evidence (logs, toolchain) is rewritten by the very run that
+            # hashes it: proof/ci_last.log is ci.sh's own output, so counting it would make
+            # every full CI drift from its own seal and I9 could never pass.
         try:
             out[rel] = sha(path.read_bytes())
         except OSError:
