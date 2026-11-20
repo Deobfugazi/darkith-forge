@@ -101,13 +101,26 @@ def load_state() -> dict:
 
 
 def receipt_is_fresh(receipt: dict):
-    for item in receipt.get('evidence', []):
-        path = ROOT / item['path']
-        if not path.is_file():
-            return False, 'evidence missing: ' + item['path']
-        if hashlib.sha256(path.read_bytes()).hexdigest() != item['sha256']:
-            return False, 'evidence changed: ' + item['path']
-    return True, 'current'
+    # A receipt describes one repository revision. Evidence bytes alone are not
+    # enough: a source or dependency can change elsewhere and invalidate the proof.
+    revision = receipt.get("revision")
+    if not revision or revision != current_revision():
+        return False, "repository revision changed since receipt"
+    for item in receipt.get("evidence", []):
+        raw = pathlib.PurePosixPath(item.get("path", ""))
+        if raw.is_absolute() or ".." in raw.parts:
+            return False, "unsafe evidence path: " + str(raw)
+        path = ROOT.joinpath(*raw.parts)
+        try:
+            resolved = path.resolve(strict=True)
+            resolved.relative_to(ROOT.resolve())
+        except (OSError, ValueError):
+            return False, "evidence missing or outside repository: " + str(raw)
+        if not resolved.is_file():
+            return False, "evidence is not a file: " + str(raw)
+        if hashlib.sha256(resolved.read_bytes()).hexdigest() != item.get("sha256"):
+            return False, "evidence changed: " + str(raw)
+    return True, "current"
 
 
 def record_deferred(stage: str, reason: str) -> None:
@@ -195,6 +208,13 @@ def validate_stage(stage: str, payload: dict, cycle: int, previous: dict | None)
     elif stage == "S9":
         decision = payload["decision"]
         risk = payload["authorization_class"]
+        scope = payload["scope"]
+        if not isinstance(scope, list) or not scope or any(not isinstance(x, str) or not x.strip() for x in scope):
+            raise ValueError("S9 requires a non-empty, explicit path scope")
+        for item in scope:
+            p = pathlib.PurePosixPath(item)
+            if p.is_absolute() or ".." in p.parts:
+                raise ValueError(f"S9 scope must be repository-relative and traversal-free: {item}")
         if decision == "AUTO_APPROVED":
             if risk not in LOW_RISK_CLASSES:
                 raise ValueError("AUTO_APPROVED is restricted to configured low-risk classes")
@@ -205,13 +225,28 @@ def validate_stage(stage: str, payload: dict, cycle: int, previous: dict | None)
             raise ValueError("S9 decision must be AUTO_APPROVED or HUMAN_APPROVED")
     elif stage == "S10":
         auth = read_json(receipt_path(cycle, "S9"))
-        decision = auth["output"]["decision"]
-        if decision not in {"AUTO_APPROVED", "HUMAN_APPROVED"}:
+        auth_output = auth["output"]
+        fresh, why = receipt_is_fresh(auth)
+        if not fresh:
+            raise ValueError("S10 blocked: authorization receipt is stale: " + why)
+        if auth_output["decision"] not in {"AUTO_APPROVED", "HUMAN_APPROVED"}:
             raise ValueError("S10 blocked: no valid S9 authorization")
+        baseline = read_json(receipt_path(cycle, "S1"))["output"]
+        generated = baseline.get("generated_artifacts", [])
+        generated_paths = {
+            item if isinstance(item, str) else item.get("path")
+            for item in generated
+        }
+        approved_scope = auth_output["scope"]
         for item in payload["changed_files"]:
             path = item.get("path", "") if isinstance(item, dict) else ""
-            if any(path == root or path.startswith(root + "/") for root in GENERATED_ROOTS):
+            pure = pathlib.PurePosixPath(path)
+            if pure.is_absolute() or ".." in pure.parts:
+                raise ValueError(f"S10 changed path must be repository-relative: {path}")
+            if any(path == root or path.startswith(root + "/") for root in GENERATED_ROOTS) or path in generated_paths:
                 raise ValueError(f"S10 refuses generated-output mutation: {path}")
+            if not any(path == scope or path.startswith(scope.rstrip("/") + "/") for scope in approved_scope):
+                raise ValueError(f"S10 changed file falls outside authorized scope: {path}")
             if not item.get("change_reason"):
                 raise ValueError(f"S10 changed file requires change_reason: {path}")
     elif stage == "S11":
@@ -237,6 +272,15 @@ def validate_stage(stage: str, payload: dict, cycle: int, previous: dict | None)
     elif stage == "S16":
         if not payload["board_revision"] or not payload["board_state_sha256"]:
             raise ValueError("S16 requires a verifiable board revision and state hash")
+        board = ROOT / "TASKS.md"
+        if not board.is_file():
+            raise ValueError("S16 cannot seal: TASKS.md is missing")
+        actual = hashlib.sha256(board.read_bytes()).hexdigest()
+        if payload["board_state_sha256"] != actual:
+            raise ValueError("S16 board_state_sha256 does not match the actual TASKS.md bytes")
+        for key in ("next_cycle_queue", "regression_queue", "changed_nodes"):
+            if not isinstance(payload[key], list):
+                raise ValueError(f"S16 {key} must be a list")
 
 
 def record(stage: str, payload_path: str, evidence_paths: list[str]) -> dict:
