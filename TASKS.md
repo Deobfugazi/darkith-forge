@@ -160,3 +160,45 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
    - sha256 `1ccfa978007ed129`
 
 <!-- CHAT-GATE:END -->
+
+## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
+
+The Operator's standing demand, codified so it is a property of the apparatus and not of any
+one agent's memory:
+
+1. **The product is an installable, agnostic artifact.** Every completion report states, in
+   plain sight, whether the deliverable is a runnable/installable thing on any account or
+   host — and if it is not, that is the headline, not a footnote. No hunting.
+
+2. **No defect may be reported as an emergent surprise.** A defect that was *possible* is a
+   codification failure. Every fix lands as a class fix: a detector, a deterministic repair,
+   and a prevention gate in CI. `tools/autophagy.py` is that registry. A repair with no
+   prevention gate is refused at load.
+
+3. **The tree must always be a newborn.** `tools/autophagy.py` detects every registered
+   defect class, repairs it, re-runs the detector to prove the repair took, and loops to
+   convergence. A tree that requires watching is a patient, not an apparatus.
+
+4. **Only evolutionary progress is reported.** Against the omega endpoint: what class was
+   ended, what gate now prevents its return, what the tree can do that it could not before.
+
+5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
+   what the installable artifact is. Evidence after.
+
+## H. NT XI - THE OMEGA PROGRESS-DEFICIT INDICATOR
+
+NT XI (Autophagic Sovereign Economy) carries the retention law `W_in - E = S != 0`, with
+absolution as `E/W_in -> 0`. Read off the durable board and the deficit ledger, it is this
+project's own progress-deficit indicator. `W_in` is all named work; `E` is work named but not
+returned to the source; `S` is work returned. A rising ratio across a delivery is extraction
+and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is formally descoped.
+
+| metric | value | meaning |
+|---|---|---|
+| W_in | 8 | named work = board 0 + deficits 8 |
+| E | 0 | un-returned = todo 0 + in_progress 0 + blocked 0 + open 0 |
+| S | 8 | returned = done 0 + closed 3 + descoped 5 |
+| E/W_in | 0.000 | the progress-deficit indicator; absolution at 0 |
+| absolution | YES | E = 0 (all named work returned) |
+
+Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.

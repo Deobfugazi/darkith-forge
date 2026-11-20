@@ -96,6 +96,18 @@ CLASSES = [
            "'omega-app/src/main/java/*.kt')",
            "ci: kotlin comment scan",
            "an unclosed comment makes every later line of the file unparseable"),
+    Class_("central directive on every board",
+           "python3 tools/cns_directive.py --check",
+           "python3 tools/cns_directive.py --write",
+           "ci: cns directive",
+           "a directive on four boards is a directive one agent does not have"),
+
+    Class_("omega deficit indicator",
+           "python3 tools/omega_deficit.py",
+           "python3 tools/omega_deficit.py --write",
+           "ci: omega deficit",
+           "a stale E/W_in reports progress that has not happened"),
+
     Class_("generated docs index",
            "python3 tools/kb_index.py",
            "python3 tools/kb_index.py --write",
