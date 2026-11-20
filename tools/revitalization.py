@@ -180,6 +180,38 @@ def is_exempt(path: str) -> bool:
                            .startswith(path.rstrip("/") + "/"))
 
 
+def strip_generated_board(text: str) -> str:
+    """Remove only the machine-owned REVITALIZATION block from TASKS content."""
+    if BOARD_BEGIN not in text:
+        return text
+    pre, rest = text.split(BOARD_BEGIN, 1)
+    if BOARD_END not in rest:
+        return text
+    _, post = rest.split(BOARD_END, 1)
+    return pre + post
+
+
+def board_only_dirty(root: pathlib.Path) -> bool:
+    """True only when TASKS.md differs from HEAD solely inside the generated S16 block."""
+    current = root / "TASKS.md"
+    if not current.is_file():
+        return False
+    head = git(root, "show", "HEAD:TASKS.md")
+    if head.returncode != 0:
+        return False
+    return (strip_generated_board(current.read_text(encoding="utf-8"))
+            == strip_generated_board(head.stdout))
+
+
+def clean_dirty_paths(root: pathlib.Path) -> list[str]:
+    dirty = [ln[3:].strip().strip('"').split(" -> ")[0]
+             for ln in git(root, "status", "--porcelain").stdout.splitlines()
+             if ln.strip()]
+    if board_only_dirty(root):
+        dirty = [p for p in dirty if p != "TASKS.md"]
+    return sorted(p for p in dirty if not is_exempt(p))
+
+
 def canonical(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"))
 
@@ -291,7 +323,7 @@ class Pipeline:
         governing = {p: sha((self.root / p).read_bytes())
                      for p in GOVERNING_SOURCES if (self.root / p).is_file()}
         tree_hashes = tree_snapshot(self.root)
-        repo_dirty = [d for d in dirty if not is_exempt(d)]
+        repo_dirty = clean_dirty_paths(self.root)
         input_obj = {"branch": branch, "commit": commit,
                      "dirty_count": len(repo_dirty), "governing": governing,
                      "tree_sha256": chash(tree_hashes)}
@@ -939,9 +971,11 @@ class Pipeline:
         }
         manifest_targets = source_targets | regenerated_targets
         dirty_paths = [p.split(" -> ")[0] for p in dirty]
+        board_only = board_only_dirty(self.root)
         cycle_output = [p for p in dirty_paths if is_exempt(p)]
         drift = [p for p in dirty_paths
-                 if not is_exempt(p) and p not in manifest_targets]
+                 if not is_exempt(p) and p not in manifest_targets
+                 and not (p == "TASKS.md" and board_only)]
         clean = not drift and suite_ok
         details = {"dirty": dirty, "unexplained_drift": drift,
                    "cycle_output": cycle_output,
@@ -1141,12 +1175,12 @@ def idempotency_key(root: pathlib.Path) -> dict:
         return sha(path.read_bytes()) if path.is_file() else "none"
     commit = git(root, "rev-parse", "HEAD").stdout.strip()
     branch = git(root, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
-    dirty = [ln[3:].strip().strip('"').split(" -> ")[0]
-             for ln in git(root, "status", "--porcelain").stdout.splitlines()
-             if ln.strip()]
-    repo_dirty = sorted(p for p in dirty if not is_exempt(p))
-    governing = {p: sha((root / p).read_bytes()) for p in GOVERNING_SOURCES
-                 if (root / p).is_file()}
+    repo_dirty = clean_dirty_paths(root)
+    governing = {
+        p: (sha(strip_generated_board((root / p).read_text(encoding="utf-8")).encode("utf-8"))
+            if p == "TASKS.md" else sha((root / p).read_bytes()))
+        for p in GOVERNING_SOURCES if (root / p).is_file()
+    }
     return {"branch": branch, "commit": commit, "dirty": repo_dirty,
             "governing": governing,
             "registry_sha256": sha_of(root / "proof/revitalization/probe_registry.json"),
