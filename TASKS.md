@@ -4,7 +4,7 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Circadian phase at ingest: **wake/active**, occupation **engaged** (gap 0.01h). This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T05:22:16.666703`. This section is regenerated, never hand-edited._
 >
 > **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
 >
@@ -82,7 +82,7 @@
 | `SPI-4` | LOG TO DISK, READ FROM DISK |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #15`, `MUST #38`, `MUST #40`, `SPI-16`, `SPI-19`, `SPI-29`, `SPI-30`, `SPI-32`, `SPI-33`, `SPI-34`
+**Also matched by term (derived, advisory — not an order):** `MUST #38`, `MUST #40`, `SPI-16`, `SPI-19`, `SPI-29`, `SPI-30`, `SPI-32`, `SPI-33`, `SPI-34`
 
 <!-- PRAXIS:END -->
 
@@ -91,7 +91,7 @@
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Circadian phase at ingest: **wake/active**, occupation **engaged** (gap 0.01h). This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T05:22:16.666703`. This section is regenerated, never hand-edited._
 
 **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
 

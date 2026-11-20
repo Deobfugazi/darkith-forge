@@ -431,8 +431,18 @@ def _root():
     cwd default made a copy in /tmp operate on /tmp itself, one level above the project it had
     just installed into.
     """
-    return os.path.abspath(os.environ.get("COORDINASYNC_ROOT")
-                           or os.path.dirname(os.path.abspath(__file__)))
+    explicit = os.environ.get("COORDINASYNC_ROOT")
+    if explicit:
+        return os.path.abspath(explicit)
+    # A project marker in the working directory wins: someone who runs
+    # `python3 kit/coordinasync.py check` from their project root means THAT project, not the
+    # subdirectory the bundle happens to live in. With no marker the bundle's own directory is
+    # the only thing that can be trusted — that is the copy-dropped-somewhere case, and it must
+    # never reach upward to whatever project happens to sit above it.
+    cwd = os.getcwd()
+    if os.path.isfile(os.path.join(cwd, "TASKS.md")) or             os.path.isfile(os.path.join(cwd, ".coordinasync.json")):
+        return cwd
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 def _call(name, argv):
