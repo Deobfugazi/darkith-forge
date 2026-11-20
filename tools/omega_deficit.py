@@ -52,9 +52,18 @@ SECTION_HEAD = "## H. NT XI"
 
 
 def board_rows() -> list[tuple[int, str, str]]:
-    """(lineno, task, status) for every board row carrying a status cell."""
+    """(lineno, task, status) for work rows; generated stage telemetry is not work."""
     rows = []
+    in_revitalization = False
     for i, line in enumerate(BOARD.read_text(encoding="utf-8").splitlines(), 1):
+        if line.strip().startswith("<!-- REVITALIZATION:BEGIN"):
+            in_revitalization = True
+            continue
+        if line.strip().startswith("<!-- REVITALIZATION:END"):
+            in_revitalization = False
+            continue
+        if in_revitalization:
+            continue
         if not line.lstrip().startswith("|") or set(line) <= set("|-: "):
             continue
         c = [x.strip() for x in line.strip().strip("|").split("|")]
