@@ -98,6 +98,24 @@ def load_state() -> dict:
     return read_json(p)
 
 
+def receipt_is_fresh(receipt: dict):
+    for item in receipt.get('evidence', []):
+        path = ROOT / item['path']
+        if not path.is_file():
+            return False, 'evidence missing: ' + item['path']
+        if hashlib.sha256(path.read_bytes()).hexdigest() != item['sha256']:
+            return False, 'evidence changed: ' + item['path']
+    return True, 'current'
+
+
+def record_deferred(stage: str, reason: str) -> None:
+    path = STORE / 'deferred.jsonl'
+    path.parent.mkdir(parents=True, exist_ok=True)
+    event = {'stage': stage, 'state': 'DEGRADED/UPSTREAM_STALE', 'reason': reason, 'deferred_at': now(), 'retry': 'next invocation/tick'}
+    with path.open('a', encoding='utf-8') as stream:
+        stream.write(json.dumps(event, sort_keys=True) + chr(10))
+
+
 def save_json(path: pathlib.Path, value: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     data = json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
@@ -238,6 +256,9 @@ def record(stage: str, payload_path: str, evidence_paths: list[str]) -> dict:
         if not prev_path.exists():
             raise ValueError(f"UPSTREAM_STALE: missing {STAGES[idx - 1][0]} receipt; stage deferred to next tick")
         previous = read_json(prev_path)
+        fresh, why = receipt_is_fresh(previous)
+        if not fresh:
+            raise ValueError('UPSTREAM_STALE: predecessor evidence is stale (' + why + '); stage deferred to next tick')
     else:
         previous = None
         if cycle > 1 and not receipt_path(cycle - 1, "S16").exists():
@@ -245,7 +266,7 @@ def record(stage: str, payload_path: str, evidence_paths: list[str]) -> dict:
     payload = read_json(pathlib.Path(payload_path))
     validate_stage(stage, payload, cycle, previous)
     ev = evidence_records(evidence_paths)
-    if stage in {"S4", "S5", "S6", "S12", "S13", "S14", "S15"} and not ev:
+    if stage in {"S4", "S5", "S6", "S12", "S13", "S14", "S15", "S16"} and not ev:
         raise ValueError(f"{stage} requires at least one file-backed evidence reference")
     core = {
         "cycle": cycle, "stage": stage, "output": payload,
@@ -322,7 +343,11 @@ def show_status() -> int:
     print(f"cycle={cycle} blocked={state.get('blocked', False)} reason={state.get('block_reason') or '-'}")
     for code, name, _ in STAGES:
         p = receipt_path(cycle, code)
-        status = "RECEIPT" if p.exists() else "WAITING"
+        if p.exists():
+            fresh, why = receipt_is_fresh(read_json(p))
+            status = "RECEIPT" if fresh else "STALE (" + why + ")"
+        else:
+            status = "WAITING"
         print(f"{code} {name}: {status}")
     return 0
 
@@ -364,7 +389,10 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     except (ValueError, RuntimeError) as exc:
         print(f"serial_revival: DEGRADED — {exc}", file=sys.stderr)
-        return 3 if "UPSTREAM_STALE" in str(exc) else 1
+        if "UPSTREAM_STALE" in str(exc) and args.command == "record":
+            record_deferred(args.stage, str(exc))
+            return 3
+        return 1
 
 
 if __name__ == "__main__":
