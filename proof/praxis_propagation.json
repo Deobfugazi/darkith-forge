@@ -51,7 +51,7 @@
       "detail": "mirror"
     }
   ],
-  "mode": "apply",
+  "mode": "check",
   "stale": 0,
   "problems": 0
 }
