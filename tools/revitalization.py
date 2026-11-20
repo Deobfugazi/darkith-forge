@@ -99,6 +99,12 @@ STAGES = (
 STAGE_IDS = tuple(s for s, _ in STAGES)
 STAGE_NAMES = dict(STAGES)
 
+
+def stage_file(stage_id: str) -> str:
+    # Filename-safe rendering: '+' breaks board_gate's evidence-path token
+    # regex, so the on-disk name uses '_' while the display name keeps '+'.
+    return f"{stage_id}_{STAGE_NAMES[stage_id].replace('+', '_')}.json"
+
 LAYERS = {
     "L1": "apparatus (tools/, build/, kit/, nodal/ - gates, toolchain, engines)",
     "L2": "product source (Kotlin: app/, omega-app/)",
@@ -185,7 +191,7 @@ class Pipeline:
 
     # ---------------------------------------------------------- emit (I1/I3/I7)
     def receipt_path(self, stage_id: str) -> pathlib.Path:
-        return self.cycle_dir / f"{stage_id}_{STAGE_NAMES[stage_id]}.json"
+        return self.cycle_dir / stage_file(stage_id)
 
     def emit(self, stage_id: str, status: str, input_obj, details=None,
              evidence=None, reason=None, uncertainty=None) -> dict:
@@ -438,7 +444,7 @@ class Pipeline:
         latest = self.prev_cycle_dir()
         if not latest:
             return []
-        f = latest / "S16_BOARD+ROTATE.json"
+        f = latest / stage_file("S16")
         if not f.is_file():
             return []
         return read_receipt(f)["details"].get("task_queue", [])
@@ -827,7 +833,7 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
             return 2
         if prev and prev.get("cycle_id") and (rev / str(prev["cycle_id"])).is_dir():
             prev_dir = rev / str(prev["cycle_id"])
-            f = prev_dir / "S16_BOARD+ROTATE.json"
+            f = prev_dir / stage_file("S16")
             if f.is_file():
                 prev_skips = read_receipt(f)["details"].get("skips", [])
             prev_marker = prev
@@ -882,10 +888,10 @@ def verify_chain(root: pathlib.Path) -> tuple:
     receipts: dict = {}
     parent = GENESIS
     for sid in STAGE_IDS:
-        path = d / f"{sid}_{STAGE_NAMES[sid]}.json"
+        path = d / stage_file(sid)
         if not path.is_file():
             later = [s for s in STAGE_IDS
-                     if (d / f"{s}_{STAGE_NAMES[s]}.json").is_file()]
+                     if (d / stage_file(s)).is_file()]
             fails.append(f"I1 chain gap: {sid} missing while {len(later)} later "
                          f"receipt(s) exist")
             break
@@ -979,7 +985,7 @@ def command_write_board(root: pathlib.Path) -> int:
         return 1 if fails else 3
     rev = root / "proof" / "revitalization"
     cyc = str(json.loads((rev / "CURRENT").read_text(encoding="utf-8"))["cycle_id"])
-    s16 = read_receipt(rev / cyc / "S16_BOARD+ROTATE.json")
+    s16 = read_receipt(rev / cyc / stage_file("S16"))
     verdict = "closed" if s16["details"].get("closed") else "OPEN - tasks pending"
     heading = (f"## REVITALIZATION - the sixteen-stage corrective cycle "
                f"(cycle `{cyc}`, {verdict})")
@@ -1058,7 +1064,7 @@ def selftest() -> int:
     g1, f1 = verify_chain(r1)
     check("gate PASSes the clean sealed chain", g1 == 0, "; ".join(f1))
     cyc1 = current_cycle(r1)
-    s16 = receipt(r1, cyc1, "S16_BOARD+ROTATE.json")
+    s16 = receipt(r1, cyc1, stage_file("S16"))
     check("S16 records the cycle as closed", s16["details"]["closed"] is True)
     block = s16["details"]["board_block"]
     check("S16 board block seals 16 staged rows",
@@ -1092,7 +1098,7 @@ def selftest() -> int:
           bool(t_first["defects"] and t_first["governing_file"]
                and t_first["baseline_commit"] and t_first["evidence"]
                and t_first["acceptance_criteria"]))
-    s16_open = receipt(r3, cyc3, "S16_BOARD+ROTATE.json")
+    s16_open = receipt(r3, cyc3, stage_file("S16"))
     check("cycle refuses closure while a task is open (I8)",
           s16_open["details"]["closed"] is False and s16_open["status"] == "FAIL")
     g3, f3 = verify_chain(r3)
