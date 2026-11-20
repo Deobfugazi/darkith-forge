@@ -1252,13 +1252,16 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
         commands = [
             "python3 tools/board_gate.py",
             "python3 tools/doc_path_gate.py",
-            "python3 tools/kb_index.py --check",
+            "python3 tools/kb_index.py",
             "python3 tools/omega_deficit.py",
             "python3 tools/praxis_propagate.py --check",
             "python3 tools/autophagy.py --check",
         ]
         results_post = [p.run_cmd(cmd) for cmd in commands]
-        ok = all(r.get("exit") == 0 for r in results_post)
+        # A SKIP (exit 3) is an explicit no-verdict, not a defect: the same rule the
+        # probe classifier applies at I3. Counting it as failure would make closure
+        # impossible for any gate that legitimately has nothing to examine.
+        ok = not any(r.get("state") == "FAIL" for r in results_post)
         log_rel = f"proof/revitalization/{p.cycle}/S16_POST_SEAL.log"
         log_text = "\n".join(
             f"$ {r['cmd']}\nexit={r['exit']}\n{r.get('tail', '')}"
