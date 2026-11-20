@@ -33,16 +33,22 @@ EXEMPT = {
 }
 
 
-def ignored_top_dirs() -> list[str]:
+def ignored_top_dirs() -> list[str] | None:
+    """None means the scan could not run. An empty list means it ran and found nothing.
+
+    These are different facts and collapsing them is how a gate passes over nothing: git
+    failing to answer is not evidence that no phantom tree exists. SPI-32 — a gate may not
+    pass over zero inputs, and it may not pass over an error it treated as silence.
+    """
     try:
         p = subprocess.run(
             ["git", "ls-files", "--others", "--ignored", "--exclude-standard", "--directory"],
             cwd=str(ROOT), capture_output=True, text=True, timeout=120,
         )
     except (OSError, subprocess.TimeoutExpired):
-        return []
+        return None
     if p.returncode != 0:
-        return []
+        return None
     out = []
     for line in p.stdout.splitlines():
         s = line.strip().rstrip("/")
@@ -52,9 +58,12 @@ def ignored_top_dirs() -> list[str]:
     return out
 
 
-def phantoms() -> list[str]:
+def phantoms() -> list[str] | None:
+    names = ignored_top_dirs()
+    if names is None:
+        return None
     found = []
-    for name in ignored_top_dirs():
+    for name in names:
         d = ROOT / name
         if (d / "app").is_dir() or (d / "src").is_dir():
             found.append(name)
@@ -65,8 +74,24 @@ def main(argv: list[str]) -> int:
     mode = "--fix" if "--fix" in argv else "--check"
     found = phantoms()
 
+    if found is None:
+        # Exit 3 is SKIP, never PASS: ci.sh treats it as a skip and never as green.
+        print("phantom_tree_gate: SKIP — git could not enumerate ignored paths, so the scan "
+              "did not run; this is not a clean tree, it is an unanswered question")
+        return 3
+
     if not found:
-        print("phantom_tree_gate: PASS — no gitignored duplicate source tree")
+        # Zero candidates is not proof of zero phantoms — nothing was examined (SPI-32). This
+        # gate still fires the moment one appears, because a phantom tree is itself an ignored
+        # directory and therefore a candidate. Until then it SKIPs rather than claiming a
+        # clean scan it never performed.
+        n = len(ignored_top_dirs() or [])
+        if n == 0:
+            print("phantom_tree_gate: SKIP — 0 candidate directories to scan; "
+                  "nothing examined, so nothing is proven")
+            return 3
+        print(f"phantom_tree_gate: PASS — scanned {n} ignored director(ies); "
+              f"no gitignored duplicate source tree")
         return 0
 
     if mode == "--check":

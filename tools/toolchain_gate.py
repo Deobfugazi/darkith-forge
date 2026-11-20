@@ -69,8 +69,13 @@ def main(argv: list[str]) -> int:
     mode = "--fix" if "--fix" in argv else "--check"
 
     if not kotlinc_available():
-        print("toolchain_gate: PASS — no kotlinc, so compile gates SKIP honestly")
-        return 0
+        # No kotlinc means the compile gates cannot run — that is a SKIP, and a skip is never
+        # a pass (SPI-31). Reporting PASS here would assert a toolchain that is not present,
+        # which is the single most dangerous false green in a project whose whole build is a
+        # kotlinc chain.
+        print("toolchain_gate: SKIP — kotlinc is not installed, so no compile gate ran; "
+              "the absence of a compiler is not evidence of a compiling tree")
+        return 3
 
     ok, why = kotlinc_runs()
     if ok:

@@ -7,7 +7,7 @@
   "phase.active.js": "wake/active",
   "phase.rest.py": "rest/digest/restore",
   "phase.rest.js": "rest/digest/restore",
-  "tree.files": 340,
+  "tree.files": 342,
   "tree.blobsha.agree": true,
   "source.examiner": 58,
   "source.walk": 58,
