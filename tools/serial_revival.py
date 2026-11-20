@@ -177,7 +177,9 @@ def verify_states(payload: dict) -> None:
     if not isinstance(states, dict) or not states:
         raise ValueError("S5 node_states must be a non-empty object")
     for node, state in states.items():
-        if state not in STATES:
+        if not isinstance(node, str) or not node.strip():
+            raise ValueError("S5 node identifiers must be non-empty strings")
+        if not isinstance(state, str) or state not in STATES:
             raise ValueError(f"S5 invalid state for {node}: {state!r}; expected {sorted(STATES)}")
 
 
@@ -267,8 +269,15 @@ def validate_stage(stage: str, payload: dict, cycle: int, previous: dict | None)
         if payload["regressions"]:
             raise ValueError("S13 blocked: regression detected; route same cause to reopened task or new cause to linked defect")
     elif stage == "S14":
-        if payload["clean"] is not True or payload["unexplained_drift"] or payload["unchecked_nodes"]:
+        health = payload["mesh_health"]
+        if (payload["clean"] is not True or payload["unexplained_drift"]
+                or payload["unchecked_nodes"]):
             raise ValueError("S14 blocked: mesh is not fully reconciled")
+        if not isinstance(health, dict) or not health:
+            raise ValueError("S14 blocked: mesh_health must explicitly classify every affected node")
+        unhealthy = {node: state for node, state in health.items() if state != "PASS"}
+        if unhealthy:
+            raise ValueError(f"S14 blocked: SKIP, INACTIVE, or FAIL cannot count as healthy: {unhealthy}")
     elif stage == "S15":
         expected = [receipt_path(cycle, code).name for code, _, _ in STAGES[:14]]
         if not set(expected).issubset(set(payload["included_receipts"])):
