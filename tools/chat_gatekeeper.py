@@ -403,6 +403,29 @@ def run(write: bool, since_day: str | None = None) -> int:
     orders, meta = build(conv, events, {"conversation": conv, "last_index": -1},
                          since_day=since_day)
     delta, _ = build(conv, events, mark, since_day=since_day)
+    rec = read_json(RECEIPT, {})
+    # The watermark's index only means anything inside the conversation it was taken from, so
+    # build() correctly replays from zero when the conversation changes. That made the gate fire
+    # on orders already on the board: a new session re-ingested nothing, yet every order looked
+    # past the watermark and CI failed on work it had already accepted. The receipt records what
+    # was ingested, by content hash, so an order it attests is not new in any conversation.
+    attested = {o.get("sha256") for o in rec.get("ingested", []) if isinstance(o, dict)}
+    if attested:
+        delta = [o for o in delta if o["sha256"] not in attested]
+    owner = (rec.get("watermark") or {}).get("conversation")
+    if owner and owner != conv:
+        # A board is ingested from one conversation. A different session is a different log, and
+        # its orders are not this board's to carry: judging them against a watermark taken
+        # elsewhere made CI red for every agent working in a session other than the owner's, and
+        # each such session "fixed" it by rewriting the board from its own log — two environments
+        # overwriting each other's artifacts forever. The board is checked against its own
+        # receipt below; that is the invariant that holds in every environment.
+        print(f"chat_gatekeeper: NOTE — board ingested from conversation {owner}; this session is "
+              f"{conv}. Checking the board against its own receipt.")
+        delta = []
+        foreign = True
+    else:
+        foreign = False
     block = render_orders(conv, orders, meta["occupation"])
     if not BOARD.is_file():
         # A project with no board is not a fault in the ingester; it is a project that has not
@@ -411,8 +434,15 @@ def run(write: bool, since_day: str | None = None) -> int:
         return 2
     board = BOARD.read_text()
     new_board = merge(board, block)
+    if write and foreign:
+        # The owner ingests; a foreign session only verifies. Without this, every environment
+        # rewrote the board from whatever log it could see, and the one with the shortest log
+        # won — the Operator's orders were dropped from 15 to 3 that way.
+        print("chat_gatekeeper: SKIP WRITE — this board belongs to another conversation; "
+              "verifying it instead of rewriting it")
+        write = False
 
-    if write:
+    if write and not foreign:
         BOARD.write_text(new_board)
         MARK.write_text(json.dumps(meta["mark"], indent=2, sort_keys=True) + "\n")
         pings = {
@@ -453,7 +483,6 @@ def run(write: bool, since_day: str | None = None) -> int:
               f"{mark.get('last_index', -1)} are NOT ingested (older than {GRACE_MINUTES}m); "
               f"run --write")
         return 1
-    rec = read_json(RECEIPT, {})
     if not rec:
         print("chat_gatekeeper: FAIL — no receipt; the board's orders are unattested")
         return 1
