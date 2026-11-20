@@ -505,11 +505,13 @@ def selftest() -> int:
     b2 = render_orders("c1", o1, m1["occupation"])
     chk("render is deterministic", b1 == b2)
 
-    # replace, never append
-    board = "## ★ OLD\n\nbody\n"
+    # replace, never append, and preserve the board's authored title on repeated runs
+    board = "# TASKS — the durable board\n\n## ★ OLD\n\nbody\n"
     merged = merge(board, b1)
     merged2 = merge(merged, b2)
-    chk("merge replaces", merged.count(BEGIN) == 1 and merged == merged2)
+    chk("merge preserves board title", merged.splitlines()[0] == "# TASKS — the durable board")
+    chk("replacement preserves board title", merged2.splitlines()[0] == "# TASKS — the durable board")
+    chk("merge replaces idempotently", merged.count(BEGIN) == 1 and merged == merged2)
 
     # occupation follows the pulse, not a guess
     chk("rest phase detected", occupation({"gapHours": 9.0, "currentPhase": "rest/digest/restore"})["state"] == "returning-from-rest")
