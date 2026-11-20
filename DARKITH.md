@@ -1668,6 +1668,43 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   Gate: `tools/holostream_gate.py --check` re-derives the map and fails CI if the bytes
   embedded in the page differ from the fresh derivation.
 
+---
+
+─── NEVER #23 (A CONTRACT MAY NOT DEPEND ON INTERPRETER WEATHER) ───
+  GATE: tools/ci.sh
+  Found 2026-11-21: the scanner's depth-limit contract — a ~10k-term binop chain must
+  surface as an unattested medium PARSE_DEPTH, never a high PARSE — passed on one
+  interpreter and failed on the runner. CPython 3.12's parser RecursionErrors building a
+  10k-node BinOp chain; 3.14 builds it iteratively and parses the identical bytes clean.
+  The test pinned the interpreter's incidental behavior, so the same code, same tool,
+  red on one Python and green on another — and every hour of "why is CI red" spent
+  root-causing a version boundary nobody wrote.
+
+  The law: a tool's limits are owned by the tool, measured on what the tool built, and
+  hold on every interpreter it accepts. A contract that changes meaning when the
+  interpreter changes is not a contract — it is a weather report. Where the incidentally
+  raised exception was the detector, the detector is replaced by one the tool computes
+  deterministically (here: an AST depth the scanner walks itself, against a budget the
+  scanner declares — `savf.py _DEPTH_BUDGET`, `_tree_depth`).
+
+  Proven by: the same payload yields PARSE_DEPTH (medium, rc 0 alone) on an interpreter
+  that parses it AND on one that chokes — 42/42 in `build/savf-cli-test.py`.
+
+---
+
+─── MUST #43 (ANALYZED IS NOT APOLOGIZED: DEPTH FINDINGS CARRY THEIR SCOPE) ───
+  GATE: tools/ci.sh
+  Coupled to NEVER #23: the deterministic budget makes depth fire on trees that WERE
+  analyzed in full. The finding text must therefore scope itself exactly — a RecursionError
+  fallback says "tree-based rules were not run"; a measured-budget overage says "analyzed
+  in full". A depth finding that claims unanalyzed bytes over a fully walked tree is a
+  false residue; the reverse hides what was skipped. Either form is medium and never fails
+  a scan alone (the scanner's limit is never mistaken for a defect in the scanned code).
+
+  Gate: `savf.py scan --json` emits PARSE_DEPTH with scope-true text on both paths;
+  `build/savf-cli-test.py` pins rc=0 / all-medium for depth alone, and full findings when
+  a real high (phantom import) coexists.
+
 ## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
 
 The Operator's standing demand, codified so it is a property of the apparatus and not of any

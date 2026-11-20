@@ -304,6 +304,26 @@ def _import_findings_from_tokens(src, path, local, installed):
     return F
 
 
+# The scanner's depth limit is owned HERE, not by whichever CPython happens to run.
+# CPython's parser recursion behavior drifts across versions: a 10k-term binop chain
+# RecursionErrors in ast.parse on 3.12 but parses iteratively on 3.14. A limit the
+# interpreter owns is a limit that silently disappears; the budget below is measured
+# against the AST WE build, so "too deep to guarantee" means the same thing everywhere.
+_DEPTH_BUDGET = 8000
+
+
+def _tree_depth(root):
+    deepest = 0
+    stack = [(root, 0)]
+    while stack:
+        n, d = stack.pop()
+        if d > deepest:
+            deepest = d
+        for ch in ast.iter_child_nodes(n):
+            stack.append((ch, d + 1))
+    return deepest
+
+
 def scan_file(path, local, installed=None):
     try:
         # Decode exactly as CPython does: a UTF-8 BOM or a PEP 263 `coding:`
@@ -349,6 +369,17 @@ def scan_file(path, local, installed=None):
         return [_finding("PARSE", 1, path, getattr(e, "lineno", 0) or 0, f"cannot parse: {e}", "high")]
     test_file = is_test_file(path)
     F = _token_findings(src, path, test_file)
+    # The budget is ours, so it must be measured on the tree we now hold. On an
+    # interpreter that parsed what 3.12 could not, the RecursionError branch above
+    # never fires; this on-depth check fires instead, and the rule means the same
+    # thing on both. It is medium and never fails a scan on its own (phi1: the
+    # scanner's limit is never mistaken for a defect in the scanned code).
+    _depth = _tree_depth(tree)
+    if _depth > _DEPTH_BUDGET:
+        F.append(_finding("PARSE_DEPTH", 1, path, 0,
+                          f"nested {_depth} levels deep, above the scanner's own "
+                          f"budget of {_DEPTH_BUDGET}; the tree was still analyzed "
+                          "in full", "medium"))
     # imports (phi2)
     mod_alias = {}
     for n in ast.walk(tree):
