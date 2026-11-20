@@ -217,3 +217,48 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
    - sha256 `0158492cfa11e711`
 
 <!-- CHAT-GATE:END -->
+
+## ★ SERIAL AUTOFILLING CORRECTIVE REVITALIZATION — SIXTEEN-STAGE PRIME DIRECTIVE
+
+**Canonical contract:** `docs/SERIAL-REVIVAL.md`  
+**Executable transition kernel:** `tools/serial_revival.py`  
+**CI contract tests:** `tools/test_serial_revival.py`
+
+Every stage consumes the immediately preceding stage's verified receipt. A missing predecessor returns `DEGRADED/UPSTREAM_STALE` (exit 3), records a deferred transition, and never advances by waiting or skipping. Receipt identity is content-hash keyed; timestamps remain metadata.
+
+| stage | directive | status | evidence |
+|---|---|---|---|
+| S1 | BASELINE — branch, HEAD, governing sources, generated artifacts, dirty inventory, timestamp | todo | docs/SERIAL-REVIVAL.md |
+| S2 | INVENTORY — classify every component by source/generated/gate/evidence/runtime and L1-L6; UNKNOWN explicit | todo | docs/SERIAL-REVIVAL.md |
+| S3 | TOPOLOGY — map forward/backward/sideways/vertical dependencies; expose unknown edges | todo | docs/SERIAL-REVIVAL.md |
+| S4 | DIAGNOSTIC — record every applicable probe, command, exit, logs, duration, revision | todo | docs/SERIAL-REVIVAL.md |
+| S5 | CLASSIFY — PASS/FAIL/SKIP/INACTIVE; no coercion or implied health | todo | docs/SERIAL-REVIVAL.md |
+| S6 | TRACE — defects and demonstrated root causes; distinguish symptoms; UNCONFIRMED explicit | todo | docs/SERIAL-REVIVAL.md |
+| S7 | GOVERN — map each root cause to governing source, clause, generator, and repair boundary | todo | docs/SERIAL-REVIVAL.md |
+| S8 | TASK — one corrective task per confirmed root cause with inherited provenance and acceptance criteria | todo | docs/SERIAL-REVIVAL.md |
+| S9 | AUTHORIZE — AUTO_APPROVED allowlist or HUMAN_APPROVED receipt with approver and scope | todo | docs/SERIAL-REVIVAL.md |
+| S10 | REPAIR — authorized source/generator/config changes only; generated artifacts cannot be patched | todo | docs/SERIAL-REVIVAL.md |
+| S11 | REGENERATE — rebuild dependent outputs; any remaining drift blocks exit | todo | docs/SERIAL-REVIVAL.md |
+| S12 | VERIFY-LOCAL — targeted checks and before/after evidence | todo | docs/SERIAL-REVIVAL.md |
+| S13 | VERIFY-BLAST — verify neighbors/shared dependencies/consumers; regressions route and block | todo | docs/SERIAL-REVIVAL.md |
+| S14 | RECONCILE — clean affected mesh, no unexplained drift, no unchecked nodes | todo | docs/SERIAL-REVIVAL.md |
+| S15 | SEAL — evidence bundle includes S1-S14 receipts, provenance, skipped checks, uncertainty | todo | docs/SERIAL-REVIVAL.md |
+| S16 | BOARD+ROTATE — evidence-backed board revision, next-cycle queue, regression queue, changed nodes | todo | docs/SERIAL-REVIVAL.md |
+
+### Serial autofill invariants
+
+- I1 Serial dependency: exact predecessor receipt required; upstream stale defers with exit 3.
+- I2 Evidence inheritance: defect, parent task, governing clause, commit, and evidence references remain attached.
+- I3 Four-state integrity: PASS / FAIL / SKIP / INACTIVE only; SKIP and INACTIVE never imply healthy.
+- I4 Repair integrity: detection, correction, verification, and closure are separate gates.
+- I5 Root-level repair: correct authoritative source/generator; never patch generated tissue.
+- I6 Failure routing: same root cause reopens original task; new root cause creates linked regression task; advancement blocks.
+- I7 Idempotency: canonical content hash determines identity; exact replay returns same receipt; changed content cannot overwrite history.
+- I8 Evidence-only closure: S14 reconciliation + S15 sealed evidence + accurate S16 board revision required.
+- I9 Temporal integrity: revision and timestamp on every receipt; stale evidence blocks closure; recurrence reopens.
+- I10 Authorization boundary: detection/task generation autonomous; consequential mutation requires configured authorization.
+
+### Implementation boundary
+
+The first implementation increment supplies the serial receipt kernel and CI contract tests. Existing repo tools remain the actual producers for inventory, topology, probes, generation, verification, reconciliation, and board publication. The board must not claim those stages complete until their real outputs are supplied and verified.
+
