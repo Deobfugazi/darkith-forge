@@ -534,7 +534,6 @@ is documentation, not a law. A law that is not executed is not a law.
 
 ─── SPI-21 (REPACK KEEPS ARSC AND .SO STORED) ───
 GATE: tools/apk_gate.py
-PREDICATE: resources.arsc and every lib/*.so have compress_type 0 in the built APK
 Any step that re-zips the APK MUST keep `resources.arsc` and `lib/*.so` STORED.
 Re-adding them to a ZIP_DEFLATED archive silently compresses them; Android 11+ (API 30)
 mmaps those entries in place and the installer then fails with a bare "App not installed".
