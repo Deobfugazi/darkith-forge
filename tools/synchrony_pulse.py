@@ -16,6 +16,7 @@ never asserted.
                                               > STALE_HOURS) or missing the boot/activity map
   python3 tools/synchrony_pulse.py --mark     record a new activity instant (a turn happened)
 """
+import datetime
 import json
 import pathlib
 import sys
@@ -25,7 +26,7 @@ sys.path.insert(0, str(ROOT / "build" / "gen"))
 sys.path.insert(0, str(ROOT / "tools"))
 
 from omega_time_runtime import (  # noqa: E402
-    boot_stamp, classify, device_relation, iso, phase, since, stamp,
+    TZ as OPERATOR_TZ, boot_stamp, classify, device_relation, iso, phase, since, stamp,
 )
 
 PULSE = ROOT / "proof/synchrony_pulse.json"
@@ -41,11 +42,65 @@ def load() -> dict:
     return {}
 
 
+EVENT_ROOTS = [pathlib.Path("/var/openhands/conversations"),
+               pathlib.Path("/workspace/conversations")]
+
+
+def live_activity() -> str | None:
+    """The timestamp of the newest real conversation event, read from the event log.
+
+    Before this existed, `lastActivity` only moved when someone passed --mark, so the pulse
+    reported whatever instant the last human remembered to stamp — on 2026-11-20 it claimed
+    21.5h of quiet while the Operator had spoken 12 minutes earlier. A pulse that must be told
+    the user is present is not occupation-aware; it is a diary. MUST #28 says the session
+    AUTOCCOUPLES to the device and tracks last activity, so this reads the bytes (SPI-2).
+    """
+    newest = None
+    for root in EVENT_ROOTS:
+        if not root.is_dir():
+            continue
+        for conv in sorted(root.iterdir()):
+            ev = conv / "events"
+            if not ev.is_dir():
+                continue
+            files = sorted(ev.glob("event-*.json"))
+            if not files:
+                continue
+            try:
+                e = json.loads(files[-1].read_text())
+            except Exception:
+                continue
+            ts = e.get("timestamp")
+            if not ts:
+                continue
+            # The event log stamps in UTC with no offset; the pulse works in Operator-local.
+            # Handing a naive UTC string to since() reads it as local and invents the zone
+            # offset as a gap (measured: 8.0h of quiet that never happened). The boundary
+            # conversion happens here, once, and the value crosses it already carrying its zone.
+            try:
+                utc = datetime.datetime.fromisoformat(ts)
+            except ValueError:
+                continue
+            if utc.tzinfo is None:
+                utc = utc.replace(tzinfo=datetime.timezone.utc)
+            local = utc.astimezone(OPERATOR_TZ)
+            if newest is None or local > newest:
+                newest = local
+    return newest.isoformat(timespec="seconds") if newest else None
+
+
 def observe(mark: bool = False) -> dict:
     prev = load()
     now_iso = iso()
     boot = prev.get("boot") or boot_stamp()
-    last = now_iso if (mark or not prev.get("lastActivity")) else prev["lastActivity"]
+    # Live activity outranks a remembered stamp; --mark still works as an explicit override.
+    live = live_activity()
+    if mark:
+        last = now_iso
+    elif live:
+        last = live
+    else:
+        last = prev.get("lastActivity") or now_iso
     gap = round(since(last), 3)
     pulse = {
         "boot": boot,

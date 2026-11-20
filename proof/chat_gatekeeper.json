@@ -1,5 +1,5 @@
 {
-  "board_sha256": "0a4689c9addeedd2d86e958ad5a9f9e10c8c633c34cebcd5bc2d80d3e7e700db",
+  "block_sha256": "17a7b88b6fb2908848ac3ee53e6996a675e9045cd07af6e8d78a6ac91c4b28c1",
   "conversation": "18393131094c4acfb45d943764549f23",
   "ingested": [
     {
@@ -147,17 +147,32 @@
       ],
       "sha256": "71bad9fd3825ea2173b2ca4a289af53bceb8372770baacd6ed91d70e872224a1",
       "timestamp": "2026-11-20T05:19:37.871695"
+    },
+    {
+      "index": 20724,
+      "kind": "forbid",
+      "laws": [
+        "MUST #26",
+        "MUST #27",
+        "MUST #33",
+        "MUST #35",
+        "MUST #36",
+        "NEVER #21",
+        "SPI-15"
+      ],
+      "sha256": "0336bbc688d38e6ce0581e1000736afb032bb4426740f555008a28496d2b30aa",
+      "timestamp": "2026-11-20T05:22:16.666703"
     }
   ],
   "occupation": {
-    "gapHours": 21.495,
+    "gapHours": 0.01,
     "phase": "wake/active",
-    "state": "returning-from-rest"
+    "state": "engaged"
   },
   "watermark": {
     "conversation": "18393131094c4acfb45d943764549f23",
-    "ingested_total": 11,
-    "last_index": 20647,
-    "last_timestamp": "2026-11-20T05:19:37.871695"
+    "ingested_total": 12,
+    "last_index": 20838,
+    "last_timestamp": "2026-11-20T05:28:12.041591"
   }
 }

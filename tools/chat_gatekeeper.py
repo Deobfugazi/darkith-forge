@@ -236,15 +236,36 @@ def render_orders(conv: str, orders: list[dict], occ: dict) -> str:
 
 
 def merge(board_text: str, block: str) -> str:
-    """Replace the gatekeeper block; insert before the first `## ★` if absent."""
+    """Replace the gatekeeper block; insert before the first `## ★` if absent.
+
+    Every marker pair is removed, not just the first: a duplicated pair (which happened when
+    praxis block-quoted this section) left orphan markers behind and the region multiplied on
+    each pass. One owner means one pair.
+    """
     if BEGIN in board_text and END in board_text:
-        pre = board_text.split(BEGIN)[0]
-        post = board_text.split(END, 1)[1]
-        return pre + block + post
+        while BEGIN in board_text and END in board_text:
+            pre, rest = board_text.split(BEGIN, 1)
+            post = rest.split(END, 1)[1]
+            board_text = pre + post
+        # Normalise the seam. Stripping the block leaves the newlines that surrounded it; if
+        # they are not collapsed, each pass adds two more and the render stops being idempotent
+        # (MUST #18) — the same input must produce byte-identical output.
+        rest = board_text.lstrip("\n")
+        m = re.search(r"^##\s*★", rest, re.MULTILINE)
+        if m:
+            return block + "\n\n" + rest[m.start():]
+        return (block + "\n\n" + rest).rstrip("\n") + "\n"
     m = re.search(r"^##\s*★", board_text, re.MULTILINE)
     if m:
         return board_text[: m.start()] + block + "\n\n" + board_text[m.start():]
     return board_text.rstrip() + "\n\n" + block + "\n"
+
+
+def block_of(board_text: str) -> str:
+    """The region this tool owns, byte-exact."""
+    if BEGIN not in board_text or END not in board_text:
+        return ""
+    return BEGIN + board_text.split(BEGIN, 1)[1].split(END, 1)[0] + END
 
 
 def targets() -> list[str]:
@@ -305,7 +326,13 @@ def run(write: bool, since_day: str | None = None) -> int:
     if since_day is None and events:
         # Default window is the session's own latest day: "today" as the Operator means it.
         since_day = events[-1][1][:10]
-    orders, meta = build(conv, events, mark, since_day=since_day)
+    # Rebuild from the whole day, not from the watermark delta. Rendering only the delta meant
+    # every new prompt REPLACED the block and erased the orders already on it: the board lost
+    # all 11 of the Operator's orders the moment he sent the 12th. The watermark decides what is
+    # NEW; the day decides what is ON THE BOARD. Two different questions, two different windows.
+    orders, meta = build(conv, events, {"conversation": conv, "last_index": -1},
+                         since_day=since_day)
+    _, delta = build(conv, events, mark, since_day=since_day)
     block = render_orders(conv, orders, meta["occupation"])
     board = BOARD.read_text()
     new_board = merge(board, block)
@@ -324,20 +351,21 @@ def run(write: bool, since_day: str | None = None) -> int:
             "conversation": conv,
             "watermark": meta["mark"],
             "occupation": meta["occupation"],
-            "board_sha256": sha(new_board.encode()),
+            "block_sha256": sha(block.encode()),
             "ingested": [
                 {"index": o["index"], "kind": o["kind"], "sha256": o["sha256"],
                  "timestamp": o["timestamp"], "laws": o["laws"]}
                 for o in orders
             ],
         }, indent=2, sort_keys=True) + "\n")
-        print(f"chat_gatekeeper: WROTE — {len(orders)} order(s) past watermark {mark.get('last_index', -1)}, "
+        print(f"chat_gatekeeper: WROTE — {len(orders)} order(s) on the board ({len(delta)} new past "
+              f"watermark {mark.get('last_index', -1)}), "
               f"phase {meta['occupation']['phase']}, occupation {meta['occupation']['state']}, "
               f"{len(targets())} board target(s) pinged")
         return 0
 
-    if orders:
-        print(f"chat_gatekeeper: FAIL — {len(orders)} order(s) past watermark "
+    if delta:
+        print(f"chat_gatekeeper: FAIL — {len(delta)} order(s) past watermark "
               f"{mark.get('last_index', -1)} are NOT ingested; run --write")
         return 1
     rec = read_json(RECEIPT, {})
@@ -352,10 +380,14 @@ def run(write: bool, since_day: str | None = None) -> int:
               f"{rec.get('watermark', {}).get('last_index')} != board watermark "
               f"{mark.get('last_index')}; run --write")
         return 1
-    if sha(board.encode()) != rec.get("board_sha256"):
-        print("chat_gatekeeper: FAIL — the board drifted from the receipt (hand-edited block?)")
+    # Hash the block this tool OWNS, not the whole board. praxis_propagate rewrites its own
+    # PRAXIS block in the same file after this one runs, so a whole-board digest could never
+    # match and would fire on a healthy tree. A digest must cover exactly the region the tool
+    # is responsible for, or it measures someone else's work as drift.
+    if sha(block_of(board).encode()) != rec.get("block_sha256"):
+        print("chat_gatekeeper: FAIL — the CHAT-GATE block drifted from the receipt (hand-edited?)")
         return 1
-    print(f"chat_gatekeeper: PASS — board attested at watermark {mark.get('last_index')}, "
+    print(f"chat_gatekeeper: PASS — CHAT-GATE block attested at watermark {mark.get('last_index')}, "
           f"{len(rec.get('ingested', []))} order(s) recorded")
     return 0
 

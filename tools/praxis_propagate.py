@@ -187,7 +187,12 @@ def render_block(title: str, body: str, declared: list[str], derived: list[str],
     lines = [BEGIN, f"## ⟐ PRAXIS — order in force (mirrored from TASKS.md)", ""]
     lines.append(f"**Directive:** {title}")
     lines.append("")
-    quoted = body.strip("\n").splitlines()
+    # Strip ownership markers before quoting. A block-quoted marker pair is still a marker
+    # pair: quoting CHAT-GATE:BEGIN/END into this block made a second owner of the same region,
+    # and each propagation pass then found two more copies of it. Markers are addresses, not
+    # content — they do not survive being quoted.
+    quoted = [ln for ln in body.strip("\n").splitlines()
+              if not ln.strip().startswith(("<!-- CHAT-GATE:", "<!-- PRAXIS:"))]
     lines += [("> " + ln).rstrip() for ln in quoted]
     lines += ["", f"**Coupled laws (declared by the directive):** "
                   + (", ".join(f"`{l}`" for l in declared) if declared else "_none declared_"), ""]

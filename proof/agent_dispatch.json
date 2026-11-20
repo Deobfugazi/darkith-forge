@@ -1,0 +1,31 @@
+{
+  "dispatch": "Operator order 2026-11-20T05:19 \u2014 ping ALL agents active or IDLE in simultaneity",
+  "recorded_at": "2026-11-20T05:24:55.274318Z",
+  "agents": [
+    {
+      "conversation_id": "51e7647b37834b39a3286e1ca5fdd822",
+      "sandbox_id": "5avNYKxkmav70MvcRfjUho",
+      "repository": "Deobfugazi/darkith-forge",
+      "was": "PAUSED",
+      "now": "RUNNING",
+      "dispatched_at": "2026-11-20T05:24:00Z",
+      "action_events_after_dispatch": 15,
+      "executing": true,
+      "agent_server": "https://hcxnqdvqjpajzlsg.prod-runtime.all-hands.dev",
+      "ui": "https://app.all-hands.dev/canvas/conversations/51e7647b37834b39a3286e1ca5fdd822"
+    },
+    {
+      "conversation_id": "f947e4b540c24d1c97125691f3d14707",
+      "sandbox_id": "DjgsOhp4h8bUvKU4vlBRo",
+      "repository": "Deobfugazi/community-assets",
+      "was": "PAUSED",
+      "now": "RUNNING",
+      "dispatched_at": "2026-11-20T05:24:00Z",
+      "action_events_after_dispatch": 13,
+      "executing": true,
+      "agent_server": "https://tzezyjthckczgvil.prod-runtime.all-hands.dev",
+      "ui": "https://app.all-hands.dev/canvas/conversations/f947e4b540c24d1c97125691f3d14707"
+    }
+  ],
+  "note": "Both were PAUSED and idle. Both were resumed and dispatched in the same second via threads. ActionEvents confirm execution, not queueing."
+}
