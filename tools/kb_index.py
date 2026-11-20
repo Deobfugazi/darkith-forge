@@ -23,7 +23,7 @@ applied to the filesystem, that yields four registers:
   B-knowledge   the human-readable corpus             docs/**
   C-skillbase   the interactive skill surfaces        root *.html (savf, omega, studio, forge, inscriber)
   D-asset       shipped runtime assets                app/src/main/assets/**
-  E-evidence    machine-generated proof               proof/** except proof/revitalization/** (self-sealed serial receipts)
+  E-evidence    machine-generated proof               proof/** except proof/revitalization/** (self-sealed serial receipts)\n\nThe generated REVITALIZATION block inside TASKS.md is excluded from its index hash; S16 seals that block separately. This prevents the board's own receipt telemetry from invalidating the knowledge index.
 
 It emits docs/INDEX.md (the universal index a reader is pointed at) and docs/kb_manifest.json
 (the machine manifest: path + register + bytes + sha256). Both are generated from the bytes,
@@ -124,6 +124,23 @@ def is_readable(path: str) -> bool:
     return pathlib.PurePosixPath(path).suffix in READABLE_EXTS
 
 
+def indexed_bytes(path: str) -> bytes:
+    """Return indexable source bytes, excluding the generated S16 telemetry block."""
+    raw = (ROOT / path).read_bytes()
+    if path != "TASKS.md":
+        return raw
+    text = raw.decode("utf-8", errors="replace")
+    begin = "<!-- REVITALIZATION:BEGIN"
+    end = "<!-- REVITALIZATION:END"
+    if begin in text:
+        pre, rest = text.split(begin, 1)
+        if end not in rest:
+            raise ValueError("TASKS.md has an unclosed REVITALIZATION block")
+        _, post = rest.split(end, 1)
+        text = pre + post
+    return text.encode("utf-8")
+
+
 def sha256(p: pathlib.Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
@@ -162,11 +179,12 @@ def collect() -> list[dict]:
         p = ROOT / path
         if not p.is_file():
             continue
+        content = indexed_bytes(path)
         rows.append({
             "path": path,
             "register": register_of(path) or "UNFILED",
-            "bytes": p.stat().st_size,
-            "sha256": sha256(p),
+            "bytes": len(content),
+            "sha256": hashlib.sha256(content).hexdigest(),
             "desc": describe(path),
         })
     rows.sort(key=lambda r: (r["register"], r["path"]))
