@@ -63,6 +63,30 @@ the single authoritative history. Consequences:
 - The gate now carries **discrepancy detectors**: clean-tree, fork singularity
   (NEVER #11), and version truth (manifest vs AGENTS.md).
 
+## 0c. REVITALIZATION - the sixteen-stage corrective cycle (one apparatus)
+
+The Operator's convergence of every prior diagnostic/repair spelling onto one fixed
+point: sixteen serial stages, each consuming the previous stage's VERIFIED receipt.
+Canonical tool: `tools/revitalization.py`; invariants I1-I10 are encoded IN the tool
+and witnessed by its sandbox self-test (`python3 tools/revitalization.py selftest`),
+not by notes. Key obligations:
+
+- a step advances only when its predecessor's receipt exists and is hash-verified;
+- states are exactly PASS / FAIL / SKIP / INACTIVE - SKIP is never PASS, INACTIVE
+  never implies healthy;
+- repairs are root-level (generated tissue is regenerated, never patched) and
+  authorization-bounded (detection autonomous; consequential mutation only under an
+  AUTO_APPROVED-class plan entry in `proof/revitalization/repair_plan.json`);
+- failure routing: same root cause reopens the corrective task; a new root cause
+  creates a linked defect (Divergence-9);
+- closure is evidence-only: S14 reconcile clean + S15 seal attached + board accurate;
+  recurring drift reopens.
+
+Commands: `run` (execute a cycle; writes receipts under `proof/revitalization/`),
+`gate` (read-only chain verification; runs in CI), `selftest`, `write-board` (paste
+the sealed cycle onto TASKS.md). Exit codes: run 0 closed / 1 defects open /
+2 deferred; gate 0 sound / 1 violation / 3 no receipts yet.
+
 ## Project
 - Android app **Darkith** + an offline web studio. Built on a phone in Termux via the
   **NT IX 7-step raw chain** (`aapt2 -> kotlinc -> d8 -> zip -> zipalign -> apksigner`).

@@ -127,6 +127,15 @@ if have python3; then
     if [ -f tools/closed_briefings.py ]; then
       run "closed briefings stay closed"  python3 tools/closed_briefings.py --check
     fi
+    # Revitalization chain gate: the sixteen-stage serial corrective cycle. The
+    # pipeline itself never runs inside CI (a run writes receipts, and a green run
+    # must not dirty the tree); CI verifies the sealed chain instead: serial parent
+    # links (I1), four-state legality with SKIP-never-PASS (I3), task evidence
+    # inheritance (I2/I8), and that a cycle claiming closure really is sealed.
+    if [ -f tools/revitalization.py ]; then
+      run "revitalization selftest"   python3 tools/revitalization.py selftest
+      run "revitalization chain gate" python3 tools/revitalization.py gate
+    fi
     if [ -f tools/comment_audit.py ]; then
       run "kotlin comment scan (whole repo)"  python3 tools/comment_audit.py
     fi
