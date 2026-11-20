@@ -84,6 +84,34 @@ BOARD_END = "<!-- REVITALIZATION:END -->"
 GENESIS = "GENESIS"
 STATES = ("PASS", "FAIL", "SKIP", "INACTIVE")
 DRIFT_EXEMPT_PREFIX = "proof/revitalization/"
+GENERATED_PREFIXES = ("tools/generated/", "build/gen/", "delivery/", "dl/", "dist/", "proof/")
+GENERATED_FILES = {"docs/INDEX.md", "docs/kb_manifest.json"}
+
+
+def is_generated_target(path: str) -> bool:
+    normalized = pathlib.PurePosixPath(path).as_posix()
+    return (pathlib.PurePosixPath(normalized).is_absolute()
+            or ".." in pathlib.PurePosixPath(normalized).parts
+            or normalized in GENERATED_FILES
+            or any(normalized == prefix.rstrip("/") or normalized.startswith(prefix)
+                   for prefix in GENERATED_PREFIXES))
+
+
+def tree_snapshot(root: pathlib.Path) -> dict:
+    """Hash every repository file except VCS/cache and the current cycle's own receipts."""
+    out = {}
+    excluded = {".git", ".tools", ".gradle", "node_modules", "__pycache__", ".venv"}
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
+            continue
+        rel = path.relative_to(root).as_posix()
+        if rel.startswith("proof/revitalization/"):
+            continue
+        try:
+            out[rel] = sha(path.read_bytes())
+        except OSError:
+            out[rel] = "UNREADABLE"
+    return out
 BUILTIN_PROBES = (
     {"name": "secret-gate", "cmd": "python3 tools/secret_gate.py"},
     {"name": "fracture-scout-selftest", "cmd": "python3 tools/fracture_scout.py selftest"},
@@ -569,20 +597,32 @@ class Pipeline:
                 pending.append(t["id"])  # autonomous detection, bounded mutation (I10)
                 continue
             for edit in r.get("edits", []):
-                tgt = self.root / edit["target"]
+                rel = pathlib.PurePosixPath(edit.get("target", ""))
+                target_name = rel.as_posix()
+                if is_generated_target(target_name):
+                    manifest.append({"target": target_name, "applied": False,
+                                     "why": "generated tissue or unsafe path is forbidden in S10"})
+                    continue
+                tgt = (self.root / target_name).resolve()
+                try:
+                    tgt.relative_to(self.root.resolve())
+                except ValueError:
+                    manifest.append({"target": target_name, "applied": False,
+                                     "why": "target resolves outside repository"})
+                    continue
                 if not tgt.is_file():
-                    manifest.append({"target": edit["target"], "applied": False,
+                    manifest.append({"target": target_name, "applied": False,
                                      "why": "target missing"})
                     continue
                 before = tgt.read_bytes()
                 old, new = edit["old"].encode("utf-8"), edit["new"].encode("utf-8")
                 hits = before.count(old)
                 if hits != 1:
-                    manifest.append({"target": edit["target"], "applied": False,
+                    manifest.append({"target": target_name, "applied": False,
                                      "why": f"expected exactly one match, found {hits}"})
                     continue
                 tgt.write_bytes(before.replace(old, new))
-                manifest.append({"target": edit["target"], "applied": True,
+                manifest.append({"target": target_name, "applied": True,
                                  "before_sha256": sha(before),
                                  "after_sha256": sha(tgt.read_bytes())})
             for key in ("regenerate", "verify", "blast"):
@@ -595,6 +635,8 @@ class Pipeline:
                             reason="no repairs owed this cycle (no defect found)")
             return rec, manifest, ops
         blocked = [m for m in manifest if not m.get("applied")]
+        blocked.extend({"task": task_id, "why": "HUMAN_REQUIRED or no approved repair plan"}
+                       for task_id in pending)
         input_obj = {"applied": [m for m in manifest if m.get("applied")],
                      "pending": pending,
                      "regenerate_cmds": [o["cmd"] for o in ops["regenerate"]],
@@ -605,7 +647,7 @@ class Pipeline:
                          "regenerate": ops["regenerate"], "verify": ops["verify"],
                          "blast": ops["blast"], "plan_present": bool(by_task)},
                         evidence=None,
-                        reason=(f"{len(blocked)} edit(s) not applied - repair deferred"
+                        reason=(f"{len(blocked)} edit(s)/authorization(s) unresolved"
                                 if blocked else None))
         return rec, manifest, ops
 
@@ -625,27 +667,43 @@ class Pipeline:
 
     def s11_regenerate(self, ops: dict) -> tuple:
         regenerate = ops.get("regenerate", [])
+        applied = [m for m in self.receipts["S10"]["details"].get("manifest", [])
+                   if m.get("applied")]
         if not regenerate:
+            if applied:
+                rec = self.emit("S11", "FAIL", {"runs": [], "applied": applied},
+                                {"runs": [], "applied": applied},
+                                reason="source changed but no authoritative regeneration command was declared")
+                return rec, False
             return self.emit("S11", "INACTIVE", {"runs": []}, {"runs": []},
-                             reason="nothing generated (no source changed this "
-                                    "cycle)"), True
+                             reason="no source change requires regeneration this cycle"), True
         runs, holds = [], True
         for item in regenerate:
+            before = tree_snapshot(self.root)
             h1 = self.run_cmd(item["cmd"])
+            after_first = tree_snapshot(self.root)
             h2 = self.run_cmd(item["cmd"])
+            after_second = tree_snapshot(self.root)
+            changed = {p: {"before": before.get(p), "after": after_first.get(p)}
+                       for p in sorted(set(before) | set(after_first))
+                       if before.get(p) != after_first.get(p)}
             item_holds = (h1["exit"] == 0 and h2["exit"] == 0
-                          and h1["tail_sha256"] == h2["tail_sha256"])
+                          and after_first == after_second)
             holds = holds and item_holds
             runs.append({"task": item["task"], "cmd": item["cmd"],
                          "exit": h1["exit"], "exit_again": h2["exit"],
-                         "output_sha256": h1["tail_sha256"],
-                         "again_sha256": h2["tail_sha256"], "holds": item_holds})
-        input_obj = {"runs": [{"task": r["task"], "cmd": r["cmd"]} for r in runs]}
+                         "changed_outputs": changed,
+                         "first_tree_sha256": chash(after_first),
+                         "second_tree_sha256": chash(after_second),
+                         "holds": item_holds})
+        input_obj = {"runs": [{"task": r["task"], "cmd": r["cmd"],
+                               "first_tree_sha256": r["first_tree_sha256"],
+                               "second_tree_sha256": r["second_tree_sha256"]} for r in runs]}
         rec = self.emit("S11", "PASS" if holds else "FAIL", input_obj,
                         {"runs": runs},
                         reason=(None if holds else
-                                "back-edge fired but did not HOLD: regeneration is "
-                                "not idempotent, so S10 reopens (Divergence-5)"))
+                                "back-edge fired but generated repository bytes did not hold "
+                                "identically on the second regeneration (Divergence-5)"))
         return rec, holds
 
     def s12_verify_local(self, ops: dict, tasks) -> tuple:
@@ -785,8 +843,16 @@ class Pipeline:
         return rec, ok
 
     def task_verified(self, task) -> bool:
-        return (self.receipts.get("S12", {}).get("status") == "PASS"
-                and self.receipts.get("S14", {}).get("status") == "PASS")
+        s10 = self.receipts.get("S10", {}).get("status")
+        s11 = self.receipts.get("S11", {}).get("status")
+        s12 = self.receipts.get("S12", {}).get("status")
+        s13 = self.receipts.get("S13", {}).get("status")
+        s14 = self.receipts.get("S14", {}).get("status")
+        applied = any(m.get("applied") for m in
+                      self.receipts.get("S10", {}).get("details", {}).get("manifest", []))
+        regeneration_ok = s11 == "PASS" or (s11 == "INACTIVE" and not applied)
+        blast_ok = s13 == "PASS" or (s13 == "INACTIVE" and not applied)
+        return s10 == "PASS" and regeneration_ok and s12 == "PASS" and blast_ok and s14 == "PASS"
 
     def s16_board_rotate(self, tasks, ok_local, ok_blast, clean, prev_skips) -> tuple:
         skips = [p["probe"] for p in self.receipts["S04"]["details"]["probes"]
