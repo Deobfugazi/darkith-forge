@@ -23,7 +23,7 @@ applied to the filesystem, that yields four registers:
   B-knowledge   the human-readable corpus             docs/**
   C-skillbase   the interactive skill surfaces        root *.html (savf, omega, studio, forge, inscriber)
   D-asset       shipped runtime assets                app/src/main/assets/**
-  E-evidence    machine-generated proof               proof/**
+  E-evidence    machine-generated proof               proof/** except proof/revitalization/** (self-sealed serial receipts)
 
 It emits docs/INDEX.md (the universal index a reader is pointed at) and docs/kb_manifest.json
 (the machine manifest: path + register + bytes + sha256). Both are generated from the bytes,
@@ -86,7 +86,11 @@ CONFIG = {"tools/deps.txt", "tools/fractures.txt", "requirements-dev.txt"}
 def tracked() -> list[str]:
     out = subprocess.run(["git", "-C", str(ROOT), "ls-files", "-z"],
                          capture_output=True, text=True, check=True).stdout
-    return [p for p in out.split("\0") if p]
+    # The serial receipt chain is self-hashed and verified by revitalization.py.
+    # Indexing those receipts would create a circular dependency: S16 seals the index,
+    # while the index would otherwise hash S16 itself.
+    return [p for p in out.split("\0")
+            if p and not p.startswith("proof/revitalization/")]
 
 
 def register_of(path: str) -> str | None:
@@ -111,7 +115,7 @@ def register_of(path: str) -> str | None:
 
 
 def is_readable(path: str) -> bool:
-    if path in SELF:
+    if path in SELF or path.startswith("proof/revitalization/"):
         return False
     if path in GOVERNANCE or path in CONFIG:
         return True
