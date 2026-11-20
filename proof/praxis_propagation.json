@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "2972515cf533be9d068d957ab08dd595aa2d07c3553656d2d6e70daaf88131e6",
-  "board_sha256": "87c69662ae4e698d2287550e99d95aa9e316d199229cf4606ccc1bd22baee7a1",
+  "directive_sha256": "7afaf5159b2952c4fb2685870d46ed1a326041a2570445a32b0766c4792587a9",
+  "board_sha256": "a13b8106101d7193e97e28eb39ddde20ba4a107b17c48ee8ae1b50c851478a4e",
   "laws": {
     "declared": [
       "MUST #20",
@@ -14,8 +14,10 @@
       "MUST #33",
       "MUST #35",
       "MUST #36",
+      "MUST #11",
       "NEVER #19",
       "NEVER #21",
+      "NEVER #18",
       "SPI-15",
       "SPI-2",
       "SPI-25",
@@ -28,27 +30,39 @@
     "derived_advisory": [
       "MUST #38",
       "MUST #40",
-      "SPI-16",
-      "SPI-19",
-      "SPI-29",
-      "SPI-30",
-      "SPI-32",
-      "SPI-33",
-      "SPI-34"
+      "SPI-17"
     ]
   },
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/darkith-forge/TASKS.md",
+      "path": "/workspace/project/TASKS.md",
       "status": "updated",
-      "detail": "11888->15224 B"
+      "detail": "11900->8530 B"
     },
     {
-      "target": "session:18393131094c4acfb45d943764549f23",
-      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
       "status": "updated",
       "detail": "mirror beside board"
+    },
+    {
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "updated",
+      "detail": "mirror beside board"
+    },
+    {
+      "target": "worktree:fixwt",
+      "path": "/tmp/fixwt/TASKS.md",
+      "status": "updated",
+      "detail": "3942->3686 B"
+    },
+    {
+      "target": "worktree:pristine",
+      "path": "/tmp/pristine/TASKS.md",
+      "status": "updated",
+      "detail": "3942->3686 B"
     }
   ],
   "mode": "apply",
