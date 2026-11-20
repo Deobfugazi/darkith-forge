@@ -484,19 +484,23 @@ class Pipeline:
         defects = []
         specific_failures = [r for r in results
                              if r["state"] == "FAIL" and r["probe"] != "repository-ci-overall"]
+        summary_probes = {"autophagy (defect classes are impossible, not absent)"}
         for r in results:
             if r["state"] != "FAIL":
                 continue
             if r["probe"] == "repository-ci-overall" and specific_failures:
                 continue  # summary symptom; retain the specific gate defects instead
+            if r["probe"] in summary_probes and specific_failures:
+                continue  # composite autophagy residue is explained by its failing prevention gates
             rule = rules.get(r["probe"], {})
             defects.append({
                 "id": f"DEF-{len(defects) + 1:03d}",
                 "probe": r["probe"],
+                "cmd": r.get("cmd", "UNRESOLVED"),
                 "root_cause": rule.get("root_cause", "UNCONFIRMED"),
                 "origin": "origin" if rule.get("root_cause") else "propagated",
                 "governing_file": rule.get("governing_file",
-                                           self.tool_of(r["cmd"]) or "UNCONFIRMED"),
+                                           self.tool_of(r.get("cmd", "")) or "UNCONFIRMED"),
             })
         names = [d["probe"] for d in defects]
         input_obj = {"defect_signatures": [[d["probe"], d["governing_file"]]
@@ -547,48 +551,71 @@ class Pipeline:
 
     def s8_task(self, defects) -> tuple:
         prev_tasks = self.prev_tasks()
-        tasks, seq = [], 0
-        for d in defects:
-            sig = [d["probe"], d["governing_file"]]
-            rule = self.trace_rules().get(d["probe"], {})
-            prior = self.match_task(prev_tasks, sig, allow_closed=False)
-            seq += 1
+        grouped = {}
+        for defect in defects:
             governed = next((g for g in self.receipts["S07"]["details"].get("routes", [])
-                             if g.get("defect") == d["id"]), {})
+                             if g.get("defect") == defect["id"]), {})
+            root_cause = governed.get("root_cause", defect.get("root_cause", "UNCONFIRMED"))
+            governing_file = governed.get("governing_file", defect.get("governing_file", "UNCONFIRMED"))
+            clause = governed.get("governing_clause", "UNCONFIRMED")
+            # Confirmed causes share one task even when several gates expose the same
+            # underlying defect. Unconfirmed symptoms stay separate until evidence joins them.
+            signature = ([root_cause, clause, governing_file] if root_cause != "UNCONFIRMED"
+                         else ["UNCONFIRMED", defect["probe"], governing_file])
+            key = tuple(signature)
+            grouped.setdefault(key, {"signature": signature, "routes": [], "defects": []})
+            grouped[key]["routes"].append(governed)
+            grouped[key]["defects"].append(defect)
+
+        tasks = []
+        for seq, group in enumerate(grouped.values(), 1):
+            signature = group["signature"]
+            defects_for_task = group["defects"]
+            routes = group["routes"]
+            first = routes[0]
+            probes = sorted({d["probe"] for d in defects_for_task})
+            probe_commands = [{"probe": d["probe"], "cmd": d.get("cmd", "UNRESOLVED")}
+                              for d in defects_for_task]
+            prior = self.match_task(prev_tasks, signature, allow_closed=False)
             if prior:
-                task = {"id": prior["id"], "defects": prior["defects"] + [d["id"]],
-                        "signature": sig, "reopened": True,
-                        "parent_task": prior.get("parent_task") or "ROOT",
-                        "governing_file": governed.get("governing_file", d["governing_file"]),
-                        "governing_clause": governed.get("governing_clause", "UNCONFIRMED"),
-                        "generator": governed.get("generator", "UNCONFIRMED"),
-                        "repair_boundary": governed.get("repair_boundary", "UNCONFIRMED"),
-                        "root_cause": governed.get("root_cause", d["root_cause"]),
-                        "baseline_commit": self.receipts["S01"]["details"]["commit"]}
+                task = {"id": prior["id"],
+                        "defects": sorted(set(prior.get("defects", []))
+                                          | {d["id"] for d in defects_for_task}),
+                        "signature": signature, "reopened": True,
+                        "parent_task": prior.get("parent_task") or first.get("parent_task") or "ROOT"}
             else:
-                closed_prior = self.match_task(prev_tasks, sig, allow_closed=True)
+                closed_prior = self.match_task(prev_tasks, signature, allow_closed=True)
                 task = {"id": f"REV-{self.cycle}-{seq:03d}",
-                        "defects": [d["id"]], "signature": sig, "reopened": False,
-                        "parent_task": governed.get("parent_task")
-                        or (closed_prior or {}).get("id") or "ROOT",
-                        "governing_file": governed.get("governing_file", d["governing_file"]),
-                        "governing_clause": governed.get("governing_clause", "UNCONFIRMED"),
-                        "generator": governed.get("generator", "UNCONFIRMED"),
-                        "repair_boundary": governed.get("repair_boundary", "UNCONFIRMED"),
-                        "root_cause": governed.get("root_cause", d["root_cause"]),
-                        "baseline_commit": self.receipts["S01"]["details"]["commit"]}
-            task["acceptance_criteria"] = [
-                f"probe '{d['probe']}' returns PASS",
-                "S14 reconcile clean (no unexplained drift)",
-                "S15 evidence bundle attached to this task id",
-            ]
-            task["evidence"] = [str(self.receipt_path("S04").relative_to(self.root))]
+                        "defects": [d["id"] for d in defects_for_task],
+                        "signature": signature, "reopened": False,
+                        "parent_task": first.get("parent_task")
+                        or (closed_prior or {}).get("id") or "ROOT"}
+            task.update({
+                "probes": probes,
+                "probe_commands": probe_commands,
+                "governing_file": first.get("governing_file", "UNCONFIRMED"),
+                "governing_clause": first.get("governing_clause", "UNCONFIRMED"),
+                "generator": first.get("generator", "UNCONFIRMED"),
+                "repair_boundary": first.get("repair_boundary", "UNCONFIRMED"),
+                "root_cause": first.get("root_cause", "UNCONFIRMED"),
+                "baseline_commit": self.receipts["S01"]["details"]["commit"],
+                "acceptance_criteria": [
+                    *[f"probe '{probe}' returns PASS" for probe in probes],
+                    "S14 reconcile clean (no unexplained drift)",
+                    "S15 evidence bundle attached to this task id",
+                ],
+                "evidence": [str(self.receipt_path("S04").relative_to(self.root))],
+            })
+            suite = self.receipts["S04"]["details"].get("suite") or {}
+            if suite.get("log"):
+                task["evidence"].append(suite["log"])
             tasks.append(task)
         input_obj = {"task_ids": sorted(t["id"] for t in tasks),
-                     "reopened": [t["id"] for t in tasks if t["reopened"]]}
+                     "reopened": [t["id"] for t in tasks if t["reopened"]],
+                     "root_causes": sorted({t["root_cause"] for t in tasks})}
         rec = self.emit("S08", "FAIL" if defects else "PASS", input_obj,
                         {"tasks": tasks},
-                        reason=(f"{len(tasks)} corrective task(s) open"
+                        reason=(f"{len(tasks)} corrective task(s) for {len(defects)} defect(s) open"
                                 if defects else None))
         return rec, tasks
 
