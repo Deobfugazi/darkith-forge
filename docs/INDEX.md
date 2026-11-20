@@ -65,7 +65,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
-| `repo-holostream.html` | 125,546 | `3daa873be5fd` | DARKITH Ω — repo holostream |
+| `repo-holostream.html` | 126,131 | `80aa94363e3b` | DARKITH Ω — repo holostream |
 | `savf.html` | 463,190 | `e37837910ad5` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
