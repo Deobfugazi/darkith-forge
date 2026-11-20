@@ -1100,6 +1100,28 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
         marker.write_text(canonical(
             {"cycle_id": p.cycle, "closed": True, "idempotency_key": key,
              "written_at_utc": now_utc()}) + "\n", encoding="utf-8")
+        gate_rc, gate_failures = verify_chain(root)
+        if gate_rc != 0:
+            # S16 is terminal, so it can be downgraded without breaking a child link.
+            # Never leave CURRENT claiming closure when the independent verifier rejects it.
+            rec16["status"] = "FAIL"
+            rec16["reason"] = "post-seal verifier rejected closure: " + "; ".join(gate_failures[:5])
+            rec16["details"]["closed"] = False
+            rec16["details"]["board_block"] = (
+                rec16["details"]["board_block"]
+                .replace("CYCLE CLOSED", "CYCLE OPEN")
+                .replace("| S16 | BOARD+ROTATE | done |",
+                         "| S16 | BOARD+ROTATE | in_progress |"))
+            rec16["receipt_sha256"] = chash(
+                {k: v for k, v in rec16.items() if k != "receipt_sha256"})
+            p.receipt_path("S16").write_text(canonical(rec16) + "\n", encoding="utf-8")
+            marker.write_text(canonical(
+                {"cycle_id": p.cycle, "closed": False, "idempotency_key": key,
+                 "written_at_utc": now_utc()}) + "\n", encoding="utf-8")
+            print("=== CYCLE OPEN - post-seal verifier rejected closure ===")
+            for failure in gate_failures:
+                print("  " + failure)
+            return 1
         print("=== CYCLE CLOSED (16/16 staged, evidence-sealed) ===")
         return 0
     open_tasks = [t["id"] for t in rec16["details"]["task_queue"]
@@ -1150,6 +1172,9 @@ def verify_chain(root: pathlib.Path) -> tuple:
         parent = rec["receipt_sha256"]
 
     if not fails and len(receipts) == len(STAGE_IDS):
+        s16_closed = receipts["S16"].get("details", {}).get("closed") is True
+        if s16_closed != bool(current.get("closed")):
+            fails.append("I8: CURRENT closed marker disagrees with the S16 receipt")
         s04 = receipts["S04"]["details"].get("probes", [])
         s05 = {row["probe"]: row["state"]
                for row in receipts["S05"]["details"].get("ledger", [])}
