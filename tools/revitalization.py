@@ -954,7 +954,7 @@ class Pipeline:
         s16_status = "PASS" if can_close else "FAIL"
         block = self.board_block(can_close, task_queue, skips,
                                  s16_status=s16_status)
-        board_hash = self.apply_board_block(block)
+        board_hash = self.apply_board_block(block, can_close)
         input_obj = {"closed": can_close,
                      "task_ids": sorted(t["id"] for t in tasks),
                      "skip_count": len(skips), "board_sha256": board_hash}
@@ -972,28 +972,28 @@ class Pipeline:
                             open_tasks, newly_skipped, clean, ok_local, ok_blast)))
         return rec, can_close
 
-    def apply_board_block(self, block: str) -> str:
+    def apply_board_block(self, block: str, closed: bool) -> str:
         """Write the S16-generated board block as part of S16, then hash the bytes."""
-        heading = (f"## REVITALIZATION - the sixteen-stage corrective cycle "
-                   f"(cycle `{self.cycle}`, "
-                   f"{'closed' if self.receipts.get('S16', {}).get('details', {}).get('closed') else 'open'})")
-        section = f"{heading}\\n\\n{block}\\n"
-        text = BOARD.read_text(encoding="utf-8")
+        board_path = self.root / "TASKS.md"
+        verdict = "closed" if closed else "open"
+        heading = "## REVITALIZATION - the sixteen-stage corrective cycle (cycle " + self.cycle + ", " + verdict + ")"
+        section = f"{heading}\n\n{block}\n"
+        text = board_path.read_text(encoding="utf-8")
         if BOARD_BEGIN in text:
             pre, rest = text.split(BOARD_BEGIN, 1)
             if BOARD_END not in rest:
                 raise ValueError("TASKS.md has an unclosed REVITALIZATION marker")
             _, post = rest.split(BOARD_END, 1)
-            new_text = pre + BOARD_BEGIN + "\\n" + section + "\\n" + BOARD_END + post
+            new_text = pre + BOARD_BEGIN + "\n" + section + "\n" + BOARD_END + post
         else:
             idx = text.find("<!-- CHAT-GATE:BEGIN")
             if idx == -1:
-                new_text = text.rstrip("\\n") + "\\n\\n" + BOARD_BEGIN + "\\n" + section + "\\n" + BOARD_END + "\\n"
+                new_text = text.rstrip("\n") + "\n\n" + BOARD_BEGIN + "\n" + section + "\n" + BOARD_END + "\n"
             else:
-                new_text = text[:idx] + BOARD_BEGIN + "\\n" + section + "\\n" + BOARD_END + "\\n\\n" + text[idx:]
+                new_text = text[:idx] + BOARD_BEGIN + "\n" + section + "\n" + BOARD_END + "\n\n" + text[idx:]
         if new_text != text:
-            BOARD.write_text(new_text, encoding="utf-8")
-        return sha(BOARD.read_bytes())
+            board_path.write_text(new_text, encoding="utf-8")
+        return sha(board_path.read_bytes())
 
     def board_block(self, closed: bool, task_queue, skips,
                     s16_status: str = "PASS") -> str:
@@ -1397,6 +1397,7 @@ def selftest() -> int:
         (root / "tools").mkdir()
         (root / "proof").mkdir()
         (root / "README.md").write_text("sandbox\n")
+        (root / "TASKS.md").write_text("# Sandbox board\n")
         sh(root, "git init -q")
         commit_all(root, "seed")
         return root
