@@ -744,6 +744,16 @@ class Pipeline:
             rec = self.emit("S13", "INACTIVE", {"runs": []}, {"runs": []},
                             reason="no repair this cycle")
             return rec, True
+        if targets and not blast_ops:
+            rec = self.emit("S13", "FAIL", {"targets": targets, "blast_cmds": []},
+                            {"runs": [], "targets": targets},
+                            reason="changed source has no declared downstream blast-radius probe")
+            return rec, False
+        if tasks and not targets and not blast_ops:
+            rec = self.emit("S13", "INACTIVE", {"targets": [], "blast_cmds": []},
+                            {"runs": []},
+                            reason="no source mutation occurred; task remains open until S10 authorization")
+            return rec, True
         runs, ok, whys = [], True, []
         for item in blast_ops:
             h = self.run_cmd(item["cmd"])
@@ -829,9 +839,17 @@ class Pipeline:
                                              for u in self.receipts[s]
                                              .get("uncertainty", [])})[:40],
         }
-        ok = clean and ok_local and ok_blast
+        task_closure_ok = all(self.task_verified(t) for t in tasks)
+        s14_ok = self.receipts.get("S14", {}).get("status") == "PASS"
+        ok = clean and ok_local and ok_blast and s14_ok and task_closure_ok
         evidence = [str(self.receipt_path(s).relative_to(self.root))
                     for s in receipt_ids]
+        for stage_id in ("S04", "S14"):
+            log = (self.receipts.get(stage_id, {}).get("details", {})
+                   .get("suite", self.receipts.get(stage_id, {}).get("details", {})
+                        .get("full_suite", {})).get("log"))
+            if log:
+                evidence.append(log)
         input_obj = {"sealed": {k: sealed[k] for k in
                                 ("cycle_id", "revision", "changed_files",
                                  "stage_files", "task_ids")}}
@@ -855,13 +873,18 @@ class Pipeline:
         return s10 == "PASS" and regeneration_ok and s12 == "PASS" and blast_ok and s14 == "PASS"
 
     def s16_board_rotate(self, tasks, ok_local, ok_blast, clean, prev_skips) -> tuple:
-        skips = [p["probe"] for p in self.receipts["S04"]["details"]["probes"]
-                 if p["state"] == "SKIP"]
-        newly_skipped = [s for s in skips if s not in prev_skips]
+        baseline_skips = {p["probe"] for p in self.receipts["S04"]["details"]["probes"]
+                          if p["state"] == "SKIP"}
+        final_probes = self.receipts.get("S14", {}).get("details", {}).get("full_suite", {}).get("probes", [])
+        final_skips = {p["probe"] for p in final_probes if p.get("state") == "SKIP"}
+        skips = sorted(final_skips or baseline_skips)
+        newly_skipped = sorted((baseline_skips - set(prev_skips)) | (final_skips - baseline_skips))
         open_tasks = [t for t in tasks if not self.task_verified(t)]
         task_queue = [dict(t, status=("closed" if self.task_verified(t) else "open"))
                       for t in tasks]
-        can_close = (clean and ok_local and ok_blast
+        s14_ok = self.receipts.get("S14", {}).get("status") == "PASS"
+        s15_ok = self.receipts.get("S15", {}).get("status") == "PASS"
+        can_close = (clean and ok_local and ok_blast and s14_ok and s15_ok
                      and not open_tasks and not newly_skipped)
         s16_status = "PASS" if can_close else "FAIL"
         block = self.board_block(can_close, task_queue, skips,
