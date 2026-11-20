@@ -161,6 +161,17 @@ def evidence_records(paths: list[str]) -> list[dict]:
     return [unique[k] for k in sorted(unique)]
 
 
+def path_in_scope(path: str, scopes: list[str]) -> bool:
+    return any(path == scope or path.startswith(scope.rstrip("/") + "/") for scope in scopes)
+
+
+def is_generated_path(path: str, baseline_generated: set[str] | None = None) -> bool:
+    return (
+        any(path == root or path.startswith(root + "/") for root in GENERATED_ROOTS)
+        or path in (baseline_generated or set())
+    )
+
+
 def verify_states(payload: dict) -> None:
     states = payload.get("node_states")
     if not isinstance(states, dict) or not states:
@@ -243,9 +254,9 @@ def validate_stage(stage: str, payload: dict, cycle: int, previous: dict | None)
             pure = pathlib.PurePosixPath(path)
             if pure.is_absolute() or ".." in pure.parts:
                 raise ValueError(f"S10 changed path must be repository-relative: {path}")
-            if any(path == root or path.startswith(root + "/") for root in GENERATED_ROOTS) or path in generated_paths:
+            if is_generated_path(path, generated_paths):
                 raise ValueError(f"S10 refuses generated-output mutation: {path}")
-            if not any(path == scope or path.startswith(scope.rstrip("/") + "/") for scope in approved_scope):
+            if not path_in_scope(path, approved_scope):
                 raise ValueError(f"S10 changed file falls outside authorized scope: {path}")
             if not item.get("change_reason"):
                 raise ValueError(f"S10 changed file requires change_reason: {path}")
