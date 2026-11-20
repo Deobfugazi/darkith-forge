@@ -256,9 +256,9 @@ cycle `20261120T174731Z112` - verdict: CYCLE CLOSED (all stages evidence-sealed)
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T15:21:39.647626`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T18:29:29.618260`. This section is regenerated, never hand-edited._
 
-**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
 
 1. **[order]** I need this automated to prime core/remote So this is true to every repos (right now its just my darkith prime omega) and its peripheral sibling tab/…
    - prompt index `18433` at `2026-11-20T02:32:29.872371`
@@ -318,5 +318,9 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
 15. **[forbid]** What have you fucking done to my CI pipe!!🤬🤬🤬🤬🤬🤬🤬 The tests never pass and stuck on red!!!🤬
    - prompt index `22129` at `2026-11-20T15:21:39.647626`
    - sha256 `0158492cfa11e711`
+16. **[forbid]** If you look at the sytem as an outside observer seeing a holographic wiring circuit tree and say able to virtually see and trace the connectivities a…
+   - prompt index `22669` at `2026-11-20T18:29:29.618260`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
+   - sha256 `1f26c4ac771ea8ca`
 
 <!-- CHAT-GATE:END -->

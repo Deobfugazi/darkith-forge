@@ -1,5 +1,5 @@
 {
-  "block_sha256": "3b0b69604ad913e5ca2a5577b6956acfc7783d89619aa376efb88b3e3f2682e4",
+  "block_sha256": "a3bc3f2daa6173c6c31e97a1ec00352f0b1ad41010319d21160167fbbd03c6b3",
   "conversation": "18393131094c4acfb45d943764549f23",
   "ingested": [
     {
@@ -207,6 +207,72 @@
       "laws": [],
       "sha256": "0158492cfa11e711bfab8ae7be785e0911cb777bcff2e438cac067d81db684da",
       "timestamp": "2026-11-20T15:21:39.647626"
+    },
+    {
+      "index": 22669,
+      "kind": "forbid",
+      "laws": [
+        "MUST #20",
+        "MUST #21",
+        "MUST #22",
+        "MUST #26",
+        "MUST #27",
+        "MUST #28",
+        "MUST #30",
+        "MUST #33",
+        "MUST #35",
+        "MUST #36",
+        "MUST#18",
+        "MUST#20",
+        "MUST#21",
+        "MUST#22",
+        "MUST#26",
+        "MUST#27",
+        "MUST#28",
+        "MUST#30",
+        "MUST#33",
+        "MUST#35",
+        "MUST#36",
+        "MUST#38",
+        "MUST#40",
+        "MUST-11",
+        "MUST-17",
+        "MUST-18",
+        "NEVER #19",
+        "NEVER #21",
+        "NEVER#11",
+        "NEVER#19",
+        "NEVER#21",
+        "SPI-1",
+        "SPI-11",
+        "SPI-12",
+        "SPI-13",
+        "SPI-14",
+        "SPI-15",
+        "SPI-16",
+        "SPI-18",
+        "SPI-19",
+        "SPI-2",
+        "SPI-21",
+        "SPI-25",
+        "SPI-26",
+        "SPI-29",
+        "SPI-30",
+        "SPI-31",
+        "SPI-32",
+        "SPI-33",
+        "SPI-34",
+        "SPI-35",
+        "SPI-36",
+        "SPI-37",
+        "SPI-38",
+        "SPI-4",
+        "SPI-5",
+        "SPI-6",
+        "SPI-8"
+      ],
+      "sha256": "1f26c4ac771ea8ca0bcfd37834c02b5f687e8b60f24b92d2ac4feb689ef1cc00",
+      "timestamp": "2026-11-20T18:29:29.618260"
     }
   ],
   "occupation": {
@@ -216,8 +282,8 @@
   },
   "watermark": {
     "conversation": "18393131094c4acfb45d943764549f23",
-    "ingested_total": 15,
-    "last_index": 22129,
-    "last_timestamp": "2026-11-20T15:21:39.647626"
+    "ingested_total": 16,
+    "last_index": 22669,
+    "last_timestamp": "2026-11-20T18:29:29.618260"
   }
 }
