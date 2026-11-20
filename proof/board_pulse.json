@@ -1,4 +1,5 @@
 {
+  "board_commit": "f022f4e",
   "pushed_at": "2026-11-20T10:12:48+08:00",
   "agent": "primary",
   "note": "board updated; parallel worker should fetch and converge"
