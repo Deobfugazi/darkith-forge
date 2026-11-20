@@ -162,7 +162,11 @@ def main() -> int:
     only_g = sorted(p for p in set(mg) - set(mw) if not _generated(p))
     only_w = sorted(p for p in set(mw) - set(mg) if not _generated(p))
     differ = sorted(p for p in set(mg) & set(mw) if mg[p] != mw[p] and not _generated(p))
-    facts["tree.files"] = len(mw)
+    # Count what is under test, not the audit trail. The divergence checks above
+    # already skip generated proof/ evidence; the count must use the same universe,
+    # or committing a cycle's own receipts changes the number and this file drifts
+    # from the seal that recorded it.
+    facts["tree.files"] = len([p for p in mw if not _generated(p)])
     facts["tree.blobsha.agree"] = not (only_g or only_w or differ)
     if only_g:
         fails.append(f"tree: {len(only_g)} file(s) in git index but not hashed by the walk: {only_g[:5]}")
