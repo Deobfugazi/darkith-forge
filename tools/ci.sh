@@ -597,9 +597,9 @@ def tree_of(f):
     # in cycle A and in cycle B are two records, not two copies of one file.
     # Comparing them would report every successive cycle as a fork of the last.
     if f.startswith("proof/revitalization/"):
-        rest = f.split("/", 2)
-        if len(rest) == 3 and rest[1] != "":
-            return "proof/revitalization/" + rest[1]
+        rest = f.split("/", 3)
+        if len(rest) == 4 and rest[2] != "":
+            return "proof/revitalization/" + rest[2]
     head = f.split("/",1)[0]
     return head if head in ("app","omega-app") else ""
 by = collections.defaultdict(list)
