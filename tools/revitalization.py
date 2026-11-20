@@ -191,6 +191,13 @@ def strip_generated_board(text: str) -> str:
     return pre + post
 
 
+def boardless(text: str) -> str:
+    """The marker block plus its padding removed and newlines normalised, so a
+    board-only TASKS.md diff never fakes a content change (I7): the block writer
+    pads the appended block, and raw stripping preserves that padding asymmetry."""
+    return strip_generated_board(text).strip("\n")
+
+
 def board_only_dirty(root: pathlib.Path) -> bool:
     """True only when TASKS.md differs from HEAD solely inside the generated S16 block."""
     current = root / "TASKS.md"
@@ -199,8 +206,8 @@ def board_only_dirty(root: pathlib.Path) -> bool:
     head = git(root, "show", "HEAD:TASKS.md")
     if head.returncode != 0:
         return False
-    return (strip_generated_board(current.read_text(encoding="utf-8"))
-            == strip_generated_board(head.stdout))
+    return (boardless(current.read_text(encoding="utf-8"))
+            == boardless(head.stdout))
 
 
 def clean_dirty_paths(root: pathlib.Path) -> list[str]:
@@ -1177,7 +1184,7 @@ def idempotency_key(root: pathlib.Path) -> dict:
     branch = git(root, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
     repo_dirty = clean_dirty_paths(root)
     governing = {
-        p: (sha(strip_generated_board((root / p).read_text(encoding="utf-8")).encode("utf-8"))
+        p: (sha(boardless((root / p).read_text(encoding="utf-8")).encode("utf-8"))
             if p == "TASKS.md" else sha((root / p).read_bytes()))
         for p in GOVERNING_SOURCES if (root / p).is_file()
     }
