@@ -9,10 +9,10 @@
       "sha256": "b385ffc237e3028185488de35cbc758de2b667dbd8c926e2d7f99a99215cef88"
     },
     {
-      "bytes": 101928,
+      "bytes": 102461,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "b2af0a14fd3104b61a92979e27e4627e8ebfffb405db6295aa9abce57c8106e2"
+      "sha256": "16f9c621a4529d5d59ab5113e5642d398fd25aaf5048d2ceb8bf8a2f530e4aa2"
     },
     {
       "bytes": 3356,
@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 21572,
+      "bytes": 23958,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "a9dd0dc5247149cf30f691610f3537ac6bad64e887bd5057e5cfa37d54377a8c"
+      "sha256": "4671daa37f7bca8ae6996c2114fd1976c8e62ad2d49743d28be1a7fc79c4f0f1"
     },
     {
       "bytes": 9608,
