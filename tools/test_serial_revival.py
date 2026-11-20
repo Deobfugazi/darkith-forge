@@ -31,6 +31,31 @@ class SerialRevivalTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "invalid state"):
             sr.verify_states({"node_states": {"node-a": "SKIPPED"}})
 
+    def test_record_is_idempotent_and_refuses_history_overwrite(self):
+        import json
+        import tempfile
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            receipts = root / "receipts"
+            state_file = root / "state.json"
+            payload_file = root / "s1.json"
+            payload = {"branch": "test", "commit": "rev-1", "governing_sources": [],
+                       "generated_artifacts": [], "dirty_files": [], "captured_at": "fixed"}
+            payload_file.write_text(json.dumps(payload), encoding="utf-8")
+            with patch.object(sr, "ROOT", root), patch.object(sr, "RECEIPTS", receipts), \\
+                 patch.object(sr, "state_path", return_value=state_file), \\
+                 patch.object(sr, "current_revision", return_value="rev-1"), \\
+                 patch.object(sr, "now", return_value="2026-11-21T00:00:00+08:00"):
+                first = sr.record("S1", str(payload_file), [])
+                replay = sr.record("S1", str(payload_file), [])
+                self.assertEqual(first["receipt_id"], replay["receipt_id"])
+                payload["branch"] = "changed"
+                payload_file.write_text(json.dumps(payload), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "different receipt"):
+                    sr.record("S1", str(payload_file), [])
+
     def test_receipt_freshness_rejects_changed_repository_revision(self):
         from unittest.mock import patch
         with patch.object(sr, "current_revision", return_value="new-revision"):
