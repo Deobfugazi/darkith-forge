@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "ca33e1ad4cf65450ffa89bf4183b310fea7720dc6df420766f665ab3644b7a2e",
-  "board_sha256": "57e46b688812cd7dd9cee5d483c77f1523b61c4eadfde0b3369f8c89c3a69e71",
+  "directive_sha256": "7afaf5159b2952c4fb2685870d46ed1a326041a2570445a32b0766c4792587a9",
+  "board_sha256": "9322d9c250071271fe405338abb24999f8b532e13864a2b4280caf071d9fac2f",
   "laws": {
     "declared": [
       "MUST #20",
@@ -14,8 +14,10 @@
       "MUST #33",
       "MUST #35",
       "MUST #36",
+      "MUST #11",
       "NEVER #19",
       "NEVER #21",
+      "NEVER #18",
       "SPI-15",
       "SPI-2",
       "SPI-25",
@@ -28,30 +30,42 @@
     "derived_advisory": [
       "MUST #38",
       "MUST #40",
-      "SPI-16",
-      "SPI-19",
-      "SPI-29",
-      "SPI-30",
-      "SPI-32",
-      "SPI-33",
-      "SPI-34"
+      "SPI-17"
     ]
   },
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/darkith-forge/TASKS.md",
+      "path": "/workspace/project/TASKS.md",
+      "status": "updated",
+      "detail": "28300->28302 B"
+    },
+    {
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "worktree:fixwt",
+      "path": "/tmp/fixwt/TASKS.md",
       "status": "current",
       "detail": ""
     },
     {
-      "target": "session:18393131094c4acfb45d943764549f23",
-      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
+      "target": "worktree:pristine",
+      "path": "/tmp/pristine/TASKS.md",
       "status": "current",
-      "detail": "mirror"
+      "detail": ""
     }
   ],
-  "mode": "check",
+  "mode": "apply",
   "stale": 0,
   "problems": 0
 }

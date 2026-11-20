@@ -1,21 +1,21 @@
 {
-  "probed": "2026-11-20T05:54:48.178697+00:00",
-  "agents": [
+  "issued": "2026-11-20T06:40:11.492708",
+  "occupation": {
+    "gapHours": 0.008,
+    "phase": "wake/active",
+    "state": "engaged"
+  },
+  "orders": 3,
+  "targets": [
     {
-      "id": "51e7647b37834b39a3286e1ca5fdd822",
-      "repository": "Deobfugazi/darkith-forge",
-      "execution_status": "running",
-      "sandbox_status": "RUNNING",
-      "updated_at": "2026-11-20T05:54:30.959918Z",
-      "conversation_url": "https://hcxnqdvqjpajzlsg.prod-runtime.all-hands.dev/api/conversations/51e7647b37834b39a3286e1ca5fdd822"
+      "orders": 3,
+      "status": "pinged",
+      "target": "/workspace/project/TASKS.md"
     },
     {
-      "id": "f947e4b540c24d1c97125691f3d14707",
-      "repository": "Deobfugazi/community-assets",
-      "execution_status": "running",
-      "sandbox_status": "RUNNING",
-      "updated_at": "2026-11-20T05:52:21.490597Z",
-      "conversation_url": "https://tzezyjthckczgvil.prod-runtime.all-hands.dev/api/conversations/f947e4b540c24d1c97125691f3d14707"
+      "orders": 3,
+      "status": "pinged",
+      "target": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json"
     }
   ]
 }
