@@ -421,6 +421,11 @@ class Pipeline:
                                     "exit": None, "state": "INACTIVE",
                                     "reason": line[9:].strip(), "tail": line})
                     seen.add(name)
+        if exit_code != 0 and not any(r.get("state") == "FAIL" for r in results):
+            results.append({"probe": "repository-ci-overall", "cmd": "bash tools/ci.sh",
+                            "exit": exit_code, "state": "FAIL",
+                            "reason": "CI failed without a parsed individual gate failure",
+                            "tail": (cp.stdout + cp.stderr)[-4000:]})
         return exit_code, results, log_rel, sha(log.encode("utf-8"))
 
     def s4_diagnostic(self) -> tuple:
@@ -475,9 +480,13 @@ class Pipeline:
     def s6_trace(self, results) -> tuple:
         rules = self.trace_rules()
         defects = []
+        specific_failures = [r for r in results
+                             if r["state"] == "FAIL" and r["probe"] != "repository-ci-overall"]
         for r in results:
             if r["state"] != "FAIL":
                 continue
+            if r["probe"] == "repository-ci-overall" and specific_failures:
+                continue  # summary symptom; retain the specific gate defects instead
             rule = rules.get(r["probe"], {})
             defects.append({
                 "id": f"DEF-{len(defects) + 1:03d}",
@@ -1156,19 +1165,26 @@ def verify_chain(root: pathlib.Path) -> tuple:
             else:
                 want = "PASS"
             got = s05.get(probe["probe"])
-            if got and got != want:
+            if got is None:
+                fails.append(f"I3: S05 omitted S04 probe {probe['probe']}")
+            elif got != want:
                 fails.append(f"I3: S05 says {probe['probe']}={got} but S04 measured "
                              f"exit={probe.get('exit')} state={st} "
                              f"(SKIP is never PASS)")
+        s07_routes = receipts["S07"]["details"].get("routes", [])
         for task in receipts["S08"]["details"].get("tasks", []):
             missing = [k for k in ("id", "defects", "parent_task", "governing_file",
-                                   "governing_clause", "root_cause", "baseline_commit",
-                                   "acceptance_criteria", "evidence") if not task.get(k)]
+                                   "governing_clause", "generator", "repair_boundary",
+                                   "root_cause", "baseline_commit", "acceptance_criteria",
+                                   "evidence") if not task.get(k)]
             if missing:
                 fails.append(f"I2: task {task.get('id')} lacks {', '.join(missing)}")
             if task.get("governing_clause") == "UNCONFIRMED" or task.get("root_cause") == "UNCONFIRMED":
                 if current.get("closed"):
                     fails.append(f"I2/I7: closed cycle contains unconfirmed root cause/governance for {task.get('id')}")
+        if receipts["S08"]["details"].get("tasks") and receipts["S07"].get("status") != "PASS":
+            if current.get("closed"):
+                fails.append("I2: closed cycle contains tasks without a complete S07 governing route")
         for sid, rec in receipts.items():
             for ref in rec.get("evidence", []):
                 evidence_path = root / ref
