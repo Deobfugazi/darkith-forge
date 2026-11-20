@@ -58,7 +58,9 @@ def kotlinc_runs() -> tuple[bool, str]:
     env = dict(os.environ)
     if (BUNDLED_JDK_BIN / "java").is_file():
         env["PATH"] = f"{BUNDLED_JDK_BIN}{os.pathsep}{env.get('PATH', '')}"
-        env.setdefault("JAVA_HOME", str(BUNDLED_JDK_BIN.parent))
+        # JAVA_HOME takes precedence over PATH in several kotlinc launchers. Force the
+        # same pinned JDK rather than inheriting a runner's unrelated JAVA_HOME.
+        env["JAVA_HOME"] = str(BUNDLED_JDK_BIN.parent)
     try:
         p = subprocess.run([exe, "-version"], capture_output=True, text=True, timeout=180,
                            env=env)
