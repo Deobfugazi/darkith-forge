@@ -20,7 +20,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 15,090 | `ac0e12aeac92` | TASKS — the durable board |
+| `TASKS.md` | 8,773 | `1ddab4e7ecad` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
