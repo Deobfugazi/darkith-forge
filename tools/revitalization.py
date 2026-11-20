@@ -61,6 +61,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import pathlib
 import re
 import shlex
@@ -182,6 +183,9 @@ class Pipeline:
         self.operator = operator
         self.probes = probes
         self.prev_dir = prev_dir
+        # The real repository run executes the complete CI suite. Sandbox self-tests
+        # use injected probes and must never recursively launch the repository CI.
+        self.run_full_suite = root.resolve() == ROOT.resolve()
         self.parent = GENESIS
         self.cycle = (now_utc().replace("-", "").replace(":", "")
                       + f"{int(time.time() * 1000) % 1000:03d}")
@@ -320,23 +324,85 @@ class Pipeline:
                 "duration_s": round(time.monotonic() - t0, 3),
                 "state": state, "reason": reason, "tail": tail}
 
-    def s4_diagnostic(self) -> tuple:
-        probes = self.load_probes()
+    def run_repository_ci(self, stage_id: str) -> tuple:
+        """Run the repository's real gate suite and preserve its complete log as evidence.
+
+        The chain gate is deliberately INACTIVE during S04/S14 because it cannot verify
+        a chain whose final receipt has not yet been sealed. CI runs that gate normally
+        after S16; the in-process verifier also checks the completed chain before close.
+        """
+        log_rel = f"proof/revitalization/{self.cycle}/{stage_id}_CI.log"
+        env = os.environ.copy()
+        env["REVITALIZATION_BOOTSTRAP"] = "1"
+        env["CI_LOG"] = log_rel
+        try:
+            cp = subprocess.run(["bash", "tools/ci.sh"], cwd=str(self.root), env=env,
+                                 capture_output=True, text=True, timeout=1800)
+            exit_code = cp.returncode
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return 127, [], log_rel, str(exc)
+        log_path = self.root / log_rel
+        log = (log_path.read_text(encoding="utf-8", errors="replace")
+               if log_path.is_file() else (cp.stdout + cp.stderr))
         results = []
-        for probe in probes:
-            res = self.run_probe(probe["cmd"])
-            res["probe"] = probe["name"]
-            results.append(res)
+        seen = set()
+        for line in log.splitlines():
+            m = re.match(r"^---\\s+(.+?):\\s+(PASS|FAIL|SKIP)\\b(.*)$", line.strip())
+            if m:
+                name, state, tail = m.groups()
+                rc_match = re.search(r"exit\\s+(\\d+)", tail)
+                rc = int(rc_match.group(1)) if rc_match else {"PASS": 0, "FAIL": 1, "SKIP": 3}[state]
+                results.append({"probe": name, "cmd": "bash tools/ci.sh",
+                                "exit": rc, "state": state,
+                                "reason": None if state == "PASS" else tail.strip(),
+                                "tail": line})
+                seen.add(name)
+            elif line.startswith("SKIP:"):
+                label = line[5:].strip().split("—", 1)[0].strip()
+                name = "manual-skip:" + label[:100]
+                if name not in seen:
+                    results.append({"probe": name, "cmd": "bash tools/ci.sh",
+                                    "exit": 3, "state": "SKIP",
+                                    "reason": line[5:].strip(), "tail": line})
+                    seen.add(name)
+            elif line.startswith("INACTIVE:"):
+                label = line[9:].strip().split("—", 1)[0].strip()
+                name = "inactive:" + label[:100]
+                if name not in seen:
+                    results.append({"probe": name, "cmd": "bash tools/ci.sh",
+                                    "exit": None, "state": "INACTIVE",
+                                    "reason": line[9:].strip(), "tail": line})
+                    seen.add(name)
+        return exit_code, results, log_rel, sha(log.encode("utf-8"))
+
+    def s4_diagnostic(self) -> tuple:
+        results = []
+        suite = None
+        if self.run_full_suite:
+            exit_code, results, log_rel, log_hash = self.run_repository_ci("S04")
+            suite = {"exit": exit_code, "state": "PASS" if exit_code == 0 else "FAIL",
+                     "log": log_rel, "log_sha256": log_hash}
+            if not (self.root / log_rel).is_file():
+                results = []
+        else:
+            for probe in self.load_probes():
+                res = self.run_probe(probe["cmd"])
+                res["probe"] = probe["name"]
+                results.append(res)
         registry_sha = (sha(self.registry_path.read_bytes())
-                        if self.registry_path.is_file() else "builtin")
+                        if self.registry_path.is_file() else "repository-ci" if suite else "builtin")
         input_obj = {"registry_sha256": registry_sha,
+                     "suite": suite,
                      "results": [{"probe": r["probe"], "exit": r["exit"],
                                   "state": r["state"]} for r in results]}
+        evidence = [suite["log"]] if suite and suite.get("log") and (self.root / suite["log"]).is_file() else []
         if not results:
-            rec = self.emit("S04", "FAIL", input_obj, {"probes": results},
-                            reason="empty probe corpus is not a pass (SPI-32)")
+            rec = self.emit("S04", "FAIL", input_obj, {"probes": results, "suite": suite},
+                            evidence=evidence,
+                            reason="diagnostic corpus/log is empty; no probe may pass vacuously (SPI-32)")
             return rec, results
-        rec = self.emit("S04", "PASS", input_obj, {"probes": results})
+        rec = self.emit("S04", "PASS", input_obj, {"probes": results, "suite": suite},
+                        evidence=evidence)
         return rec, results
 
     def s5_classify(self, results) -> tuple:
@@ -346,7 +412,8 @@ class Pipeline:
         bad = [row for row, r in zip(ledger, results)
                if not ((r["exit"] == 0 and row["state"] == "PASS")
                        or (r["exit"] == 3 and row["state"] == "SKIP")
-                       or ((r["exit"] is None or r["exit"] not in (0, 3))
+                       or (r["exit"] is None and row["state"] == "INACTIVE")
+                       or ((r["exit"] is not None and r["exit"] not in (0, 3))
                            and row["state"] == "FAIL"))]
         input_obj = {"ledger": ledger,
                      "s04_exits": {r["probe"]: r["exit"] for r in results}}
@@ -644,6 +711,20 @@ class Pipeline:
 
     # ---------------------------------------------------------------- S14..S16
     def s14_reconcile(self) -> tuple:
+        suite = {"state": "INACTIVE", "reason": "sandbox self-test; no repository CI checkout"}
+        suite_evidence = []
+        suite_ok = True
+        if self.run_full_suite:
+            exit_code, results, log_rel, log_hash = self.run_repository_ci("S14")
+            suite_ok = exit_code == 0
+            suite = {"executor": "tools/ci.sh", "exit": exit_code,
+                     "state": "PASS" if suite_ok else "FAIL",
+                     "log": log_rel, "log_sha256": log_hash,
+                     "probes": results,
+                     "bootstrap_exclusions": ["revitalization chain gate", "CI receipt emitter"]}
+            if (self.root / log_rel).is_file():
+                suite_evidence.append(log_rel)
+
         cp = git(self.root, "status", "--porcelain")
         dirty = [ln[3:].strip().strip('"')
                  for ln in cp.stdout.splitlines() if ln.strip()]
@@ -654,19 +735,21 @@ class Pipeline:
         cycle_output = [p for p in dirty_paths if is_exempt(p)]
         drift = [p for p in dirty_paths
                  if not is_exempt(p) and p not in manifest_targets]
-        clean = not drift
+        clean = not drift and suite_ok
         details = {"dirty": dirty, "unexplained_drift": drift,
                    "cycle_output": cycle_output,
                    "manifest_targets": sorted(manifest_targets),
                    "regenerable_trees": [p for p in ("tools/generated", "build/gen")
                                          if (self.root / p).is_dir()],
-                   "full_suite": {"executor": "tools/ci.sh",
-                                  "receipt": "proof/ci_last.log (regenerates from a "
-                                             "fresh run; CI is the executor)"}}
-        input_obj = {"dirty": dirty_paths, "drift": drift}
+                   "full_suite": suite}
+        input_obj = {"dirty": dirty_paths, "drift": drift,
+                     "full_suite_exit": suite.get("exit")}
         rec = self.emit("S14", "PASS" if clean else "FAIL", input_obj, details,
+                        evidence=suite_evidence,
                         reason=(None if clean else
-                                f"{len(drift)} unexplained dirty path(s): {drift[:4]}"))
+                                (f"full tools/ci.sh exit {suite.get('exit')}"
+                                 if not suite_ok else
+                                 f"{len(drift)} unexplained dirty path(s): {drift[:4]}")))
         return rec, clean, drift
 
     def s15_seal(self, tasks, ok_local: bool, ok_blast: bool, clean: bool) -> tuple:
