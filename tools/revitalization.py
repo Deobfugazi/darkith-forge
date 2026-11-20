@@ -102,13 +102,15 @@ def is_generated_target(path: str) -> bool:
 def tree_snapshot(root: pathlib.Path) -> dict:
     """Hash every repository file except VCS/cache and the current cycle's own receipts."""
     out = {}
-    excluded = {".git", ".tools", ".gradle", "node_modules", "__pycache__", ".venv"}
+    excluded = {".git", ".tools", ".gradle", "node_modules", "__pycache__", ".venv",
+                ".forge_work", ".savf", ".agent_tmp", ".shell-harness", "prerun-out"}
     for path in sorted(root.rglob("*")):
         if not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
             continue
         rel = path.relative_to(root).as_posix()
         if rel.startswith("proof/revitalization/") or rel in ("proof/praxis_propagation.json",
-                                                              "proof/convergence.json"):
+                                                              "proof/convergence.json",
+                                                              "proof/ci_last.log"):
             continue  # per-run booked telemetry, not generated tissue and not source
         try:
             out[rel] = sha(path.read_bytes())
@@ -174,7 +176,8 @@ def is_exempt(path: str) -> bool:
     """The cycle's own output is never unexplained drift. Handles the git porcelain
     truncation: a wholly untracked `proof/` reports as `?? proof/`, an ancestor of
     the exempt prefix."""
-    return bool(path) and (path in ("proof/praxis_propagation.json", "proof/convergence.json")
+    return bool(path) and (path in ("proof/praxis_propagation.json", "proof/convergence.json",
+                                    "proof/ci_last.log")
                            or path == DRIFT_EXEMPT_PREFIX.rstrip("/")
                            or path.startswith(DRIFT_EXEMPT_PREFIX)
                            or (DRIFT_EXEMPT_PREFIX.rstrip("/") + "/")
