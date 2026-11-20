@@ -18,10 +18,16 @@ never asserted.
 """
 import datetime
 import json
+import os
 import pathlib
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+# ROOT is the project this tool serves. COORDINASYNC_ROOT overrides it so the same source can
+# be bundled into the single-file kit (where __file__ is the bundle, not tools/) and run against
+# a host project anywhere. Without the override, a bundled copy resolves its root to whatever
+# directory it happens to sit in and writes its board there.
+ROOT = pathlib.Path(os.environ.get("COORDINASYNC_ROOT") or
+                    pathlib.Path(__file__).resolve().parent.parent).resolve()
 sys.path.insert(0, str(ROOT / "build" / "gen"))
 sys.path.insert(0, str(ROOT / "tools"))
 
@@ -42,8 +48,37 @@ def load() -> dict:
     return {}
 
 
-EVENT_ROOTS = [pathlib.Path("/var/openhands/conversations"),
-               pathlib.Path("/workspace/conversations")]
+def _discover_event_roots() -> list[pathlib.Path]:
+    """Where this project keeps conversation logs.
+
+    Precedence: COORDINASYNC_EVENT_ROOTS, then this project's own `.coordinasync.json`
+    declaration, then `conversations/` beside the tool, then `../conversations`.
+
+    The project DECLARES its log root; the toolkit assumes none. Both guesses failed: assuming
+    platform paths let a copy running in /tmp ingest the home session into an unrelated project,
+    and assuming project-local-only left the home repo blind to its own log. A declaration is
+    neither — it is the project stating a fact about itself, and a project that states nothing
+    gets nothing rather than somebody else's orders.
+    """
+    env = os.environ.get("COORDINASYNC_EVENT_ROOTS")
+    if env:
+        return [pathlib.Path(p) for p in env.split(os.pathsep) if p]
+    declared = ROOT / ".coordinasync.json"
+    if declared.is_file():
+        try:
+            cfg = json.loads(declared.read_text(encoding="utf-8"))
+            roots = [pathlib.Path(p) for p in cfg.get("event_roots", []) if p]
+            if roots:
+                return roots
+        except (ValueError, OSError):
+            pass
+    for cand in (ROOT / "conversations", ROOT.parent / "conversations"):
+        if cand.is_dir():
+            return [cand]
+    return []
+
+
+EVENT_ROOTS = _discover_event_roots()
 
 
 def live_activity() -> str | None:

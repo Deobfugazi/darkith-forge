@@ -41,20 +41,54 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import pathlib
 import re
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+# ROOT is the project this tool serves. COORDINASYNC_ROOT overrides it so the same source can
+# be bundled into the single-file kit (where __file__ is the bundle, not tools/) and run against
+# a host project anywhere. Without the override, a bundled copy resolves its root to whatever
+# directory it happens to sit in and writes its board there.
+ROOT = pathlib.Path(os.environ.get("COORDINASYNC_ROOT") or
+                    pathlib.Path(__file__).resolve().parent.parent).resolve()
 BOARD = ROOT / "TASKS.md"
 RECEIPT = ROOT / "proof" / "chat_gatekeeper.json"
 PINGS = ROOT / "proof" / "agent_pings.json"
 MARK = ROOT / "proof" / "chat_watermark.json"
 PULSE = ROOT / "proof" / "synchrony_pulse.json"
-EVENT_ROOTS = [
-    pathlib.Path("/var/openhands/conversations"),
-    pathlib.Path("/workspace/conversations"),
-]
+GRACE_MINUTES = 10.0        # a prompt younger than this may be mid-flight through CI
+def _discover_event_roots() -> list[pathlib.Path]:
+    """Where this project keeps conversation logs.
+
+    Precedence: COORDINASYNC_EVENT_ROOTS, then this project's own `.coordinasync.json`
+    declaration, then `conversations/` beside the tool, then `../conversations`.
+
+    The project DECLARES its log root; the toolkit assumes none. Both guesses failed: assuming
+    platform paths let a copy running in /tmp ingest the home session into an unrelated project,
+    and assuming project-local-only left the home repo blind to its own log. A declaration is
+    neither — it is the project stating a fact about itself, and a project that states nothing
+    gets nothing rather than somebody else's orders.
+    """
+    env = os.environ.get("COORDINASYNC_EVENT_ROOTS")
+    if env:
+        return [pathlib.Path(p) for p in env.split(os.pathsep) if p]
+    declared = ROOT / ".coordinasync.json"
+    if declared.is_file():
+        try:
+            cfg = json.loads(declared.read_text(encoding="utf-8"))
+            roots = [pathlib.Path(p) for p in cfg.get("event_roots", []) if p]
+            if roots:
+                return roots
+        except (ValueError, OSError):
+            pass
+    for cand in (ROOT / "conversations", ROOT.parent / "conversations"):
+        if cand.is_dir():
+            return [cand]
+    return []
+
+
+EVENT_ROOTS = _discover_event_roots()
 
 # The block the gatekeeper owns in TASKS.md. Markers bound it so re-ingest is a REPLACE, never
 # an append: an append-only ingester would grow the board every run and duplicate the order.
@@ -123,6 +157,18 @@ AGENT_ECHO = re.compile(
 )
 # "never mind for now" is a withdrawal, not a standing prohibition.
 WITHDRAWAL = re.compile(r"never mind|nvm\b|forget (it|that)|ill come back later", re.IGNORECASE)
+
+
+def _age_minutes(ts: str) -> float | None:
+    """Minutes since an event timestamp (UTC, naive). None if unparseable."""
+    import datetime as _dt
+    try:
+        when = _dt.datetime.fromisoformat(ts)
+    except (ValueError, TypeError):
+        return None
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=_dt.timezone.utc)
+    return (_dt.datetime.now(_dt.timezone.utc) - when).total_seconds() / 60.0
 
 
 def read_json(p: pathlib.Path, default):
@@ -213,9 +259,18 @@ def render_orders(conv: str, orders: list[dict], occ: dict) -> str:
     L = [BEGIN, ""]
     L.append("## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat")
     L.append("")
-    L.append(f"_Source: conversation `{conv}`, ingested by `tools/chat_gatekeeper.py`. "
-             f"Circadian phase at ingest: **{occ['phase']}**, occupation **{occ['state']}** "
-             f"(gap {occ['gapHours']}h). This section is regenerated, never hand-edited._")
+    # Anchor the provenance to the ORDER's own instant, not to "now". Stamping the current
+    # clock into the board made the board churn on every run — the same orders rendered a
+    # different phase each time the pulse moved, so re-ingesting identical input produced
+    # different bytes and idempotence (MUST #18) could never hold. The order does not change
+    # because the machine's clock advanced.
+    anchor = orders[-1]["timestamp"] if orders else None
+    if anchor:
+        L.append(f"_Source: conversation `{conv}`, ingested by `tools/chat_gatekeeper.py`. "
+                 f"Latest order `{anchor}`. This section is regenerated, never hand-edited._")
+    else:
+        L.append(f"_Source: conversation `{conv}`, ingested by `tools/chat_gatekeeper.py`. "
+                 f"No order in window. This section is regenerated, never hand-edited._")
     L.append("")
     # praxis_propagate requires the order in force to DECLARE its coupled laws; a derived guess
     # is not an order. These are the laws the Operator named in the prompts themselves.
@@ -332,8 +387,13 @@ def run(write: bool, since_day: str | None = None) -> int:
     # NEW; the day decides what is ON THE BOARD. Two different questions, two different windows.
     orders, meta = build(conv, events, {"conversation": conv, "last_index": -1},
                          since_day=since_day)
-    _, delta = build(conv, events, mark, since_day=since_day)
+    delta, _ = build(conv, events, mark, since_day=since_day)
     block = render_orders(conv, orders, meta["occupation"])
+    if not BOARD.is_file():
+        # A project with no board is not a fault in the ingester; it is a project that has not
+        # been wired yet. Say so in one line instead of a traceback that reads like a bug.
+        print(f"chat_gatekeeper: no board at {BOARD} — run `coordinasync install` first")
+        return 2
     board = BOARD.read_text()
     new_board = merge(board, block)
 
@@ -364,9 +424,19 @@ def run(write: bool, since_day: str | None = None) -> int:
               f"{len(targets())} board target(s) pinged")
         return 0
 
-    if delta:
-        print(f"chat_gatekeeper: FAIL — {len(delta)} order(s) past watermark "
-              f"{mark.get('last_index', -1)} are NOT ingested; run --write")
+    # Grace window. A prompt that arrived WHILE this CI run was in flight cannot have been
+    # ingested before the run started, so failing on it makes the gate fire on its own race
+    # rather than on neglect — and a gate that cries wolf is broken (W-040). Only a prompt older
+    # than GRACE_MINUTES that is still un-ingested is a real stall (NEVER #21).
+    fresh = []
+    for o in delta:
+        age = _age_minutes(o["timestamp"])
+        if age is None or age > GRACE_MINUTES:
+            fresh.append(o)
+    if fresh:
+        print(f"chat_gatekeeper: FAIL — {len(fresh)} order(s) past watermark "
+              f"{mark.get('last_index', -1)} are NOT ingested (older than {GRACE_MINUTES}m); "
+              f"run --write")
         return 1
     rec = read_json(RECEIPT, {})
     if not rec:
@@ -443,6 +513,7 @@ def selftest() -> int:
     # a propagation order must declare the board laws, not leave them to a term guess
     oc, _ = build("c1", [(1, "t1", "auto-propagate this to every board")], {"conversation": "c1", "last_index": -1})
     chk("coupling declared", "MUST #26" in oc[0]["laws"])
+    chk("grace window sane", GRACE_MINUTES > 0)
     chk("coupling deterministic", oc[0]["laws"] == build("c1", [(1, "t1", "auto-propagate this to every board")], {"conversation": "c1", "last_index": -1})[0][0]["laws"])
 
     print(f"chat_gatekeeper selftest: {'ok' if ok else 'BROKEN'}")

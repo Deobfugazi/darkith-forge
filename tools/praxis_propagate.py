@@ -49,7 +49,12 @@ import re
 import subprocess
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+# ROOT is the project this tool serves. COORDINASYNC_ROOT overrides it so the same source can
+# be bundled into the single-file kit (where __file__ is the bundle, not tools/) and run against
+# a host project anywhere. Without the override, a bundled copy resolves its root to whatever
+# directory it happens to sit in and writes its board there.
+ROOT = pathlib.Path(os.environ.get("COORDINASYNC_ROOT") or
+                    pathlib.Path(__file__).resolve().parent.parent).resolve()
 BOARD = ROOT / "TASKS.md"
 LAWS = ROOT / "DARKITH.md"
 RECEIPT = ROOT / "proof" / "praxis_propagation.json"
@@ -94,6 +99,39 @@ def normalise_law(tok: str) -> str:
     return f"SPI-{num}" if kind == "SPI" else f"{kind} #{num}"
 
 
+def _discover_event_roots() -> list[pathlib.Path]:
+    """Where this project keeps conversation logs.
+
+    Precedence: COORDINASYNC_EVENT_ROOTS, then this project's own `.coordinasync.json`
+    declaration, then `conversations/` beside the tool, then `../conversations`.
+
+    The project DECLARES its log root; the toolkit assumes none. Both guesses failed: assuming
+    platform paths let a copy running in /tmp ingest the home session into an unrelated project,
+    and assuming project-local-only left the home repo blind to its own log. A declaration is
+    neither — it is the project stating a fact about itself, and a project that states nothing
+    gets nothing rather than somebody else's orders.
+    """
+    env = os.environ.get("COORDINASYNC_EVENT_ROOTS")
+    if env:
+        return [pathlib.Path(p) for p in env.split(os.pathsep) if p]
+    declared = ROOT / ".coordinasync.json"
+    if declared.is_file():
+        try:
+            cfg = json.loads(declared.read_text(encoding="utf-8"))
+            roots = [pathlib.Path(p) for p in cfg.get("event_roots", []) if p]
+            if roots:
+                return roots
+        except (ValueError, OSError):
+            pass
+    for cand in (ROOT / "conversations", ROOT.parent / "conversations"):
+        if cand.is_dir():
+            return [cand]
+    return []
+
+
+EVENT_ROOTS = _discover_event_roots()
+
+
 def law_corpus() -> dict[str, str]:
     """Law id -> its full body, parsed with law_gate's own regex so there is ONE definition of
     what a law heading looks like. A second parser here would drift from the gate that enforces
@@ -101,6 +139,11 @@ def law_corpus() -> dict[str, str]:
     sys.path.insert(0, str(ROOT / "tools"))
     import law_gate  # noqa: E402  — deliberate: reuse the gate's regex, do not fork it
 
+    # A host project may have no law corpus yet (a fresh account, a different repo). That is an
+    # empty corpus, not a crash: propagation can still carry a directive that declares its laws
+    # by id; only the heading table would be blank.
+    if not LAWS.is_file():
+        return {}
     text = LAWS.read_text(encoding="utf-8")
     lines = text.splitlines()
     hits = [(i, m) for i, line in enumerate(lines) for m in [law_gate.LAW.search(line)] if m]
@@ -262,10 +305,10 @@ def discover_targets() -> list[tuple[str, pathlib.Path]]:
 
     # Ephemeral agent boards: one per live conversation. The Operator's own convention is
     # workspace/conversations/<id>/TASKS.json.
-    for conv in sorted(pathlib.Path("/workspace/conversations").glob("*/TASKS.json")):
-        targets.append((f"session:{conv.parent.name}", conv))
-    for conv in sorted(pathlib.Path("/workspace/workspace/conversations").glob("*/TASKS.json")):
-        targets.append((f"session:{conv.parent.name}", conv))
+    # Session boards live where the host keeps its logs; discovery, never a platform assumption.
+    for p in _discover_event_roots():
+        for conv in sorted(pathlib.Path(p).glob("*/TASKS.json")):
+            targets.append((f"session:{conv.parent.name}", conv))
 
     # Sibling worktrees: a branch checked out elsewhere has its own TASKS.md and its own agent.
     try:
@@ -442,8 +485,17 @@ def main() -> int:
     # would chase a law that no gate enforces. Fail closed, in --check and in apply alike.
     missing = [l for l in declared if l not in corpus]
     if missing:
-        print(f"praxis: FAIL — the directive names law(s) absent from DARKITH.md: {missing}")
-        return 1
+        if not corpus:
+            # No corpus at all: this account has not inscribed its laws yet, so nothing can be
+            # checked against them. Carrying the directive is still the right act — the order is
+            # the Operator's words and they do not become invalid because the heading table is
+            # missing. Fail-closed applies where a corpus EXISTS and contradicts the order; on a
+            # fresh account it would make the kit unusable exactly where it is needed first.
+            print(f"praxis: note — no law corpus at {LAWS.name}; carrying the directive "
+                  f"unverified against {len(missing)} declared law(s)")
+        else:
+            print(f"praxis: FAIL — the directive names law(s) absent from {LAWS.name}: {missing}")
+            return 1
 
     block = render_block(title, body, declared, derived, corpus)
 

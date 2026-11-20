@@ -1553,3 +1553,39 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   replace-never-append; --check fails if any prompt past the watermark is un-ingested, if the
   receipt is missing, if the receipt watermark disagrees with the board's, or if the board
   drifted from the receipt.
+
+
+---
+
+─── MUST #40 (THE APPARATUS TRAVELS — ONE FILE, NO INSTALL) ───
+  GATE: kit/coordinasync.py selftest (wired into tools/ci.sh)
+  Source: Operator directive 2026-11-20T05:31 — "Package this Co-ordin-async parallelization
+  toolchain part of my source tree so it goes with me agnostically independently on every
+  fucking cloud service platform account i may hop and remotely recycle the same utility
+  apparatus as my go-to invariant toolkit!"
+
+  The gap this closed: the toolchain was four modules plus a generated runtime, wired by
+  absolute path into one repo on one account. Carrying it meant re-deriving it — and every
+  re-derivation re-introduced the same defects. The apparatus has to survive the hop intact.
+
+  The law: the toolkit ships as ONE file, `kit/coordinasync.py`, with its modules embedded
+  compressed and loaded into sys.modules. No install step, no venv, no package index, no
+  network, no Gradle, no directory layout to reconstruct. python3.10+ is the only requirement.
+  `install` re-materialises the module files in whatever project it is run from.
+
+  Four defects found while making it actually portable, each fixed at its class:
+    - an embedded module's __file__ is the bundle, so ROOT resolved one directory too high;
+      the host root is now handed in explicitly before the first load;
+    - praxis imported law_gate, a module that was not in the kit, so a foreign machine could
+      not propagate at all (SPI-27 forbids forking it, so it travels);
+    - the event-log roots defaulted to this platform's absolute paths, so a copy running in
+      /tmp silently ingested the home session and wrote those orders into an unrelated
+      project — contamination dressed as portability. Defaults are now project-local;
+    - the board stamped "now" into its provenance line, so identical input rendered different
+      bytes on every run and idempotence could never hold. It now anchors to the order's own
+      instant.
+
+  Gate: `coordinasync selftest` builds a throwaway project with a fabricated event log and
+  proves the whole chain — ingest, coupling, board write, check, propagation, pulse,
+  idempotence — 12 checks, none touching the tree beside it. CI runs it, so a kit that stops
+  being portable fails the build instead of failing on the Operator's next account.

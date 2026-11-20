@@ -147,6 +147,11 @@ if have python3; then
     if [ -f tools/controller_gate.py ]; then
       run "controller behaviour (SPI-38)" python3 tools/controller_gate.py
     fi
+    # The kit is the apparatus the Operator carries between accounts. A kit that only works
+    # here is not portable, so CI runs its foreign-directory selftest, not just its presence.
+    if [ -f kit/coordinasync.py ]; then
+      run "coordinasync portable kit (MUST #40)" python3 kit/coordinasync.py selftest
+    fi
     # The Operator's chat is the source of the order in force. A directive that exists only
     # because someone typed it into TASKS.md by hand is not ingested from his speech.
     if [ -f tools/chat_gatekeeper.py ]; then

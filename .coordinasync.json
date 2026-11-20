@@ -1,0 +1,6 @@
+{
+  "event_roots": [
+    "/var/openhands/conversations",
+    "/workspace/conversations"
+  ]
+}
