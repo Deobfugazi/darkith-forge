@@ -20,7 +20,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 BOARD = ROOT / "TASKS.md"
-STATUSES = {"done", "in_progress", "todo", "blocked"}
+STATUSES = {"done", "in_progress", "todo", "blocked", "skipped", "inactive"}
 REPO_ROOTS = {"app", "tools", "build", "libs", "docs", "proof", "delivery", ".github", ".tools"}
 # Generated output trees: regenerable, gitignored (see .gitignore). Evidence may cite a
 # path here (e.g. a built APK) because it IS checkable after a build, but it is never in a
