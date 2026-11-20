@@ -33,10 +33,10 @@
       "sha256": "ccfc31cbf8cc24b7c2fb7e46634269fbd255806dd3286e43f214dd459bcdd599"
     },
     {
-      "bytes": 36205,
+      "bytes": 12161,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "755837c3b63a3a12b24b356c413eb0ce3f7141fe398c986995a75899b1225ccd"
+      "sha256": "7aae860f9a1ecf6930244162b7e10e27319d76cbb47f237fdbb933167dccb83b"
     },
     {
       "bytes": 9608,
@@ -153,28 +153,28 @@
       "sha256": "5ab6f2706f8ac80f0262b54c769109dfef368d083e8905bea93fa01f7bebc6ae"
     },
     {
-      "bytes": 96732,
+      "bytes": 98859,
       "path": "clearanceloop.html",
       "register": "C-skillbase",
-      "sha256": "c7a30d34b2da92610aca5131c2c8fbfbef327d83b8b6f82ede8d475e5410f9e5"
+      "sha256": "ae16a99a055e902d0f0dec144134b660fbd9e76baee743a0a7d9cd868e5d32ab"
     },
     {
-      "bytes": 589430,
+      "bytes": 596911,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "de9aa8326526a51922d48994d148c9fbd1bebb541de6112d5d892c385071099f"
+      "sha256": "5cc122191d2069d4190db9a4bba4ce30e6309ee459814dfef378e6699d865deb"
     },
     {
-      "bytes": 1447616,
+      "bytes": 1462578,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "21dcee7b4c86892cac00e4ccdf62ba0eb52331a28a86b50f5255b56a446432b0"
+      "sha256": "fd25081c0397ed723ace3855f9435d9b8ef808ae9e4e6f3e354ac15733036a40"
     },
     {
-      "bytes": 277150,
+      "bytes": 279277,
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
-      "sha256": "3de7cc56d4216dcee5dd7cede570ff019b80ac94d4de7f250049141759b5ee56"
+      "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
     },
     {
       "bytes": 7073,
@@ -237,16 +237,16 @@
       "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     },
     {
-      "bytes": 87767,
+      "bytes": 89894,
       "path": "omega.html",
       "register": "C-skillbase",
-      "sha256": "bfb86c7623ac32bd720257fa64b03c4e2a56e5f9e61a1288ac14e6b916f774b9"
+      "sha256": "0bebef245cf4788e327c4ee0670dc39537d43be44f60e4aa750c1f635e9313a8"
     },
     {
-      "bytes": 450747,
+      "bytes": 458525,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "d939694731be240e0b1f2ff7d57629349583c57f7bd8b63ed2d0f34ba3d8c45c"
+      "sha256": "fad6f5a27fda35fe73e63ed14d44f1729f2713821c7bcaf25061e1a4917912c5"
     },
     {
       "bytes": 11465,
@@ -297,10 +297,10 @@
       "sha256": "2bccb0ab5978142e3811988700e93691efb0e1a5e50b1f61d94ae4d8a3b1936a"
     },
     {
-      "bytes": 277150,
+      "bytes": 279277,
       "path": "app/src/main/assets/darkith_ui.html",
       "register": "D-asset",
-      "sha256": "3de7cc56d4216dcee5dd7cede570ff019b80ac94d4de7f250049141759b5ee56"
+      "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
     },
     {
       "bytes": 490080,
