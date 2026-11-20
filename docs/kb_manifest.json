@@ -1,18 +1,18 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 62,
+  "count": 63,
   "files": [
     {
-      "bytes": 69253,
+      "bytes": 73115,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "7844779f933d26394e8c524ba7a21275f757ac74f6afbccfa20ce974ab8e4092"
+      "sha256": "dbc0ba81c77ed817b30a13549ac7d98850f128a103fd7fe6b8d766639f821d52"
     },
     {
-      "bytes": 72204,
+      "bytes": 74683,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "fc3af326618a21f76cc38a5d05d3969ef12159fefc345ff8678500aec5e8de89"
+      "sha256": "6dcbed576959b359fc535f373ef63405cf4b1591714ad22214bdeb6e2cb71161"
     },
     {
       "bytes": 3356,
@@ -21,22 +21,22 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 65733,
+      "bytes": 66370,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "28534d40e74c553771fc72f0be5f425c51a6b3dabbe1e80ddba6582b3f95fbf4"
+      "sha256": "227a570938772c86aeb7392477b02fd949ff4ee6b5507799f79ff171509c0ad3"
     },
     {
-      "bytes": 5183,
+      "bytes": 5949,
       "path": "RESUME.md",
       "register": "A-apparatus",
-      "sha256": "4e8c3eed2cd7fde2866f82725f800a5ac94f6808d0d077d39a66c71c479f4be0"
+      "sha256": "28eca490a9a12a458661016afb61119cf1607f0069b7600e9d77c28fd828109f"
     },
     {
-      "bytes": 22433,
+      "bytes": 23153,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "59db01ee2bd828f124fed63a45345464c2f5d0be5a29e1b1bc8a812130866672"
+      "sha256": "e1eced7f849a2639508db7def1a640cf2930f683a9439a16402b498d902bf43b"
     },
     {
       "bytes": 9608,
@@ -147,22 +147,28 @@
       "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
     },
     {
-      "bytes": 583821,
+      "bytes": 96732,
+      "path": "clearanceloop.html",
+      "register": "C-skillbase",
+      "sha256": "c7a30d34b2da92610aca5131c2c8fbfbef327d83b8b6f82ede8d475e5410f9e5"
+    },
+    {
+      "bytes": 589430,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "8cecd66d64fadc318f66889ed96d793947e990c84029b3f17a33ec49ce8129c1"
+      "sha256": "de9aa8326526a51922d48994d148c9fbd1bebb541de6112d5d892c385071099f"
     },
     {
-      "bytes": 1436398,
+      "bytes": 1447616,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "8ead738e0bb8abe422ead57643914bc8bb1f67b0cdfdd6fb4a70d0c28148c28b"
+      "sha256": "21dcee7b4c86892cac00e4ccdf62ba0eb52331a28a86b50f5255b56a446432b0"
     },
     {
-      "bytes": 271541,
+      "bytes": 277150,
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
-      "sha256": "71fba2835db8960b03021b9fe25a676b0a3cbcfea411e79c24f4605173de01d4"
+      "sha256": "3de7cc56d4216dcee5dd7cede570ff019b80ac94d4de7f250049141759b5ee56"
     },
     {
       "bytes": 7073,
@@ -225,16 +231,16 @@
       "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     },
     {
-      "bytes": 82158,
+      "bytes": 87767,
       "path": "omega.html",
       "register": "C-skillbase",
-      "sha256": "e19779ce68608b305c1f143301d348660d013a7694bee15e15fc1191f0353335"
+      "sha256": "bfb86c7623ac32bd720257fa64b03c4e2a56e5f9e61a1288ac14e6b916f774b9"
     },
     {
-      "bytes": 443120,
+      "bytes": 450747,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "b35f17537c84a07e291b55026bfbe2ebb157f5163dd3b8bc52f49f8429ac98a7"
+      "sha256": "d939694731be240e0b1f2ff7d57629349583c57f7bd8b63ed2d0f34ba3d8c45c"
     },
     {
       "bytes": 11465,
@@ -285,10 +291,10 @@
       "sha256": "2bccb0ab5978142e3811988700e93691efb0e1a5e50b1f61d94ae4d8a3b1936a"
     },
     {
-      "bytes": 271541,
+      "bytes": 277150,
       "path": "app/src/main/assets/darkith_ui.html",
       "register": "D-asset",
-      "sha256": "71fba2835db8960b03021b9fe25a676b0a3cbcfea411e79c24f4605173de01d4"
+      "sha256": "3de7cc56d4216dcee5dd7cede570ff019b80ac94d4de7f250049141759b5ee56"
     },
     {
       "bytes": 490080,
