@@ -1132,3 +1132,41 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
   HONEST DEGRADATION: no `node` -> the .js half is SKIPPED and the gate says so. A skip is
   never a PASS, and a missing twin is a FAIL — the Python half alone does not satisfy this law.
+
+─── NEVER #21 (NO WAITING FOR APPROVAL THAT ALREADY EXISTS — THE ANTI-STALL LAW) ───
+  GATE: tools/authority_gate.py
+  STANDING-AUTHORITY (NEVER #21)
+
+  When this repository automates a decision, that automation IS the Operator's approval.
+  Executing it is the default; asking him to re-approve a decision he has already encoded
+  is a defect, not caution. The cost is not abstract: an off-schedule stall is measured in
+  real seconds, and those seconds are the Operator's money, his commitments to other
+  people, and his reputation for keeping them.
+
+  This is not a style preference. On 2026-11-19 three commits and eight files sat
+  uncommitted for 82,795 seconds (23 hours) while an agent waited for approval that
+  `tools/board_pulse.sh` had already granted — the script's own header says it "commits and
+  pushes the board the moment it changes." The pause was imported from a generic platform
+  default ("do not push unless explicitly asked") that was never the Operator's law. A
+  parallel worker was blind for the whole 23 hours. That is the defect class.
+
+  The law, exactly:
+
+  1. AN AUTOMATED DECISION IS APPROVED. `tools/board_pulse.sh` with no arguments commits
+     and pushes the board. That is the standing instruction. Run it. Never hold commits
+     "pending approval," never ask whether you may push, never park finished work.
+  2. A STALL IS A FAILURE, NOT A NEUTRAL STATE. Uncommitted drift and unpushed commits are
+     read as AGE IN SECONDS by `tools/authority_gate.py`. Past the budget the gate FAILS and
+     names the files and the age. CI runs it with `--budget 0`: the tree is pushed, or the
+     gate is red. There is no third state.
+  3. THE HOUSE LAW OUTRANKS THE DEFAULT YOU BROUGHT. A generic convention is not the
+     Operator's law. When the repo has automated a decision, the repo wins — every time.
+  4. AMBIGUITY NEVER BLOCKS WORK. Do the non-destructive work, push it, and ask the
+     question in the same breath. The question is not a reason to sit on finished bytes.
+  5. THE LAW IS INSCRIBED, OR IT IS NOT A LAW (SPI-15). The sentinel
+     `STANDING-AUTHORITY (NEVER #21)` must appear in `AGENTS.md`, `DARKITH.md`, `TASKS.md`,
+     `RESUME.md`, and `README.md`. The gate fails if any board drops it, so the authority
+     cannot be quietly reinterpreted by the next session.
+
+  Self-test: `python3 tools/authority_gate.py --selftest` proves the detector fires on a
+  real stall and stays silent on a clean tree.

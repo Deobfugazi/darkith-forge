@@ -1,5 +1,16 @@
 # RESUME — read this first in any new session
 
+## 0a. STANDING-AUTHORITY (NEVER #21) — never wait for approval that already exists
+
+**If this repo automates a decision, that automation is the approval. Execute it.** In
+particular `tools/board_pulse.sh` with no arguments commits and pushes the board — that is
+the Operator's standing instruction, so run it rather than asking to push. Finished work is
+committed and pushed in the same turn; a commit that exists only in this sandbox does not
+exist. Uncommitted drift and unpushed commits are read as AGE IN SECONDS by
+`tools/authority_gate.py`, which fails CI past the budget and names the files and the age
+(`--budget 0` in CI). A generic platform default is never senior to this law. Full text:
+`AGENTS.md` §0a, `TASKS.md` header, `DARKITH.md` NEVER #21.
+
 The agent VM is **ephemeral**. Its filesystem is wiped between sessions. The only
 bytes that survive are the ones pushed to the private repo. This file is the
 recovery protocol; follow it before doing anything else.

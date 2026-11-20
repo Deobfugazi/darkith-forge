@@ -93,6 +93,7 @@ header{
 .titles{flex:1;min-width:0}
 .titles h1{margin:0;font-size:15px;font-weight:650;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .titles p{margin:1px 0 0;font-size:11.5px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg-short,.tg-shortest,.h1-short{display:none}
 .iconbtn{
   width:44px;height:44px;flex:none;display:grid;place-items:center;
   background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
@@ -206,8 +207,8 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .gate .id{font-size:12.5px;font-weight:700;font-family:var(--mono);letter-spacing:-.2px}
 .gate .name{font-size:11px;color:var(--fg-3);margin-top:1px;line-height:1.35}
 .chip{
-  font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
-  padding:2.5px 7px;border-radius:999px;flex:none;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.55px;
+  padding:3px 7px;border-radius:999px;flex:none;
 }
 .c-pass{background:var(--ok-soft);color:var(--ok)}
 .c-marginal{background:var(--warn-soft);color:var(--warn)}
@@ -224,7 +225,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px;margin-bottom:10px;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
 .filters button{
-  flex:none;min-height:36px;padding:0 13px;border-radius:999px;border:1px solid var(--line);
+  flex:none;min-height:44px;padding:0 13px;border-radius:999px;border:1px solid var(--line);
   background:var(--panel-2);color:var(--fg-2);font-size:12px;font-weight:600;cursor:pointer;
   display:inline-flex;align-items:center;
 }
@@ -281,12 +282,28 @@ th{color:var(--fg-3);font-size:10.5px;text-transform:uppercase;letter-spacing:.5
 td.mono{font-family:var(--mono);font-size:11px}
 .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
 @media (max-width:420px){
-  .titles h1{font-size:14px}
-  .titles p{font-size:11px}
+  /* A sticky header must not eat the phone's viewport, so both lines stay on one
+     line each and shrink rather than wrap. The tagline keeps its honesty text
+     ("session-only storage" when storage is blocked) visible. */
+  header{padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top))}
+  .titles h1{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .titles p{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tg-long{display:none}
+  .tg-short{display:inline}
+  nav{margin-top:6px}
   .card{padding:12px;border-radius:12px}
   .verdict{padding:13px}
   .verdict h3{font-size:17px}
   main{padding:12px 10px 96px}
+}
+@media (max-width:344px){
+  /* 320px phones (Galaxy Fold cover, older Androids) need their own short forms
+     rather than an ellipsis, so the name and the promise stay readable. */
+  .titles h1{font-size:12px}
+  .titles h1 .h1-short{display:inline}
+  .titles h1 .h1-long{display:none}
+  .titles p .tg-short{display:none}
+  .titles p .tg-shortest{display:inline}
 }
 
 </style>
@@ -296,21 +313,21 @@ td.mono{font-family:var(--mono);font-size:11px}
   <div class="bar">
     <div class="logo" aria-hidden="true">SA</div>
     <div class="titles">
-      <h1>SAVF-1 Universal Audit Engine</h1>
-      <p id="tagline">Signed Axis Verification Formulary &middot; offline &middot; zero dependency</p>
+      <h1><span class="h1-long">SAVF-1 Universal Audit Engine</span><span class="h1-short">SAVF-1 Audit Engine</span></h1>
+      <p id="tagline"><span class="tg-long">Signed Axis Verification Formulary &middot; offline &middot; zero dependency</span><span class="tg-short">Formulary &middot; offline &middot; zero dependency</span><span class="tg-shortest">Offline &middot; zero dependency</span></p>
     </div>
     <button class="iconbtn" id="themeBtn" title="Switch light / dark" aria-label="Switch light or dark theme">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     </button>
   </div>
   <nav role="tablist" aria-label="Sections">
-    <button role="tab" aria-selected="true"  data-tab="audit">Audit</button>
-    <button role="tab" aria-selected="false" data-tab="gates">Gates</button>
-    <button role="tab" aria-selected="false" data-tab="axis">Axis</button>
-    <button role="tab" aria-selected="false" data-tab="ledger">Ledger</button>
-    <button role="tab" aria-selected="false" data-tab="seal">Freeze</button>
-    <button role="tab" aria-selected="false" data-tab="self">Self-test</button>
-    <button role="tab" aria-selected="false" data-tab="help">Help</button>
+    <button role="tab" id="tab-audit"  aria-controls="p-audit"  aria-selected="true"  data-tab="audit">Audit</button>
+    <button role="tab" id="tab-gates"  aria-controls="p-gates"  aria-selected="false" data-tab="gates">Gates</button>
+    <button role="tab" id="tab-axis"   aria-controls="p-axis"   aria-selected="false" data-tab="axis">Axis</button>
+    <button role="tab" id="tab-ledger" aria-controls="p-ledger" aria-selected="false" data-tab="ledger">Ledger</button>
+    <button role="tab" id="tab-seal"   aria-controls="p-seal"   aria-selected="false" data-tab="seal">Freeze</button>
+    <button role="tab" id="tab-self"   aria-controls="p-self"   aria-selected="false" data-tab="self">Self-test</button>
+    <button role="tab" id="tab-help"   aria-controls="p-help"   aria-selected="false" data-tab="help">Help</button>
   </nav>
 </header>
 
@@ -3653,7 +3670,11 @@ function dict(seed) {
   var TAB_ORDER = ["audit", "gates", "axis", "ledger", "seal", "self", "help"];
   function showTab(name) {
     if (TAB_ORDER.indexOf(name) < 0) return;
-    TAB_ORDER.forEach(function (t) { $("p-" + t).classList.toggle("on", t === name); });
+    TAB_ORDER.forEach(function (t) {
+      var panel = $("p-" + t), on = t === name;
+      panel.classList.toggle("on", on);
+      if (on) panel.removeAttribute("hidden"); else panel.setAttribute("hidden", "");
+    });
     var btns = document.querySelectorAll("nav button");
     for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-selected", String(btns[i].dataset.tab === name));
     if (location.hash.slice(1) !== name) {
@@ -3684,6 +3705,10 @@ function dict(seed) {
     if (h) showTab(h);
     var sel = btns.filter(function (b) { return b.getAttribute("aria-selected") === "true"; })[0] || btns[0];
     btns.forEach(function (b) { b.tabIndex = b === sel ? 0 : -1; });
+    TAB_ORDER.forEach(function (t) {
+      var panel = $("p-" + t);
+      if (!panel.classList.contains("on")) panel.setAttribute("hidden", "");
+    });
   }
 
   function chip(state) {
@@ -4220,7 +4245,12 @@ function dict(seed) {
     var noStore = false;
     try { localStorage.setItem("savf.probe", "1"); localStorage.removeItem("savf.probe"); }
     catch (e) { noStore = true; }
-    if (noStore) $("tagline").textContent = "Signed Axis Verification Formulary \u00b7 offline \u00b7 session-only storage";
+    if (noStore) {
+      /* The truth changes, so both variants must say it: storage is session-only. */
+      $("tagline").innerHTML = '<span class="tg-long">Signed Axis Verification Formulary \u00b7 offline \u00b7 session-only storage</span>' +
+        '<span class="tg-short">Formulary \u00b7 offline \u00b7 session-only storage</span>' +
+        '<span class="tg-shortest">Session-only storage</span>';
+    }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

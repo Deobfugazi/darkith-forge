@@ -120,6 +120,13 @@ if have python3; then
     if [ -f tools/stall_clock.py ]; then
       run "stall clock (off-schedule dwell)" python3 tools/stall_clock.py
     fi
+    # NEVER #21: an automated decision is already approved. Prove the authority is inscribed
+    # in every board, and that nothing is sitting uncommitted or unpushed. --budget 0 is the
+    # CI setting: a pushed tree, or a red gate — there is no "pending approval" third state.
+    if [ -f tools/authority_gate.py ]; then
+      run "authority gate selftest"         python3 tools/authority_gate.py --selftest
+      run "authority gate (NEVER #21)"      python3 tools/authority_gate.py --check --budget 0
+    fi
   fi
 else
   echo "SKIP: python3 not found"; FAILED=1
@@ -203,6 +210,13 @@ if [ -d app/src/main/java ] && [ -f tools/fork_integrity_gate.sh ]; then
   # (never fails) when no browser is installed, so a bare CI box stays green.
   if [ -f "$ROOT/tools/clearanceloop_ui_gate.py" ]; then
     run "clearanceloop webapp gate (headless browser)" python3 tools/clearanceloop_ui_gate.py
+  fi
+  # The SAVF webapp gate drives savf.html in real Chromium, Firefox and WebKit:
+  # every tab, the audit flow, the axis/sign/exp laws, the ledger, the freeze/tamper
+  # path, the in-app self-test, keyboard, both themes, measured a11y/layout at
+  # 320/360/1280, hostile input, corrupt theme and denied storage.
+  if [ -f "$ROOT/tools/savf_ui_gate.py" ]; then
+    run "savf webapp gate (headless browser)" python3 tools/savf_ui_gate.py
   fi
   run "bridge contract audit" \
     python3 tools/bridge_contract_audit.py "darkith home forge.html" app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt
