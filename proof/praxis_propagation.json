@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "2972515cf533be9d068d957ab08dd595aa2d07c3553656d2d6e70daaf88131e6",
-  "board_sha256": "2640a606fdc4eec0134f83a5d3a4cca4eda5088966c8e1902ccb909b1f6a2894",
+  "board_sha256": "2c60b87b9adfd54adaa3e89f388cb797984ec8de52ba643d47e94eddd627739d",
   "laws": {
     "declared": [
       "MUST #20",
@@ -40,15 +40,39 @@
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/darkith-forge/TASKS.md",
-      "status": "updated",
-      "detail": "11854->15224 B"
+      "path": "/workspace/project/TASKS.md",
+      "status": "current",
+      "detail": ""
     },
     {
-      "target": "session:18393131094c4acfb45d943764549f23",
-      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
       "status": "current",
       "detail": "mirror"
+    },
+    {
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "worktree:failwt",
+      "path": "/tmp/failwt/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "worktree:fixwt",
+      "path": "/tmp/fixwt/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "worktree:pristine",
+      "path": "/tmp/pristine/TASKS.md",
+      "status": "current",
+      "detail": ""
     }
   ],
   "mode": "apply",

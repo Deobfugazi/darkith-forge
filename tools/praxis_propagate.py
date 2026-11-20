@@ -263,6 +263,13 @@ def strip_block(text: str) -> str:
     Both halves must be exact or `merge` is not idempotent: leaving the separator behind means
     every run adds one blank line, which is an append bug wearing a different coat. Measured:
     before this, a second run grew the board 25275 -> 25276 B.
+
+    The removal is the exact inverse of what merge() added — one blank line on each side —
+    and nothing more. An earlier version collapsed every run of 3+ newlines in the whole
+    board. That is not this tool's region: TASKS.md carries a REVITALIZATION block written by
+    tools/revitalization.py, and the blank line before it is that writer's, so praxis deleted
+    a byte it did not own on every pass. The board then differed from HEAD after a no-op run,
+    which is what kept the praxis gate and the S14 reconcile stage red.
     """
     while True:
         b = text.find(BEGIN)
@@ -272,11 +279,13 @@ def strip_block(text: str) -> str:
         if e < 0:  # truncated block: drop to EOF rather than leave an unterminated marker
             return text[:b].rstrip("\n") + "\n"
         e += len(END)
-        tail = text[e:].lstrip("\n")
-        text = text[:b].rstrip("\n") + "\n\n" + tail
-    # collapse any run of blank lines left where the block used to be, so the authored
-    # board comes back byte-identical to what it was before propagation
-    return re.sub(r"\n{3,}", "\n\n", text)
+        pre, post = text[:b], text[e:]
+        # merge() inserted exactly "\n\n" on each side. Take back exactly that, so authored
+        # whitespace elsewhere on the board survives untouched.
+        pre = pre[:-2] if pre.endswith("\n\n") else pre.rstrip("\n")
+        post = post[2:] if post.startswith("\n\n") else post.lstrip("\n")
+        text = pre + "\n\n" + post
+    return text
 
 
 def merge(board_text: str, block: str) -> str:
