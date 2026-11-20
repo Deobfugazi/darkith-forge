@@ -98,11 +98,13 @@ def main() -> int:
             # SPI-6: the WHOLE log, not a remembered filter. Publishing only `error:` lines
             # shipped a failure the runner could not diagnose — UnsupportedClassVersionError
             # carries no lowercase `error:` at all, so a mute gate cost a full delivery
-            # cycle. Every failure names its command, its exit, and its compiler's words.
+            # cycle. Every failure names its command, its exit, its compiler's words, and
+            # whether the jar appeared; a compiler that printed nothing says so itself.
+            output = (cc.stdout or "") + (cc.stderr or "")
             print("controller_gate: FAIL — harness did not compile, so the law was not run")
-            print(f"  cmd: {kotlinc} (exit {cc.returncode})")
-            comp = (cc.stdout + cc.stderr).strip()
-            for l in (comp.splitlines()[-30:] if comp else ["(compiler produced no output)"]):
+            print(f"  cmd: {kotlinc} (exit {cc.returncode}; jar_exists={jar.exists()})")
+            lines = output.splitlines()
+            for l in (lines[-30:] if lines else ["(compiler produced no output; inspect process exit and runner memory)"]):
                 print("  | " + l)
             return 1
         try:

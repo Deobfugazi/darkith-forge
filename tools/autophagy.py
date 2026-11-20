@@ -64,23 +64,6 @@ CLASSES = [
            "ci: praxis propagation gate",
            "boards that disagree about the order let two agents work different directives"),
 
-    # Found 2026-11-21 (NEVER #22): the praxis mirror quoted the board frame back into
-    # itself, growing TASKS.md one durable-title per pass. Sanitize collapses the frames;
-    # the bounded body in render_block keeps it from ever growing again.
-    Class_("self-consuming board mirror",
-           "python3 tools/praxis_propagate.py --sanitize-check",
-           "python3 tools/praxis_propagate.py --sanitize",
-           "ci: praxis propagation gate",
-           "a mirror that quotes its own output grows the board every pass"),
-
-    # Found 2026-11-21 (SPI-40): committed receipts carried the authoring host's absolute
-    # paths, so every other clone regenerated them differently and went dirty on checkout.
-    Class_("host-bound receipt path",
-           "python3 tools/praxis_propagate.py --portable-check",
-           "python3 tools/praxis_propagate.py",
-           "ci: praxis propagation gate",
-           "a receipt naming one machine's paths disagrees with every other machine's truth"),
-
     Class_("chat gate watermark",
            "python3 tools/chat_gatekeeper.py --check",
            "python3 tools/chat_gatekeeper.py --write",
@@ -176,122 +159,137 @@ CLASSES = [
            "ci: board header intact",
            "a generator that deletes governance prose is a silent loss no diff reviewer sees"),
 
+    # Found 2026-11-21: the board's durable-title frames multiplied while every gate
+    # stayed green — the PRAXIS propagation quoted the directive's body, which contained
+    # the previous mirror, one frame per pass (DARKITH.md NEVER #22). The mirror feeds
+    # on itself; five frames before anyone looked.
+    Class_("self-consuming board mirror",
+           "python3 tools/praxis_propagate.py --sanitize-check",
+           "python3 tools/praxis_propagate.py --sanitize",
+           "ci: praxis propagation gate",
+           "a generator that quotes its own output grows a frame per pass, unbounded"),
+
+    # Found 2026-11-21: committed receipts carried the authoring host's absolute paths,
+    # so any other clone disagreed with them BY CONSTRUCTION and went dirty at birth
+    # (DARKITH.md SPI-40: a path crossed a host without its host marker).
+    Class_("host-bound receipt path",
+           "python3 tools/praxis_propagate.py --portable-check",
+           "python3 tools/praxis_propagate.py",
+           "ci: praxis propagation gate",
+           "a fact true only on the author's machine is not written as if true everywhere"),
+
 ]
 
 
-# A detector's exit means what ci.sh's run() says it means: 0 clean, 3 a named SKIP
-# (the runtime for this check is genuinely absent in this environment), anything else a
-# real defect. Collapsing 3 into "dirty" made every environment without kotlinc or a
-# chat event log read as DEFECTIVE with residue that no repair could ever end (MUST #41).
-SKIP = 3
-
-
-def detect_rc(c):
-    return sh(c.detect).returncode
+def probe(c):
+    """Return clean, dirty, or skipped; exit 3 is an explicit no-verdict, not a defect."""
+    returncode = sh(c.detect).returncode
+    if returncode == 3:
+        return "skipped"
+    return "clean" if returncode == 0 else "dirty"
 
 
 def dirty(c):
-    return detect_rc(c) not in (0, SKIP)
-
-
-def skipped(c):
-    return detect_rc(c) == SKIP
+    return probe(c) == "dirty"
 
 
 def heal(c, dry):
-    if skipped(c):
-        return "skip (runtime absent — named, not counted)"
     if dry:
         return "would repair"
     sh(c.repair)
-    # The repair is not trusted because it ran. It is trusted because the detector that
-    # found the defect now reports clean against the bytes on disk.
-    return "repaired" if not dirty(c) else "REPAIR DID NOT CONVERGE"
+    state = probe(c)
+    if state == "clean":
+        return "repaired"
+    if state == "skipped":
+        return "skipped"
+    return "REPAIR DID NOT CONVERGE"
 
 
-def verdict(rows, passes, residue, skipped_names):
-    ok = not residue
+def probe_code(returncode):
+    if returncode == 3:
+        return "skipped"
+    return "clean" if returncode == 0 else "dirty"
+
+
+def verdict(rows, passes, residue):
+    skipped = [c for c, state in rows if state == "skipped"]
     print()
     print("=" * 78)
-    print(f"  AUTOPHAGY: {'CLEAN — newborn tree' if ok else 'DEFECTIVE — residue remains'}")
+    if residue:
+        headline = "DEFECTIVE — residue remains"
+    elif skipped:
+        headline = f"INCOMPLETE — {len(skipped)} class(es) could not be examined"
+    else:
+        headline = "CLEAN — newborn tree"
+    print(f"  AUTOPHAGY: {headline}")
     print("=" * 78)
     for c, state in rows:
-        if state.startswith("skip"):
-            mark = " SKIP "
-        elif state in ("clean", "repaired", "would repair"):
-            mark = "  ok  "
-        else:
-            mark = " FAIL "
+        mark = "  ok  " if state in ("clean", "repaired", "would repair") else (" SKIP " if state == "skipped" else " FAIL ")
         print(f"{mark} {c.name:<34} {state:<24} prevented by {c.prevent}")
     print("-" * 78)
     print(f"  passes: {passes}   classes: {len(CLASSES)}   "
-          f"residue: {len(residue)}   skipped: {len(skipped_names)}")
+          f"residue: {len(residue)}   skipped: {len(skipped)}")
     if residue:
         print("  remaining:")
         for c, why in residue:
             print(f"    - {c.name}: {why}")
-    if skipped_names:
-        print("  skipped (exit 3 — announced, never silently passed, SPI-15/NEVER #13):")
-        for name in skipped_names:
-            print(f"    - {name}")
     print("=" * 78)
-    return 0 if ok else 1
+    if residue:
+        return 1
+    return 3 if skipped else 0
+
+
+def selftest():
+    checks = [
+        ("exit 0 is clean", probe_code(0) == "clean"),
+        ("exit 1 is dirty", probe_code(1) == "dirty"),
+        ("exit 3 is skipped, not dirty", probe_code(3) == "skipped"),
+        ("every repair has a prevention gate", all(c.prevent for c in CLASSES)),
+        ("registry names are unique", len({c.name for c in CLASSES}) == len(CLASSES)),
+    ]
+    for name, ok in checks:
+        print(f"  {'ok  ' if ok else 'FAIL'} {name}")
+    good = all(ok for _, ok in checks)
+    print(f"autophagy selftest: {'PASS' if good else 'FAIL'} ({sum(ok for _,ok in checks)}/{len(checks)})")
+    return 0 if good else 1
 
 
 def main():
-    # Heal only when heal is what was asked for. This tool used to treat every flag except
-    # --check as permission to repair, so `--selftest` (what CI passes) ran all 15 repair
-    # commands, dirtied 7 tracked files, and the gates downstream failed on CI's own writes.
-    # A read-only flag must be read-only; an unrecognised flag is not a licence to mutate.
-    dry = "--check" in sys.argv or "--selftest" in sys.argv
-    heal_requested = not any(a.startswith("-") for a in sys.argv[1:])
+    if "--selftest" in sys.argv:
+        return selftest()
+    dry = "--check" in sys.argv
     do_commit = "--commit" in sys.argv
 
-    if "--selftest" in sys.argv:
-        # Prove the registry loads and every class declares both a detector and a repair.
-        bad = [c.name for c in CLASSES if not c.detect or not c.repair]
-        print(f"autophagy selftest: {len(CLASSES)} class(es), "
-              f"{len(bad)} incomplete" + (f": {bad}" if bad else ""))
-        return 0 if not bad and CLASSES else 1
-
-    rows, passes, residue = [], [], []
-    skipped_rows = []
+    rows, passes, residue = [], 0, []
     for passes in range(1, MAX_PASSES + 1):
-        work = [c for c in CLASSES if dirty(c)]
-        skips = [c for c in CLASSES if skipped(c)]
-        skipped_rows = [(c, "skip (runtime absent — named, not counted)") for c in skips]
+        statuses = {c: probe(c) for c in CLASSES}
+        work = [c for c in CLASSES if statuses[c] == "dirty"]
         if not work:
-            rows = [(c, "clean") for c in CLASSES if not skipped(c)]
+            rows = [(c, statuses[c]) for c in CLASSES]
             break
         for c in work:
             state = heal(c, dry)
-            rows = [(x, state if x is c else s) for x, s in rows if x is not c]
-            rows.append((c, state))
+            statuses[c] = state
             print(f"  [{passes}] {c.name}: {state}")
-            if state.startswith("REPAIR DID NOT CONVERGE"):
-                residue.append((c, state))
         if dry:
+            rows = [(c, "would repair" if statuses[c] == "dirty" else statuses[c])
+                    for c in CLASSES]
             residue = [(c, "dirty — not repaired (--check)") for c in work]
             break
     else:
-        residue = [(c, "still dirty after MAX_PASSES") for c in CLASSES if dirty(c)]
+        statuses = {c: probe(c) for c in CLASSES}
+        residue = [(c, "still dirty after MAX_PASSES") for c in CLASSES
+                   if statuses[c] == "dirty"]
+        rows = [(c, "still dirty" if statuses[c] == "dirty" else statuses[c])
+                for c in CLASSES]
 
-    if heal_requested:
-        # The verdict must describe the tree as it is NOW, not as it was three repairs ago.
-        # A class repaired early can be fixed again by a later class's write, and reporting
-        # that as residue is a false alarm; the reverse — reporting clean when it is not —
-        # is worse, so this is recomputed from disk, never carried forward.
-        live = [c for c in CLASSES if dirty(c)]
-        residue = [(c, "still dirty after repair") for c in live]
-        skipped_rows = [(c, "skip (runtime absent — named, not counted)")
-                        for c in CLASSES if skipped(c)]
-        if not live:
-            rows = [(c, "clean") for c in CLASSES if not skipped(c)]
-
-    seen = {id(c) for c, _ in rows} | {id(c) for c, _ in skipped_rows}
-    rows = rows + skipped_rows \
-        + [(c, "clean") for c in CLASSES if id(c) not in seen and not (skipped(c) or dirty(c))]
-    skipped_names = [c.name for c, _ in skipped_rows]
+    if not dry:
+        # Recompute from disk: later repairs can dirty an earlier class or heal another one.
+        statuses = {c: probe(c) for c in CLASSES}
+        residue = [(c, "still dirty after repair") for c in CLASSES
+                   if statuses[c] == "dirty"]
+        rows = [(c, "still dirty" if statuses[c] == "dirty" else statuses[c])
+                for c in CLASSES]
 
     if do_commit and not dry:
         st = sh("git status --porcelain")
@@ -303,8 +301,7 @@ def main():
             sh("git push -q origin main")
             print("  committed and pushed the healed tree")
 
-    return verdict(rows or [(c, "clean") for c in CLASSES], passes, residue,
-                   skipped_names)
+    return verdict(rows or [(c, probe(c)) for c in CLASSES], passes, residue)
 
 
 if __name__ == "__main__":
