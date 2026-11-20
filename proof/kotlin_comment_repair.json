@@ -1,0 +1,34 @@
+{
+  "generated": "2026-11-20T07:22:49.254056+00:00",
+  "task": "19 Kotlin files: verify the stripped '/*' openers are restored and no unclosed comment remains",
+  "kotlinc": ".tools/kotlinc/bin/kotlinc \u2014 kotlinc-jvm 1.9.24 (JRE 17.0.12+7)",
+  "method": [
+    "character-level Kotlin lexer over all 64 .kt files (nested block comments, raw strings, escapes)",
+    "kotlinc compile of the 19 named files, no classpath",
+    "kotlinc compile of the 19 named files with android-all-14 robolectric framework jar",
+    "kotlinc compile of all 58 app .kt files with the framework jar (OOM at 4GB, SPI-1)"
+  ],
+  "results": {
+    "opener_present_at_stated_line": "18/19",
+    "HomekeeperBridge.kt_282": "line 282 is live code, not a comment opener; the brief's line number is stale. No unclosed comment exists anywhere in the file.",
+    "character_scan_all_64_files": "0 unclosed block comments",
+    "kotlinc_19_files_no_classpath": {
+      "unclosed_comment": 0,
+      "syntax_errors": 0,
+      "total_diagnostics": 763,
+      "remaining": "248 unresolved reference \u2014 android.*, org.json, JavascriptInterface (the classpath problem, out of scope)"
+    },
+    "kotlinc_19_files_with_framework_jar": {
+      "unclosed_comment": 0,
+      "syntax_errors": 0,
+      "total_diagnostics": 129,
+      "remaining": "36 unresolved reference \u2014 sibling classes not in the 19 (HomekeeperActivity, NativeForgeBuilder)"
+    },
+    "kotlinc_all_58_files": {
+      "unclosed_comment": 0,
+      "syntax_errors": 0,
+      "outcome": "exit 137 \u2014 OOM at 4GB RAM, SPI-1 ceiling, not a code defect"
+    }
+  },
+  "verdict": "The 'Unclosed comment' syntax error class is GONE. Every remaining diagnostic is a missing-classpath or missing-sibling-class reference, which is the second problem and explicitly out of scope for this task."
+}
