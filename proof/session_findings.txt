@@ -1,0 +1,33 @@
+DARKITH EVIDENCE SNAPSHOT 2026-11-20T03:44:32Z
+
+-- git --
+bbc5573 Bind every CI run to the hash-chained ledger
+937d9be Close the spelling loophole: eleven laws were ungated and reported as zero
+b0bcafe fix(gates): unfalsifiable gates and inert trials (SPI-33, SPI-34)
+
+-- tree clean? --
+ M proof/convergence.json
+?? proof/session_findings.txt
+(empty above = clean)
+
+-- coupling --
+directive_core: 72 law(s), 72 coupled, 0 uncoupled, 0 healed
+directive_core: PASS — every law is bound to a gate that can fail
+
+-- generated gates --
+gate_must_17.py          MUST-17: PASS — python3 tools/pack_delivery.py --check exited 0
+gate_must_18.py          MUST-18: PASS — python3 tools/pack_delivery.py --check exited 0
+gate_spi_1.py            SPI-1: PASS — build.gradle absent
+gate_spi_11.py           SPI-11: PASS — //data/data/com\.termux/files/home/\.gradle/ absent from all 51 file(s)
+gate_spi_18.py           SPI-18: PASS — bash tools/consolidate_docs.sh --check exited 0
+gate_spi_35.py           SPI-35: PASS — python3 tools/directive_core.py --check exited 0
+gate_spi_36.py           SPI-36: PASS — python3 tools/directive_core.py --check exited 0
+gate_spi_5.py            SPI-5: PASS — /^\s*import\s+androidx/ absent from all 58 file(s)
+gate_spi_8.py            SPI-8: PASS — every /fun fileRoots/ is accompanied by /getExternalStorageDirectory/
+
+-- receipts --
+ci_receipts: PASS — 1 lane(s), 225 receipt(s), every chain recomputes to its stored id
+
+-- selftests --
+directive_core selftest: PASS — 7 dialects, 7 predicate kinds, idempotent healing, SPI-31/32/33 compiled into every generated gate
+ci_receipts selftest: PASS — log parsing, genesis anchoring, and both out-of-band forgery trials (UPDATE and DELETE refused at the storage layer)
