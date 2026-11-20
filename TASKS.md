@@ -48,9 +48,6 @@ _Source: conversation `f947e4b540c24d1c97125691f3d14707`, ingested by `tools/cha
 >
 > # TASKS — the durable board
 >
-> # TASKS — the durable board
->
-> # TASKS — the durable board
 
 **Coupled laws (declared by the directive):** `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #11`, `NEVER #19`, `NEVER #21`, `NEVER #18`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-6`
 
@@ -82,8 +79,6 @@ _Source: conversation `f947e4b540c24d1c97125691f3d14707`, ingested by `tools/cha
 **Also matched by term (derived, advisory — not an order):** `MUST #38`, `MUST #40`, `SPI-17`
 
 <!-- PRAXIS:END -->
-
-
 
 # TASKS — the durable board
 
