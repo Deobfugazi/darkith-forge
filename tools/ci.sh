@@ -21,9 +21,14 @@ cd "$ROOT" || exit 2
 # cannot run its harness reports a code defect that does not exist. Export it here so every
 # compile gate tells the truth on a machine with no system java.
 if [ -x "$ROOT/.tools/jdk-17.0.12+7/bin/java" ]; then
+  # Keep JAVA_HOME and PATH aligned. kotlinc launchers may prefer JAVA_HOME even when the
+  # pinned java binary is first on PATH; leaving the runner's inherited value can select a
+  # different JDK and make the harness fail before it reaches the Kotlin source.
+  JAVA_HOME="$ROOT/.tools/jdk-17.0.12+7"
+  export JAVA_HOME
   case ":$PATH:" in
-    *":$ROOT/.tools/jdk-17.0.12+7/bin:"*) ;;
-    *) PATH="$ROOT/.tools/jdk-17.0.12+7/bin:$PATH"; export PATH ;;
+    *":$JAVA_HOME/bin:"*) ;;
+    *) PATH="$JAVA_HOME/bin:$PATH"; export PATH ;;
   esac
 fi
 
