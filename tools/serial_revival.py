@@ -225,6 +225,13 @@ def validate_stage(stage: str, payload: dict, cycle: int, previous: dict | None)
         expected = [receipt_path(cycle, code).name for code, _, _ in STAGES[:14]]
         if not set(expected).issubset(set(payload["included_receipts"])):
             raise ValueError("S15 must include receipts S1-S14")
+        for code, _, _ in STAGES[:14]:
+            path = receipt_path(cycle, code)
+            if not path.exists():
+                raise ValueError("S15 missing " + code + " receipt")
+            fresh, why = receipt_is_fresh(read_json(path))
+            if not fresh:
+                raise ValueError("S15 stale evidence: " + why)
     elif stage == "S16":
         if not payload["board_revision"] or not payload["board_state_sha256"]:
             raise ValueError("S16 requires a verifiable board revision and state hash")
