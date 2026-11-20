@@ -1427,3 +1427,36 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
   Measured this session: 70 laws, 70 coupled, 7 generated gates, SPI-8 proven PASS→FAIL→PASS
   by stripping the SD root from HomekeeperBridge and restoring it.
+
+
+---
+
+─── SPI-37 (A QUANTITY CROSSES A BOUNDARY WITH ITS UNIT) ───
+  GATE: tools/unit_ledger_gate.py
+  A number is not a quantity. `Long` is bytes, vertices, parameters, tokens, blocks and
+  scale factors indistinguishably, and the compiler accepts every one of them in every
+  other's place. Where two quantities of different dimension meet, the crossing must be
+  named, or the arithmetic silently sums a count into a byte total and the result is
+  dimensionally meaningless while remaining type-correct.
+
+  The general principle: dimensional closure is a precondition of Σ = 0. A residual
+  computed from mismatched units is not small or large, it is undefined, so no closure
+  criterion can be satisfied by it. This is the same defect class in every domain — a
+  control law fed a count where it expects bytes, a quantizer applying a per-block scale
+  to a tensor whose block size it did not verify, a governor comparing a vertex budget
+  against a heap. The local instance was one call site; the class is any boundary.
+
+  The cure is the compiler, not a regex: a regex gate cannot see a dimension and cannot
+  tell code from a comment about code. Where the language allows it, distinct units become
+  distinct types (`@JvmInline value class Bytes`, `Vertices`, `Params`, `Scale`) so a
+  crossing fails to compile. Where the language does not (Kotlin `Long` at a Java
+  boundary), the crossing is enumerated in `tools/unit_ledger.json` with both sides'
+  units, and the gate fails on any `reciprocate`-class call whose arguments are not
+  either unit-typed or explicitly listed with a justification. An unlisted crossing is a
+  deficit, never a default.
+
+  Measured at inscription: `NativeOmegaBuilder.kt:44` passed `allocation.vertexBudget` (a
+  vertex count, vMin 65,536 .. vMax 524,288) into `reciprocate`'s `modelAllocatedBytes`
+  parameter (bytes). kotlinc compiled it clean — 0 errors, 58 files. The type system could
+  not see it; only the dimensional reading could. Pole B was therefore never measured and
+  `rendererShare` was always 1.0.

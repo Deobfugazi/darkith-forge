@@ -36,6 +36,8 @@ class OmegaRenderer : GLSurfaceView.Renderer {
     @Volatile var lastFrameMs = 16.6f; private set
     /** GL bytes this renderer owns right now: FBO + grid VBO/IBO + IR VBO. Pole A for the governor. */
     @Volatile var trackedBytes = 0L; private set
+    /** The single governor's verdict from this frame. Pole A cap + Pole B cap + pressure. */
+    @Volatile var lastCoupling: CouplingAllocation? = null; private set
     @Volatile var capBreached = false; private set
     private var lastFrameNs = System.nanoTime()
 
@@ -111,6 +113,7 @@ class OmegaRenderer : GLSurfaceView.Renderer {
         val free = freeMemProvider().coerceAtLeast(0L)
         val alloc = allocator.tick(free, trackedBytes, cpuProvider(), lastFrameMs.toDouble())
         val gov = governor.reciprocate(trackedBytes, modelAllocatedBytes())
+        lastCoupling = gov
         val cap = GpuScanner.safetyCap(free)
         val quadsFromCap = (cap / (IRBuilder.VERTEX_STRIDE_FLOATS.toLong() * 4L)).coerceAtLeast(1L)
         val safeV = min(alloc.vertexBudget, quadsFromCap)

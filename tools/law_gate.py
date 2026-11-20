@@ -37,7 +37,11 @@ DOC = ROOT / "DARKITH.md"
 # A law heading, e.g. "─── NEVER #18 (NO LOCAL-ONLY RESOLUTION) ───"
 LAW = re.compile(r"───\s*((?:NEVER|MUST|SPI)-?\s*#?\d+)\s*(?:\(([^)]*)\))?\s*───")
 # A gate citation inside a law body: tools/foo.py, tools/foo.sh or tools/foo.js
-GATE = re.compile(r"tools/[\w.-]+\.(?:py|sh|js)")
+# The trailing lookahead is load-bearing: without it `tools/unit_ledger.json` parses as
+# `tools/unit_ledger.js` + a stranded `on`, because `js` is an alternative and the
+# character class before it happily eats the dot. A detector that matches a PREFIX of
+# the name it is looking for reports a gate that does not exist (SPI-35).
+GATE = re.compile(r"tools/[\w.-]+\.(?:py|sh|js)(?![\w.-])")
 NOTE = "[NOTE: not yet gated]"
 
 # A law declaration in prose: the id at the start of a line, followed by "(" or ":".

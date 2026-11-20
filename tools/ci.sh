@@ -134,6 +134,13 @@ if have python3; then
         done
       fi
     # MUST #15 / #16 / NEVER #17 / §31 synchrony — the laws that were only notes until now.
+    # SPI-37 (a quantity crosses a boundary with its unit). The compiler cannot see
+    # dimension, so `reciprocate(usedRam, allocation.vertexBudget)` — bytes and a vertex
+    # count — compiled clean and Pole B was never measured. Exit 3 is a named SKIP: no
+    # boundary declared, so nothing was judged (never a silent pass).
+    if [ -f tools/unit_ledger_gate.py ]; then
+      run "unit ledger (SPI-37)"      python3 tools/unit_ledger_gate.py .
+    fi
     for g in circadian_gate download_gate stall_gate synchrony_gate synchrony_pulse convergence_gate; do
       if [ -f "tools/$g.py" ]; then
         run "$g"                          python3 "tools/$g.py"

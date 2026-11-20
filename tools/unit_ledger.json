@@ -1,0 +1,11 @@
+{
+  "_why": "SPI-37. A boundary where two quantities of different dimension meet. The gate fails on a positive contradiction: an argument whose own name declares a unit other than the one the parameter demands. Adding an entry here is a claim that a human read the crossing and found it correct; it is not a way to silence a finding.",
+  "boundaries": [
+    {
+      "call": "reciprocate",
+      "file": "app/src/main/java/com/darkith/transliaison/core/MemoryGovernor.kt",
+      "units": ["bytes", "bytes"],
+      "reason": "Two-pole memory governor. Both arguments are heap bytes: Pole A is the renderer's tracked GL bytes, Pole B is the model's native bytes. This boundary is the reason SPI-37 exists — it was called as reciprocate(usedRam, allocation.vertexBudget), where vertexBudget is a VERTEX COUNT clamped 65,536..524,288. Both are Long, so kotlinc compiled it clean and Pole B was never measured."
+    }
+  ]
+}

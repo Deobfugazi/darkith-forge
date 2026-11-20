@@ -1,14 +1,20 @@
 package com.darkith.transliaison.core
 
 import android.content.Context
-import android.os.Debug
 import android.os.Handler
 import android.os.Looper
 import java.io.File
 
+/**
+ * Feeds live CPU load to the renderer's control law and reports its verdict.
+ *
+ * This class does NOT tick the allocator and does NOT own a governor. OmegaRenderer runs
+ * the whole law at the frame boundary, on the GL thread, and its contract says callers must
+ * not tick it themselves. A second allocator here ran on a different clock (16 ms handler
+ * vs frame), which corrupted the integral term's dt and drove a stale Allocation into
+ * apply() behind the frame's own decision. One control law, one clock, one actuator.
+ */
 class NativeOmegaBuilder(private val renderer: OmegaRenderer, private val context: Context) {
-    private val allocator = AutophagicAllocator()
-    private val governor = MemoryGovernor()
     private val handler = Handler(Looper.getMainLooper())
 
     private var lastCpuTotal = 0L
@@ -20,11 +26,8 @@ class NativeOmegaBuilder(private val renderer: OmegaRenderer, private val contex
         override fun run() {
             if (!isRunning) return
 
-            // Measure memory
-            val freeRam = Debug.getNativeHeapFreeSize()
-            val usedRam = Debug.getNativeHeapAllocatedSize()
-
-            // Measure CPU from /proc/stat
+            // Measure CPU from /proc/stat. Memory is measured by the renderer's own
+            // providers, which the frame-boundary law reads directly — one source per input.
             val cpuLoad = try {
                 val parts = File("/proc/stat").readLines()
                     .first { it.startsWith("cpu ") }
@@ -37,19 +40,16 @@ class NativeOmegaBuilder(private val renderer: OmegaRenderer, private val contex
                 if (dT > 0) (1.0 - dI.toDouble() / dT).coerceIn(0.0, 1.0) else 0.0
             } catch (e: Exception) { 0.5 }
 
-            // 1. Autophagic Allocator derives the frame budget
-            val allocation = allocator.tick(freeRam, usedRam, cpuLoad, renderer.lastFrameMs.toDouble())
+            // Hand the measurement to the one control law, which runs at the frame boundary.
+            renderer.cpuProvider = { cpuLoad }
 
-            // 2. Governor asserts internal heap safety and reciprocally throttles memory
-            val coupling = governor.reciprocate(usedRam, allocation.vertexBudget)
-            lastStatus = "vB=" + allocation.vertexBudget + " cpu=" + (cpuLoad * 100).toInt() + "% oomSafe=" + coupling.selfOomSafe
-            if (!coupling.selfOomSafe) {
-                // Structurally bypassed: the governor has clamped the budgets.
-                // In a real LLM runtime, this is where the model's KV cache trim is enforced.
-            }
-
-            // 3. Renderer consumes the invariantly mapped Allocation
-            renderer.apply(allocation)
+            // Report what that law actually decided this frame, not a second opinion.
+            val alloc = renderer.lastAlloc
+            val coupling = renderer.lastCoupling
+            lastStatus = "vB=" + (alloc?.vertexBudget ?: 0L) +
+                " cpu=" + (cpuLoad * 100).toInt() + "%" +
+                " oomSafe=" + (coupling?.selfOomSafe ?: true) +
+                " pressure=" + String.format("%.3f", coupling?.systemPressure ?: 0.0)
 
             handler.postDelayed(this, 16L)
         }
