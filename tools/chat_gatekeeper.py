@@ -505,6 +505,7 @@ def selftest() -> int:
     merged = merge(board, b1)
     merged2 = merge(merged, b2)
     chk("merge preserves board title", merged.splitlines()[0] == "# TASKS — the durable board")
+    chk("replacement preserves board title", merged2.splitlines()[0] == "# TASKS — the durable board")
     chk("merge replaces idempotently", merged.count(BEGIN) == 1 and merged == merged2)
 
     # occupation follows the pulse, not a guess
