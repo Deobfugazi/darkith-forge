@@ -98,7 +98,7 @@ class SerialRevivalTests(unittest.TestCase):
                    "predecessor_receipt_id": "x"}
         # S10 consults the S9 receipt on disk; test the policy predicate independently.
         path = payload["changed_files"][0]["path"]
-        self.assertTrue(any(path == r or path.startswith(r + "/") for r in sr.GENERATED_ROOTS))
+        self.assertTrue(sr.is_generated_path(path))
 
     def test_s11_drift_blocks_exit(self):
         with self.assertRaisesRegex(ValueError, "drift remains"):
@@ -130,8 +130,7 @@ class SerialRevivalTests(unittest.TestCase):
             original = {"task_id": "TASK-1", "root_cause_id": "ROOT-1",
                         "status": "CLOSED", "reopen_count": 0}
             sr.save_json(task_dir / "task-1.json", original)
-            with patch.object(sr, "TASKS", task_dir), patch.object(sr, "state_path", return_value=state_file), \\
-                 patch.object(sr, "load_state", return_value={"cycle": 1, "blocked": False}):
+            with patch.object(sr, "TASKS", task_dir), patch.object(sr, "state_path", return_value=state_file), patch.object(sr, "load_state", return_value={"cycle": 1, "blocked": False}):
                 reopened = sr.route_failure("S13", "DEF-1", "ROOT-1", "same cause",
                                             "TASK-1", "same")
                 self.assertEqual("TASK-1", reopened["task_id"])
