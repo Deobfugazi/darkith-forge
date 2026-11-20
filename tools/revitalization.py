@@ -1480,6 +1480,10 @@ def verify_chain(root: pathlib.Path) -> tuple:
                 evidence_path = root / ref
                 if not evidence_path.is_file():
                     fails.append(f"I8: {sid} evidence does not resolve: {ref}")
+                elif ignored(ref):
+                    # Evidence git discards cannot be evidence: the citation resolves here but not
+                    # in a fresh clone, so a sealed cycle would fail its own gate on checkout.
+                    fails.append(f"I8: {sid} cites evidence git ignores, so it will not travel: {ref}")
                     continue
                 expected = rec.get("evidence_sha256", {}).get(ref)
                 # S16 is the authorized terminal writer for TASKS.md. Preserve S01's
