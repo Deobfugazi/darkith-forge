@@ -26,6 +26,8 @@ class SerialRevivalTests(unittest.TestCase):
             sr.validate_stage("S2", {"components": []}, 1, None)
 
     def test_skip_is_not_healthy(self):
+        # A non-empty classification reaches the state validator; SKIPPED is not
+        # silently coerced into one of the four permitted states.
         with self.assertRaisesRegex(ValueError, "invalid state"):
             sr.verify_states({"node-a": "SKIPPED"})
 
@@ -65,9 +67,30 @@ class SerialRevivalTests(unittest.TestCase):
                                       "unchecked_nodes": ["consumer-x"], "mesh_health": {},
                                       "predecessor_receipt_id": "x"}, 1, {"receipt_id": "x"})
 
-    def test_failure_route_distinguishes_same_and_new(self):
-        self.assertEqual("REOPEN_ORIGINAL", "REOPEN_ORIGINAL")
-        self.assertEqual("LINK_NEW_DEFECT", "LINK_NEW_DEFECT")
+    def test_failure_route_reopens_original_and_links_new_cause(self):
+        import tempfile
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            task_dir = root / "tasks"
+            task_dir.mkdir()
+            state_file = root / "state.json"
+            original = {"task_id": "TASK-1", "root_cause_id": "ROOT-1",
+                        "status": "CLOSED", "reopen_count": 0}
+            sr.save_json(task_dir / "task-1.json", original)
+            with patch.object(sr, "TASKS", task_dir), patch.object(sr, "state_path", return_value=state_file), \\
+                 patch.object(sr, "load_state", return_value={"cycle": 1, "blocked": False}):
+                reopened = sr.route_failure("S13", "DEF-1", "ROOT-1", "same cause",
+                                            "TASK-1", "same")
+                self.assertEqual("TASK-1", reopened["task_id"])
+                self.assertEqual("OPEN", reopened["status"])
+                self.assertEqual(1, reopened["reopen_count"])
+                regression = sr.route_failure("S13", "DEF-2", "ROOT-2", "new cause",
+                                               "TASK-1", "new")
+                self.assertEqual("LINK_NEW_DEFECT", regression["routing"])
+                self.assertEqual("TASK-1", regression["parent_task_id"])
+                self.assertTrue(regression["task_id"].startswith("REGRESSION-"))
 
 
 if __name__ == "__main__":
