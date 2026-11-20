@@ -52,7 +52,9 @@ def digest(value: Any) -> str:
 
 
 def now() -> str:
-    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    # All project timestamps use the generated Omega clock (Asia/Manila).
+    from omega_time import now as omega_now
+    return omega_now().isoformat(timespec="seconds")
 
 
 def git(*args: str) -> str:
@@ -302,22 +304,56 @@ def route_failure(stage: str, defect_id: str, root_cause_id: str, summary: str,
                   parent_task_id: str, cause_kind: str) -> dict:
     state = load_state()
     cycle = int(state["cycle"])
+    stage_index(stage)
+    if not defect_id or not root_cause_id or not parent_task_id or not summary:
+        raise ValueError("failure routing requires defect, root cause, parent task, and summary")
     if cause_kind not in {"same", "new"}:
         raise ValueError("cause_kind must be same or new")
-    task_id = ("REOPEN-" if cause_kind == "same" else "REGRESSION-") + digest({
-        "cycle": cycle, "stage": stage, "defect_id": defect_id, "root_cause_id": root_cause_id
-    })[:12]
-    task = {
-        "task_id": task_id, "cycle": cycle, "source_stage": stage,
-        "defect_id": defect_id, "root_cause_id": root_cause_id,
-        "parent_task_id": parent_task_id, "summary": summary,
-        "routing": "REOPEN_ORIGINAL" if cause_kind == "same" else "LINK_NEW_DEFECT",
-        "status": "OPEN", "created_at": now(),
-    }
-    path = TASKS / f"{task_id.lower()}.json"
-    if path.exists():
-        return read_json(path)
-    save_json(path, task)
+
+    TASKS.mkdir(parents=True, exist_ok=True)
+    if cause_kind == "same":
+        # Reopen the actual originating task; never mint a replacement task for the
+        # same root cause. Missing provenance is a hard stop, not a guessed linkage.
+        matches = []
+        for path in sorted(TASKS.glob("*.json")):
+            candidate = read_json(path)
+            if candidate.get("task_id") == parent_task_id:
+                matches.append((path, candidate))
+        if len(matches) != 1:
+            raise ValueError(f"same-cause routing requires exactly one original task {parent_task_id}; found {len(matches)}")
+        path, task = matches[0]
+        if task.get("root_cause_id") not in (None, root_cause_id):
+            raise ValueError("same-cause routing root_cause_id does not match the original task")
+        task["status"] = "OPEN"
+        task["reopened_at"] = now()
+        task["reopen_count"] = int(task.get("reopen_count", 0)) + 1
+        task.setdefault("failure_events", []).append({
+            "stage": stage, "defect_id": defect_id, "root_cause_id": root_cause_id,
+            "summary": summary, "recorded_at": now(),
+        })
+        task["routing"] = "REOPEN_ORIGINAL"
+        save_json(path, task)
+        task_id = parent_task_id
+    else:
+        task_id = "REGRESSION-" + digest({
+            "cycle": cycle, "stage": stage, "defect_id": defect_id,
+            "root_cause_id": root_cause_id, "parent_task_id": parent_task_id,
+        })[:12]
+        task = {
+            "task_id": task_id, "cycle": cycle, "source_stage": stage,
+            "defect_id": defect_id, "root_cause_id": root_cause_id,
+            "parent_task_id": parent_task_id, "summary": summary,
+            "routing": "LINK_NEW_DEFECT", "status": "OPEN", "created_at": now(),
+        }
+        path = TASKS / f"{task_id.lower()}.json"
+        if path.exists():
+            existing = read_json(path)
+            if existing.get("root_cause_id") != root_cause_id or existing.get("parent_task_id") != parent_task_id:
+                raise ValueError("regression task identity collision; refusing to overwrite")
+            task = existing
+        else:
+            save_json(path, task)
+
     state["blocked"] = True
     state["block_reason"] = f"{task_id}: {summary}"
     save_json(state_path(), state)
