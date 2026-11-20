@@ -97,7 +97,7 @@ CLASSES = [
            "ci: kotlin comment scan",
            "an unclosed comment makes every later line of the file unparseable"),
     Class_("standing authority inscribed",
-           "python3 tools/authority_gate.py --check",
+           "python3 tools/authority_gate.py --sentinel-only",
            "python3 tools/cns_directive.py --write",
            "ci: authority gate (NEVER #21)",
            "the sentinel vanished three times through rebases; it is generated now, so it "
@@ -149,7 +149,7 @@ CLASSES = [
     # that replaced the file was the thing being trusted.
     Class_("board header intact",
            "python3 tools/board_header_gate.py --check",
-           "git checkout HEAD -- TASKS.md AGENTS.md RESUME.md",
+           "python3 tools/board_header_gate.py --fix",
            "ci: board header intact",
            "a generator that deletes governance prose is a silent loss no diff reviewer sees"),
 

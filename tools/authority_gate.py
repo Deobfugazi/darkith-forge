@@ -207,9 +207,37 @@ def selftest() -> int:
     return 0
 
 
+def sentinel_failures() -> list[str]:
+    """Only the inscription check, with no drift/push budget.
+
+    Autophagy repairs this class by regenerating the boards, so its detector must observe
+    exactly what the repair can change. The full gate also fails on unpushed commits and
+    stale drift, which `cns_directive --write` can never fix — pairing the broad detector with
+    that repair made the class report "still dirty after repair" forever.
+    """
+    out = []
+    for name in BOARDS:
+        f = ROOT / name
+        if not f.is_file():
+            out.append(f"board {name} is missing")
+        elif SENTINEL not in f.read_text(encoding="utf-8", errors="replace"):
+            out.append(f"board {name} does not carry '{SENTINEL}'")
+    return out
+
+
 def main(argv: list[str]) -> int:
     if "--selftest" in argv:
         return selftest()
+
+    if "--sentinel-only" in argv:
+        bad = sentinel_failures()
+        if bad:
+            print(f"authority_gate: FAIL — {len(bad)} board(s) missing the sentinel:")
+            for b in bad:
+                print(f"  - {b}")
+            return 1
+        print(f"authority_gate: PASS — sentinel inscribed in {len(BOARDS)} boards")
+        return 0
 
     budget = DEFAULT_BUDGET
     if "--budget" in argv:

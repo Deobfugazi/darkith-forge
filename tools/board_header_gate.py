@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -38,13 +39,19 @@ BASELINE = ROOT / "tools" / "board_header_baseline.json"
 # marker -> the generated block it opens. A hand-written prefix ends at the first of these.
 MARKERS = ("<!-- PRAXIS:BEGIN", "<!-- CNS:BEGIN", "<!-- AUTOGEN:BEGIN")
 
+# The sentinel is checked as a heading at any level: the CNS generator emits it as `###`
+# while the earlier hand-written boards used `##`. Pinning the level would fail a board for
+# a cosmetic difference, so the gate pins the token and that it is a heading at all.
+SENTINEL = "STANDING-AUTHORITY (NEVER #21)"
+SENTINEL_HEADING = re.compile(r"^#{2,4}\s*" + re.escape(SENTINEL), re.M)
+
 GUARDED = {
     "TASKS.md": {
         "title": "# TASKS — the durable board",
-        "required": ["## STANDING-AUTHORITY (NEVER #21)"],
+        "required": [SENTINEL],
     },
-    "AGENTS.md": {"required": ["## 0a. STANDING-AUTHORITY (NEVER #21)"]},
-    "RESUME.md": {"required": ["## 0a. STANDING-AUTHORITY (NEVER #21)"]},
+    "AGENTS.md": {"required": [SENTINEL]},
+    "RESUME.md": {"required": [SENTINEL]},
 }
 
 
@@ -70,10 +77,30 @@ def inspect(name: str, spec: dict) -> list[str]:
             problems.append(f"{name}: title line is {first!r}, expected {spec['title']!r}")
 
     for req in spec.get("required", []):
-        if req not in text:
+        if req == SENTINEL:
+            if not SENTINEL_HEADING.search(text):
+                problems.append(f"{name}: required heading {req!r} is gone")
+        elif req not in text:
             problems.append(f"{name}: required section {req!r} is gone")
 
     return problems
+
+
+def fix() -> list[str]:
+    """Restore a missing title. Deterministic: prepend the pinned title line."""
+    done = []
+    for name, spec in GUARDED.items():
+        if "title" not in spec:
+            continue
+        p = ROOT / name
+        if not p.is_file():
+            continue
+        text = p.read_text(encoding="utf-8")
+        first = text.splitlines()[0] if text.splitlines() else ""
+        if first != spec["title"]:
+            p.write_text(spec["title"] + "\n\n" + text.lstrip("\n"), encoding="utf-8")
+            done.append(f"{name}: restored title")
+    return done
 
 
 def load_baseline() -> dict:
@@ -87,6 +114,12 @@ def load_baseline() -> dict:
 
 def main(argv: list[str]) -> int:
     write = "--write" in argv
+    repair = "--fix" in argv
+
+    if repair:
+        for line in fix():
+            print(f"board_header_gate: FIXED — {line}")
+
     baseline = load_baseline()
     problems: list[str] = []
 
