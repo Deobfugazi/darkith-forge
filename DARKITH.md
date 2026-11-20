@@ -532,6 +532,15 @@ extended Activity() with no import android.app.Activity.
 Insight: A ledger that records a failure but does not gate the pipeline against it
 is documentation, not a law. A law that is not executed is not a law.
 
+─── SPI-21 (REPACK KEEPS ARSC AND .SO STORED) ───
+GATE: tools/apk_gate.py
+PREDICATE: resources.arsc and every lib/*.so have compress_type 0 in the built APK
+Any step that re-zips the APK MUST keep `resources.arsc` and `lib/*.so` STORED.
+Re-adding them to a ZIP_DEFLATED archive silently compresses them; Android 11+ (API 30)
+mmaps those entries in place and the installer then fails with a bare "App not installed".
+build.sh step 5 carried this defect, proven by running the old logic (DEFLATED) against the
+new (STORED) on the real base.apk. The gate verifies per-entry compression after every repack.
+
 ─── THE ANTI-DIVERGENCE LAWS ───
 
 ─── NEVER #11 (ONE TREE) ───

@@ -5,9 +5,9 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T15:21:39.647626`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T18:29:29.618260`. This section is regenerated, never hand-edited._
 >
-> **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+> **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
 >
 > 1. **[order]** I need this automated to prime core/remote So this is true to every repos (right now its just my darkith prime omega) and its peripheral sibling tab/…
 >    - prompt index `18433` at `2026-11-20T02:32:29.872371`
@@ -67,9 +67,13 @@
 > 15. **[forbid]** What have you fucking done to my CI pipe!!🤬🤬🤬🤬🤬🤬🤬 The tests never pass and stuck on red!!!🤬
 >    - prompt index `22129` at `2026-11-20T15:21:39.647626`
 >    - sha256 `0158492cfa11e711`
+> 16. **[forbid]** If you look at the sytem as an outside observer seeing a holographic wiring circuit tree and say able to virtually see and trace the connectivities a…
+>    - prompt index `22669` at `2026-11-20T18:29:29.618260`
+>    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
+>    - sha256 `1f26c4ac771ea8ca`
 >
 
-**Coupled laws (declared by the directive):** `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `NEVER #19`, `NEVER #21`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-6`
+**Coupled laws (declared by the directive):** `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #18`, `MUST #38`, `MUST #40`, `MUST #11`, `MUST #17`, `NEVER #19`, `NEVER #21`, `NEVER #11`, `SPI-1`, `SPI-11`, `SPI-12`, `SPI-13`, `SPI-14`, `SPI-15`, `SPI-16`, `SPI-18`, `SPI-19`, `SPI-2`, `SPI-21`, `SPI-25`, `SPI-26`, `SPI-29`, `SPI-30`, `SPI-31`, `SPI-32`, `SPI-33`, `SPI-34`, `SPI-35`, `SPI-36`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-5`, `SPI-6`, `SPI-8`
 
 | law | heading |
 |---|---|
@@ -83,18 +87,43 @@
 | `MUST #33` | THE CHARGE IS CALIBRATED OR WITHDRAWN |
 | `MUST #35` | STANDING AUTHORITY TO PUBLISH — NEVER ASK TO PUSH |
 | `MUST #36` | NO OFF-SCHEDULE DWELL — STALL IS MEASURED AS TIME |
+| `MUST #18` | IDEMPOTENT PACKAGING |
+| `MUST #38` | THE CHAT IS THE BOARD — NO HUMAN IN THE LOOP |
+| `MUST #40` | THE APPARATUS TRAVELS — ONE FILE, NO INSTALL |
+| `MUST #11` | COMPILE IS THE PROOF |
+| `MUST #17` | GENERATED COPIES |
 | `NEVER #19` | NO UNEXAMINED SOURCE |
 | `NEVER #21` | NO WAITING FOR APPROVAL THAT ALREADY EXISTS — THE ANTI-STALL LAW |
+| `NEVER #11` | ONE TREE |
+| `SPI-1` | NO GRADLE |
+| `SPI-11` | DISCOVER, DO NOT HARDCODE |
+| `SPI-12` | ONE AUTHORITATIVE TREE |
+| `SPI-13` | EVERY SYMBOL RESOLVES IN-TREE |
+| `SPI-14` | EVERY BUILD INPUT IS VERSIONED |
 | `SPI-15` | A LAW WITHOUT A GATE IS A NOTE |
+| `SPI-16` | NO UNGATED DELIVERY |
+| `SPI-18` | CONSOLIDATION IS IDEMPOTENT |
+| `SPI-19` | THE FAMILY IS WHOLE |
 | `SPI-2` | READ THE BYTES FIRST |
+| `SPI-21` | REPACK KEEPS ARSC AND .SO STORED |
 | `SPI-25` | SYNCHRONY IS UNIVERSAL, LIKE THE PRIME DIRECTIVE |
 | `SPI-26` | SYNCHRONY IS HARDCODED, IN ALL SOFTWARE |
+| `SPI-29` | THE ORDER TRAVELS WITH THE BOARD |
+| `SPI-30` | NO HEADING, NO CLOSURE |
+| `SPI-31` | A SKIP IS NEVER A PASS |
+| `SPI-32` | NO GATE MAY PASS OVER ZERO INPUTS |
+| `SPI-33` | A GATE THAT CANNOT FAIL IS A NOTE |
+| `SPI-34` | CALIBRATE WITH A TRIAL THAT CAN SUCCEED |
+| `SPI-35` | A DETECTOR MUST SEE THE COMMON FORM |
+| `SPI-36` | A LAW CARRIES ITS OWN ENFORCEMENT |
 | `SPI-37` | A QUANTITY CROSSES A BOUNDARY WITH ITS UNIT |
 | `SPI-38` | A LAW MUST BE RUN, NOT READ |
 | `SPI-4` | LOG TO DISK, READ FROM DISK |
+| `SPI-5` | NO ANDROIDX ON THE RAW CHAIN |
 | `SPI-6` | READ THE WHOLE LOG |
+| `SPI-8` | THE HOME IS THE SD CARD |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #38`, `MUST #40`, `SPI-16`, `SPI-19`, `SPI-29`, `SPI-30`, `SPI-32`, `SPI-33`, `SPI-34`
+**Also matched by term (derived, advisory — not an order):** `MUST #13`, `MUST #37`
 
 <!-- PRAXIS:END -->
 
