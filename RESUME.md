@@ -145,3 +145,12 @@ one agent's memory:
 
 5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
    what the installable artifact is. Evidence after.
+
+### STANDING-AUTHORITY (NEVER #21) — the decision is already made
+
+Execute, commit, push. Do not ask permission for work already ordered. The Operator does not
+want a request to publish; they want the publish. A change that sits uncommitted waiting for
+a yes is a stall, and a stall is the failure mode this law exists to forbid.
+
+Scope: every board, every parallel agent, every session carrying this directive.
+Budget: 0 seconds. There is no waiting window to spend.

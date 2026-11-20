@@ -96,6 +96,13 @@ CLASSES = [
            "'omega-app/src/main/java/*.kt')",
            "ci: kotlin comment scan",
            "an unclosed comment makes every later line of the file unparseable"),
+    Class_("standing authority inscribed",
+           "python3 tools/authority_gate.py --check",
+           "python3 tools/cns_directive.py --write",
+           "ci: authority gate (NEVER #21)",
+           "the sentinel vanished three times through rebases; it is generated now, so it "
+           "cannot"),
+
     Class_("forge artifact in sync",
            "python3 build/build-forge.py --check",
            "python3 build/build-forge.py",

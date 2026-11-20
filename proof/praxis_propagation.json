@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "7afaf5159b2952c4fb2685870d46ed1a326041a2570445a32b0766c4792587a9",
-  "board_sha256": "0e732c18583fdb38e9144e574c402ba298c096a7573a74f97639e18d01f0ece4",
+  "directive_sha256": "3d647c596c187f773ca969bb953303c88f98ec4047cc7dd0a61aeeec463f8ee2",
+  "board_sha256": "a7c1c4e03b28cdc4fc83454053e03be61b1fe7bd12cb563691dd29db27d88aeb",
   "laws": {
     "declared": [
       "MUST #20",
@@ -14,10 +14,8 @@
       "MUST #33",
       "MUST #35",
       "MUST #36",
-      "MUST #11",
       "NEVER #19",
       "NEVER #21",
-      "NEVER #18",
       "SPI-15",
       "SPI-2",
       "SPI-25",
@@ -30,39 +28,27 @@
     "derived_advisory": [
       "MUST #38",
       "MUST #40",
-      "SPI-17"
+      "SPI-16",
+      "SPI-19",
+      "SPI-29",
+      "SPI-30",
+      "SPI-32",
+      "SPI-33",
+      "SPI-34"
     ]
   },
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/TASKS.md",
+      "path": "/workspace/project/darkith-forge/TASKS.md",
       "status": "current",
       "detail": ""
     },
     {
-      "target": "session:f947e4b540c24d1c97125691f3d14707",
-      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "target": "session:18393131094c4acfb45d943764549f23",
+      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
       "status": "current",
       "detail": "mirror"
-    },
-    {
-      "target": "session:f947e4b540c24d1c97125691f3d14707",
-      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
-    },
-    {
-      "target": "worktree:fixwt",
-      "path": "/tmp/fixwt/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "worktree:pristine",
-      "path": "/tmp/pristine/TASKS.md",
-      "status": "current",
-      "detail": ""
     }
   ],
   "mode": "check",
