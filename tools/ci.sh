@@ -147,6 +147,10 @@ if have python3; then
     if [ -f tools/controller_gate.py ]; then
       run "controller behaviour (SPI-38)" python3 tools/controller_gate.py
     fi
+    # NT-XIII's falsifier, executed: on a known cut the deficit must be BOOKED, not silenced.
+    if [ -f tools/ofif_gate.py ]; then
+      run "OFIF falsifier (NT-XIII G6/G7)" python3 tools/ofif_gate.py
+    fi
     for g in circadian_gate download_gate stall_gate synchrony_gate synchrony_pulse convergence_gate; do
       if [ -f "tools/$g.py" ]; then
         run "$g"                          python3 "tools/$g.py"

@@ -1490,3 +1490,26 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   stalled clock. Proven by falsification: the original law FAILS at 258% overshoot with the
   scale pinned at 0.500; the corrected law passes at 0.08% error. A gate that cannot run
   exits 3 and judges nothing — never a silent pass.
+
+
+---
+
+─── SPI-39 (A RAIL IS NOT A BOOKKEEPING LIMIT) ───
+  GATE: tools/ofif_gate.py
+  An actuator's hard limit and the ledger's residual are different objects, and clamping the
+  target to the limit erases the deficit. Measured on the AutophagicAllocator: with 500 KB
+  free, memory can pay for 8,632 vertices, the actuator floor is vMin = 65,536, and the
+  reported residual was EXACTLY 0 — a 7.6x overrun booked as balanced, because
+  `affordable.coerceIn(vMin, vMax)` made error = vMin - vK = 0. The books balanced only
+  because the waste term was removed. That is the provider violation NT-V XVIII.12 names,
+  reproduced in my own fix.
+
+  The law: the target is what the resource can pay for, unclamped. The rail is applied to the
+  ACTUATOR, and the residual is computed from the unclamped error so it survives the rail.
+  A system that cannot comply must say so at full magnitude, never report zero.
+
+  Gate: on books known to balance the residual must be ~0 (G6); on a known cut it must be
+  NEGATIVE (G7). Falsified both ways — restoring the clamp makes G7 report residual 0 and
+  FAIL; removing it reports -1,365,684 bytes and PASSES. Note the charge itself was
+  recalibrated during construction: demanding budget <= ceiling below the actuator floor
+  demanded the impossible, and a charge that can never pass is a broken charge (W-040).

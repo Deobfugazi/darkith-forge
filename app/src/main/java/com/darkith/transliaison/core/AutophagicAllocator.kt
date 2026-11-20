@@ -63,7 +63,13 @@ class AutophagicAllocator(
         // from vK, so this is not self-reference. Driving on (affordable - usage) instead
         // pushed vK UP whenever the renderer was under budget, railing it at vMax while the
         // affordable ceiling was far below vMax — a budget that spends memory it does not have.
-        val targetVertices = affordableVertices.coerceIn(vMin, vMax)
+        // The target is what memory can actually pay for, NOT that value clamped into
+        // [vMin, vMax]. Clamping first erased the deficit: below vMin the clamp made
+        // error = vMin - vK = 0, so a 7.6x memory overrun reported a residual of exactly 0 —
+        // books that balance only because the waste term was removed. That is the provider
+        // violation NT-V XVIII.12 names. The residual must survive the rail, and the rail is
+        // the actuator limit, not a bookkeeping limit.
+        val targetVertices = affordableVertices
         val actualVertices = safeGpuMem / BYTES_PER_VERTEX
         val error = targetVertices - vK
         integral += error * dt
@@ -100,6 +106,8 @@ class AutophagicAllocator(
             resolutionScale = sK,
             // memoryResidual is BYTES by name, so it is converted back; budgetCeiling is a
             // ceiling on vertexBudget, so it stays in VERTICES. Both names now state their unit.
+            // The residual is computed from the unclamped error, so it reports the real
+            // distance from what memory can pay for even when the actuator has railed.
             memoryResidual = error * BYTES_PER_VERTEX,
             budgetCeiling = affordableVertices
         )

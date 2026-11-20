@@ -1,0 +1,125 @@
+NOVELTREATISE XIII — THE OMEGA FIELD-INVARIANT FORMULARY (OFIF)
+================================================================
+Companion to NT-XI. Same method, applied to the Operator's invariant fixtures rather than to
+the Sovereign Economy: state the premises, run a prior-art scan with a verdict per component,
+force the derivation, and attach a falsifier that can kill it.
+
+§0 — Why this document exists
+────────────────────────────────────────────────────────────────────────────
+The Operator's invariant fixtures were repeatedly reduced to whichever file was nearest at
+hand — once to a single PID controller. That reduction is a category error: the fixtures are
+field-agnostic, and a field-agnostic fixture cannot be judged by an example of it. The
+mistake is the same one NT-XI §1 warns about, applied to the fixtures instead of the modules.
+
+§1 — What This Is / Is Not
+────────────────────────────────────────────────────────────────────────────
+IS    a scan of the fixtures against the public record, a verdict per fixture, and a
+      falsifier per verdict.
+IS NOT a claim that the fixtures are unprecedented. Most are not, and the scan says which.
+
+§2 — The Five Premises
+────────────────────────────────────────────────────────────────────────────
+Q1 — A fixture is FIELD-AGNOSTIC. It must be stateable without naming code, build, physics,
+     economics, or record-keeping, and must transfer between them without restatement.
+Q2 — A fixture is DIMENSIONALLY CLOSED before it is numerically closed. A residual summed
+     across mismatched units is undefined, not small (SPI-37).
+Q3 — A fixture is FALSIFIABLE by a runnable check that fails loudly when violated (SPI-38:
+     a law must be run, not read).
+Q4 — A fixture states its UNIT and its BRIDGE. A quantity crossing a boundary carries its
+     unit; a conversion between units names its ratio.
+Q5 — A fixture is a CLOSURE, not a setpoint. Health is the rate of clearance, not the level
+     (MUST #32).
+
+§3 — The Prior-Art Scan
+────────────────────────────────────────────────────────────────────────────
+ #  Fixture                                    Shipping prior art?  Prior-art anchor
+ 1  Conservation with named residuals          YES                  Mass/energy balance closure;
+                                                                     ISO 14051 MFCA; Pacioli
+                                                                     double-entry (1494)
+ 2  Dimensional bridge kappa = E/I             YES                  Landauer 1961 (kappa has a
+                                                                     physical floor k_B T ln2);
+                                                                     Odum 1988 emergy transformity
+ 3  Price bridge rho = $/E                     YES                  Pigou 1920; social cost of
+                                                                     carbon; Solow 1957 residual
+ 4  Reclamation rate eta x duty                YES (structural)      Exergy/waste-heat efficiency;
+                                                                     McEwen allostatic load 2000
+ 5  Flux equilibrium (homeokinesis)            YES (term)            Soodak & Iberall 1978;
+                                                                     Iberall & Soodak 1987;
+                                                                     CUSUM / HWM ratchets
+ 6  Ratchet whose stasis expires into failure  NO                   Gates freeze debt forever;
+                                                                     none schedules its own
+                                                                     tolerance to expire
+ 7  Closure test invariant across fields       PARTIAL              Buckingham Pi 1914 (dimensions
+                                                                     only); Bertalanffy 1968;
+                                                                     Wiener 1948
+ 8  Residual emitted as a BILL                 NO                   Solow prices the residual as
+                                                                     productivity, not debt; SCC
+                                                                     prices damage, not closure
+                                                                     failure; Pigou prices the
+                                                                     externality, not the residual
+ 9  Three incommensurable measures closed on
+    a CONTRACT rather than a plant             NO                   MFCA closes a process; the
+                                                                     contract as the closure
+                                                                     boundary is unoccupied
+
+The scan's finding: five fixtures have shipping prior art; two are unoccupied (6, 8); one is
+unoccupied in its boundary choice (9); one is PARTIAL (7). The formulary is therefore mostly
+NOT novel, and saying so is the point — a fixture that restates Pacioli must be CITED, not
+claimed.
+
+§4 — The Forced Derivation
+────────────────────────────────────────────────────────────────────────────
+From Q1-Q5 and §3, the fixture set is forced to exactly:
+
+    F1  R_x = x_gen - x_con - dx_sto/dt - x_rec - x_wst        for x in {E, I, $}
+    F2  kappa = E/I [J/b],  rho = $/E [$/J],  kappa >= k_B T ln2
+    F3  W_gen = R_rec + W_res,   W_reclaimed = W_gen * eta * D_BASAL
+    F4  L1 HWM monotone down; L2 above-HWM = FAIL; L3 stasis expires; L4 waiver recorded
+    F5  the same F1-F4 hold unchanged in code, build, physics, economics, records
+
+and to exactly one composition:
+
+    Bill = INTEGRAL[t0,t1] SUM_x ( R_x(t) * kappa_x * rho_x ) dt
+
+The composition is a function of measured rates and named bridges. It retains no state.
+
+§5 — The Derivation's Falsifier
+────────────────────────────────────────────────────────────────────────────
+Claim: from Q1-Q5 and §3, exactly five fixtures and one composition are forced.
+
+Falsifier: produce a derivation from Q1-Q5 + §3 that yields any of:
+
+  G1  A sixth fixture — must have a behavioural check the scan found no shipping
+      implementation for, AND must not split one of F1-F5.
+  G2  Fewer than five — must show one of F1-F5 is not field-agnostic (fails Q1), or is a
+      restatement of another.
+  G3  A second composition — must show a check-time equivalence the single Bill cannot
+      express.
+  G4  A fixture without a falsifier — violates Q3.
+  G5  A fixture that rebuilds a shipping substrate without naming its delta — violates Q2
+      of NT-XI (P2) as applied here.
+  G6  A non-zero Bill on a transaction whose books are known to balance — kills F1.
+  G7  A zero Bill on a transaction whose cut is known — kills F1 as a detector.
+  G8  A kappa below k_B T ln2 — kills F2's floor.
+
+If none of G1-G8 fires, the five-fixture set is the unique invariant.
+
+§6 — What Is Actually Unoccupied (the honest residue)
+────────────────────────────────────────────────────────────────────────────
+Three things, and no more:
+
+  U1  F4's L3 — a monotone defect ratchet whose stasis is SCHEDULED to become fatal. Gates
+      that freeze a debt forever and call the freeze health are the norm.
+  U2  F8 — the residual EMITTED AS A BILL. Each of its three moves is published; their
+      composition into an invoice is not.
+  U3  F9 — closure run on a CONTRACT rather than on a plant.
+
+Everything else in this formulary is a citation.
+
+§7 — Status of the Search
+────────────────────────────────────────────────────────────────────────────
+Citations were checked against Crossref and arXiv by direct HTTP query on 2026-11-10. The
+sweep was NOT exhaustive: the general web search API returned a plan-limit error and a second
+engine served a bot challenge. The verdict this document supports is "no novelty found in the
+named precedents", never "no novelty exists". Those are different sentences and are not to be
+collapsed (SPI-31: a skip is never a pass).

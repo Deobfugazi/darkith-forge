@@ -9,14 +9,14 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**64 readable files across 6 registers.**
+**65 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 73,115 | `dbc0ba81c77e` | AGENTS.md — Darkith |
-| `DARKITH.md` | 93,866 | `2fbf9b46c214` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 95,232 | `911e03fa4f29` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 66,370 | `227a57093877` | DARKITH — README |
 | `RESUME.md` | 5,949 | `28eca490a9a1` | RESUME — read this first in any new session |
@@ -44,6 +44,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/nt/NT-X.txt` | 27,503 | `560b5904324a` | NOVELTREATISE X — OMEGA FINAL EDITION (REVISED: HARDWARE-BOUND, DELTA- |
 | `docs/nt/NT-XI.txt` | 70,277 | `a46ef4198869` | NOVELTREATISE XI: THE AUTOPHAGIC SOVEREIGN ECONOMY (ASE) |
 | `docs/nt/NT-XII.txt` | 78,125 | `9412708d5468` | NOVELTREATISE XII — OMEGA FINAL EDITION |
+| `docs/nt/NT-XIII-OFIF.txt` | 9,228 | `5ab6f2706f8a` | NOVELTREATISE XIII — THE OMEGA FIELD-INVARIANT FORMULARY (OFIF) |
 
 ## C-skillbase — Skill surfaces — the interactive web apps
 

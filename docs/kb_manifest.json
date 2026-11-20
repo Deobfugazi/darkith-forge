@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 64,
+  "count": 65,
   "files": [
     {
       "bytes": 73115,
@@ -9,10 +9,10 @@
       "sha256": "dbc0ba81c77ed817b30a13549ac7d98850f128a103fd7fe6b8d766639f821d52"
     },
     {
-      "bytes": 93866,
+      "bytes": 95232,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "2fbf9b46c2146b8ad28336a135d6fc1cad7024484c71645d75bfe520f22c7617"
+      "sha256": "911e03fa4f294a05beddf411b61f8f2f7171ea7fdd670591a7ef27dd623620d2"
     },
     {
       "bytes": 3356,
@@ -145,6 +145,12 @@
       "path": "docs/nt/NT-XII.txt",
       "register": "B-knowledge",
       "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
+    },
+    {
+      "bytes": 9228,
+      "path": "docs/nt/NT-XIII-OFIF.txt",
+      "register": "B-knowledge",
+      "sha256": "5ab6f2706f8ac80f0262b54c769109dfef368d083e8905bea93fa01f7bebc6ae"
     },
     {
       "bytes": 96732,
