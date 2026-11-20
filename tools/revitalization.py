@@ -1199,28 +1199,112 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
     _, clean, _drift = p.s14_reconcile()
     p.s15_seal(tasks, ok_local, ok_blast, clean)
     rec16, closed = p.s16_board_rotate(tasks, ok_local, ok_blast, clean, prev_skips)
+
+    def run_post_seal_checks():
+        commands = [
+            "python3 tools/board_gate.py",
+            "python3 tools/doc_path_gate.py",
+            "python3 tools/kb_index.py --check",
+            "python3 tools/omega_deficit.py",
+            "python3 tools/praxis_propagate.py --check",
+            "python3 tools/autophagy.py --check",
+        ]
+        results_post = [p.run_cmd(cmd) for cmd in commands]
+        ok = all(r.get("exit") == 0 for r in results_post)
+        log_rel = f"proof/revitalization/{p.cycle}/S16_POST_SEAL.log"
+        log_text = "\n".join(
+            f"$ {r['cmd']}\nexit={r['exit']}\n{r.get('tail', '')}"
+            for r in results_post) + "\n"
+        log_path = root / log_rel
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_path.write_text(log_text, encoding="utf-8")
+        return ok, results_post, log_rel, sha(log_path.read_bytes())
+
+    def save_s16():
+        task_queue = rec16["details"].get("task_queue", [])
+        skips = rec16["details"].get("skips", [])
+        board_hash = rec16["details"].get("board_sha256")
+        input_obj = {"closed": rec16["details"].get("closed") is True,
+                     "task_ids": sorted(t["id"] for t in tasks),
+                     "skip_count": len(skips), "board_sha256": board_hash}
+        rec16["input_sha256"] = chash(
+            {"stage": "S16", "parent": rec16["parent_receipt_sha256"], "input": input_obj})
+        rec16["written_at_utc"] = now_utc()
+        rec16["receipt_sha256"] = chash(
+            {k: v for k, v in rec16.items() if k != "receipt_sha256"})
+        p.receipt_path("S16").write_text(canonical(rec16) + "\n", encoding="utf-8")
+        p.receipts["S16"] = rec16
+        p.parent = rec16["receipt_sha256"]
+
+    if p.run_full_suite:
+        # Let final board consumers inspect the S16 receipt itself, not a pre-seal placeholder.
+        marker.write_text(canonical(
+            {"cycle_id": p.cycle, "closed": bool(closed), "idempotency_key": key,
+             "written_at_utc": now_utc()}) + "\n", encoding="utf-8")
+        post_ok, post_results, post_log, post_hash = run_post_seal_checks()
+        rec16["details"]["post_seal_status"] = "PASS" if post_ok else "FAIL"
+        rec16["details"]["post_seal_checks"] = post_results
+        rec16["details"]["post_seal_log"] = post_log
+        if post_log not in rec16.get("evidence", []):
+            rec16.setdefault("evidence", []).append(post_log)
+        rec16.setdefault("evidence_sha256", {})[post_log] = post_hash
+
+        if closed and not post_ok:
+            closed = False
+            task_queue = rec16["details"].get("task_queue", [])
+            skips = rec16["details"].get("skips", [])
+            open_block = p.board_block(False, task_queue, skips, s16_status="FAIL")
+            board_hash = p.apply_board_block(open_block, False)
+            rec16["status"] = "FAIL"
+            rec16["reason"] = "post-seal board/dependency checks failed"
+            rec16["details"]["closed"] = False
+            rec16["details"]["board_block"] = open_block
+            rec16["details"]["board_sha256"] = board_hash
+            rec16.setdefault("evidence_sha256", {})["TASKS.md"] = sha((root / "TASKS.md").read_bytes())
+            marker.write_text(canonical(
+                {"cycle_id": p.cycle, "closed": False, "idempotency_key": key,
+                 "written_at_utc": now_utc()}) + "\n", encoding="utf-8")
+            post_ok, post_results, post_log, post_hash = run_post_seal_checks()
+            rec16["details"]["post_seal_status"] = "PASS" if post_ok else "FAIL"
+            rec16["details"]["post_seal_checks"] = post_results
+            rec16["details"]["post_seal_log"] = post_log
+            rec16.setdefault("evidence_sha256", {})[post_log] = post_hash
+        save_s16()
+    else:
+        rec16["details"]["post_seal_status"] = "INACTIVE"
+        rec16["details"]["post_seal_checks"] = []
+        rec16["details"]["post_seal_log"] = None
+        save_s16()
+        marker.write_text(canonical(
+            {"cycle_id": p.cycle, "closed": bool(closed), "idempotency_key": key,
+             "written_at_utc": now_utc()}) + "\n", encoding="utf-8")
+
     if closed:
         marker.write_text(canonical(
             {"cycle_id": p.cycle, "closed": True, "idempotency_key": key,
              "written_at_utc": now_utc()}) + "\n", encoding="utf-8")
         gate_rc, gate_failures = verify_chain(root)
         if gate_rc != 0:
-            # S16 is terminal, so it can be downgraded without breaking a child link.
-            # Never leave CURRENT claiming closure when the independent verifier rejects it.
+            task_queue = rec16["details"].get("task_queue", [])
+            skips = rec16["details"].get("skips", [])
+            open_block = p.board_block(False, task_queue, skips, s16_status="FAIL")
+            board_hash = p.apply_board_block(open_block, False)
             rec16["status"] = "FAIL"
             rec16["reason"] = "post-seal verifier rejected closure: " + "; ".join(gate_failures[:5])
             rec16["details"]["closed"] = False
-            rec16["details"]["board_block"] = (
-                rec16["details"]["board_block"]
-                .replace("CYCLE CLOSED", "CYCLE OPEN")
-                .replace("| S16 | BOARD+ROTATE | done |",
-                         "| S16 | BOARD+ROTATE | in_progress |"))
-            rec16["receipt_sha256"] = chash(
-                {k: v for k, v in rec16.items() if k != "receipt_sha256"})
-            p.receipt_path("S16").write_text(canonical(rec16) + "\n", encoding="utf-8")
+            rec16["details"]["board_block"] = open_block
+            rec16["details"]["board_sha256"] = board_hash
+            rec16["evidence_sha256"]["TASKS.md"] = sha((root / "TASKS.md").read_bytes())
             marker.write_text(canonical(
                 {"cycle_id": p.cycle, "closed": False, "idempotency_key": key,
                  "written_at_utc": now_utc()}) + "\n", encoding="utf-8")
+            # The open board is the durable truth even when the closed candidate is rejected.
+            post_ok, post_results, post_log, post_hash = run_post_seal_checks()
+            rec16["details"]["post_seal_status"] = "PASS" if post_ok else "FAIL"
+            rec16["details"]["post_seal_checks"] = post_results
+            rec16["details"]["post_seal_log"] = post_log
+            rec16["evidence_sha256"][post_log] = post_hash
+            save_s16()
             print("=== CYCLE OPEN - post-seal verifier rejected closure ===")
             for failure in gate_failures:
                 print("  " + failure)
@@ -1230,7 +1314,9 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
     open_tasks = [t["id"] for t in rec16["details"]["task_queue"]
                   if t.get("status") != "closed"]
     print(f"=== CYCLE OPEN - {len(open_tasks)} corrective task(s): {open_tasks} ===")
-    return 1 if (tasks or p.receipts["S05"]["status"] == "FAIL") else 2
+    return 1 if (tasks or p.receipts["S05"]["status"] == "FAIL"
+                  or rec16["details"].get("post_seal_status") == "FAIL") else 2
+
 
 
 def verify_chain(root: pathlib.Path) -> tuple:
