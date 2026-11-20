@@ -29,7 +29,7 @@ class SerialRevivalTests(unittest.TestCase):
         # A non-empty classification reaches the state validator; SKIPPED is not
         # silently coerced into one of the four permitted states.
         with self.assertRaisesRegex(ValueError, "invalid state"):
-            sr.verify_states({"node-a": "SKIPPED"})
+            sr.verify_states({"node_states": {"node-a": "SKIPPED"}})
 
     def test_task_inheritance_is_mandatory(self):
         with self.assertRaisesRegex(ValueError, "missing inherited field"):
