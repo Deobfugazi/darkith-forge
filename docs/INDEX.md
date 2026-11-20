@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**63 readable files across 6 registers.**
+**64 readable files across 6 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -95,6 +95,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `proof/nt_ledger_prereconcile.txt` | 2,924 | `800061c03912` | ENGINE-RULE A->A  analysis |
 | `proof/offline_oneshot_proof.txt` | 1,780 | `fce363ef10fd` | DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6) |
 | `proof/oneshot_proof.txt` | 1,556 | `dcda10db485e` | PROOF — one-shot installer + native-lib packaging (SPI-2/4/6) |
+| `proof/session_findings.txt` | 1,768 | `b4571adf757e` | DARKITH EVIDENCE SNAPSHOT 2026-11-20T03:44:32Z |
 
 ## F-config — Build configuration — dependency manifests
 
