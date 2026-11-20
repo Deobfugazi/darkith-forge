@@ -1439,15 +1439,15 @@ def verify_chain(root: pathlib.Path) -> tuple:
         # Whole-tree temporal integrity: every byte change after S01 must be attributable
         # to the authorized S10 edit, an S11 generator output, or the terminal S16 board.
         baseline_tree = receipts["S01"]["details"].get("tree_hashes", {})
+        current_tree = tree_snapshot(root)
         allowed_after = dict(authorized_changes)
         for run in receipts["S11"]["details"].get("runs", []):
             for path, hashes in run.get("changed_outputs", {}).items():
-                if path in baseline_tree or path in tree_snapshot(root):
+                if path in baseline_tree or path in current_tree:
                     allowed_after[path] = hashes.get("after")
         s16_board_hash = receipts["S16"].get("details", {}).get("board_sha256")
         if s16_board_hash:
             allowed_after["TASKS.md"] = s16_board_hash
-        current_tree = tree_snapshot(root)
         for path in sorted(set(baseline_tree) | set(current_tree)):
             expected = allowed_after.get(path, baseline_tree.get(path))
             actual = current_tree.get(path)
