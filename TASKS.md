@@ -149,6 +149,111 @@ and fails CI (M6 SE non-extractive clause / NEVER #17) unless a deficit is forma
 
 Computed and gated by `tools/omega_deficit.py`; recorded at `proof/omega_deficit.json`.
 
+## REVITALIZATION - BOARD PRIME DIRECTIVE (sixteen stages, evidence-bound)
+
+The corrective cycle as a standing law of this board. Canonical apparatus:
+`tools/revitalization.py`; its receipt chain is verified in CI by
+`python3 tools/revitalization.py gate`. Each stage's receipt is the next stage's entry
+condition (serial dependency, I1); every state is four-valued - PASS / FAIL / SKIP /
+INACTIVE - and SKIP is never PASS (I3); every closure is evidence-bound (I8).
+
+Sequence (paste-ready; each row closes only when its stage's receipt is attached):
+
+[ ] S01 BASELINE      - canonical baseline receipt: branch, commit, governing files,
+                        generated artifacts, dirty-file inventory, timestamp.
+[ ] S02 INVENTORY     - component registry: layer L1-L6, owner, classification.
+                        UNKNOWN allowed; unclassified is not.
+[ ] S03 TOPOLOGY      - directed dependency graph: forward / backward / sideways /
+                        vertical. Unknown links visible, never hidden.
+[ ] S04 DIAGNOSTIC    - full sweep: audits, tests, builds, consistency, runtime probes.
+                        No silent source mutation. Per-probe result recorded.
+[ ] S05 CLASSIFY      - four-state node health ledger with evidence refs. No SKIP or
+                        INACTIVE misrepresented as PASS.
+[ ] S06 TRACE         - defect register + root-cause map. Origin vs propagated
+                        symptom. UNCONFIRMED allowed; undocumented is not.
+[ ] S07 GOVERN        - governing clause reference per root cause: file, directive,
+                        generator, repair boundary.
+[ ] S08 TASK          - corrective task per root cause, not per symptom. One confirmed
+                        cause = one corrective task; symptoms link, they do not duplicate.
+[ ] S09 AUTHORIZE     - authorization receipt for consequential repairs;
+                        AUTO_APPROVED class for low-risk only (I10).
+[ ] S10 REPAIR        - modify source / generator / config only. Generated tissue
+                        untouched (I5).
+[ ] S11 REGENERATE    - run generators, synchronizers, builders. The back-edge HOLDS,
+                        not merely fires: a regeneration that leaves drift reopens S10.
+[ ] S12 VERIFY-LOCAL  - targeted tests, affected gates, before/after comparison.
+[ ] S13 VERIFY-BLAST  - neighbors, shared deps, downstream consumers, contracts.
+                        Abort on regression.
+[ ] S14 RECONCILE     - whole-mesh reconciliation: repo cleanliness, generated-state
+                        consistency, full gate suite (`tools/ci.sh`). Block on drift.
+[ ] S15 SEAL          - evidence bundle: revision, changed files, commands, results,
+                        logs, skipped checks, provenance, remaining uncertainty.
+[ ] S16 BOARD+ROTATE  - board state + next-cycle queue + regression queue +
+                        changed-node list. Cycle closes; next S01 begins from the
+                        verified current state.
+
+Autofill rules (non-negotiable):
+A. serial dependency - no step advances without the prior receipt;
+B. evidence inheritance - every task carries originating defect, parent task,
+   governing clause, commit, evidence refs;
+C. root-cause deduplication - one confirmed cause = one corrective task;
+D. no false closure - SKIP, INACTIVE, missing evidence, unexplained drift, or an
+   unverified dependency can never satisfy PASS;
+E. regeneration integrity - generated artifacts are recreated through their
+   authoritative production process, never hand-patched;
+F. regression routing - same root cause reopens the task; a NEW root cause creates a
+   linked defect (parent = the original);
+G. idempotency - content-hash keyed; re-running a completed step creates no duplicates;
+H. authorization boundary - detection/task-generation autonomous; consequential
+    mutations require the configured approval;
+I. temporal integrity - timestamps, revisions, staleness on every receipt; stale
+   evidence blocks closure; recurring drift reopens;
+J. evidence-only closure - a task closes iff acceptance criteria are verified AND the
+   evidence bundle is attached AND the board state is accurate.
+
+Hard prohibitions (the PR #11 class, encoded as invariants):
+- never patch generated tissue in place (rule E);
+- never treat SKIP as PASS (rule D);
+- never close a repair without S14 reconcile + S15 seal (rule J);
+- never let a back-edge fire without holding (S11 exit);
+- never substitute a corrected detector for a corrected system (S10 touches the
+  originating source; a better probe is not a fix);
+- never re-ask for authorization the governing clause already granted (I10).
+
+Closure criterion: the cycle closes iff S14 reconciliation is clean (no unexplained
+drift, `git status` clean of work), S15 evidence is attached to every S08 task, S13
+shows no unchecked neighbor, S16's board revision reflects the post-repair state, and
+no new SKIP was introduced. Otherwise the S08 task reopens (same cause) or a linked
+defect is created (new cause), and the cycle continues (I6, I8).
+
+<!-- REVITALIZATION:BEGIN - generated by tools/revitalization.py; edit the cycle, not this block -->
+## REVITALIZATION - the sixteen-stage corrective cycle (cycle 20261120T193354Z197, closed)
+
+cycle `20261120T193354Z197` - verdict: CYCLE CLOSED (all stages evidence-sealed)
+
+| stage | name | status | receipt |
+|---|---|---|---|
+| S01 | BASELINE | done | proof/revitalization/20261120T193354Z197/S01_BASELINE.json |
+| S02 | INVENTORY | done | proof/revitalization/20261120T193354Z197/S02_INVENTORY.json |
+| S03 | TOPOLOGY | done | proof/revitalization/20261120T193354Z197/S03_TOPOLOGY.json |
+| S04 | DIAGNOSTIC | done | proof/revitalization/20261120T193354Z197/S04_DIAGNOSTIC.json |
+| S05 | CLASSIFY | done | proof/revitalization/20261120T193354Z197/S05_CLASSIFY.json |
+| S06 | TRACE | done | proof/revitalization/20261120T193354Z197/S06_TRACE.json |
+| S07 | GOVERN | inactive | proof/revitalization/20261120T193354Z197/S07_GOVERN.json |
+| S08 | TASK | done | proof/revitalization/20261120T193354Z197/S08_TASK.json |
+| S09 | AUTHORIZE | inactive | proof/revitalization/20261120T193354Z197/S09_AUTHORIZE.json |
+| S10 | REPAIR | inactive | proof/revitalization/20261120T193354Z197/S10_REPAIR.json |
+| S11 | REGENERATE | inactive | proof/revitalization/20261120T193354Z197/S11_REGENERATE.json |
+| S12 | VERIFY-LOCAL | inactive | proof/revitalization/20261120T193354Z197/S12_VERIFY-LOCAL.json |
+| S13 | VERIFY-BLAST | inactive | proof/revitalization/20261120T193354Z197/S13_VERIFY-BLAST.json |
+| S14 | RECONCILE | done | proof/revitalization/20261120T193354Z197/S14_RECONCILE.json |
+| S15 | SEAL | done | proof/revitalization/20261120T193354Z197/S15_SEAL.json |
+| S16 | BOARD+ROTATE | done | proof/revitalization/20261120T193354Z197/S16_BOARD_ROTATE.json |
+
+Named skips this cycle (SKIP is never PASS): autophagy (defect classes are impossible, not absent), autophagy (defect-class registry), chat gatekeeper ingest (MUST #38), clearanceloop webapp gate (headless browser), install gate, manual-skip:jsdom not installed (npm install jsdom), manual-skip:no built APK on disk, manual-skip:playwright not installed, manual-skip:playwright not installed (python3 -m pip install -r requirements-dev.txt), phantom source tree, savf py/js parity gate, savf webapp gate (headless browser).
+
+<!-- REVITALIZATION:END -->
+
 <!-- CHAT-GATE:BEGIN — generated by tools/chat_gatekeeper.py; source is the Operator's chat -->
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat

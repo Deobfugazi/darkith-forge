@@ -127,6 +127,19 @@ if have python3; then
     if [ -f tools/closed_briefings.py ]; then
       run "closed briefings stay closed"  python3 tools/closed_briefings.py --check
     fi
+    # Revitalization chain gate: the sixteen-stage serial corrective cycle. The
+    # pipeline itself never runs inside CI (a run writes receipts, and a green run
+    # must not dirty the tree); CI verifies the sealed chain instead: serial parent
+    # links (I1), four-state legality with SKIP-never-PASS (I3), task evidence
+    # inheritance (I2/I8), and that a cycle claiming closure really is sealed.
+    if [ -f tools/revitalization.py ]; then
+      run "revitalization selftest" python3 tools/revitalization.py selftest
+      if [ "${REVITALIZATION_BOOTSTRAP:-0}" = "1" ]; then
+        echo "INACTIVE: revitalization chain gate deferred until S16 seal (bootstrap run)"
+      else
+        run "revitalization chain gate" python3 tools/revitalization.py gate
+      fi
+    fi
     if [ -f tools/comment_audit.py ]; then
       run "kotlin comment scan (whole repo)"  python3 tools/comment_audit.py
     fi
@@ -353,7 +366,7 @@ if have python3 && [ -f tools/autophagy.py ]; then
   # prevention gate; this runs the detectors so a repaired class cannot silently return.
   # It runs BEFORE kb_index so a generator-order inversion is reported as itself rather
   # than as an anonymous stale index.
-  run "autophagy (defect-class registry)" python3 tools/autophagy.py --selftest
+  run "autophagy (defect-class selftest)" python3 tools/autophagy.py --selftest
   run "autophagy (defect-class registry)" python3 tools/autophagy.py --check
 fi
 
@@ -589,6 +602,12 @@ for f in files:
     # people to ignore the gate.
     if "/res/" in f:
         continue
+    # CYCLE-scoped receipt dirs are versioned evidence: proof/revitalization/<cycle>/
+    # names the revision, so the SAME basename across cycle dirs is REQUIRED to
+    # differ — that is what the cycle dir means. Treating a newer cycle's receipt
+    # as a divergent copy of an older one would train people to ignore the gate.
+    if f.startswith("proof/revitalization/") and f.count("/") >= 2:
+        continue
     by[(tree_of(f), f.rsplit("/",1)[-1])].append(f)
 divergent, mirrors = {}, {}
 for (tree, name), paths in sorted(by.items()):
@@ -714,10 +733,12 @@ fi
 # failure, because a broken ledger is a bookkeeping fault, not a broken tree.
 # The run's own stdout is the source of truth for what each gate reported, so re-run the
 # parse against a log this script wrote itself rather than a variable that may not exist.
-if [ -f tools/ci_receipts.py ] && [ -f "${CI_LOG:-}" ]; then
+if [ "${REVITALIZATION_BOOTSTRAP:-0}" != "1" ] && [ -f tools/ci_receipts.py ] && [ -f "${CI_LOG:-}" ]; then
   printf '\n=== ci receipts ===\n'
   python3 tools/ci_receipts.py --emit < "$CI_LOG" || true
   python3 tools/ci_receipts.py --verify || true
+elif [ "${REVITALIZATION_BOOTSTRAP:-0}" = "1" ]; then
+  echo "INACTIVE: CI receipt emitter deferred until the sealed cycle is available"
 fi
 
 printf '\nCI: %s (%d skipped)\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)" "$SKIPPED"

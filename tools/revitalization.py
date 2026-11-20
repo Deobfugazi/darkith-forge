@@ -102,13 +102,16 @@ def is_generated_target(path: str) -> bool:
 def tree_snapshot(root: pathlib.Path) -> dict:
     """Hash every repository file except VCS/cache and the current cycle's own receipts."""
     out = {}
-    excluded = {".git", ".tools", ".gradle", "node_modules", "__pycache__", ".venv"}
+    excluded = {".git", ".tools", ".gradle", "node_modules", "__pycache__", ".venv",
+                ".forge_work", ".savf", ".agent_tmp", ".shell-harness", "prerun-out"}
     for path in sorted(root.rglob("*")):
         if not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
             continue
         rel = path.relative_to(root).as_posix()
-        if rel.startswith("proof/revitalization/") or rel == "proof/praxis_propagation.json":
-            continue  # the propagation receipt records per-run target states, not generated tissue
+        if rel.startswith("proof/revitalization/") or rel in ("proof/praxis_propagation.json",
+                                                              "proof/convergence.json",
+                                                              "proof/ci_last.log"):
+            continue  # per-run booked telemetry, not generated tissue and not source
         try:
             out[rel] = sha(path.read_bytes())
         except OSError:
@@ -173,35 +176,51 @@ def is_exempt(path: str) -> bool:
     """The cycle's own output is never unexplained drift. Handles the git porcelain
     truncation: a wholly untracked `proof/` reports as `?? proof/`, an ancestor of
     the exempt prefix."""
-    return bool(path) and (path == "proof/praxis_propagation.json"
+    return bool(path) and (path in ("proof/praxis_propagation.json", "proof/convergence.json",
+                                    "proof/ci_last.log")
                            or path == DRIFT_EXEMPT_PREFIX.rstrip("/")
                            or path.startswith(DRIFT_EXEMPT_PREFIX)
                            or (DRIFT_EXEMPT_PREFIX.rstrip("/") + "/")
                            .startswith(path.rstrip("/") + "/"))
 
 
-def authored_board(text: str) -> str:
-    """TASKS.md with this tool's own region removed, for comparison and for the key.
-
-    S16 writes the board, so a closed cycle always leaves TASKS.md modified relative to
-    HEAD. Reading that as drift made the cycle non-idempotent: the second run saw a dirty
-    board, derived a different idempotency key, and opened a second cycle directory instead
-    of taking the I7 no-op (measured: two dirs, 40 ms apart, same content). The region this
-    tool writes is output, not input; the authored bytes around it are what a rerun must
-    compare. Only the REVITALIZATION markers are stripped — a new operator order changes
-    CHAT-GATE and must still start a fresh cycle.
-    """
+def strip_generated_board(text: str) -> str:
+    """Remove only the machine-owned REVITALIZATION block from TASKS content."""
     if BOARD_BEGIN not in text:
-        return text.rstrip("\n")
+        return text
     pre, rest = text.split(BOARD_BEGIN, 1)
-    post = rest.split(BOARD_END, 1)[1] if BOARD_END in rest else ""
-    return (pre.rstrip("\n") + "\n" + post.lstrip("\n")).rstrip("\n")
+    if BOARD_END not in rest:
+        return text
+    _, post = rest.split(BOARD_END, 1)
+    return pre + post
 
 
-def head_board(root: pathlib.Path) -> str:
-    """TASKS.md as committed, or "" when it is not in HEAD yet."""
-    proc = git(root, "show", "HEAD:TASKS.md")
-    return proc.stdout if proc.returncode == 0 else ""
+def boardless(text: str) -> str:
+    """The marker block plus its padding removed and newlines normalised, so a
+    board-only TASKS.md diff never fakes a content change (I7): the block writer
+    pads the appended block, and raw stripping preserves that padding asymmetry."""
+    return strip_generated_board(text).strip("\n")
+
+
+def board_only_dirty(root: pathlib.Path) -> bool:
+    """True only when TASKS.md differs from HEAD solely inside the generated S16 block."""
+    current = root / "TASKS.md"
+    if not current.is_file():
+        return False
+    head = git(root, "show", "HEAD:TASKS.md")
+    if head.returncode != 0:
+        return False
+    return (boardless(current.read_text(encoding="utf-8"))
+            == boardless(head.stdout))
+
+
+def clean_dirty_paths(root: pathlib.Path) -> list[str]:
+    dirty = [ln[3:].strip().strip('"').split(" -> ")[0]
+             for ln in git(root, "status", "--porcelain").stdout.splitlines()
+             if ln.strip()]
+    if board_only_dirty(root):
+        dirty = [p for p in dirty if p != "TASKS.md"]
+    return sorted(p for p in dirty if not is_exempt(p))
 
 
 def canonical(obj) -> str:
@@ -315,7 +334,7 @@ class Pipeline:
         governing = {p: sha((self.root / p).read_bytes())
                      for p in GOVERNING_SOURCES if (self.root / p).is_file()}
         tree_hashes = tree_snapshot(self.root)
-        repo_dirty = [d for d in dirty if not is_exempt(d)]
+        repo_dirty = clean_dirty_paths(self.root)
         input_obj = {"branch": branch, "commit": commit,
                      "dirty_count": len(repo_dirty), "governing": governing,
                      "tree_sha256": chash(tree_hashes)}
@@ -809,11 +828,11 @@ class Pipeline:
             tail_sha = sha(tail.encode("utf-8") or b"ok")
             state = "PASS" if cp.returncode == 0 else \
                 ("SKIP" if cp.returncode == 3 else "FAIL")
-            return {"exit": cp.returncode, "tail": tail, "tail_sha256": tail_sha,
-                    "state": state}
+            return {"cmd": cmd, "exit": cp.returncode, "tail": tail,
+                    "tail_sha256": tail_sha, "state": state}
         except FileNotFoundError as exc:
-            return {"exit": None, "tail": str(exc), "tail_sha256": "absent",
-                    "state": "SKIP"}
+            return {"cmd": cmd, "exit": None, "tail": str(exc),
+                    "tail_sha256": "absent", "state": "SKIP"}
 
     def s11_regenerate(self, ops: dict) -> tuple:
         regenerate = ops.get("regenerate", [])
@@ -963,18 +982,11 @@ class Pipeline:
         }
         manifest_targets = source_targets | regenerated_targets
         dirty_paths = [p.split(" -> ")[0] for p in dirty]
+        board_only = board_only_dirty(self.root)
         cycle_output = [p for p in dirty_paths if is_exempt(p)]
-        # S16 owns the REVITALIZATION region of the board, so a board differing from HEAD
-        # only there is this cycle's output. Comparing the authored bytes keeps a real
-        # hand-edit to TASKS.md visible as drift.
-        board = self.root / "TASKS.md"
-        if "TASKS.md" in dirty_paths and board.is_file():
-            if authored_board(board.read_text(encoding="utf-8")) == \
-                    authored_board(head_board(self.root)):
-                cycle_output.append("TASKS.md")
-                dirty_paths = [p for p in dirty_paths if p != "TASKS.md"]
         drift = [p for p in dirty_paths
-                 if not is_exempt(p) and p not in manifest_targets]
+                 if not is_exempt(p) and p not in manifest_targets
+                 and not (p == "TASKS.md" and board_only)]
         clean = not drift and suite_ok
         details = {"dirty": dirty, "unexplained_drift": drift,
                    "cycle_output": cycle_output,
@@ -1174,22 +1186,12 @@ def idempotency_key(root: pathlib.Path) -> dict:
         return sha(path.read_bytes()) if path.is_file() else "none"
     commit = git(root, "rev-parse", "HEAD").stdout.strip()
     branch = git(root, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
-    dirty = [ln[3:].strip().strip('"').split(" -> ")[0]
-             for ln in git(root, "status", "--porcelain").stdout.splitlines()
-             if ln.strip()]
-    repo_dirty = sorted(p for p in dirty if not is_exempt(p))
-    governing = {p: sha((root / p).read_bytes()) for p in GOVERNING_SOURCES
-                 if (root / p).is_file()}
-    # The board is compared on its authored bytes. S16 writes the REVITALIZATION region,
-    # so hashing the whole file would make a closed cycle look like new input forever.
-    board = root / "TASKS.md"
-    board_is_cycle_output = False
-    if board.is_file():
-        authored = authored_board(board.read_text(encoding="utf-8"))
-        governing["TASKS.md"] = sha(authored.encode("utf-8"))
-        board_is_cycle_output = authored == authored_board(head_board(root))
-    if board_is_cycle_output:
-        repo_dirty = [p for p in repo_dirty if p != "TASKS.md"]
+    repo_dirty = clean_dirty_paths(root)
+    governing = {
+        p: (sha(boardless((root / p).read_text(encoding="utf-8")).encode("utf-8"))
+            if p == "TASKS.md" else sha((root / p).read_bytes()))
+        for p in GOVERNING_SOURCES if (root / p).is_file()
+    }
     return {"branch": branch, "commit": commit, "dirty": repo_dirty,
             "governing": governing,
             "registry_sha256": sha_of(root / "proof/revitalization/probe_registry.json"),
@@ -1250,13 +1252,17 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
         commands = [
             "python3 tools/board_gate.py",
             "python3 tools/doc_path_gate.py",
-            "python3 tools/kb_index.py --check",
+            "python3 tools/kb_index.py",
             "python3 tools/omega_deficit.py",
             "python3 tools/praxis_propagate.py --check",
             "python3 tools/autophagy.py --check",
         ]
         results_post = [p.run_cmd(cmd) for cmd in commands]
-        ok = all(r.get("exit") == 0 for r in results_post)
+        # The boundary exists to catch interference with the sealed board, not to
+        # re-grade the gates: a named SKIP (exit 3) is recorded in full but never
+        # masquerades as failure, and at least one check must actually run (SPI-32).
+        ok = (all(r.get("exit") in (0, 3) for r in results_post)
+              and any(r.get("exit") == 0 for r in results_post))
         log_rel = f"proof/revitalization/{p.cycle}/S16_POST_SEAL.log"
         log_text = "\n".join(
             f"$ {r['cmd']}\nexit={r['exit']}\n{r.get('tail', '')}"

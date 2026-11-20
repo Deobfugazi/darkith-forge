@@ -23,7 +23,7 @@ applied to the filesystem, that yields four registers:
   B-knowledge   the human-readable corpus             docs/**
   C-skillbase   the interactive skill surfaces        root *.html (savf, omega, studio, forge, inscriber)
   D-asset       shipped runtime assets                app/src/main/assets/**
-  E-evidence    machine-generated proof               proof/**
+  E-evidence    machine-generated proof               proof/** except proof/revitalization/** (self-sealed serial receipts)\n\nThe generated REVITALIZATION block inside TASKS.md is excluded from its index hash; S16 seals that block separately. This prevents the board's own receipt telemetry from invalidating the knowledge index.
 
 It emits docs/INDEX.md (the universal index a reader is pointed at) and docs/kb_manifest.json
 (the machine manifest: path + register + bytes + sha256). Both are generated from the bytes,
@@ -86,7 +86,11 @@ CONFIG = {"tools/deps.txt", "tools/fractures.txt", "requirements-dev.txt"}
 def tracked() -> list[str]:
     out = subprocess.run(["git", "-C", str(ROOT), "ls-files", "-z"],
                          capture_output=True, text=True, check=True).stdout
-    return [p for p in out.split("\0") if p]
+    # The serial receipt chain is self-hashed and verified by revitalization.py.
+    # Indexing those receipts would create a circular dependency: S16 seals the index,
+    # while the index would otherwise hash S16 itself.
+    return [p for p in out.split("\0")
+            if p and not p.startswith("proof/revitalization/")]
 
 
 def register_of(path: str) -> str | None:
@@ -111,13 +115,30 @@ def register_of(path: str) -> str | None:
 
 
 def is_readable(path: str) -> bool:
-    if path in SELF:
+    if path in SELF or path.startswith("proof/revitalization/"):
         return False
     if path in GOVERNANCE or path in CONFIG:
         return True
     if path.startswith(("build/", ".tools/", ".openhands/", "libs/", ".github/")):
         return False
     return pathlib.PurePosixPath(path).suffix in READABLE_EXTS
+
+
+def indexed_bytes(path: str) -> bytes:
+    """Return indexable source bytes, excluding the generated S16 telemetry block."""
+    raw = (ROOT / path).read_bytes()
+    if path != "TASKS.md":
+        return raw
+    text = raw.decode("utf-8", errors="replace")
+    begin = "<!-- REVITALIZATION:BEGIN"
+    end = "<!-- REVITALIZATION:END"
+    if begin in text:
+        pre, rest = text.split(begin, 1)
+        if end not in rest:
+            raise ValueError("TASKS.md has an unclosed REVITALIZATION block")
+        _, post = rest.split(end, 1)
+        text = pre + post
+    return text.encode("utf-8")
 
 
 def sha256(p: pathlib.Path) -> str:
@@ -158,11 +179,12 @@ def collect() -> list[dict]:
         p = ROOT / path
         if not p.is_file():
             continue
+        content = indexed_bytes(path)
         rows.append({
             "path": path,
             "register": register_of(path) or "UNFILED",
-            "bytes": p.stat().st_size,
-            "sha256": sha256(p),
+            "bytes": len(content),
+            "sha256": hashlib.sha256(content).hexdigest(),
             "desc": describe(path),
         })
     rows.sort(key=lambda r: (r["register"], r["path"]))

@@ -9,6 +9,9 @@ proof/ci_receipts.db
 .forge_work/
 .tools/
 *.log
+# A revitalization stage log is receipt evidence (I8): a receipt whose evidence
+# cannot resolve in a fresh clone is unverifiable outside the machine that ran it.
+!proof/revitalization/**/*.log
 
 # ---- scratch harnesses (regenerable) ------------------------------------
 .shell-harness/

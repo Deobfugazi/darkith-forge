@@ -1,0 +1,28 @@
+{
+  "route": {
+    "praxis propagation gate": {
+      "root_cause": "BOARD_DIRECTIVE_PROPAGATION_DRIFT",
+      "governing_file": "TASKS.md",
+      "governing_clause": "MUST-33",
+      "generator": "tools/praxis_propagate.py",
+      "repair_boundary": "derived directive copies across repository boards",
+      "parent_task": "ROOT"
+    },
+    "omega deficit (NT XI retention)": {
+      "root_cause": "NT_XI_DEFICIT_INDICATOR_STALE",
+      "governing_file": "TASKS.md",
+      "governing_clause": "NEVER-17",
+      "generator": "tools/omega_deficit.py",
+      "repair_boundary": "TASKS.md §H indicator and proof/omega_deficit.json",
+      "parent_task": "ROOT"
+    },
+    "knowledge-base index + dedup": {
+      "root_cause": "KNOWLEDGE_BASE_INDEX_STALE",
+      "governing_file": "DARKITH.md",
+      "governing_clause": "MUST-18",
+      "generator": "tools/kb_index.py",
+      "repair_boundary": "docs/INDEX.md and docs/kb_manifest.json",
+      "parent_task": "ROOT"
+    }
+  }
+}
