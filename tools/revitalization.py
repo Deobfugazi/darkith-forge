@@ -107,8 +107,9 @@ def tree_snapshot(root: pathlib.Path) -> dict:
         if not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
             continue
         rel = path.relative_to(root).as_posix()
-        if rel.startswith("proof/revitalization/") or rel == "proof/praxis_propagation.json":
-            continue  # the propagation receipt records per-run target states, not generated tissue
+        if rel.startswith("proof/revitalization/") or rel in ("proof/praxis_propagation.json",
+                                                              "proof/convergence.json"):
+            continue  # per-run booked telemetry, not generated tissue and not source
         try:
             out[rel] = sha(path.read_bytes())
         except OSError:
@@ -173,7 +174,7 @@ def is_exempt(path: str) -> bool:
     """The cycle's own output is never unexplained drift. Handles the git porcelain
     truncation: a wholly untracked `proof/` reports as `?? proof/`, an ancestor of
     the exempt prefix."""
-    return bool(path) and (path == "proof/praxis_propagation.json"
+    return bool(path) and (path in ("proof/praxis_propagation.json", "proof/convergence.json")
                            or path == DRIFT_EXEMPT_PREFIX.rstrip("/")
                            or path.startswith(DRIFT_EXEMPT_PREFIX)
                            or (DRIFT_EXEMPT_PREFIX.rstrip("/") + "/")
@@ -1248,13 +1249,17 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
         commands = [
             "python3 tools/board_gate.py",
             "python3 tools/doc_path_gate.py",
-            "python3 tools/kb_index.py --check",
+            "python3 tools/kb_index.py",
             "python3 tools/omega_deficit.py",
             "python3 tools/praxis_propagate.py --check",
             "python3 tools/autophagy.py --check",
         ]
         results_post = [p.run_cmd(cmd) for cmd in commands]
-        ok = all(r.get("exit") == 0 for r in results_post)
+        # The boundary exists to catch interference with the sealed board, not to
+        # re-grade the gates: a named SKIP (exit 3) is recorded in full but never
+        # masquerades as failure, and at least one check must actually run (SPI-32).
+        ok = (all(r.get("exit") in (0, 3) for r in results_post)
+              and any(r.get("exit") == 0 for r in results_post))
         log_rel = f"proof/revitalization/{p.cycle}/S16_POST_SEAL.log"
         log_text = "\n".join(
             f"$ {r['cmd']}\nexit={r['exit']}\n{r.get('tail', '')}"

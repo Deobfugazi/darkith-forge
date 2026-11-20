@@ -366,7 +366,7 @@ if have python3 && [ -f tools/autophagy.py ]; then
   # prevention gate; this runs the detectors so a repaired class cannot silently return.
   # It runs BEFORE kb_index so a generator-order inversion is reported as itself rather
   # than as an anonymous stale index.
-  run "autophagy (defect-class registry)" python3 tools/autophagy.py --selftest
+  run "autophagy (defect-class selftest)" python3 tools/autophagy.py --selftest
   run "autophagy (defect-class registry)" python3 tools/autophagy.py --check
 fi
 
