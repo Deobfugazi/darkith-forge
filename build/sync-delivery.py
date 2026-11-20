@@ -224,12 +224,10 @@ def main() -> int:
         shutil.copyfile(src, dst)
         print(f"  copied   {src.name} -> delivery/{dst.name}  ({dst.stat().st_size:,} B)")
 
-    index = INDEX.read_text(encoding="utf-8")
-    refreshed = refresh_index(index)
-    INDEX.write_text(refreshed, encoding="utf-8")
-    changed = sum(1 for a, b in zip(index.splitlines(), refreshed.splitlines()) if a != b)
-    print(f"  index    refreshed ({changed} line(s) updated)")
-
+    # Docs before index: index.html prints a size and sha256 for each shipped file,
+    # PROGRESS-LEDGER.md among them. Refreshing the index first stamped the hash of the
+    # doc as it was *before* this run rewrote it, so a single run always left the index
+    # stale and a second run was needed to converge (MUST #18).
     for doc in DOCS:
         p = DELIVERY / doc
         if not p.exists():
@@ -240,6 +238,12 @@ def main() -> int:
             p.write_text(new, encoding="utf-8")
             n = sum(1 for a, b in zip(text.splitlines(), new.splitlines()) if a != b)
             print(f"  {doc:<8} refreshed ({n} line(s) updated)")
+
+    index = INDEX.read_text(encoding="utf-8")
+    refreshed = refresh_index(index)
+    INDEX.write_text(refreshed, encoding="utf-8")
+    changed = sum(1 for a, b in zip(index.splitlines(), refreshed.splitlines()) if a != b)
+    print(f"  index    refreshed ({changed} line(s) updated)")
 
     missing = check_links(refreshed)
     if missing:

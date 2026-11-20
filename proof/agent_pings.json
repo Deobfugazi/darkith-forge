@@ -1,7 +1,7 @@
 {
   "issued": "2026-11-20T12:59:44.966046",
   "occupation": {
-    "gapHours": 0.009,
+    "gapHours": 0.012,
     "phase": "wake/active",
     "state": "engaged"
   },

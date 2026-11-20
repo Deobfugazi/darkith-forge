@@ -65,6 +65,16 @@ r = run("scan", "/tmp/savf-does-not-exist-xyz.py")
 check("scan: missing path exits non-zero", r.returncode != 0, r.stdout.strip())
 check("scan: missing path says so", "no such file" in (r.stdout + r.stderr), r.stdout + r.stderr)
 
+# 6b. a scan over zero Python files examined nothing, so it must SKIP (exit 3), never
+# report "0 finding(s)" and exit 0 — that is indistinguishable from a clean bill of health.
+with tempfile.TemporaryDirectory() as td:
+    (pathlib.Path(td) / "note.txt").write_text("nothing to scan\n")
+    r = run("scan", td)
+    check("scan: empty tree exits 3 (skip), not 0", r.returncode == 3, f"rc={r.returncode}")
+    check("scan: empty tree says nothing was examined",
+          "SKIP" in (r.stdout + r.stderr) and "nothing was examined" in (r.stdout + r.stderr),
+          (r.stdout + r.stderr)[-160:])
+
 r = run("freeze", "definitely-not-here.py")
 check("freeze: a missing file exits non-zero", r.returncode != 0, r.stdout.strip())
 check("freeze: a missing file names the path, no traceback",

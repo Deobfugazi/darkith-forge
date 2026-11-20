@@ -976,6 +976,13 @@ def main(argv=None):
         inst = None
         if A.installed is not None:
             inst = {x.strip() for x in A.installed.split(",") if x.strip()}
+        # SPI-32: a scan that examined nothing proves nothing. Reporting "0 finding(s)" over an
+        # empty or Python-free tree is indistinguishable from a clean bill of health, so it is
+        # a skip (exit 3), never a pass.
+        examined = py_files(A.path)
+        if not examined:
+            print(f"scan: SKIP — no .py file under {A.path}; nothing was examined", file=sys.stderr)
+            return 3
         F = scan(A.path, inst)
         if A.json:
             print(json.dumps(F, indent=2))

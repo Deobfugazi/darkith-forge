@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "f8e8f2a7d2680e6f5c2db156ed13fb37a201699be4b0998eea925a5f2fdbdcf0",
-  "board_sha256": "54ba6a1bb5e5c70bbfaee19fe088360dca7766a16ac43264182f24fe5763e5a2",
+  "board_sha256": "4347a5bde26f75984b2292b55c5928ff6edbcce1ba723e28674801f532ddee21",
   "laws": {
     "declared": [
       "MUST #20",
@@ -37,35 +37,35 @@
     {
       "target": "durable",
       "path": "/workspace/project/TASKS.md",
-      "status": "current",
-      "detail": ""
+      "status": "updated",
+      "detail": "8776->8680 B"
     },
     {
       "target": "session:f947e4b540c24d1c97125691f3d14707",
       "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
+      "status": "updated",
+      "detail": "mirror beside board"
     },
     {
       "target": "session:f947e4b540c24d1c97125691f3d14707",
       "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
+      "status": "updated",
+      "detail": "mirror beside board"
     },
     {
       "target": "worktree:fixwt",
       "path": "/tmp/fixwt/TASKS.md",
-      "status": "current",
-      "detail": ""
+      "status": "updated",
+      "detail": "3814->3720 B"
     },
     {
       "target": "worktree:pristine",
       "path": "/tmp/pristine/TASKS.md",
-      "status": "current",
-      "detail": ""
+      "status": "updated",
+      "detail": "3814->3720 B"
     }
   ],
-  "mode": "check",
+  "mode": "apply",
   "stale": 0,
   "problems": 0
 }

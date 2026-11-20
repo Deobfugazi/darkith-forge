@@ -82,7 +82,7 @@
     }
   ],
   "occupation": {
-    "gapHours": 0.009,
+    "gapHours": 0.012,
     "phase": "wake/active",
     "state": "engaged"
   },
