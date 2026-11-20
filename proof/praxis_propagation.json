@@ -1,7 +1,7 @@
 {
   "directive": "PRIORITY DIRECTIVE \u2014 CONVERGE THE INVARIANT SYNTHESIS (top priority, 2026-11-18)",
   "directive_sha256": "3e65559910d90091a46c959630456286d4b03e0c6c708855e59114618b917897",
-  "board_sha256": "0dc9703197714c8f53caff1be35be8fc14c876e1ddbc799b9b505e863cca7520",
+  "board_sha256": "9e96fe19b58a8b43d14ddd7f24e06e5e5c17b9effb10c9d548b92dfb81a0e940",
   "laws": {
     "declared": [
       "NEVER #19",
@@ -24,17 +24,17 @@
     {
       "target": "durable",
       "path": "/workspace/project/darkith-forge/TASKS.md",
-      "status": "updated",
-      "detail": "23658->26223 B"
+      "status": "current",
+      "detail": ""
     },
     {
       "target": "session:18393131094c4acfb45d943764549f23",
       "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
-      "status": "updated",
-      "detail": "mirror beside board"
+      "status": "current",
+      "detail": "mirror"
     }
   ],
-  "mode": "apply",
+  "mode": "check",
   "stale": 0,
   "problems": 0
 }

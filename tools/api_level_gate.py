@@ -36,8 +36,10 @@ COMMENT = re.compile(r"^\s*(//|/\*|\*)")
 def main(argv: list[str]) -> int:
     root = pathlib.Path(argv[1]) if len(argv) > 1 else pathlib.Path("app/src/main/java")
     if not root.is_dir():
-        print(f"api_level_gate: SKIP (no source tree at {root})")
-        return 0
+        # The source tree is TRACKED: its absence is a defect in the tree, not an
+        # absent runtime. Reporting SKIP here let a tree with no sources pass green.
+        print(f"api_level_gate: FAIL — no source tree at {root} (tracked, so its absence is a defect)")
+        return 1
 
     offenders = []
     scanned = 0

@@ -40,14 +40,19 @@ def py_sign(chart: str, axis: str, move: str) -> str:
 
 
 def main() -> int:
-    if not SAVF_PY.is_file() or not SAVF_HTML.is_file():
-        print("savf_parity_gate: SKIP — savf.py or savf.html missing")
-        return 0
+    # savf.html is TRACKED (its absence is a defect); savf.py is generated. Playwright is
+    # a runtime. Only the last two are skips — exit 3, never a silent exit 0.
+    if not SAVF_HTML.is_file():
+        print(f"savf_parity_gate: FAIL — {SAVF_HTML} is tracked but missing (broken tree)")
+        return 1
+    if not SAVF_PY.is_file():
+        print("savf_parity_gate: SKIP — savf.py not generated")
+        return 3
     try:
         from playwright.sync_api import sync_playwright
     except Exception:
         print("savf_parity_gate: SKIP — playwright not installed")
-        return 0
+        return 3
 
     base = {f"phi{i}": "pass" for i in range(11)}
     cases = {"all_pass": dict(base)}
@@ -72,7 +77,7 @@ def main() -> int:
             b = pw.chromium.launch(**kwargs)
         except Exception as e:
             print(f"savf_parity_gate: SKIP — no browser ({str(e)[:60]})")
-            return 0
+            return 3
         p = b.new_page()
         p.goto(SAVF_HTML.as_uri(), wait_until="load", timeout=60000)
         p.wait_for_timeout(800)

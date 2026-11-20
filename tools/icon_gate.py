@@ -22,8 +22,9 @@ MANIFEST = ROOT / "app/src/main/AndroidManifest.xml"
 
 def main() -> int:
     if not MANIFEST.is_file():
-        print("icon_gate: SKIP (no AndroidManifest.xml)")
-        return 0
+        # AndroidManifest.xml is TRACKED: if it is gone, the tree is broken, not the runtime.
+        print("icon_gate: FAIL — no AndroidManifest.xml (tracked, so its absence is a defect)")
+        return 1
     m = MANIFEST.read_text(encoding="utf-8", errors="replace")
 
     fails = []

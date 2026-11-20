@@ -149,9 +149,11 @@ def main(argv: list[str]) -> int:
         for g in DEFAULT_GLOBS:
             targets += sorted(ROOT.glob(g))
         if not targets:
+            # No corpus means the gate checked NOTHING. Exit 3 so it is reported as a
+            # skip; exiting 0 here was a vacuous pass that read as verification.
             print("blueprint_gate: SKIP — no blueprint corpus found "
                   f"({' '.join(DEFAULT_GLOBS)})")
-            return 0
+            return 3
 
     total = 0
     for p in targets:

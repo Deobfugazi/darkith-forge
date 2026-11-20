@@ -578,8 +578,9 @@ def main():
 
     g, why = run(args.shots)
     if g is None:
+        # Runtime absence, not a defect: exit 3 so CI reports SKIP, never a false PASS.
         print("SKIP: " + why)
-        return 0
+        return 3
 
     if g.fails:
         print("SAVF UI GATE: FAIL (%d/%d checks)" % (g.passed, g.total()))

@@ -66,8 +66,10 @@ def main() -> int:
             ROOT / "build" / "termkit_omega" / "app-signed.apk",
         ] if p.exists()]
     if not args:
+        # The APK is a build ARTIFACT, never tracked. Absent = not built yet = a real
+        # skip, signalled with exit 3 so CI reports SKIP instead of a false PASS.
         print("apk_gate: SKIP — no APK to check")
-        return 0
+        return 3
     failed = False
     for a in args:
         p = pathlib.Path(a)

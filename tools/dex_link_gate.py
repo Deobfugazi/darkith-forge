@@ -84,8 +84,9 @@ def main() -> int:
             ROOT / "build" / "termkit_omega" / "app-signed.apk",
         ] if p.exists()]
     if not args:
+        # Build artifact, not a tracked input: exit 3 so CI shows SKIP, never PASS.
         print("dex_link_gate: SKIP — no APK to check")
-        return 0
+        return 3
 
     failed = False
     for a in args:

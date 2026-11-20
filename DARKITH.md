@@ -1272,3 +1272,33 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   A GATEKEEPER THAT SKIPS HEADINGS IS A FILTER THAT REPORTS SUCCESS ON THE INPUT IT DECLINED
   TO READ. Skipping is not leniency; it is the stall wearing a green badge. The baseline is
   absolute: no heading, no closure, no PASS.
+
+  ---
+
+  §35 — THE LOOPHOLE CLOSURE LAW (2026-11-18)
+
+  ─── SPI-31 (A SKIP IS NEVER A PASS) ───
+  GATE: tools/ci.sh
+  A gate may end three ways, and they are not two: PASS (0), FAIL (1), SKIP (3). Collapsing
+  SKIP into PASS is the loophole that makes a tree look verified when nothing verified it.
+
+  MEASURED, THIS REPO: `run()` in `tools/ci.sh` treated every exit 0 as PASS, and twelve gates
+  printed `SKIP` and then returned 0. `blueprint_gate.py` skipped when it found no corpus at
+  all — a vacuous pass over zero inputs. `api_level_gate.py` skipped when the source tree was
+  ABSENT, and that tree is tracked, so the gate passed hardest exactly when the tree was most
+  broken. `prerunner_gate.py` merged "the tracked CLI is missing" (a defect) and "node is not
+  installed" (a runtime absence) into one exit-0 branch.
+
+  The rule that separates them: the absence of a TRACKED input is a FAIL, because the tree is
+  wrong; the absence of a BUILD ARTIFACT, a FETCHED vendor file, or a RUNTIME (node, browser,
+  playwright) is a SKIP, signalled with exit 3. CI now reports the skip count on the summary
+  line so a run that verified nothing says so out loud.
+
+  ─── SPI-32 (NO GATE MAY PASS OVER ZERO INPUTS) ───
+  GATE: tools/ci.sh
+  A gate that iterates a set and finds it empty has not verified anything. It must exit 3, not
+  0. "No files matched" is the loudest possible result and it was being read as the quietest.
+
+  Loopholes are not edge cases. A loophole is a rule that can be satisfied without doing the
+  work, and every one of them leaks an untracked signal: the tree drifts, no gate reports it,
+  and the next session spends its energy rediscovering what a gate was supposed to say.

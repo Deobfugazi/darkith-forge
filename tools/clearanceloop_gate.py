@@ -126,8 +126,9 @@ process.exit(fail ? 1 : 0);
 
 def main() -> int:
     if not ENGINE.is_file():
+        # vendor/ is fetched, not tracked: exit 3 so CI shows SKIP, never PASS.
         print("clearanceloop_gate: SKIP — vendor/clearanceloop.js missing")
-        return 0
+        return 3
 
     fails: list[str] = []
 

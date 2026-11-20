@@ -18,14 +18,25 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT" || exit 2
 
 FAILED=0
+SKIPPED=0
 run() {
   local name="$1"; shift
   printf '\n=== %s ===\n' "$name"
+  # A gate signals SKIP with exit 3. Anything else non-zero is a FAIL. The distinction
+  # matters because "the runtime is absent" and "the check ran and passed" are different
+  # facts, and collapsing them into one green line is how a tree ships looking verified
+  # when nothing verified it. A skip is never a PASS (SPI-15 / NEVER #13).
   if "$@"; then
     printf -- '--- %s: PASS\n' "$name"
   else
-    printf -- '--- %s: FAIL (exit %s)\n' "$name" "$?"
-    FAILED=1
+    local rc=$?
+    if [ "$rc" -eq 3 ]; then
+      printf -- '--- %s: SKIP (exit 3)\n' "$name"
+      SKIPPED=$((SKIPPED+1))
+    else
+      printf -- '--- %s: FAIL (exit %s)\n' "$name" "$rc"
+      FAILED=1
+    fi
   fi
 }
 
@@ -78,6 +89,11 @@ if have python3; then
     if [ -f tools/praxis_propagate.py ]; then
       run "praxis calibration (MUST #33)"  python3 tools/praxis_propagate.py --selftest
       run "praxis propagation gate"       python3 tools/praxis_propagate.py --check
+    fi
+    # Loophole gate (SPI-31/SPI-32): a gate that can pass without verifying is a gate that
+    # lies. Catches skip-as-pass (SKIP then exit 0) and vacuous pass (empty input set, exit 0).
+    if [ -f tools/loophole_gate.py ]; then
+      run "loophole closure (SPI-31/32)"  python3 tools/loophole_gate.py
     fi
     # Law gate: SPI-15 — a law that is not an executable gate is a note. Enforces the
     # prime directive (DARKITH.md §30) and that every declared NEVER/MUST/SPI names a
@@ -564,7 +580,7 @@ else
   FAILED=1
 fi
 
-printf '\nCI: %s\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)"
+printf '\nCI: %s (%d skipped)\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)" "$SKIPPED"
 exit "$FAILED"
 
 

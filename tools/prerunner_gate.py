@@ -58,13 +58,19 @@ def run_cli(node: str, args: list[str], env: dict) -> tuple[int, dict | None]:
 
 
 def main() -> int:
-    if not CLI.is_file() or not ENGINE.is_file():
-        print("prerunner_gate: SKIP — tools/prerunner-cli.js or vendor/prerunner.js missing")
-        return 0
+    # The CLI is TRACKED; the engine is fetched into vendor/. A missing tracked file is a
+    # broken tree, a missing fetched file is a skip, and a missing node is a skip. Mixing
+    # them into one exit-0 branch let a tree with no prerunner at all report green.
+    if not CLI.is_file():
+        print(f"prerunner_gate: FAIL — {CLI} is tracked but missing (broken tree)")
+        return 1
+    if not ENGINE.is_file():
+        print("prerunner_gate: SKIP — vendor/prerunner.js not fetched")
+        return 3
     node = shutil.which("node")
     if not node:
         print("prerunner_gate: SKIP — node not installed")
-        return 0
+        return 3
 
     fails: list[str] = []
 

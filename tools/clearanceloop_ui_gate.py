@@ -425,8 +425,9 @@ def main():
 
     g, why = run(args.shots)
     if g is None:
+        # Runtime absence (no browser/jsdom): exit 3 so CI reports SKIP, never PASS.
         print("clearanceloop_ui_gate: SKIP -- " + why)
-        return 0
+        return 3
 
     if g.fails:
         print("clearanceloop_ui_gate: FAIL -- " + str(len(g.fails)) + "/" + str(g.total()) + " checks failed")
