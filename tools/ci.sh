@@ -141,6 +141,12 @@ if have python3; then
     if [ -f tools/unit_ledger_gate.py ]; then
       run "unit ledger (SPI-37)"      python3 tools/unit_ledger_gate.py .
     fi
+    # SPI-37 / SPI-38: the allocator's faults were not textual — the code was well-formed,
+    # compiled clean, and read like a textbook PID. Only RUNNING it showed it emitted a
+    # constant. This gate compiles and executes the real law; a regex could not see it.
+    if [ -f tools/controller_gate.py ]; then
+      run "controller behaviour (SPI-38)" python3 tools/controller_gate.py
+    fi
     for g in circadian_gate download_gate stall_gate synchrony_gate synchrony_pulse convergence_gate; do
       if [ -f "tools/$g.py" ]; then
         run "$g"                          python3 "tools/$g.py"

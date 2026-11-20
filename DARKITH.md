@@ -1460,3 +1460,33 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   parameter (bytes). kotlinc compiled it clean — 0 errors, 58 files. The type system could
   not see it; only the dimensional reading could. Pole B was therefore never measured and
   `rendererShare` was always 1.0.
+
+
+---
+
+─── SPI-38 (A LAW MUST BE RUN, NOT READ) ───
+  GATE: tools/controller_gate.py
+  A control law is not verified by reading its formulas, and not by its file compiling. The
+  AutophagicAllocator was well-formed Kotlin, compiled clean in 58 files, and read like a
+  textbook PID. Run, it emitted a CONSTANT: it added a byte error to a vertex count,
+  saturated on the first tick, and anti-windup then reset the integral every tick. Every
+  generated gate in this tree is a text-level regex and this session proved they can be
+  fooled by a comment. A law whose output is a function of state cannot be judged by its
+  text at all — it must be executed against known inputs and its output compared to what
+  the law claims.
+
+  Four faults, one class: a quantity or a gain applied in the wrong basis.
+    1. UNIT      error = bytes - vertices, added into a vertex state.
+    2. GAIN      D term divided by dt, re-scaling a per-second gain by 1/dt (60x at 60 Hz),
+                 which drove full-span oscillation.
+    3. SIGN      memPressure = error/budget let a POSITIVE headroom penalise the scale, so
+                 it ratcheted to its 0.5 floor at idle.
+    4. STRUCTURE sK was a bounded MULTIPLICATIVE integrator: a state in [0.5,1.0] multiplied
+                 by a factor below 1 can only descend, so it could never recover.
+
+  The gate asserts behaviour, not shape: vK must settle within 2% of the ceiling that
+  measured free RAM can pay for, the resolution scale must return to >= 0.99 at idle, and
+  bounds, finiteness and concurrency must hold across 4000 adversarial ticks including a
+  stalled clock. Proven by falsification: the original law FAILS at 258% overshoot with the
+  scale pinned at 0.500; the corrected law passes at 0.08% error. A gate that cannot run
+  exits 3 and judges nothing — never a silent pass.
