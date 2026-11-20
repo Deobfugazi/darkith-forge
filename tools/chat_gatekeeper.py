@@ -290,6 +290,18 @@ def render_orders(conv: str, orders: list[dict], occ: dict) -> str:
     return "\n".join(L)
 
 
+def _assemble(head: str, block: str, tail: str) -> str:
+    """Join the three regions, dropping the empty ones.
+
+    An unconditional separator in front of a block that has no head prepends two
+    newlines on every pass, so the render stops being idempotent (MUST #18).
+    Trailing `\\r` is stripped too: a CRLF board would otherwise keep its carriage
+    return on the first pass and lose it on the second.
+    """
+    parts = [p for p in (head.rstrip("\r\n"), block, tail.strip("\r\n")) if p]
+    return "\n\n".join(parts) + "\n"
+
+
 def merge(board_text: str, block: str) -> str:
     """Replace the gatekeeper block; insert before the first `## ★` if absent.
 
@@ -312,16 +324,11 @@ def merge(board_text: str, block: str) -> str:
         # was rewritten each pass, so CI never settled.
         m = re.search(r"^##\s*★", rest, re.MULTILINE)
         cut = m.start() if m else len(rest)
-        head = rest[:cut].rstrip("\n")
-        tail = rest[cut:].rstrip("\n")
-        # Drop empty parts: a block at the very top has no head, and an empty part would
-        # otherwise contribute its own separator and shift the file by two newlines a pass.
-        parts = [x for x in (head, block, tail) if x]
-        return "\n\n".join(parts) + "\n"
+        return _assemble(rest[:cut], block, rest[cut:])
     m = re.search(r"^##\s*★", board_text, re.MULTILINE)
     if m:
-        return board_text[: m.start()] + block + "\n\n" + board_text[m.start():]
-    return board_text.rstrip() + "\n\n" + block + "\n"
+        return _assemble(board_text[: m.start()], block, board_text[m.start():])
+    return _assemble(board_text, block, "")
 
 
 def block_of(board_text: str) -> str:
@@ -521,6 +528,17 @@ def selftest() -> int:
     chk("merge preserves board title", merged.splitlines()[0] == "# TASKS — the durable board")
     chk("replacement preserves board title", merged2.splitlines()[0] == "# TASKS — the durable board")
     chk("merge replaces idempotently", merged.count(BEGIN) == 1 and merged == merged2)
+
+    # A single pass cannot tell a stable seam from a slow leak, so assert a third pass.
+    # Empty and CRLF boards are the shapes where a separator still crept in per run.
+    for label, src in (
+        ("empty board", ""),
+        ("block first", board),
+        ("CRLF board", "# T\r\n\r\n## ★ B\r\nbody\r\n"),
+        ("no heading", "just prose\n"),
+    ):
+        chk(f"merge is a fixed point ({label})", merge(merge(merge(src, b1), b1), b1) == merge(src, b1))
+    chk("merge keeps the title", merge("# TITLE\n\nprose\n\n## ★ OLD\n\nbody\n", b1).startswith("# TITLE"))
 
     # occupation follows the pulse, not a guess
     chk("rest phase detected", occupation({"gapHours": 9.0, "currentPhase": "rest/digest/restore"})["state"] == "returning-from-rest")
