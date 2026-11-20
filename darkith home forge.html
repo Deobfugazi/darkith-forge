@@ -14220,6 +14220,18 @@ function dict(seed) {
     return scanSource(file, dec.text, opts);
   }
 
+  /* True when the engine ran out of call stack rather than the source being
+     wrong.  Chromium and Safari: RangeError "Maximum call stack size exceeded";
+     Firefox: InternalError "too much recursion"; a bare RangeError with no
+     message still counts, because nothing else in this parser raises one. */
+  function isStackOverflow(e) {
+    if (!e) return false;
+    var name = e.name || (e.constructor && e.constructor.name) || "";
+    var msg = String(e.message || e);
+    if (/call stack|too much recursion|stack overflow/i.test(msg)) return true;
+    return name === "RangeError" || name === "InternalError";
+  }
+
   /* Rules that need no tree, for a source whose AST could not be built.  The
      token rules and the import roots are read directly, so a too-deep file is
      never reported cleaner than the same file one character shorter.  Mirrors
@@ -14308,13 +14320,16 @@ function dict(seed) {
       tree = parsed.tree; tokens = parsed.tokens;
     } catch (e) {
       /* A JS engine stack limit is not a verdict about the source.  The parser
-         recurses, so a long enough chain ("not " repeated 20000 times) raises
-         RangeError: Maximum call stack size exceeded.  CPython reaches its own
-         guard on the same input.  Reporting that as PARSE would be a
-         high-severity accusation that turns the verdict into LIED and convicts
-         correct code, so it is reported as an unattested medium instead, and the
-         rules that need no tree still run -- exactly as the CLI does. */
-      if (e && (e.name === "RangeError" || /call stack/i.test(String(e.message)))) {
+         recurses, so a long enough chain ("not " repeated 20000 times) runs out
+         of stack.  CPython reaches its own guard on the same input.  Reporting
+         that as PARSE would be a high-severity accusation that turns the verdict
+         into LIED and convicts correct code, so it is reported as an unattested
+         medium instead, and the rules that need no tree still run -- exactly as
+         the CLI does.
+         Each engine names this its own way, so all three are recognised:
+         Chromium/Safari raise RangeError "Maximum call stack size exceeded",
+         Firefox raises InternalError "too much recursion". */
+      if (isStackOverflow(e)) {
         var tokRes = global.PyLex.tokenize(src, { resumable: true });
         return tokenOnlyFindings(tokRes.toks || [], file, isTestFile(file), opts)
           .concat([finding("PARSE_DEPTH", 1, file, 0,
@@ -18578,6 +18593,18 @@ function dict(seed) {
     return scanSource(file, dec.text, opts);
   }
 
+  /* True when the engine ran out of call stack rather than the source being
+     wrong.  Chromium and Safari: RangeError "Maximum call stack size exceeded";
+     Firefox: InternalError "too much recursion"; a bare RangeError with no
+     message still counts, because nothing else in this parser raises one. */
+  function isStackOverflow(e) {
+    if (!e) return false;
+    var name = e.name || (e.constructor && e.constructor.name) || "";
+    var msg = String(e.message || e);
+    if (/call stack|too much recursion|stack overflow/i.test(msg)) return true;
+    return name === "RangeError" || name === "InternalError";
+  }
+
   /* Rules that need no tree, for a source whose AST could not be built.  The
      token rules and the import roots are read directly, so a too-deep file is
      never reported cleaner than the same file one character shorter.  Mirrors
@@ -18666,13 +18693,16 @@ function dict(seed) {
       tree = parsed.tree; tokens = parsed.tokens;
     } catch (e) {
       /* A JS engine stack limit is not a verdict about the source.  The parser
-         recurses, so a long enough chain ("not " repeated 20000 times) raises
-         RangeError: Maximum call stack size exceeded.  CPython reaches its own
-         guard on the same input.  Reporting that as PARSE would be a
-         high-severity accusation that turns the verdict into LIED and convicts
-         correct code, so it is reported as an unattested medium instead, and the
-         rules that need no tree still run -- exactly as the CLI does. */
-      if (e && (e.name === "RangeError" || /call stack/i.test(String(e.message)))) {
+         recurses, so a long enough chain ("not " repeated 20000 times) runs out
+         of stack.  CPython reaches its own guard on the same input.  Reporting
+         that as PARSE would be a high-severity accusation that turns the verdict
+         into LIED and convicts correct code, so it is reported as an unattested
+         medium instead, and the rules that need no tree still run -- exactly as
+         the CLI does.
+         Each engine names this its own way, so all three are recognised:
+         Chromium/Safari raise RangeError "Maximum call stack size exceeded",
+         Firefox raises InternalError "too much recursion". */
+      if (isStackOverflow(e)) {
         var tokRes = global.PyLex.tokenize(src, { resumable: true });
         return tokenOnlyFindings(tokRes.toks || [], file, isTestFile(file), opts)
           .concat([finding("PARSE_DEPTH", 1, file, 0,

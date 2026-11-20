@@ -572,6 +572,21 @@ def run(shots_dir):
             }""")
             g.ck(law["rev"], tag + " tau reversal identity")
             g.ck(law["seal"] and law["ok"] and not law["tamper"], tag + " freeze/tamper law", json.dumps(law))
+
+            # Each engine names its stack limit differently (Chromium/Safari
+            # RangeError, Firefox InternalError).  None of them may be read as a
+            # verdict on the source: a deep file must never come back PARSE/high.
+            deep = page.evaluate("""() => {
+                const src = 'import notreal_pkg\\n# TODO: deep\\nx = ' + 'not '.repeat(20000) + '1\\n';
+                const f = SavfScan.scanSource('deep.py', src,
+                    {stdlib:{}, local:{}, stdattrs:{}, installed:[]});
+                return {rules: f.map(x => x.rule), sev: f.map(x => x.rule + ':' + x.sev)};
+            }""")
+            g.ck("PARSE" not in deep["rules"], tag + " deep source is not PARSE", str(deep["rules"]))
+            g.ck("PHANTOM_IMPORT" in deep["rules"] and "MARKER" in deep["rules"],
+                 tag + " deep source still reports token rules", str(deep["rules"]))
+            g.ck(not any(s == "PARSE:high" for s in deep["sev"]),
+                 tag + " no high PARSE on deep source", str(deep["sev"]))
             page.click('nav button[data-tab="self"]')
             page.wait_for_timeout(300)
             page.fill("#selfN", "300")
