@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "625364507c849f078c681e77267eee09fb4daac47743c56aba708e6fe462452a",
-  "board_sha256": "35d3c0554b609d315480b7374dcbcddc97f8ed851d4f7775f4688e2fc4e27ef1",
+  "directive_sha256": "f8e8f2a7d2680e6f5c2db156ed13fb37a201699be4b0998eea925a5f2fdbdcf0",
+  "board_sha256": "fc98638f739be6381cb875e7d0789d630a7bdc946e96f599cfb3d8deeb41ca9f",
   "laws": {
     "declared": [
       "MUST #20",
@@ -14,8 +14,10 @@
       "MUST #33",
       "MUST #35",
       "MUST #36",
+      "MUST #11",
       "NEVER #19",
       "NEVER #21",
+      "NEVER #18",
       "SPI-15",
       "SPI-2",
       "SPI-25",
@@ -28,31 +30,42 @@
     "derived_advisory": [
       "MUST #38",
       "MUST #40",
-      "SPI-11",
-      "SPI-16",
-      "SPI-19",
-      "SPI-29",
-      "SPI-30",
-      "SPI-32",
-      "SPI-33",
-      "SPI-34"
+      "SPI-17"
     ]
   },
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/darkith-forge/TASKS.md",
-      "status": "updated",
-      "detail": "15592->15442 B"
+      "path": "/workspace/project/TASKS.md",
+      "status": "current",
+      "detail": ""
     },
     {
-      "target": "session:18393131094c4acfb45d943764549f23",
-      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
-      "status": "updated",
-      "detail": "mirror beside board"
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "worktree:fixwt",
+      "path": "/tmp/fixwt/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "worktree:pristine",
+      "path": "/tmp/pristine/TASKS.md",
+      "status": "current",
+      "detail": ""
     }
   ],
-  "mode": "apply",
+  "mode": "check",
   "stale": 0,
   "problems": 0
 }
