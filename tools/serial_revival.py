@@ -426,17 +426,33 @@ def route_failure(stage: str, defect_id: str, root_cause_id: str, summary: str,
 
 def selftest() -> int:
     checks = []
+
     def check(label: str, condition: bool) -> None:
         checks.append((label, bool(condition)))
+
+    def rejects(call) -> bool:
+        try:
+            call()
+        except ValueError:
+            return True
+        return False
+
     check("four-state vocabulary is exact", STATES == {"PASS", "FAIL", "SKIP", "INACTIVE"})
     check("sixteen unique serial stages", len(STAGES) == 16 and len({s[0] for s in STAGES}) == 16)
-    check("content hash deterministic", digest({"b": 2, "a": 1}) == digest({"a": 1, "b": 2}))
-    check("timestamp excluded from identity", digest({"stage": "S1"}) == digest({"stage": "S1"}))
-    check("SKIP is not PASS", "SKIP" != "PASS")
-    check("generated paths rejected by repair policy", any("dist/file.apk".startswith(r + "/") for r in GENERATED_ROOTS))
-    check("low-risk auto-approval is allowlisted", "test-only" in LOW_RISK_CLASSES and "source-mutation" not in LOW_RISK_CLASSES)
-    check("failure routing distinguishes same/new cause", ("REOPEN_ORIGINAL" != "LINK_NEW_DEFECT"))
-    check("stage contract includes verify-local and verify-blast", STAGES[11][0] == "S12" and STAGES[12][0] == "S13")
+    check("content hash deterministic", digest({"b": 2, "a": [1]}) == digest({"a": [1], "b": 2}))
+    check("unknown state rejected", rejects(lambda: verify_states({"node_states": {"n": "SKIPPED"}})))
+    check("generated paths rejected", is_generated_path("dist/file.apk"))
+    check("baseline-generated paths rejected", is_generated_path("docs/INDEX.md", {"docs/INDEX.md"}))
+    check("authorization scope enforced", path_in_scope("tools/gate.py", ["tools"]) and
+          not path_in_scope("docs/gate.py", ["tools"]))
+    check("low-risk auto-approval is allowlisted",
+          "test-only" in LOW_RISK_CLASSES and "source-mutation" not in LOW_RISK_CLASSES)
+    unhealthy = {"clean": True, "unexplained_drift": [], "unchecked_nodes": [],
+                 "mesh_health": {"node-a": "SKIP"}, "predecessor_receipt_id": "prior"}
+    check("SKIP cannot satisfy reconciliation",
+          rejects(lambda: validate_stage("S14", unhealthy, 1, {"receipt_id": "prior"})))
+    check("stage contract includes local and blast verification",
+          STAGES[11][0] == "S12" and STAGES[12][0] == "S13")
     failed = [name for name, ok in checks if not ok]
     for name, ok in checks:
         print(f"  [{'PASS' if ok else 'FAIL'}] {name}")
