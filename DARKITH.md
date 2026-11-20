@@ -352,19 +352,70 @@ W-035 (The Logical Inversion): The AI forced the "raw chain" (no Gradle) on code
 Insight: The raw chain and the source code are physically incompatible. You must either (A) use the raw chain and rewrite the code to raw `android.*`, or (B) use Gradle to resolve the AndroidX dependencies. There is no middle path.
 
 ─── THE SOVEREIGN SANDBOX PROTOCOL (SPI-1 to SPI-11) ───
-These are the physical laws extracted from the failures above.
+  These are the physical laws extracted from the failures above. Recast as headed laws with
+  real gates: they were declared as a bare prose list, and the law gate could not see the
+  hyphenated spelling, so eleven ungated laws reported as zero unheaded.
 
-SPI-1: Gradle is forbidden on < 2GB RAM. It deadlocks.
-SPI-2: Before any write, print the exact bytes to be changed. If you cannot see them, HALT.
-SPI-3: Isolate the entire source tree before any modification. A partial isolation leaves the rest vulnerable.
-SPI-4: Log to disk and read from disk. The terminal screen is a liar.
-SPI-5: Before compiling, check for `import androidx`. If found, the raw chain is blocked.
-SPI-6: Read the whole log file, not just the first few lines.
-SPI-7: Check `MemAvailable` inside the loop. If < 600MB, kill the process.
-SPI-8: The home is `/sdcard/Darkith/`, not Termux.
-SPI-9: Progress is `(Physical_Output / Total_Target) * 100`. Timers are hallucinations.
-SPI-10: Line numbers are unstable. Match the exact byte pattern (e.g., `* ` at line start).
-SPI-11: Do not hardcode Gradle cache paths. Discover them with `find`.
+  ─── SPI-1 (NO GRADLE) ───
+  GATE: tools/directive_core.py
+  PREDICATE: absent build.gradle
+  Gradle is forbidden on < 2GB RAM. It deadlocks. Mechanically: no Gradle build file may
+  exist in the tree; the raw chain is the only build path.
+
+  ─── SPI-2 (READ THE BYTES FIRST) ───
+  GATE: tools/source_inspector.py
+  Before any write, print the exact bytes to be changed. If you cannot see them, HALT. The
+  inspector proves this on source bytes; a charge without bytes is a guess.
+
+  ─── SPI-3 (ISOLATE BEFORE MODIFYING) ───
+  GATE: tools/convergence_gate.py
+  Isolate the entire source tree before any modification. A partial isolation leaves the
+  rest vulnerable. Convergence proves the tree is one known tree (git index == independent
+  blob hash) before anything is written.
+
+  ─── SPI-4 (LOG TO DISK, READ FROM DISK) ───
+  GATE: tools/stall_gate.py
+  Log to disk and read from disk. The terminal screen is a liar. Gates read artifacts from
+  disk, never from a live pipe, so evidence survives the session that produced it.
+
+  ─── SPI-5 (NO ANDROIDX ON THE RAW CHAIN) ───
+  GATE: tools/directive_core.py
+  PREDICATE: forbids app/src/**/*.kt :: ^\s*import\s+androidx
+  Before compiling, check for `import androidx`. If found, the raw chain is blocked, because
+  `android.jar` does not contain it. Measured this session: 0 files import androidx.
+
+  ─── SPI-6 (READ THE WHOLE LOG) ───
+  GATE: tools/source_inspector.py
+  Read the whole log file, not just the first few lines. A first-error read hides every
+  later defect behind it; the inspector enumerates all findings before sentencing.
+
+  ─── SPI-7 (MEMORY FLOOR) ───
+  GATE: tools/stall_gate.py
+  Check `MemAvailable` inside the loop. If < 600MB, kill the process. A build that runs into
+  the ZRAM wall does not fail loudly, it hangs, which is why this is a stall gate.
+
+  ─── SPI-8 (THE HOME IS THE SD CARD) ───
+  GATE: tools/directive_core.py
+  PREDICATE: implies app/src/**/*Bridge.kt :: fun fileRoots :: getExternalStorageDirectory
+  The home is `/sdcard/Darkith/`, not Termux. Every bridge that publishes a file root
+  (`fun fileRoots`) must derive it from external storage (`getExternalStorageDirectory`),
+  which is the SD card, never from the Termux home.
+
+  ─── SPI-9 (PROGRESS IS PHYSICAL) ───
+  GATE: tools/stall_clock.py
+  Progress is `(Physical_Output / Total_Target) * 100`. Timers are hallucinations. The clock
+  reads bytes on disk, not elapsed seconds.
+
+  ─── SPI-10 (MATCH BYTES, NOT LINE NUMBERS) ───
+  GATE: tools/kt_comment_scan.py
+  Line numbers are unstable. Match the exact byte pattern (e.g., `* ` at line start). This
+  law was itself vindicated: the 19-file briefing's line numbers were wrong for
+  HomekeeperBridge.kt, where line 282 is a `}` inside a catch block, not a comment opener.
+
+  ─── SPI-11 (DISCOVER, DO NOT HARDCODE) ───
+  GATE: tools/directive_core.py
+  PREDICATE: forbids tools/*.py :: /data/data/com\.termux/files/home/\.gradle
+  Do not hardcode Gradle cache paths. Discover them with `find`.
 
 ─── THE PARAMETRIC EQUATION (Roofline Model) ───
 T_exec = max( W_compute / (f_CPU * η), S_memory / BW_RAM, B_disk / BW_IO )
@@ -614,6 +665,7 @@ NEVER present work as delivered without running the delivery gate and listing
 every loophole's status. "Delivered" is a gate result, not an assertion.
 
 ─── MUST #14 (THE GATE IS THE DELIVERY) ───
+  GATE: tools/delivery_gate.sh
 Every delivery runs `tools/delivery_gate.sh`; a non-zero exit forbids the word
 "delivered". New failure classes are added to the registry BEFORE the next
 delivery — a loophole with no check is a reopened loophole (SPI-15).
@@ -700,14 +752,17 @@ DARKITH.md (version + reconciliation + deficits + laws). It is not forked.
 
 ─── MUST #17 (GENERATED COPIES) ───
 Every served or zipped copy of the canonical doc is GENERATED by
+PREDICATE: runs python3 tools/pack_delivery.py --check
 tools/pack_delivery.py from the single root source. Never hand-edit a copy.
 
 ─── MUST #18 (IDEMPOTENT PACKAGING) ───
 tools/pack_delivery.py is idempotent: no wall-clock, no self-hash, deterministic
+PREDICATE: runs python3 tools/pack_delivery.py --check
 zip timestamps. Re-running it with unchanged inputs yields byte-identical output.
 
 ─── SPI-18 (CONSOLIDATION IS IDEMPOTENT) ───
 tools/consolidate_docs.sh collapses overlapping docs into the one canonical record,
+PREDICATE: runs bash tools/consolidate_docs.sh --check
 and running it twice is a no-op. It refuses to delete unless the canonical doc
 already contains every law it would replace.
 

@@ -42,7 +42,12 @@ NOTE = "[NOTE: not yet gated]"
 
 # A law declaration in prose: the id at the start of a line, followed by "(" or ":".
 # Deliberately anchored to line start so a passing mention mid-sentence is not a declaration.
-INLINE = re.compile(r"^[ \t]*(?:[-*][ \t]+)?((?:NEVER|MUST|SPI)[ \t]*#?\d+)[ \t]*[(:]")
+# A law declared as prose with no heading. The separator may be SPACE, HYPHEN, or `#`:
+# `SPI-1:`, `SPI 1:`, `SPI#1:`, `MUST-12:`. The first version required whitespace, so
+# it was blind to the hyphenated spelling the document actually uses — and reported
+# "zero unheaded" over eleven ungated laws (SPI-1..SPI-11). A detector that cannot see
+# the common form of the thing it detects is the same defect as a gate that cannot fail.
+INLINE = re.compile(r"^[ \t]*(?:[-*][ \t]+)?((?:NEVER|MUST|SPI)[ \t]*[-#]?[ \t]*\d+)[ \t]*[(:]")
 
 
 def law_id(tok: str) -> str:

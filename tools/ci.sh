@@ -106,6 +106,19 @@ if have python3; then
     if [ -f tools/law_gate.py ]; then
       run "law gate (SPI-15/prime)"       python3 tools/law_gate.py
     fi
+      # Portable directive engine: same law set, read in ANY dialect (box-drawing, markdown,
+      # bullet, blockquote, source comment) with ANY verb spelling (MUST/NEVER/SPI/RULE/LAW/
+      # INVARIANT/CONSTRAINT/POLICY). Couples every law to a gate that can fail and regenerates
+      # missing gates from their PREDICATE. Runs beside law_gate, not instead of it: two
+      # independent readers disagreeing is information, and the branded reader was blind to
+      # `SPI-1:`-style declarations for as long as it existed.
+      if [ -f tools/directive_core.py ]; then
+        run "directive engine (portable)"   python3 tools/directive_core.py --check
+        for g in tools/generated/gate_*.py; do
+          [ -f "$g" ] || continue
+          run "generated $(basename "$g" .py)" python3 "$g"
+        done
+      fi
     # MUST #15 / #16 / NEVER #17 / §31 synchrony — the laws that were only notes until now.
     for g in circadian_gate download_gate stall_gate synchrony_gate synchrony_pulse convergence_gate; do
       if [ -f "tools/$g.py" ]; then
