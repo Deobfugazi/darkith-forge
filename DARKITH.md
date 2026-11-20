@@ -1392,3 +1392,38 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   pass, a generator standing in for a checker, and a trial that cannot fire: five faces of one
   defect. Each lets a rule be satisfied without the work, and each leaks the same untracked
   signal — the tree drifts and nothing says so.
+
+─── SPI-35 (A DETECTOR MUST SEE THE COMMON FORM) ───
+  GATE: tools/directive_core.py
+  PREDICATE: runs python3 tools/directive_core.py --check
+  A detector must recognise the spelling the tree actually uses. `law_gate` required
+  whitespace between verb and number, so `SPI-1:` and `MUST-12:` were invisible to it and
+  eleven ungated laws were reported as zero unheaded. A detector blind to the common form of
+  the thing it detects is a gate that cannot fail, wearing a different coat: it satisfies its
+  own rule without doing its work.
+
+  The corollary is that two readers are better than one. `directive_core.py` reads the same
+  laws in any dialect — box-drawing, markdown, bullet, blockquote, source comment — with any
+  verb spelling (MUST/NEVER/SPI/RULE/LAW/INVARIANT/CONSTRAINT/POLICY). It runs beside
+  `law_gate`, not instead of it. Where two independent readers disagree, the disagreement is
+  the finding.
+
+─── SPI-36 (A LAW CARRIES ITS OWN ENFORCEMENT) ───
+  GATE: tools/directive_core.py
+  PREDICATE: runs python3 tools/directive_core.py --check
+  A law declared with a `PREDICATE:` line is coupled, and its gate is GENERATED from the
+  predicate rather than trusted to exist. Healing is idempotent: same law, same bytes, no
+  diff. This closes the gap SPI-15 leaves open — SPI-15 says a law without a gate is a note,
+  but it does not say what to do about one. The answer is not to write a gate by hand and
+  hope it stays honest; it is to write the law's meaning mechanically and let the engine emit
+  the gate, so the two cannot drift.
+
+  A generated gate is born honest: exit 0 PASS, exit 1 FAIL, exit 3 SKIP, FAIL on an empty
+  corpus, and it states only the exits it can actually produce. Seven predicate kinds:
+  exists, absent, unique, contains, forbids, implies, runs. `implies` exists because
+  `contains` is a universal quantifier and cannot state SPI-8's shape — if a bridge declares
+  a file root, then it derives that root from external storage — and a law that cannot be
+  written is a law that gets written wrong.
+
+  Measured this session: 70 laws, 70 coupled, 7 generated gates, SPI-8 proven PASS→FAIL→PASS
+  by stripping the SD root from HomekeeperBridge and restoring it.

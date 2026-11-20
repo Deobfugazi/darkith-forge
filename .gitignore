@@ -1,6 +1,11 @@
 # ---- build / test noise -------------------------------------------------
 __pycache__/
 *.pyc
+# Runtime evidence, not source. The receipt ledger is append-only and hash-chained, so it
+# accumulates one entry per gate per run; committing it would make every CI run produce a
+# diff, and the drift gate would then fail forever on its own audit trail. The chain is
+# verified locally (tools/ci_receipts.py --verify) and regenerates from a fresh run.
+proof/ci_receipts.db
 .forge_work/
 .tools/
 *.log

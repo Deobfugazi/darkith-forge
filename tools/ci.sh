@@ -19,6 +19,20 @@ cd "$ROOT" || exit 2
 
 FAILED=0
 SKIPPED=0
+
+# Log to disk (SPI-4). The terminal is a liar: it scrolls, it truncates, and a run that is
+# not on disk cannot be re-read, cannot be receipted, and cannot be audited later. Every line
+# this script prints is also appended to CI_LOG, and the receipt emitter parses that file
+# rather than a remembered summary.
+CI_LOG="${CI_LOG:-$ROOT/proof/ci_last.log}"
+mkdir -p "$(dirname "$CI_LOG")" 2>/dev/null || true
+: > "$CI_LOG" 2>/dev/null || true
+# Tee the whole run: stdout keeps its normal shape for a human, the file keeps it for a
+# machine. `exec` with process substitution keeps the exit status of this script intact.
+if [ -w "$(dirname "$CI_LOG")" ]; then
+  exec > >(tee -a "$CI_LOG") 2>&1
+fi
+
 run() {
   local name="$1"; shift
   printf '\n=== %s ===\n' "$name"
@@ -596,6 +610,19 @@ if [ -f 'build&install.sh' ]; then
 else
   printf -- '--- build&install.sh entrypoint: FAIL (missing — the one-shot is the deliverable)\n'
   FAILED=1
+fi
+
+# Bind this run to the hash-chained ledger. The terminal forgets; the ledger does not.
+# Each receipt attests "this named program, over these bytes, returned this verdict", so a
+# later claim of green can be checked against evidence instead of trusted. Emitting must
+# never change the CI verdict: a receipt failure is reported, not promoted to a build
+# failure, because a broken ledger is a bookkeeping fault, not a broken tree.
+# The run's own stdout is the source of truth for what each gate reported, so re-run the
+# parse against a log this script wrote itself rather than a variable that may not exist.
+if [ -f tools/ci_receipts.py ] && [ -f "${CI_LOG:-}" ]; then
+  printf '\n=== ci receipts ===\n'
+  python3 tools/ci_receipts.py --emit < "$CI_LOG" || true
+  python3 tools/ci_receipts.py --verify || true
 fi
 
 printf '\nCI: %s (%d skipped)\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)" "$SKIPPED"

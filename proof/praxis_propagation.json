@@ -1,7 +1,7 @@
 {
   "directive": "PRIORITY DIRECTIVE \u2014 CONVERGE THE INVARIANT SYNTHESIS (top priority, 2026-11-18)",
   "directive_sha256": "3e65559910d90091a46c959630456286d4b03e0c6c708855e59114618b917897",
-  "board_sha256": "9e96fe19b58a8b43d14ddd7f24e06e5e5c17b9effb10c9d548b92dfb81a0e940",
+  "board_sha256": "6bc8dcaec3dbb57dbb8a01e916941193b94f105f685b7487a310c9c8d09195c1",
   "laws": {
     "declared": [
       "NEVER #19",
@@ -17,7 +17,8 @@
     "derived_advisory": [
       "MUST #35",
       "MUST #37",
-      "SPI-15"
+      "SPI-15",
+      "SPI-36"
     ]
   },
   "targets": [

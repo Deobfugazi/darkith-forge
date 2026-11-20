@@ -41,7 +41,7 @@
 | `SPI-29` | THE ORDER TRAVELS WITH THE BOARD |
 | `SPI-30` | NO HEADING, NO CLOSURE |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #35`, `MUST #37`, `SPI-15`
+**Also matched by term (derived, advisory — not an order):** `MUST #35`, `MUST #37`, `SPI-15`, `SPI-36`
 
 <!-- PRAXIS:END -->
 
