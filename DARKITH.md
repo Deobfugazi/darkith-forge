@@ -1675,7 +1675,13 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   red on every PR regardless of truth. The contract now recognises the checkout by its
   parents: a map whose head is a parent of it is absorbed iff the merged structure
   (nodes, edges, births, masses) equals the map; any drift is still stale, named to the
-  field (`build/gen_holostream.py compare()`, selftest regress 10/11).
+  field (`build/gen_holostream.py compare()`, selftest regress 10/11). And the lineage
+  itself is part of the CI contract: the GitHub adapter's default depth-1 checkout cut
+  the ancestry objects off, so the ancestor probe that proves the absorb could not run —
+  every red was manufactured by evidence the checkout had been told not to gather. The
+  adapter now fetches full lineage (`fetch-depth: 0`), and the gate, should lineage ever
+  be shallow again, degrades honestly to content-only (structure equality) instead of
+  calling a missing object `staleness`.
 
 ---
 

@@ -329,8 +329,7 @@ def compare(emb: dict, fresh: dict) -> tuple[bool, str]:
     # checked only when head is exact.
     ancestor = False
     if emb_head and fresh_head:
-        r = subprocess.run(["git", "merge-base", "--is-ancestor", emb_head, fresh_head],
-                           capture_output=True)
+        r = sh(["git", "-C", str(ROOT), "merge-base", "--is-ancestor", emb_head, fresh_head])
         ancestor = r.returncode == 0
     if emb_head in parents or ancestor:
         bad = structure_ok(())
@@ -338,15 +337,30 @@ def compare(emb: dict, fresh: dict) -> tuple[bool, str]:
             return False, "map is an ancestor of the checkout, but " + bad[1]
         return True, ("absorbed the checkout " + fresh_head[:12] + " (the map head "
                       + emb_head[:7] + " is an ancestor; the merged structure is identical)")
+    shallow = git("rev-parse --is-shallow-repository").strip() == "true"
+    if shallow:
+        # Lineage is CUT OFF (a depth-1 checkout): the ancestor probe cannot succeed not
+        # because the map is stale but because the objects that would prove it are not
+        # here. Lying that a missing object means staleness is the false accusation class
+        # (phi1); the honest degraded verdict is content-only: the committed tree's
+        # structure either equals the map or it does not.
+        bad = structure_ok(())
+        if bad:
+            return False, "history is shallow (lineage unavailable) and " + bad[1]
+        return True, ("history is shallow; the checkout's committed structure equals "
+                      "the map")
     tl = fresh.get("timeline", [])
     behind = sum(1 for f in tl
                  if str(emb.get("head", "")).startswith(f["h"]))
+    ev = (f"map_head={emb_head[:12]} checkout={fresh_head[:12]} "
+          f"parents={[p[:7] for p in parents]} ancestor={ancestor} "
+          f"timeline={len(tl)} frames, map_head_match={behind}")
     if not behind:
-        return False, ("map is stale: its head is not in this checkout's history at all "
-                       "(not HEAD, not a map-carrier, not a parent of a merge checkout)")
+        return False, (f"map is stale: its head is not this checkout's HEAD, a parent of "
+                       f"it, an ancestor of it, or in its history — evidence: {ev}")
     n_behind = len(tl) - behind
-    return False, (f"map is stale: HEAD has moved {n_behind} frame(s) past the map "
-                   f"and the newest commit carries more than the map itself")
+    return False, (f"map is stale: HEAD has moved {n_behind} frame(s) past the map and "
+                   f"the newest commit carries more than the map itself — evidence: {ev}")
 
 
 def canonical(m: dict) -> bytes:
