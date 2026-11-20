@@ -639,12 +639,27 @@ class Pipeline:
                 return t
         return None
 
+    @staticmethod
+    def repair_entry(task: dict, plan: dict) -> dict:
+        """Match a repair by stable task id, confirmed root cause, or exact signature."""
+        repairs = plan.get("repairs", [])
+        for entry in repairs:
+            if entry.get("task") == task.get("id"):
+                return entry
+        if task.get("root_cause") not in (None, "UNCONFIRMED"):
+            for entry in repairs:
+                if entry.get("root_cause") == task.get("root_cause"):
+                    return entry
+        for entry in repairs:
+            if entry.get("signature") == task.get("signature"):
+                return entry
+        return {}
+
     def s9_authorize(self, tasks) -> tuple:
         plan = self.repair_plan()
-        by_task = {r.get("task"): r for r in plan.get("repairs", [])}
         decisions = []
         for task in tasks:
-            planned = by_task.get(task["id"], {})
+            planned = self.repair_entry(task, plan)
             governance_complete = (
                 task.get("root_cause") != "UNCONFIRMED"
                 and task.get("governing_clause") != "UNCONFIRMED"
@@ -658,7 +673,7 @@ class Pipeline:
             if not governance_complete:
                 decision_class = "HUMAN_REQUIRED"
             decisions.append({"task": task["id"], "class": decision_class,
-                              "plan_present": task["id"] in by_task,
+                              "plan_present": bool(planned),
                               "governance_complete": governance_complete})
         legal = all(d["class"] in ("AUTO_APPROVED", "HUMAN_REQUIRED")
                     for d in decisions)
@@ -685,11 +700,13 @@ class Pipeline:
     # ---------------------------------------------------------------- S10..S13
     def s10_repair(self, tasks, decisions) -> tuple:
         plan = self.repair_plan()
-        by_task = {r.get("task"): r for r in plan.get("repairs", [])}
         manifest, pending = [], []
         ops = {"regenerate": [], "verify": [], "blast": []}
+        matched_plan = []
         for t, d in zip(tasks, decisions):
-            r = by_task.get(t["id"])
+            r = self.repair_entry(t, plan)
+            if r:
+                matched_plan.append(t["id"])
             if not r or d["class"] != "AUTO_APPROVED":
                 pending.append(t["id"])  # autonomous detection, bounded mutation (I10)
                 continue
@@ -742,7 +759,7 @@ class Pipeline:
         rec = self.emit("S10", "FAIL" if blocked else "PASS", input_obj,
                         {"manifest": manifest, "pending_human": pending,
                          "regenerate": ops["regenerate"], "verify": ops["verify"],
-                         "blast": ops["blast"], "plan_present": bool(by_task)},
+                         "blast": ops["blast"], "plan_present": bool(matched_plan), "matched_tasks": matched_plan},
                         evidence=None,
                         reason=(f"{len(blocked)} edit(s)/authorization(s) unresolved"
                                 if blocked else None))
@@ -805,8 +822,8 @@ class Pipeline:
 
     def s12_verify_local(self, ops: dict, tasks) -> tuple:
         verify_ops = ops.get("verify", [])
-        reruns = [{"task": t["id"], "cmd": self.probe_cmd(t["signature"][0])}
-                  for t in tasks]
+        reruns = [{"task": t["id"], "probe": p["probe"], "cmd": p["cmd"]}
+                  for t in tasks for p in t.get("probe_commands", [])]
         runs = [{"task": v["task"], "cmd": v["cmd"]} for v in verify_ops] + reruns
         if not runs:
             rec = self.emit("S12", "INACTIVE", {"runs": []}, {"runs": []},
