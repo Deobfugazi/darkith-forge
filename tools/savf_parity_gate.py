@@ -23,6 +23,31 @@ SAVF_PY = ROOT / "savf.py"
 SAVF_HTML = ROOT / "savf.html"
 VALID = {"x": ["L2R", "R2L"], "y": ["B2T", "T2B"], "z": ["NEAR2FAR", "FAR2NEAR"]}
 
+# f-string replacement fields are real code (PEP 701, Python 3.12+): a NAME or
+# COMMENT inside `{...}` is a token CPython sees.  The browser lexer emits one
+# STRING token per literal, so these cases pin the scan findings that must still
+# agree across the two engines.
+FSTRING_CASES = {
+    "field_name": 'x = f"{MOCK_VALUE}"\n',
+    "attribute": 'x = f"{obj.MOCK_X}"\n',
+    "format_spec": 'x = f"{v:>{MOCK_W}}"\n',
+    "nested_spec": 'x = f"{v:{WIDTH}d}"\n',
+    "debug_spec": 'x = f"{MOCK_V=}"\n',
+    "multiline": 'x = f"""\n{SAMPLE_X}\n"""\n',
+    "nested_fstring": "x = f\"{f'{FAKE_A}'}\"\n",
+    "comment_in_field": 'x = f"""{1 # TODO here\n}"""\n',
+    "kwarg": 'x = f"{g(MOCK_1=2)}"\n',
+    "dict_in_field": 'x = f"{ {MOCK_K: 1} }"\n',
+    "lambda_in_field": 'x = f"{(lambda: MOCK_D)()}"\n',
+    "raw_prefix": 'x = rf"{MOCK_R}"\n',
+    "upper_prefix": 'x = F"{MOCK_S}"\n',
+    "literal_text_only": 'x = f"TODO MOCK_A"\n',
+    "escaped_braces": 'x = f"{{MOCK_C}}"\n',
+    "string_in_field": 'x = f"{d[\'MOCK_A\']}"\n',
+    "bytes_not_fstring": 'x = b"MOCK_T"\n',
+    "concat": 'x = "a" f"{MOCK_B}"\n',
+}
+
 
 def py_verdict(states: dict) -> str:
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
@@ -37,6 +62,42 @@ def py_sign(chart: str, axis: str, move: str) -> str:
     r = subprocess.run([sys.executable, str(SAVF_PY), "sign", "--chart", chart,
                         "--axis", axis, "--move", move], capture_output=True, text=True)
     return r.stdout.strip()
+
+
+def py_glog(case: list):
+    """Outcome of the exp/log inverse: a value, or the fact that it refuses."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("savf_ref_g", SAVF_PY)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    try:
+        return ["ok", mod.g_log(*case)]
+    except Exception:
+        return ["err", "refused"]
+
+
+# g is undefined once expm1(x) rounds to -1 (x below ~ -36.7). Both engines must
+# refuse there instead of returning inf/Infinity, and agree elsewhere.
+GLOG_CASES = [
+    [1.0, 2, -3, 20], [1.0, 2, -4, 20], [0.5, 2, -3, 20], [1.0, 10, -2, 50],
+    [1.0, 1.0000001, -40, 10], [0.0, 2, -3, 20], [1.0, 2, 3, 20],
+]
+
+
+def py_findings(src: str) -> list:
+    """Scan findings for one source string, as the CLI reports them."""
+    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False, encoding="utf-8") as f:
+        f.write(src)
+        path = f.name
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("savf_ref", SAVF_PY)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return sorted([f["rule"], f["line"], f["phi"], f["msg"]]
+                      for f in mod.scan_file(path, set()))
+    finally:
+        pathlib.Path(path).unlink(missing_ok=True)
 
 
 def main() -> int:
@@ -83,7 +144,42 @@ def main() -> int:
         p.wait_for_timeout(800)
         js_v = p.evaluate("(c)=>{const o={};for(const k in c){o[k]=window.SAVF.core.verdict(c[k]);}return o;}", cases)
         js_s = p.evaluate("(ks)=>{const C=window.SAVF.core,o={};for(const k of ks){const a=k.split('/');o[k]=String(C.chartSign(a[0],a[1],a[2]));}return o;}", sign_keys)
+        js_f = p.evaluate(
+            """(cases)=>{
+              const std=Object.create(null);(window.SAVF_STDLIB||[]).forEach(n=>{std[n]=1;});
+              const o={};
+              for(const k in cases){
+                o[k]=window.SAVF.scan.scanSource('t.py', cases[k],
+                  {stdlib:std, stdattrs:window.SAVF_STDATTRIB||{}, local:Object.create(null),
+                   installed:Object.create(null)})
+                  .map(x=>[x.rule,x.line,x.phi,x.msg]).sort();
+              }
+              return o;
+            }""", FSTRING_CASES)
+        js_g = p.evaluate(
+            """(cs)=>cs.map(c=>{try{return ['ok',window.SAVF.core.gLog.apply(null,c)];}
+                               catch(e){return ['err','refused'];}})""", GLOG_CASES)
         b.close()
+
+    py_f = {k: py_findings(v) for k, v in FSTRING_CASES.items()}
+    fdiff = {k: (py_f[k], js_f[k]) for k in py_f
+             if [[str(y) for y in x] for x in py_f[k]] != [[str(y) for y in x] for x in js_f[k]]}
+    if fdiff:
+        print("savf_parity_gate: FAIL — f-string field scanning disagrees")
+        for k, (a, b) in list(fdiff.items())[:10]:
+            print(f"   {k}: py={a} js={b}")
+        return 1
+
+    py_g = [py_glog(c) for c in GLOG_CASES]
+    gdiff = []
+    for c, a, b in zip(GLOG_CASES, py_g, js_g):
+        if a[0] != b[0] or (a[0] == "ok" and abs(a[1] - b[1]) > 1e-12):
+            gdiff.append((c, a, b))
+    if gdiff:
+        print("savf_parity_gate: FAIL — exp/log inverse disagrees")
+        for c, a, b in gdiff[:10]:
+            print(f"   g_log{c}: py={a} js={b}")
+        return 1
 
     vdiff = {k: (py_v[k], js_v[k]) for k in py_v if py_v[k] != js_v[k]}
     sdiff = {k: (py_s[k], js_s[k]) for k in py_s if py_s[k] != js_s[k]}
@@ -95,7 +191,8 @@ def main() -> int:
             print(f"   sign {k}: py={a} js={b}")
         return 1
     print(f"savf_parity_gate: PASS — {len(py_v)} verdicts + {len(py_s)} chart signs agree across "
-          f"python and browser")
+          f"python and browser; {len(FSTRING_CASES)} f-string field cases and "
+          f"{len(GLOG_CASES)} exp/log inverse cases agree")
     return 0
 
 

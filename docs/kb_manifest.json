@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 66,
+  "count": 63,
   "files": [
     {
       "bytes": 73115,
@@ -9,10 +9,10 @@
       "sha256": "dbc0ba81c77ed817b30a13549ac7d98850f128a103fd7fe6b8d766639f821d52"
     },
     {
-      "bytes": 100102,
+      "bytes": 74683,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "ae5fb926171f760a5865883838f84492ded4b002f004a6149c3100885c02d317"
+      "sha256": "6dcbed576959b359fc535f373ef63405cf4b1591714ad22214bdeb6e2cb71161"
     },
     {
       "bytes": 3356,
@@ -33,10 +33,10 @@
       "sha256": "28eca490a9a12a458661016afb61119cf1607f0069b7600e9d77c28fd828109f"
     },
     {
-      "bytes": 33298,
+      "bytes": 23153,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "57e46b688812cd7dd9cee5d483c77f1523b61c4eadfde0b3369f8c89c3a69e71"
+      "sha256": "e1eced7f849a2639508db7def1a640cf2930f683a9439a16402b498d902bf43b"
     },
     {
       "bytes": 9608,
@@ -147,34 +147,28 @@
       "sha256": "9412708d54683e37421c1c9b2d9c74441b53da0ac8a350a3d3b324f2cc4bc61a"
     },
     {
-      "bytes": 9228,
-      "path": "docs/nt/NT-XIII-OFIF.txt",
-      "register": "B-knowledge",
-      "sha256": "5ab6f2706f8ac80f0262b54c769109dfef368d083e8905bea93fa01f7bebc6ae"
-    },
-    {
-      "bytes": 96732,
+      "bytes": 98859,
       "path": "clearanceloop.html",
       "register": "C-skillbase",
-      "sha256": "c7a30d34b2da92610aca5131c2c8fbfbef327d83b8b6f82ede8d475e5410f9e5"
+      "sha256": "ae16a99a055e902d0f0dec144134b660fbd9e76baee743a0a7d9cd868e5d32ab"
     },
     {
-      "bytes": 589430,
+      "bytes": 596911,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "de9aa8326526a51922d48994d148c9fbd1bebb541de6112d5d892c385071099f"
+      "sha256": "5cc122191d2069d4190db9a4bba4ce30e6309ee459814dfef378e6699d865deb"
     },
     {
-      "bytes": 1447616,
+      "bytes": 1462578,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "21dcee7b4c86892cac00e4ccdf62ba0eb52331a28a86b50f5255b56a446432b0"
+      "sha256": "fd25081c0397ed723ace3855f9435d9b8ef808ae9e4e6f3e354ac15733036a40"
     },
     {
-      "bytes": 277150,
+      "bytes": 279277,
       "path": "darkith-inscriber.html",
       "register": "C-skillbase",
-      "sha256": "3de7cc56d4216dcee5dd7cede570ff019b80ac94d4de7f250049141759b5ee56"
+      "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
     },
     {
       "bytes": 7073,
@@ -237,16 +231,16 @@
       "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     },
     {
-      "bytes": 87767,
+      "bytes": 89894,
       "path": "omega.html",
       "register": "C-skillbase",
-      "sha256": "bfb86c7623ac32bd720257fa64b03c4e2a56e5f9e61a1288ac14e6b916f774b9"
+      "sha256": "0bebef245cf4788e327c4ee0670dc39537d43be44f60e4aa750c1f635e9313a8"
     },
     {
-      "bytes": 450747,
+      "bytes": 458525,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "d939694731be240e0b1f2ff7d57629349583c57f7bd8b63ed2d0f34ba3d8c45c"
+      "sha256": "fad6f5a27fda35fe73e63ed14d44f1729f2713821c7bcaf25061e1a4917912c5"
     },
     {
       "bytes": 11465,
@@ -297,10 +291,10 @@
       "sha256": "2bccb0ab5978142e3811988700e93691efb0e1a5e50b1f61d94ae4d8a3b1936a"
     },
     {
-      "bytes": 277150,
+      "bytes": 279277,
       "path": "app/src/main/assets/darkith_ui.html",
       "register": "D-asset",
-      "sha256": "3de7cc56d4216dcee5dd7cede570ff019b80ac94d4de7f250049141759b5ee56"
+      "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
     },
     {
       "bytes": 490080,
@@ -369,12 +363,6 @@
       "sha256": "dcda10db485e5df1515568e2f5b0fb8d266a327b52ea5aa29a00b50896c59104"
     },
     {
-      "bytes": 1768,
-      "path": "proof/session_findings.txt",
-      "register": "E-evidence",
-      "sha256": "b4571adf757ed4e087f4527494343b8fb9f21799dbc6e9d0862161f878055bc1"
-    },
-    {
       "bytes": 117,
       "path": "requirements-dev.txt",
       "register": "F-config",
@@ -391,12 +379,6 @@
       "path": "tools/fractures.txt",
       "register": "F-config",
       "sha256": "ba75264a289742e8182bb756d9ce05d08981e46601f17a0391073e4c8530b2df"
-    },
-    {
-      "bytes": 3235,
-      "path": "kit/COORDINASYNC.md",
-      "register": "G-apparatus-portable",
-      "sha256": "5ccc1e4fbe07096e9b1b3e05f2e7001e66ed51cb5a7ee51bf4871bbd0ead24e9"
     }
   ],
   "mirrors": [
@@ -411,7 +393,6 @@
     "C-skillbase": "Skill surfaces \u2014 the interactive web apps",
     "D-asset": "Shipped runtime assets",
     "E-evidence": "Machine-generated proof",
-    "F-config": "Build configuration \u2014 dependency manifests",
-    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels"
+    "F-config": "Build configuration \u2014 dependency manifests"
   }
 }

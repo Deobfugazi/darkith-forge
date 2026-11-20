@@ -221,9 +221,32 @@
     if (typeof document === 'undefined') return run(opts);
     opts = opts || {};
     var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    host.setAttribute('role', 'dialog');
+    host.setAttribute('aria-modal', 'true');
+    host.setAttribute('aria-label', 'Pre-runner report');
     var card = el('div', 'width:min(560px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    card.tabIndex = -1;
     host.appendChild(card); document.body.appendChild(host);
-    var close = function () { if (host.parentNode) host.remove(); };
+    var prevFocus = document.activeElement;
+    var close = function () {
+      document.removeEventListener('keydown', onKey, true);
+      if (host.parentNode) host.remove();
+      if (prevFocus && prevFocus.focus) { try { prevFocus.focus(); } catch (e) { /* focus target may be gone */ } }
+    };
+    var onKey = function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key !== 'Tab') return;
+      var f = card.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === card)) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    card.focus();
     host.addEventListener('click', function (e) { if (e.target === host) close(); });
     var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
     head.appendChild(el('span', 'color:#ff8a3d;font-weight:700', '\u25b6 Pre-runner'));

@@ -73,7 +73,15 @@ def g_log(u, b, k, L):
     if not (0 <= u <= 1):
         raise ValueError("u must lie in [0,1]")
     lb = math.log(b)
-    return math.log1p(u * math.expm1(k * L * lb)) / (k * lb)
+    # f has collapsed once expm1(x) rounds to exactly -1 (x below ~ -36.7): every s in
+    # (0,L] then maps to u=1 and g cannot recover s. Say that instead of surfacing a
+    # bare "math domain error"; the JS twin raises on the identical condition.
+    e = math.expm1(k * L * lb)
+    if e == -1.0:
+        raise ValueError(
+            f"g is undefined here: expm1({k * L * lb:.1f}) rounds to -1, so f has "
+            "collapsed to u=1 and the inverse cannot recover s")
+    return math.log1p(u * e) / (k * lb)
 
 
 def _chk_exp(b, k, L):
@@ -785,6 +793,14 @@ def selftest(n=2000, seed=11):
         badx += not (abs(f_exp(0, b, k, L)) < 1e-12 and abs(f_exp(L, b, k, L) - 1) < 1e-9
                      and abs(g_log(u, b, k, L) - s) < 1e-6)
     rec("exp/log pair: f(0)=0, f(L)=1, g is the exact inverse", badx == 0, f"failures={badx}")
+
+    # Where expm1 rounds to -1 the inverse does not exist. The pair must say so
+    # rather than skip the region or return inf: b=2, k=-3, L=20 gives x=-41.6.
+    try:
+        g_log(1.0, 2, -3, 20)
+        rec("exp/log pair: g refuses where it is undefined", False, "returned a value")
+    except ValueError:
+        rec("exp/log pair: g refuses where it is undefined", True)
     cnt, tot = {}, 0
     for combo in itertools.product(STATES, repeat=11):
         v = verdict(dict(zip(ALL_PHI, combo)))

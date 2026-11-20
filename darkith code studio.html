@@ -3755,9 +3755,32 @@ boot();
     if (typeof document === 'undefined') return run(opts);
     opts = opts || {};
     var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    host.setAttribute('role', 'dialog');
+    host.setAttribute('aria-modal', 'true');
+    host.setAttribute('aria-label', 'Pre-runner report');
     var card = el('div', 'width:min(560px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    card.tabIndex = -1;
     host.appendChild(card); document.body.appendChild(host);
-    var close = function () { if (host.parentNode) host.remove(); };
+    var prevFocus = document.activeElement;
+    var close = function () {
+      document.removeEventListener('keydown', onKey, true);
+      if (host.parentNode) host.remove();
+      if (prevFocus && prevFocus.focus) { try { prevFocus.focus(); } catch (e) { /* focus target may be gone */ } }
+    };
+    var onKey = function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key !== 'Tab') return;
+      var f = card.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === card)) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    card.focus();
     host.addEventListener('click', function (e) { if (e.target === host) close(); });
     var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
     head.appendChild(el('span', 'color:#ff8a3d;font-weight:700', '\u25b6 Pre-runner'));
@@ -4077,9 +4100,32 @@ boot();
     if (typeof document === 'undefined') return report();
     var r = report();
     var host = el('div', 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(3,4,7,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8edf3');
+    host.setAttribute('role', 'dialog');
+    host.setAttribute('aria-modal', 'true');
+    host.setAttribute('aria-label', 'ClearanceLoop report');
     var card = el('div', 'width:min(600px,96vw);max-height:92vh;overflow:auto;background:#0b0c0e;border:1px solid #262a31;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)');
+    card.tabIndex = -1;
     host.appendChild(card); document.body.appendChild(host);
-    var close = function () { if (host.parentNode) host.remove(); };
+    var prevFocus = document.activeElement;
+    var close = function () {
+      document.removeEventListener('keydown', onKey, true);
+      if (host.parentNode) host.remove();
+      if (prevFocus && prevFocus.focus) { try { prevFocus.focus(); } catch (e) { /* focus target may be gone */ } }
+    };
+    var onKey = function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key !== 'Tab') return;
+      var f = card.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === card)) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    card.focus();
     host.addEventListener('click', function (e) { if (e.target === host) close(); });
     var head = el('div', 'display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1b1f25;position:sticky;top:0;background:#0b0c0e');
     head.appendChild(el('span', 'color:#7ee787;font-weight:700', '\u25c9 ClearanceLoop'));
@@ -6412,6 +6458,104 @@ function dict(seed) {
     var q = s.search(/['"]/);
     return q > 0 && /f/i.test(s.slice(0, q));
   }
+
+  /* CPython 3.12+ (PEP 701) tokenizes the expression inside every f-string
+     replacement field, so a NAME or COMMENT there is a real token.  This
+     lexer emits one STRING token for the whole literal, so the marker and
+     fake-data rules read the fields here to see the same tokens CPython
+     sees.  Each result carries the line the token really sits on. */
+  function fstringFieldTokens(tok) {
+    var s = tok.str;
+    var q = s.search(/['"]/);
+    if (q <= 0 || !/f/i.test(s.slice(0, q))) return [];
+    var quote = s.charAt(q);
+    var triple = s.charAt(q + 1) === quote && s.charAt(q + 2) === quote;
+    var body = s.slice(q + (triple ? 3 : 1), s.length - (triple ? 3 : 1));
+    var out = [];
+
+    function newlines(text) {
+      var c = 0;
+      for (var k = 0; k < text.length; k++) if (text.charAt(k) === "\n") c++;
+      return c;
+    }
+    /* Index of the "}" closing the field that opens at `open`, skipping
+       nested strings and bracket pairs. */
+    function fieldEnd(str, open) {
+      var i = open + 1, depth = 1;
+      while (i < str.length) {
+        var nested = global.PyLex.scanStringAt(str, i);
+        if (nested >= 0) { i = nested; continue; }
+        var ch = str.charAt(i);
+        if (ch === "{") depth++;
+        else if (ch === "}") { depth--; if (!depth) return i; }
+        i++;
+      }
+      return str.length;
+    }
+    /* Split a field body at its top-level "!" conversion or ":" spec. */
+    function splitField(inner) {
+      var depth = 0, i = 0;
+      while (i < inner.length) {
+        var nested = global.PyLex.scanStringAt(inner, i);
+        if (nested >= 0) { i = nested; continue; }
+        var ch = inner.charAt(i);
+        if ("([{".indexOf(ch) >= 0) depth++;
+        else if (")]}".indexOf(ch) >= 0) depth--;
+        else if (depth === 0 && ch === "!" && inner.charAt(i + 1) !== "=")
+          return { expr: inner.slice(0, i), rest: inner.slice(i + 1), spec: false };
+        else if (depth === 0 && ch === ":" && inner.charAt(i + 1) !== "=")
+          return { expr: inner.slice(0, i), rest: inner.slice(i + 1), spec: true };
+        i++;
+      }
+      return { expr: inner, rest: "", spec: false };
+    }
+    /* A format spec is itself f-string text, so it may hold nested fields. */
+    function scanSpec(spec, line) {
+      var k = 0;
+      while (k < spec.length) {
+        var ch = spec.charAt(k);
+        if (ch === "{") {
+          if (spec.charAt(k + 1) === "{") { k += 2; continue; }
+          var end = fieldEnd(spec, k);
+          collect(spec.slice(k + 1, end), line + newlines(spec.slice(0, k)));
+          k = end + 1;
+          continue;
+        }
+        k++;
+      }
+    }
+    function collect(expr, line) {
+      if (!expr) return;
+      var res = global.PyLex.tokenize(expr, { resumable: true });
+      res.toks.forEach(function (t) {
+        var at = line + t.line - 1;
+        if (t.type === "COMMENT") out.push({ type: "COMMENT", str: t.str, line: at });
+        else if (t.type === "NAME") out.push({ type: "NAME", str: t.str, line: at });
+        else if (t.type === "STRING" && isFStringTok(t.str)) {
+          var sub = fstringFieldTokens({ str: t.str, line: at });
+          for (var k = 0; k < sub.length; k++) out.push(sub[k]);
+        }
+      });
+    }
+
+    var i = 0;
+    while (i < body.length) {
+      var c = body.charAt(i);
+      if (c === "{") {
+        if (body.charAt(i + 1) === "{") { i += 2; continue; }
+        var end = fieldEnd(body, i);
+        var inner = body.slice(i + 1, end);
+        var line = tok.line + newlines(body.slice(0, i));
+        var parts = splitField(inner);
+        collect(parts.expr, line);
+        if (parts.spec) scanSpec(parts.rest, line);
+        i = end + 1;
+        continue;
+      }
+      i++;
+    }
+    return out;
+  }
   function numValue(s) {
     var clean = s.replace(/_/g, "");
     if (/^0[xX]/.test(clean)) return parseInt(clean.slice(2), 16);
@@ -6569,7 +6713,8 @@ function dict(seed) {
   global.PyAst = {
     parse: function (src) { return new Parser(src).parseModule(); },
     parseWithTokens: parseWithTokens,
-    walk: walk, dump: dump, canon: canon, children: children, isFStringTok: isFStringTok
+    walk: walk, dump: dump, canon: canon, children: children, isFStringTok: isFStringTok,
+    fstringFieldTokens: fstringFieldTokens
   };
 })(typeof window !== "undefined" ? window : globalThis);
 
@@ -6802,6 +6947,11 @@ function dict(seed) {
 
   /* opts: { stdlib: {name:1}, stdattrs: {mod:[attrs]}, local: {name:1} } */
   function scanSource(file, src, opts) {
+    /* tokenize.open() removes a leading UTF-8 BOM before the source reaches the
+       parser.  Text handed in directly (paste, host API) skips that decoding
+       step, so the BOM is stripped here too; anywhere else it stays a lexical
+       fault, exactly as CPython reports it. */
+    if (src.charCodeAt(0) === 0xFEFF) src = src.slice(1);
     var F = [];
     /* CPython names only the base name of the file in a syntax error, so the
        same text is produced here. */
@@ -6837,8 +6987,18 @@ function dict(seed) {
              stdattrs: opts.stdattrs || {}, installed: installed };
     var testFile = isTestFile(file);
 
-    /* markers: comments and identifiers only, never string literals */
+    /* markers: comments and identifiers only, never string literals.
+       An f-string's replacement fields are real code, so their tokens are
+       examined too, at the position each token actually occupies. */
+    var markerToks = [];
     tokens.forEach(function (tok) {
+      markerToks.push(tok);
+      if (tok.type === "STRING") {
+        var sub = global.PyAst.fstringFieldTokens(tok);
+        for (var k = 0; k < sub.length; k++) markerToks.push(sub[k]);
+      }
+    });
+    markerToks.forEach(function (tok) {
       if (tok.type === "COMMENT" && MARK.test(tok.str) && !testFile)
         F.push(finding("MARKER", 1, file, tok.line, "marker in comment: " + tok.str.trim().slice(0, 60), "medium"));
       if (tok.type === "NAME" && FAKE_NAME.test(tok.str) && !testFile)
@@ -7095,7 +7255,13 @@ function dict(seed) {
     chkExp(b, k, L);
     if (!(u >= 0 && u <= 1)) throw new Error("u must lie in [0,1]");
     var lb = Math.log(b);
-    return Math.log1p(u * Math.expm1(k * L * lb)) / (k * lb);
+    // f has collapsed once expm1(x) rounds to exactly -1 (x below ~ -36.7): every s in
+    // (0,L] then maps to u=1 and g cannot recover s. Say that instead of returning
+    // Infinity; the Python twin raises on the identical condition.
+    var e = Math.expm1(k * L * lb);
+    if (e === -1) throw new Error("g is undefined here: expm1(" + (k * L * lb).toFixed(1) +
+      ") rounds to -1, so f has collapsed to u=1 and the inverse cannot recover s");
+    return Math.log1p(u * e) / (k * lb);
   }
   function chartSign(chart, axis, move) {
     if (!CHARTS[chart]) throw new Error("unknown chart " + chart);
@@ -7384,6 +7550,13 @@ function dict(seed) {
     }
     rec("exp/log pair: f(0)=0, f(L)=1, g is the exact inverse", badx === 0,
         "failures=" + badx + " of " + tried);
+
+    // Where expm1 rounds to -1 the inverse does not exist. The pair must say so
+    // rather than skip the region or return Infinity: b=2, k=-3, L=20 gives x=-41.6.
+    var refused = false;
+    try { C.gLog(1, 2, -3, 20); } catch (e) { refused = true; }
+    rec("exp/log pair: g refuses where it is undefined", refused,
+        refused ? "" : "returned a value");
 
     var cnt = {}, tot = 0;
     var idx = C.ALL_PHI.map(function () { return 0; });

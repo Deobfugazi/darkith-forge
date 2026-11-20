@@ -2639,7 +2639,10 @@ function dict(seed) {
     chkExp(b, k, L);
     if (!(u >= 0 && u <= 1)) throw new Error("u must lie in [0,1]");
     var lb = Math.log(b);
-    return Math.log1p(u * Math.expm1(k * L * lb)) / (k * lb);
+    var e = Math.expm1(k * L * lb);
+    if (e === -1) throw new Error("g is undefined here: expm1(" + (k * L * lb).toFixed(1) +
+      ") rounds to -1, so f has collapsed to u=1 and the inverse cannot recover s");
+    return Math.log1p(u * e) / (k * lb);
   }
   function chartSign(chart, axis, move) {
     if (!CHARTS[chart]) throw new Error("unknown chart " + chart);
