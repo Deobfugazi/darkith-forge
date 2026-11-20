@@ -290,11 +290,14 @@ class Pipeline:
                  .stdout.splitlines() if ln.strip()]
         governing = {p: sha((self.root / p).read_bytes())
                      for p in GOVERNING_SOURCES if (self.root / p).is_file()}
+        tree_hashes = tree_snapshot(self.root)
         repo_dirty = [d for d in dirty if not is_exempt(d)]
         input_obj = {"branch": branch, "commit": commit,
-                     "dirty_count": len(repo_dirty), "governing": governing}
+                     "dirty_count": len(repo_dirty), "governing": governing,
+                     "tree_sha256": chash(tree_hashes)}
         details = {"branch": branch, "commit": commit,
-                   "dirty_inventory": dirty, "governing": governing}
+                   "dirty_inventory": dirty, "governing": governing,
+                   "tree_hashes": tree_hashes}
         return self.emit("S01", "PASS", input_obj, details,
                          evidence=[p for p in GOVERNING_SOURCES
                                    if (self.root / p).is_file()])
@@ -1432,6 +1435,25 @@ def verify_chain(root: pathlib.Path) -> tuple:
                 expected = receipts["S16"].get("details", {}).get("board_sha256", expected)
             if sha(current_path.read_bytes()) != expected:
                 fails.append(f"I9: governing source changed outside its sealed repair: {path}")
+
+        # Whole-tree temporal integrity: every byte change after S01 must be attributable
+        # to the authorized S10 edit, an S11 generator output, or the terminal S16 board.
+        baseline_tree = receipts["S01"]["details"].get("tree_hashes", {})
+        allowed_after = dict(authorized_changes)
+        for run in receipts["S11"]["details"].get("runs", []):
+            for path, hashes in run.get("changed_outputs", {}).items():
+                if path in baseline_tree or path in tree_snapshot(root):
+                    allowed_after[path] = hashes.get("after")
+        s16_board_hash = receipts["S16"].get("details", {}).get("board_sha256")
+        if s16_board_hash:
+            allowed_after["TASKS.md"] = s16_board_hash
+        current_tree = tree_snapshot(root)
+        for path in sorted(set(baseline_tree) | set(current_tree)):
+            expected = allowed_after.get(path, baseline_tree.get(path))
+            actual = current_tree.get(path)
+            if expected != actual:
+                fails.append(f"I9: unsealed repository tree drift at {path} "
+                             f"(expected {expected}, found {actual})")
 
         # A sealed cycle is closed only when the actual reconciliation, evidence seal,
         # and board-rotation receipts all PASS and their own payloads agree.
