@@ -825,11 +825,11 @@ class Pipeline:
             tail_sha = sha(tail.encode("utf-8") or b"ok")
             state = "PASS" if cp.returncode == 0 else \
                 ("SKIP" if cp.returncode == 3 else "FAIL")
-            return {"exit": cp.returncode, "tail": tail, "tail_sha256": tail_sha,
-                    "state": state}
+            return {"cmd": cmd, "exit": cp.returncode, "tail": tail,
+                    "tail_sha256": tail_sha, "state": state}
         except FileNotFoundError as exc:
-            return {"exit": None, "tail": str(exc), "tail_sha256": "absent",
-                    "state": "SKIP"}
+            return {"cmd": cmd, "exit": None, "tail": str(exc),
+                    "tail_sha256": "absent", "state": "SKIP"}
 
     def s11_regenerate(self, ops: dict) -> tuple:
         regenerate = ops.get("regenerate", [])
