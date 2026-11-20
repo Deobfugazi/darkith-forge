@@ -1458,6 +1458,14 @@ def verify_chain(root: pathlib.Path) -> tuple:
                 fails.append("I8: S15 bundle does not include every S01-S14 receipt")
             if s16.get("status") != "PASS" or s16.get("details", {}).get("closed") is not True:
                 fails.append("I8: S16 does not carry a PASS closure")
+            post_status = s16.get("details", {}).get("post_seal_status")
+            if root.resolve() == ROOT.resolve():
+                if post_status != "PASS":
+                    fails.append("I8: S16 post-seal board/dependency checks are not PASS")
+                if not s16.get("details", {}).get("post_seal_log"):
+                    fails.append("I8: S16 post-seal check log is missing")
+            elif post_status != "INACTIVE":
+                fails.append("self-test sandbox must mark post-seal repository checks INACTIVE")
             board_path = root / "TASKS.md"
             expected_board = s16.get("details", {}).get("board_sha256")
             if not expected_board or not board_path.is_file() or sha(board_path.read_bytes()) != expected_board:
