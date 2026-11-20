@@ -44,10 +44,7 @@ class SerialRevivalTests(unittest.TestCase):
             payload = {"branch": "test", "commit": "rev-1", "governing_sources": [],
                        "generated_artifacts": [], "dirty_files": [], "captured_at": "fixed"}
             payload_file.write_text(json.dumps(payload), encoding="utf-8")
-            with patch.object(sr, "ROOT", root), patch.object(sr, "RECEIPTS", receipts), \\
-                 patch.object(sr, "state_path", return_value=state_file), \\
-                 patch.object(sr, "current_revision", return_value="rev-1"), \\
-                 patch.object(sr, "now", return_value="2026-11-21T00:00:00+08:00"):
+            with patch.object(sr, "ROOT", root), patch.object(sr, "RECEIPTS", receipts), patch.object(sr, "state_path", return_value=state_file), patch.object(sr, "current_revision", return_value="rev-1"), patch.object(sr, "now", return_value="2026-11-21T00:00:00+08:00"):
                 first = sr.record("S1", str(payload_file), [])
                 replay = sr.record("S1", str(payload_file), [])
                 self.assertEqual(first["receipt_id"], replay["receipt_id"])
