@@ -4,7 +4,7 @@ board_gate: PASS — 16 board row(s); every done item carries evidence
 
 $ python3 tools/doc_path_gate.py
 exit=0
-doc_path_gate: PASS — every cited repo path resolves (385 tokens).
+doc_path_gate: PASS — every cited repo path resolves (387 tokens).
 
 $ python3 tools/kb_index.py
 exit=0

@@ -109,13 +109,13 @@ SAVF-CLI: PASS (42/42)
   ok   reads pypi foo 1.2.3
   ok   reads npm bar 4.5.6
   ok   rejects a malformed line
-[2026-11-21 04:30:12]   wrote /tmp/tmpj5v0pccf/req.txt (1 pypi entries)
+[2026-11-21 04:51:32]   wrote /tmp/tmpy_s37p8s/req.txt (1 pypi entries)
   ok   export writes pypi pins only
   ok   update rewrites pin and keeps comment
 
 DARKBOT: PASS (16 passed, 0 failed)
 --- darkbot self-test: PASS
-secret_gate: PASS — no credential-shaped string in 366 tracked file(s)
+secret_gate: PASS — no credential-shaped string in 369 tracked file(s)
 
 === secret gate self-test ===
   ok   detector fires: github-token
@@ -215,7 +215,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
 
 === revitalization selftest ===
 == sandbox 1: clean tree, probe passes -> cycle closes ==
-=== revitalization cycle 20261120T203014Z890 ===
+=== revitalization cycle 20261120T205134Z712 ===
   S01 BASELINE       PASS
   S02 INVENTORY      PASS
   S03 TOPOLOGY       PASS
@@ -238,11 +238,11 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
   ok   S16 records the cycle as closed
   ok   S16 board block seals 16 staged rows
 == sandbox 2: idempotency (I7) ==
- revitalization: idempotent no-op (I7) - cycle 20261120T203014Z890 already closed on this exact content hash; nothing to duplicate.
+ revitalization: idempotent no-op (I7) - cycle 20261120T205134Z712 already closed on this exact content hash; nothing to duplicate.
   ok   re-running a closed cycle is a no-op exit 0 - got 0
-  ok   no duplicate cycle dir was created (I7) - ['20261120T203014Z890']
+  ok   no duplicate cycle dir was created (I7) - ['20261120T205134Z712']
 == sandbox 3: failing probe -> defect + task (I6); SKIP never PASS (I3) ==
-=== revitalization cycle 20261120T203014Z973 ===
+=== revitalization cycle 20261120T205134Z793 ===
   S01 BASELINE       PASS
   S02 INVENTORY      PASS
   S03 TOPOLOGY       PASS
@@ -251,7 +251,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
   S06 TRACE          PASS - 1 defect(s): p-bad
   S07 GOVERN         FAIL
   S08 TASK           FAIL - 1 corrective task(s) for 1 defect(s) open
-  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261120T203014Z973-001=HUMAN_REQUIRED
+  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261120T205134Z793-001=HUMAN_REQUIRED
   S10 REPAIR         FAIL - 1 edit(s)/authorization(s) unresolved
   S11 REGENERATE     INACTIVE - no source change requires regeneration this cycle
   S12 VERIFY-LOCAL   FAIL - repaired behavior not demonstrated yet (I4: detection is not verification)
@@ -259,7 +259,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
   S14 RECONCILE      PASS
   S15 SEAL           FAIL - evidence sealed around OPEN defects - closure blocked per I8
   S16 BOARD+ROTATE   FAIL - closure blocked: 1 corrective task(s) open
-=== CYCLE OPEN - 1 corrective task(s): ['REV-20261120T203014Z973-001'] ===
+=== CYCLE OPEN - 1 corrective task(s): ['REV-20261120T205134Z793-001'] ===
   ok   defect cycle exits 1 (failure is loud, I6) - got 1
   ok   failing probe classified FAIL (I3) - {'p-bad': 'FAIL', 'p-skip': 'SKIP'}
   ok   exit-3 probe classified SKIP, never PASS (I3) - {'p-bad': 'FAIL', 'p-skip': 'SKIP'}
@@ -267,7 +267,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
   ok   cycle refuses closure while a task is open (I8)
   ok   gate PASSes an honest OPEN chain
 == sandbox 4: same-baseline rerun with open tasks defers (I1/I7) ==
- revitalization: UPSTREAM_STALE (I1/I7) - cycle 20261120T203014Z973 is not closed and its open task(s) hold the mandate; deferring to the next tick. exit 2
+ revitalization: UPSTREAM_STALE (I1/I7) - cycle 20261120T205134Z793 is not closed and its open task(s) hold the mandate; deferring to the next tick. exit 2
   ok   open-mandate rerun defers with exit 2 (never waits, never skips) - got 2
 == sandbox 5: tamper detection ==
   ok   a bit-flipped FAIL->PASS receipt is detected - S08: receipt_sha256 mismatch (tampered or stale)
@@ -276,7 +276,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
 == sandbox 6: no chain -> named SKIP (never pass) ==
   ok   no receipts -> named SKIP (exit 3)
 == sandbox 7: S10 executes only AUTO_APPROVED repairs (I10) ==
-=== revitalization cycle 20261120T203015Z094 ===
+=== revitalization cycle 20261120T205134Z919 ===
   S01 BASELINE       PASS
   S02 INVENTORY      PASS
   S03 TOPOLOGY       PASS
@@ -285,7 +285,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
   S06 TRACE          PASS - 1 defect(s): p-bad
   S07 GOVERN         PASS
   S08 TASK           FAIL - 1 corrective task(s) for 1 defect(s) open
-  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261120T203015Z094-001=HUMAN_REQUIRED
+  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261120T205134Z919-001=HUMAN_REQUIRED
   S10 REPAIR         FAIL - 1 edit(s)/authorization(s) unresolved
   S11 REGENERATE     INACTIVE - no source change requires regeneration this cycle
   S12 VERIFY-LOCAL   FAIL - repaired behavior not demonstrated yet (I4: detection is not verification)
@@ -293,10 +293,10 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
   S14 RECONCILE      PASS
   S15 SEAL           FAIL - evidence sealed around OPEN defects - closure blocked per I8
   S16 BOARD+ROTATE   FAIL - closure blocked: 1 corrective task(s) open
-=== CYCLE OPEN - 1 corrective task(s): ['REV-20261120T203015Z094-001'] ===
-  ok   HUMAN_REQUIRED repair is NOT applied under I10 - {'blast': [], 'manifest': [], 'matched_tasks': [], 'pending_human': ['REV-20261120T203015Z094-001'], 'plan_present': False, 'regenerate': [], 'verify': []}
+=== CYCLE OPEN - 1 corrective task(s): ['REV-20261120T205134Z919-001'] ===
+  ok   HUMAN_REQUIRED repair is NOT applied under I10 - {'blast': [], 'manifest': [], 'matched_tasks': [], 'pending_human': ['REV-20261120T205134Z919-001'], 'plan_present': False, 'regenerate': [], 'verify': []}
   ok   bounded mutation: target untouched without authorization
-=== revitalization cycle 20261120T203015Z152 ===
+=== revitalization cycle 20261120T205134Z976 ===
   S01 BASELINE       PASS
   S02 INVENTORY      PASS
   S03 TOPOLOGY       PASS
@@ -305,7 +305,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
   S06 TRACE          PASS - 1 defect(s): p-bad
   S07 GOVERN         PASS
   S08 TASK           FAIL - 1 corrective task(s) for 1 defect(s) open
-  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261120T203015Z094-001=AUTO_APPROVED
+  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261120T205134Z919-001=AUTO_APPROVED
   S10 REPAIR         PASS
   S11 REGENERATE     PASS
   S12 VERIFY-LOCAL   PASS
@@ -316,7 +316,7 @@ closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-ope
 === CYCLE CLOSED (16/16 staged, evidence-sealed) ===
   ok   AUTO_APPROVED repair executes end-to-end (exit 0) - got 0
   ok   the authorized edit actually landed (root-level file changed)
-  ok   same signature REOPENS the original task, never duplicates it (I9) - ['REV-20261120T203015Z094-001']
+  ok   same signature REOPENS the original task, never duplicates it (I9) - ['REV-20261120T205134Z919-001']
   ok   gate PASSes the repaired+sealed chain
 
 REVITALIZATION SELF-TEST: PASS (every invariant witnessed)
@@ -389,8 +389,8 @@ unit_ledger_gate: PASS — 4 judged argument(s) at declared boundaries, 2 adviso
 --- unit ledger (SPI-37): PASS
 
 === controller behaviour (SPI-38) ===
-  TRACK low-ram free=8MB vK=146291 expected=146400 err=0.07%
-  TRACK mid-ram free=16MB vK=292818 expected=292800 err=0.01%
+  TRACK low-ram free=8MB vK=146284 expected=146400 err=0.08%
+  TRACK mid-ram free=16MB vK=292796 expected=292800 err=0.00%
   TRACK ample-ram free=1200MB vK=524288 expected=524288 err=0.00%
   SCALE idle_sK=1.000
 controller_gate: PASS — invariants, scale, track hold on the real law
@@ -445,8 +445,8 @@ praxis: note — no law corpus at DARKITH.md; carrying the directive unverified 
 praxis: PASS — 1 board(s) agree on the order in force
 synchrony_pulse: boot 2026-11-21 02:24:09 (rest/digest/restore)
   last activity 2020-01-01T08:00:00+08:00 (wake/active)
-  now 2026-11-21T04:30:33+08:00 (rest/digest/restore)  gap 60380.509h
-  device 2026-11-20 20:30:33 UTC+00:00  agrees-with-Operator=False  (global 2026-11-20T20:30:33Z)
+  now 2026-11-21T04:51:52+08:00 (rest/digest/restore)  gap 60380.865h
+  device 2026-11-20 20:51:52 UTC+00:00  agrees-with-Operator=False  (global 2026-11-20T20:51:52Z)
 chat_gatekeeper: WROTE — 1 order(s) on the board (0 new past watermark 1), phase rest/digest/restore, occupation returning-from-rest, 2 board target(s) pinged
   ok   ingest wrote an order
   ok   order is on the board
@@ -499,7 +499,7 @@ chat_gatekeeper: PASS — CHAT-GATE block attested at watermark 22669, 16 order(
 --- chat gatekeeper ingest (MUST #38): PASS
 
 === OFIF falsifier (NT-XIII G6/G7) ===
-  G6 budget=146353 ceiling=146400 residual=1109
+  G6 budget=146353 ceiling=146400 residual=1104
   G7 budget=65536 ceiling=8632 residual=-1365684 scale=0.5
 ofif_gate: PASS — G6 and G7 hold; F1 behaves as a detector on the real controller
 --- OFIF falsifier (NT-XIII G6/G7): PASS
@@ -525,7 +525,7 @@ convergence_gate: PASS — clock (py==js), iso, phase (active+rest), tree (316 f
 --- convergence_gate: PASS
 
 === synchrony_pulse ===
-synchrony_pulse: PASS — boot-aware; last activity 5.0h ago; phase rest/digest/restore
+synchrony_pulse: PASS — boot-aware; last activity 5.4h ago; phase rest/digest/restore
 --- synchrony_pulse: PASS
 
 === nt corpus reconciliation (SAVF) ===
@@ -693,7 +693,7 @@ PASS: one canonical doc (DARKITH.md); no overlapping copies.
 --- doc consolidation check: PASS
 
 === doc path gate ===
-doc_path_gate: PASS — every cited repo path resolves (385 tokens).
+doc_path_gate: PASS — every cited repo path resolves (387 tokens).
 --- doc path gate: PASS
 
 === blueprint gate (no injection) ===
@@ -767,7 +767,7 @@ kb_index: PASS — 66 readable files, all filed, no undeclared duplicates, index
   PASS  sync explain
   PASS  learning moves t4 up the ranking  [before t1,t2,t3,t4 after t4,t1,t2,t3]
   PASS  passive observer counted a real command  [observed 0 -> 1]
-  PASS  observer credited the #parser task  [touched={"t5":1795206701923}]
+  PASS  observer credited the #parser task  [touched={"t5":1795207983170}]
   PASS  observer reinforced the parser tag  [parser=0.325]
   PASS  sync signals reports evidence
   PASS  unattributable command raised a deficit  [open deficits 11 -> 12]
@@ -1018,7 +1018,7 @@ SKIP: jsdom not installed (npm install jsdom) — inscriber studio test NOT run
   ok   assistant: catalog sizes match published GGUF bytes
   ok   assistant: streams tokens incrementally
   ok   assistant: assembles the full text
-(node:64080) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(node:77092) ExperimentalWarning: WASI is an experimental feature and might change at any time
 (Use `node --trace-warnings ...` to show where the warning was created)
   ok   wasm: a real wasm32-wasi module runs in-process and exits 0
   ok   wasm: captures the module's stdout
@@ -1115,10 +1115,7 @@ SKIP: playwright not installed (python3 -m pip install -r requirements-dev.txt)
 === discrepancy detectors (two tabs must agree) ===
 --- working tree clean: WARN (uncommitted edits are invisible to the other tab)
        M proof/revitalization/CURRENT
-      ?? proof/revitalization/20261120T200736Z183/S04_CI.log
-      ?? proof/revitalization/20261120T200736Z183/S14_CI.log
-      ?? proof/revitalization/20261120T200736Z183/S16_POST_SEAL.log
-      ?? proof/revitalization/20261120T203006Z013/
+      ?? proof/revitalization/20261120T205125Z864/
 --- fork singularity (NEVER #11): PASS (no divergent copies)
 --- mirror pair identical: app/src/main/assets/darkith_ui.html == darkith-inscriber.html
 --- version truth: PASS (2.1.0-omega)
