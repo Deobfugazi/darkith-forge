@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "5f0c2dabdf136a8e1504dbe1975bd4081af5b63f7bf4ccb2c5d45a3cfa52f1cb",
-  "board_sha256": "b17c6aeac5bf9720d91504c5a4ea725268afe8054593d0ac1c753862382b833f",
+  "board_sha256": "3e4c4812c4e7c0b3c6b1d51b61e224d394a0031ed6bfd37d68627772df5c1bc0",
   "laws": {
     "declared": [
       "MUST #20",
