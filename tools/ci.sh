@@ -602,6 +602,12 @@ for f in files:
     # people to ignore the gate.
     if "/res/" in f:
         continue
+    # CYCLE-scoped receipt dirs are versioned evidence: proof/revitalization/<cycle>/
+    # names the revision, so the SAME basename across cycle dirs is REQUIRED to
+    # differ — that is what the cycle dir means. Treating a newer cycle's receipt
+    # as a divergent copy of an older one would train people to ignore the gate.
+    if f.startswith("proof/revitalization/") and f.count("/") >= 2:
+        continue
     by[(tree_of(f), f.rsplit("/",1)[-1])].append(f)
 divergent, mirrors = {}, {}
 for (tree, name), paths in sorted(by.items()):
