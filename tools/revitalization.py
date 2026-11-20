@@ -943,7 +943,7 @@ class Pipeline:
         final_probes = self.receipts.get("S14", {}).get("details", {}).get("full_suite", {}).get("probes", [])
         final_skips = {p["probe"] for p in final_probes if p.get("state") == "SKIP"}
         skips = sorted(final_skips or baseline_skips)
-        newly_skipped = sorted((baseline_skips - set(prev_skips)) | (final_skips - baseline_skips))
+        newly_skipped = sorted(final_skips - baseline_skips)
         open_tasks = [t for t in tasks if not self.task_verified(t)]
         task_queue = [dict(t, status=("closed" if self.task_verified(t) else "open"))
                       for t in tasks]
