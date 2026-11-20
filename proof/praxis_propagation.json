@@ -1,41 +1,57 @@
 {
-  "directive": "PRIORITY DIRECTIVE \u2014 CONVERGE THE INVARIANT SYNTHESIS (top priority, 2026-11-18)",
-  "directive_sha256": "3e65559910d90091a46c959630456286d4b03e0c6c708855e59114618b917897",
-  "board_sha256": "6bc8dcaec3dbb57dbb8a01e916941193b94f105f685b7487a310c9c8d09195c1",
+  "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
+  "directive_sha256": "10acbf2c6566fac2243e60574a2289169f66b56e2191dbe9d5fcdf0004bba462",
+  "board_sha256": "0a4689c9addeedd2d86e958ad5a9f9e10c8c633c34cebcd5bc2d80d3e7e700db",
   "laws": {
     "declared": [
-      "NEVER #19",
-      "NEVER #21",
+      "MUST #20",
+      "MUST #21",
+      "MUST #22",
       "MUST #26",
       "MUST #27",
+      "MUST #28",
+      "MUST #30",
+      "MUST #33",
+      "MUST #35",
       "MUST #36",
+      "NEVER #19",
+      "NEVER #21",
+      "SPI-15",
+      "SPI-2",
       "SPI-25",
-      "SPI-27",
-      "SPI-29",
-      "SPI-30"
+      "SPI-26",
+      "SPI-37",
+      "SPI-38",
+      "SPI-4",
+      "SPI-6"
     ],
     "derived_advisory": [
-      "MUST #35",
+      "MUST #15",
       "MUST #37",
-      "SPI-15",
-      "SPI-36"
+      "SPI-16",
+      "SPI-19",
+      "SPI-29",
+      "SPI-30",
+      "SPI-32",
+      "SPI-33",
+      "SPI-34"
     ]
   },
   "targets": [
     {
       "target": "durable",
       "path": "/workspace/project/darkith-forge/TASKS.md",
-      "status": "current",
-      "detail": ""
+      "status": "updated",
+      "detail": "30350->33567 B"
     },
     {
       "target": "session:18393131094c4acfb45d943764549f23",
       "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
+      "status": "updated",
+      "detail": "mirror beside board"
     }
   ],
-  "mode": "check",
+  "mode": "apply",
   "stale": 0,
   "problems": 0
 }

@@ -147,6 +147,12 @@ if have python3; then
     if [ -f tools/controller_gate.py ]; then
       run "controller behaviour (SPI-38)" python3 tools/controller_gate.py
     fi
+    # The Operator's chat is the source of the order in force. A directive that exists only
+    # because someone typed it into TASKS.md by hand is not ingested from his speech.
+    if [ -f tools/chat_gatekeeper.py ]; then
+      run "chat gatekeeper selftest (MUST #38)" python3 tools/chat_gatekeeper.py --selftest
+      run "chat gatekeeper ingest (MUST #38)"   python3 tools/chat_gatekeeper.py --check
+    fi
     # NT-XIII's falsifier, executed: on a known cut the deficit must be BOOKED, not silenced.
     if [ -f tools/ofif_gate.py ]; then
       run "OFIF falsifier (NT-XIII G6/G7)" python3 tools/ofif_gate.py

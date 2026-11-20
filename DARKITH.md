@@ -1513,3 +1513,43 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   FAIL; removing it reports -1,365,684 bytes and PASSES. Note the charge itself was
   recalibrated during construction: demanding budget <= ceiling below the actuator floor
   demanded the impossible, and a charge that can never pass is a broken charge (W-040).
+
+
+---
+
+─── MUST #38 (THE CHAT IS THE BOARD — NO HUMAN IN THE LOOP) ───
+  GATE: tools/chat_gatekeeper.py
+  Source: Operator directive 2026-11-20T02:32 (prompt [126]) — "every clear executive prompt as
+  job order instructions must be instantiated syncronically in all tasks boards ... and the
+  DURABLE core Directive Prime Task BOARD, add a bot that auto-propagates this after an agent
+  (ai or me) insribes the most current task directive musta along with its coupled nevers!"
+  and 2026-11-20T05:04 (prompt [144]) — "auto COUPLED in sync to my CIRCADIAN circulatory
+  vital feedback as real time occupation aware".
+
+  The gap this closed: tools/praxis_propagate.py mirrored a directive FROM TASKS.md to every
+  board, so the propagation half existed. But the directive only existed if a human or agent
+  typed it into TASKS.md by hand. The Operator's SPEECH was not a source. Three of the words in
+  his order — monitor my chat directives, cyclically, circadian-coupled — described the half
+  that was missing.
+
+  The law: the session event log is the source of the order in force. Every user MessageEvent
+  past the watermark is classified (order / forbid / rebuke / chatter / skip), the executive
+  ones are written as the topmost `## ★` section of TASKS.md with their coupled laws DECLARED,
+  and praxis carries that section to every board. A waking agent on any branch reads the ping
+  and works; it does not ask the Operator to repeat himself.
+
+  Three exclusions, each earned by a defect found while building this:
+    - system nudges ("your last response did not include a function call") are not orders;
+    - the agent's own text echoed back as a user turn is not the Operator speaking;
+    - a withdrawal ("never mind for now") is not a standing prohibition.
+  Watermark, not replay: the session is one continuous stream, so ingest resumes after the last
+  index. A new conversation id replays from zero, because a new session has read nothing.
+
+  Coupling is a DECLARATION, not an inference. praxis refuses a directive with no declared
+  laws, correctly — a derived guess is not an order. The coupling table is written and fixed so
+  the same prompt always couples to the same laws (MUST #18).
+
+  Gate: --selftest proves classification, watermark, dedupe, day window, determinism and
+  replace-never-append; --check fails if any prompt past the watermark is un-ingested, if the
+  receipt is missing, if the receipt watermark disagrees with the board's, or if the board
+  drifted from the receipt.
