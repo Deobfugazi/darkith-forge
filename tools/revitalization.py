@@ -1336,33 +1336,23 @@ def command_gate(root: pathlib.Path, as_json=False) -> int:
 
 
 def command_write_board(root: pathlib.Path) -> int:
-    rc, fails = verify_chain(root)
+    """Read-only confirmation: S16 already writes and seals the board."""
+    rc, failures = verify_chain(root)
     if rc != 0:
-        for f in fails:
-            print(f"revitalization write-board: REFUSED - {f}")
-        return 1 if fails else 3
-    rev = root / "proof" / "revitalization"
-    cyc = str(json.loads((rev / "CURRENT").read_text(encoding="utf-8"))["cycle_id"])
-    s16 = read_receipt(rev / cyc / stage_file("S16"))
-    verdict = "closed" if s16["details"].get("closed") else "OPEN - tasks pending"
-    heading = (f"## REVITALIZATION - the sixteen-stage corrective cycle "
-               f"(cycle `{cyc}`, {verdict})")
-    section = f"{heading}\n\n{s16['details']['board_block']}\n"
-    text = BOARD.read_text(encoding="utf-8")
-    if BOARD_BEGIN in text:
-        pre, rest = text.split(BOARD_BEGIN, 1)
-        _, post = rest.split(BOARD_END, 1)
-        new_text = pre + BOARD_BEGIN + "\n" + section + "\n" + BOARD_END + post
-    else:
-        idx = text.find("<!-- CHAT-GATE:BEGIN")
-        if idx == -1:
-            new_text = (text.rstrip("\n") + "\n\n" + BOARD_BEGIN + "\n"
-                        + section + "\n" + BOARD_END + "\n")
-        else:
-            new_text = (text[:idx] + BOARD_BEGIN + "\n" + section + "\n"
-                        + BOARD_END + "\n\n" + text[idx:])
-    BOARD.write_text(new_text, encoding="utf-8")
-    print(f"revitalization write-board: TASKS.md updated for cycle {cyc} ({verdict})")
+        for failure in failures:
+            print(f"revitalization write-board: REFUSED - {failure}")
+        return 1 if failures else 3
+    marker = root / "proof" / "revitalization" / "CURRENT"
+    current = json.loads(marker.read_text(encoding="utf-8"))
+    cycle_dir = root / "proof" / "revitalization" / str(current["cycle_id"])
+    s16 = read_receipt(cycle_dir / stage_file("S16"))
+    board = root / "TASKS.md"
+    expected = s16.get("details", {}).get("board_sha256")
+    actual = sha(board.read_bytes()) if board.is_file() else None
+    if not expected or actual != expected:
+        print("revitalization write-board: REFUSED - TASKS.md differs from the S16-sealed board")
+        return 1
+    print(f"revitalization write-board: PASS - TASKS.md already matches cycle {current['cycle_id']}")
     return 0
 
 
