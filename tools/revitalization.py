@@ -347,10 +347,10 @@ class Pipeline:
         results = []
         seen = set()
         for line in log.splitlines():
-            m = re.match(r"^---\\s+(.+?):\\s+(PASS|FAIL|SKIP)\\b(.*)$", line.strip())
+            m = re.match(r"^---\s+(.+?):\s+(PASS|FAIL|SKIP)\b(.*)$", line.strip())
             if m:
                 name, state, tail = m.groups()
-                rc_match = re.search(r"exit\\s+(\\d+)", tail)
+                rc_match = re.search(r"exit\s+(\d+)", tail)
                 rc = int(rc_match.group(1)) if rc_match else {"PASS": 0, "FAIL": 1, "SKIP": 3}[state]
                 results.append({"probe": name, "cmd": "bash tools/ci.sh",
                                 "exit": rc, "state": state,
