@@ -80,6 +80,13 @@ class SerialRevivalTests(unittest.TestCase):
             sr.validate_stage("S11", {"generated_files": [], "drift": ["docs/index.md"],
                                       "predecessor_receipt_id": "x"}, 1, {"receipt_id": "x"})
 
+    def test_s14_skip_and_inactive_never_count_as_healthy(self):
+        for state in ("SKIP", "INACTIVE", "FAIL"):
+            payload = {"clean": True, "unexplained_drift": [], "unchecked_nodes": [],
+                       "mesh_health": {"neighbor": state}, "predecessor_receipt_id": "x"}
+            with self.subTest(state=state), self.assertRaisesRegex(ValueError, "cannot count as healthy"):
+                sr.validate_stage("S14", payload, 1, {"receipt_id": "x"})
+
     def test_s14_unchecked_neighbor_blocks(self):
         with self.assertRaisesRegex(ValueError, "not fully reconciled"):
             sr.validate_stage("S14", {"clean": True, "unexplained_drift": [],
