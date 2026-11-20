@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 65,
+  "count": 66,
   "files": [
     {
       "bytes": 73115,
@@ -33,10 +33,10 @@
       "sha256": "28eca490a9a12a458661016afb61119cf1607f0069b7600e9d77c28fd828109f"
     },
     {
-      "bytes": 33296,
+      "bytes": 33298,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "a53031022e3a48bd50c12f7313a6e202227ea8d3ea58226c6edd32a0041fe22e"
+      "sha256": "57e46b688812cd7dd9cee5d483c77f1523b61c4eadfde0b3369f8c89c3a69e71"
     },
     {
       "bytes": 9608,
@@ -391,6 +391,12 @@
       "path": "tools/fractures.txt",
       "register": "F-config",
       "sha256": "ba75264a289742e8182bb756d9ce05d08981e46601f17a0391073e4c8530b2df"
+    },
+    {
+      "bytes": 3235,
+      "path": "kit/COORDINASYNC.md",
+      "register": "G-apparatus-portable",
+      "sha256": "5ccc1e4fbe07096e9b1b3e05f2e7001e66ed51cb5a7ee51bf4871bbd0ead24e9"
     }
   ],
   "mirrors": [
@@ -405,6 +411,7 @@
     "C-skillbase": "Skill surfaces \u2014 the interactive web apps",
     "D-asset": "Shipped runtime assets",
     "E-evidence": "Machine-generated proof",
-    "F-config": "Build configuration \u2014 dependency manifests"
+    "F-config": "Build configuration \u2014 dependency manifests",
+    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels"
   }
 }

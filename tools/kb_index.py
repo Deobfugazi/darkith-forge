@@ -75,6 +75,7 @@ REGISTERS = [
     ("D-asset", "Shipped runtime assets"),
     ("E-evidence", "Machine-generated proof"),
     ("F-config", "Build configuration — dependency manifests"),
+    ("G-apparatus-portable", "Portable apparatus — the one-file toolkit that travels"),
 ]
 
 # Build configuration: dependency manifests + the fracture-scout query manifest (both are
@@ -97,6 +98,11 @@ def register_of(path: str) -> str | None:
         return "C-skillbase"
     if path.startswith("app/src/main/assets/") or path.startswith("omega-app/src/main/assets/"):
         return "D-asset"
+    if path.startswith("kit/"):
+        # The portable apparatus: the single-file toolkit and its carry instructions. It is
+        # neither corpus nor build config — it is the thing the Operator takes to the next
+        # account, so it gets its own register rather than being filed as docs.
+        return "G-apparatus-portable"
     if path.startswith("proof/"):
         return "E-evidence"
     if path in CONFIG:
