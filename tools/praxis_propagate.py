@@ -529,7 +529,7 @@ def main() -> int:
         "problems": len(problems),
     }
 
-    if not args.dry_run:
+    if not dry:
         RECEIPT.parent.mkdir(parents=True, exist_ok=True)
         RECEIPT.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
 

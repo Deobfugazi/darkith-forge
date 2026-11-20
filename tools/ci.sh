@@ -180,11 +180,17 @@ if have python3; then
     if [ -f tools/ofif_gate.py ]; then
       run "OFIF falsifier (NT-XIII G6/G7)" python3 tools/ofif_gate.py
     fi
-    for g in circadian_gate download_gate stall_gate synchrony_gate synchrony_pulse convergence_gate; do
+    for g in circadian_gate download_gate stall_gate synchrony_gate convergence_gate; do
       if [ -f "tools/$g.py" ]; then
         run "$g"                          python3 "tools/$g.py"
       fi
     done
+    # synchrony_pulse is run with --check, never bare: bare updates proof/synchrony_pulse.json,
+    # and convergence_gate then fails on the file CI just wrote. A green run must not dirty
+    # the tree, or every green run manufactures the next red one.
+    if [ -f tools/synchrony_pulse.py ]; then
+      run "synchrony_pulse"             python3 tools/synchrony_pulse.py --check
+    fi
       # NT gate: run the noveltreatise corpus through SAVF and fail unless every
       # contradiction (claim kind C) is resolved to absolution by a re-run command.
       # A law cited but not carried, or a contradiction left unresolved, stops CI.
