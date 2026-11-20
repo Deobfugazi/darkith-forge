@@ -51,8 +51,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
-| `darkith code studio.html` | 600,826 | `126923a21229` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,470,408 | `d8e2c0e99779` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith code studio.html` | 601,576 | `5cd553c1653f` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,471,908 | `877e35c5d3d1` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
 | `darkith-omega-apps.html` | 7,073 | `428a803bf151` | DARKITH Ω — apps |
 | `darkith-omega-camera.html` | 10,016 | `425678dcb574` | DARKITH Ω — camera |
@@ -65,7 +65,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 462,440 | `a81a7613d0bd` | SAVF-1 Universal Audit Engine |
+| `savf.html` | 463,190 | `e37837910ad5` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 
