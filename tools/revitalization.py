@@ -1087,8 +1087,10 @@ class Pipeline:
             lines += ["", "Tasks:", ""]
             for t in task_queue:
                 tag = "REOPENED" if t.get("reopened") else "new"
-                lines.append(f"- **{t['id']}** ({tag}, {t['status']}): probe "
-                             f"`{t['signature'][0]}`; governing `{t['governing_file']}`")
+                lines.append(f"- **{t['id']}** ({tag}, {t['status']}): probes "
+                             f"`{', '.join(t.get('probes', []))}`; root cause "
+                             f"`{t.get('root_cause', 'UNCONFIRMED')}`; governing "
+                             f"`{t['governing_file']} / {t.get('governing_clause', 'UNCONFIRMED')}`")
         if skips:
             lines += ["", "Named skips this cycle (SKIP is never PASS): "
                       + ", ".join(skips) + "."]
