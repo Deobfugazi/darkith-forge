@@ -31,6 +31,25 @@ class SerialRevivalTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "invalid state"):
             sr.verify_states({"node_states": {"node-a": "SKIPPED"}})
 
+    def test_receipt_freshness_rejects_changed_repository_revision(self):
+        from unittest.mock import patch
+        with patch.object(sr, "current_revision", return_value="new-revision"):
+            fresh, reason = sr.receipt_is_fresh({"revision": "old-revision", "evidence": []})
+        self.assertFalse(fresh)
+        self.assertIn("revision changed", reason)
+
+    def test_authorization_scope_rejects_traversal(self):
+        payload = {"decision": "AUTO_APPROVED", "authorization_class": "test-only",
+                   "scope": ["../outside"], "predecessor_receipt_id": "x"}
+        with self.assertRaisesRegex(ValueError, "repository-relative"):
+            sr.validate_stage("S9", payload, 1, {"receipt_id": "x"})
+
+    def test_scope_and_generated_output_boundaries(self):
+        self.assertTrue(sr.path_in_scope("tools/gate.py", ["tools"]))
+        self.assertFalse(sr.path_in_scope("docs/gate.py", ["tools"]))
+        self.assertTrue(sr.is_generated_path("docs/INDEX.md", {"docs/INDEX.md"}))
+        self.assertFalse(sr.is_generated_path("tools/gate.py", {"docs/INDEX.md"}))
+
     def test_task_inheritance_is_mandatory(self):
         with self.assertRaisesRegex(ValueError, "missing inherited field"):
             sr.validate_stage("S8", {"tasks": [{"task_id": "T-1"}],
