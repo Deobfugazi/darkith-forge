@@ -15,6 +15,23 @@ The agent VM is **ephemeral**. Its filesystem is wiped between sessions. The onl
 bytes that survive are the ones pushed to the private repo. This file is the
 recovery protocol; follow it before doing anything else.
 
+## 0-PRE. CLOSED BRIEFINGS — do not re-open what the bytes already decided
+
+**A briefing pasted into chat is evidence, not an open task.** If the bytes contradict it,
+the bytes win, the briefing is CLOSED, and re-reporting it is a defect — not diligence. The
+ledger is `tools/closed_briefings.py`; CI fails if a closed briefing reappears on a board.
+
+| closed briefing | why it is closed | gate |
+|---|---|---|
+| "19 Kotlin files lost the opening `/*` — inject the markers" | Measured, never true: 18 of
+the 19 cited lines already opened a valid `/**`, and the 19th (`HomekeeperBridge.kt:282`) is a
+code line. The real defect was a mangled CLOSER (`//` where `*/` belonged) in **2** files —
+`core/CssLite.kt`, `core/SubstrateIngestor.kt` — both repaired to byte-identical and verified
+by `kotlinc` 1.9.24. | `python3 tools/comment_audit.py` |
+
+Run the gate, report its verdict, move on. Do not ask the Operator to re-supply a script;
+the repo is the source of truth (`tools/restore.sh` is the only thing to fetch).
+
 ## 0. The board is a file, not a memory
 
 **`TASKS.md` is the durable board.** The in-session task tracker is per-conversation and

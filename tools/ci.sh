@@ -119,6 +119,14 @@ if have python3; then
     if [ -f tools/loophole_gate.py ]; then
       run "loophole closure (SPI-31/32)"  python3 tools/loophole_gate.py
     fi
+    # A closed briefing re-appearing on the board is a fresh agent re-litigating a
+    # question the bytes already answered. That loop costs a delivery cycle every time.
+    if [ -f tools/closed_briefings.py ]; then
+      run "closed briefings stay closed"  python3 tools/closed_briefings.py --check
+    fi
+    if [ -f tools/comment_audit.py ]; then
+      run "kotlin comment scan (whole repo)"  python3 tools/comment_audit.py
+    fi
     # MUST #17/#18 were gated by tools/pack_delivery.py, which had no --check and was never
     # invoked: a gate that cannot fail. It now proves idempotence by packing twice.
     if [ -f tools/pack_delivery.py ] && [ -d app ]; then

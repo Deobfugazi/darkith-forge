@@ -1,94 +1,69 @@
 #!/usr/bin/env python3
-"""Produce the physical proof of the comment-defect state (SPI-2/4/6).
-Writes proof/comment_premise_check.txt to disk and echoes it."""
-import os, sys, subprocess, datetime
-sys.path.insert(0, 'tools')
-from kt_comment_scan import scan
+"""Gate: every block comment in every Kotlin file is closed.
 
-# The reconciled layout: one tree under app/src/main/java. Fall back to a `tree/` dir if a
-# future checkout still has one, so the tool is layout-agnostic.
-def pick_tree():
-    for cand in ("app/src/main/java/com/darkith/transliaison", "tree"):
-        if os.path.isdir(cand):
-            return cand
-    return "."
-TREE = pick_tree()
-LOG = "proof/comment_premise_check.txt"
-out = []
-def w(s=""): out.append(s)
+This closes the class permanently. It does not re-litigate the 2026-11-10 briefing that
+claimed 19 files had lost their opening '/*': that briefing was measured against a stale
+fork, the real defect was a mangled CLOSER ('//' where '*/' belonged) in exactly 2 files
+(core/CssLite.kt, core/SubstrateIngestor.kt), and both were repaired to byte-identical with
+the reconciled tree. Re-raising that premise is what this file used to do, and it cost
+every fresh agent a delivery cycle. The bytes are authoritative; the briefing is closed.
 
-w("=== DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) ===")
-sys.path.insert(0, "tools")
-from omega_time import stamp as _stamp
-w(_stamp())
-w()
+Exit 0 = every block comment closed. Exit 1 = defect present, with file and line.
+Exit 3 = SKIP, the scan could not run (never report a pass for work not done, SPI-31/32).
+"""
+import os
+import sys
 
-NAMES = ["AxmlWriter.kt","EntryPointRewriter.kt","DarkithChainReader.kt","DarkithContentStore.kt",
- "DarkithEVMKit.kt","DarkithRuntimeHost.kt","DarkithAlpineGuest.kt","DarkithSolidityCompiler.kt",
- "HomekeeperBridge.kt","LayoutNode.kt","TransliaisonEngine.kt","AutofillCorrector.kt",
- "SubstrateIngestor.kt","CssLite.kt","HtmlDom.kt","SelfTest.kt","Allocation.kt",
- "AutophagicAllocator.kt","MemoryGovernor.kt"]
-BRIEF_LINE = {"AxmlWriter.kt":7,"EntryPointRewriter.kt":10,"DarkithChainReader.kt":5,
- "DarkithContentStore.kt":5,"DarkithEVMKit.kt":3,"DarkithRuntimeHost.kt":5,
- "DarkithAlpineGuest.kt":5,"DarkithSolidityCompiler.kt":5,"HomekeeperBridge.kt":282,
- "LayoutNode.kt":3,"TransliaisonEngine.kt":3,"AutofillCorrector.kt":3,"SubstrateIngestor.kt":92,
- "CssLite.kt":3,"HtmlDom.kt":3,"SelfTest.kt":3,"Allocation.kt":3,"AutophagicAllocator.kt":5,
- "MemoryGovernor.kt":5}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from kt_comment_scan import scan  # noqa: E402
 
-def find(root, fn):
-    for dp, _, fs in os.walk(root):
-        if fn in fs: return os.path.join(dp, fn)
-    return None
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# The whole repo, not just the app tree: a defect in omega-app/ or tools/ is the same
+# defect, and a gate that scans a subset reports a pass over files it never read.
+TREES = ["."]
+# Exempt only what cannot hold authored source. 'build' is NOT exempt: it holds real .kt
+# files (build/omega/*.kt), and skipping a directory that contains source is a pass over
+# files never read.
+EXEMPT = {".git", "dist", "proof", "node_modules", ".tools", ".agent_tmp",
+          ".forge_work", "__pycache__"}
 
-w("--- scanner self-test (parser correctness) ---")
-r = subprocess.run([sys.executable, "tools/kt_comment_scan.py", "--selftest"], capture_output=True, text=True)
-for ln in (r.stdout or r.stderr).strip().split("\n"): w("  " + ln)
-w()
 
-w("--- the 19 named files: exact line where the block comment opens ---")
-w(f"{'file':<28} {'brief ln':>8} {'actual bytes':<28} verdict")
-for fn in NAMES:
-    p = find(TREE, fn)
-    if not p:
-        w(f"{fn:<28} {BRIEF_LINE[fn]:>8} {'MISSING':<28} --"); continue
-    src = open(p, encoding="utf-8", errors="surrogateescape").read()
-    lines = src.split("\n")
-    ln = BRIEF_LINE[fn]
-    actual = lines[ln-1].strip() if ln-1 < len(lines) else "<eof>"
-    d = scan(src)
-    w(f"{fn:<28} {ln:>8} {actual[:28]:<28} {'UNCLOSED' if d else 'CLEAN'}")
+def kotlin_files(tree):
+    out = []
+    for dp, dns, fns in os.walk(os.path.join(ROOT, tree)):
+        dns[:] = [d for d in dns if d not in EXEMPT]
+        if dp.rstrip("/") == os.path.join(ROOT, ".").rstrip("/") or dp == ROOT:
+            dns[:] = [d for d in dns if d not in EXEMPT]
+        out += [os.path.join(dp, f) for f in fns if f.endswith(".kt")]
+    return sorted(out)
 
-w()
-w("--- every .kt on disk (SPI-6: read them all, not just the first) ---")
-total = 0; bad = []; workbad = []
-for dp, _, fs in os.walk('.'):
-    if '/.git' in dp: continue
-    for fn in fs:
-        if fn.endswith('.kt'):
-            total += 1
-            p = os.path.join(dp, fn)
-            d = scan(open(p, encoding='utf-8', errors='surrogateescape').read())
-            if d:
-                bad.append((p, d))
-                if not p.startswith('./tree.orig'): workbad.append((p, d))
-w(f"  .kt files scanned         : {total}")
-w(f"  defects in WORKING tree   : {len(workbad)}")
-for p, d in workbad: w(f"    DEFECT {p}: {d}")
-w(f"  defects in other snapshots : {len(bad) - len(workbad)}")
 
-w()
-w("--- verdict ---")
-if not workbad:
-    w(f"  ZERO unclosed-comment defects in the working tree '{TREE}'.")
-    w("  All 19 named files open their top comment with '/*' or '/**' and close it with '*/'.")
-    w("  No pristine pre-fix snapshot is tracked; the reconciled tree is the only tree.")
-    w("  (The briefing's line numbers came from the stale fork; the bytes here are authoritative.)")
-    w("  NOTE: the briefing's diagnosis (a stripped opening '/*') does NOT match the bytes;")
-    w("        the original defect was a mangled CLOSER ('//' instead of '*/'), in 2 files.")
-else:
-    w(f"  {len(workbad)} defective file(s) remain in the working tree (see above).")
+def main():
+    files = []
+    for t in TREES:
+        files += kotlin_files(t)
+    if not files:
+        print("comment_audit: SKIP - 0 .kt files found under "
+              + ", ".join(TREES) + "; nothing examined, so nothing is proven")
+        return 3
 
-txt = "\n".join(out) + "\n"
-open(LOG, "w", encoding="utf-8").write(txt)
-print(txt)
-print("written:", LOG)
+    defects = []
+    for p in files:
+        with open(p, encoding="utf-8", errors="surrogateescape") as fh:
+            err = scan(fh.read())
+        if err:
+            defects.append((os.path.relpath(p, ROOT), err))
+
+    if defects:
+        print(f"comment_audit: FAIL - {len(defects)} unclosed block comment(s) in "
+              f"{len(files)} file(s):")
+        for path, err in defects:
+            print(f"  {path}: {err}")
+        return 1
+
+    print(f"comment_audit: PASS - {len(files)} .kt files, every block comment closed.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

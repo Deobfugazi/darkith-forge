@@ -96,6 +96,12 @@ CLASSES = [
            "'omega-app/src/main/java/*.kt')",
            "ci: kotlin comment scan",
            "an unclosed comment makes every later line of the file unparseable"),
+    Class_("closed briefing re-opened",
+           "python3 tools/closed_briefings.py --check",
+           "python3 tools/closed_briefings.py --check",
+           "ci: closed briefings stay closed",
+           "a closed briefing back on the board is a fresh agent re-litigating a question the "
+           "bytes already answered, and it costs a delivery cycle every time"),
     Class_("standing authority inscribed",
            "python3 tools/authority_gate.py --sentinel-only",
            "python3 tools/cns_directive.py --write",

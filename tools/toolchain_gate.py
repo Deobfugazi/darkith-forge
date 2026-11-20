@@ -52,8 +52,16 @@ def kotlinc_runs() -> tuple[bool, str]:
     exe = kotlinc_path()
     if not exe:
         return False, "kotlinc absent"
+    # Probe with the bundled JDK on PATH when there is one. The toolchain is a property of
+    # the repo, not of whatever PATH this shell inherited; without this the gate fails in a
+    # fresh shell and passes inside ci.sh, so the autophagy class can never converge.
+    env = dict(os.environ)
+    if (BUNDLED_JDK_BIN / "java").is_file():
+        env["PATH"] = f"{BUNDLED_JDK_BIN}{os.pathsep}{env.get('PATH', '')}"
+        env.setdefault("JAVA_HOME", str(BUNDLED_JDK_BIN.parent))
     try:
-        p = subprocess.run([exe, "-version"], capture_output=True, text=True, timeout=180)
+        p = subprocess.run([exe, "-version"], capture_output=True, text=True, timeout=180,
+                           env=env)
     except (OSError, subprocess.TimeoutExpired) as e:
         return False, f"kotlinc could not be executed: {e}"
     out = (p.stdout or "") + (p.stderr or "")

@@ -19,7 +19,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `DARKITH.md` | 101,928 | `b2af0a14fd31` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
-| `RESUME.md` | 7,775 | `a6a0bccfd58a` | RESUME — read this first in any new session |
+| `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
 | `TASKS.md` | 15,090 | `ac0e12aeac92` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
@@ -91,7 +91,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `proof/FIELD_REPORT_THIS_TAB.md` | 11,203 | `bd7589bc3d93` | DARKITH — byte-measured field report (this tab) |
 | `proof/NT_RECONCILIATION.md` | 7,185 | `fa523afa5914` | NT CORPUS RECONCILIATION — the SAVF run and the absolution |
 | `proof/comment_19files_proof.txt` | 1,214 | `eb65d81efeb4` | file                       brief  open close  line-N bytes (SPI-2) |
-| `proof/comment_premise_check.txt` | 2,819 | `473e39ef6a5b` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
+| `proof/comment_premise_check.txt` | 2,819 | `f4110f2272d7` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
 | `proof/kt_compile_proof.txt` | 1,003 | `ca98b4c82cb3` | === §19 FORK-INTEGRITY GATE — COMPILE PROOF (SPI-2/4/6) === |
 | `proof/nt_ledger_prereconcile.txt` | 2,924 | `800061c03912` | ENGINE-RULE A->A  analysis |
 | `proof/offline_oneshot_proof.txt` | 1,780 | `fce363ef10fd` | DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6) |
