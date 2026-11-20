@@ -358,7 +358,13 @@ class Pipeline:
         if not path.is_file():
             return "UNRESOLVED"
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-            m = re.search(r'\\brun\\s+"([^"]+)"\\s+(.+)        """Run the repository's real gate suite and preserve its complete log as evidence.
+            m = re.search(r'\brun\s+"([^"]+)"\s+(.+)$', line.strip())
+            if m and m.group(1) == gate_name:
+                return m.group(2).strip()
+        return "UNRESOLVED"
+
+    def run_repository_ci(self, stage_id: str) -> tuple:
+        """Run the repository's real gate suite and preserve its complete log as evidence.
 
         The chain gate is deliberately INACTIVE during S04/S14 because it cannot verify
         a chain whose final receipt has not yet been sealed. CI runs that gate normally
