@@ -306,10 +306,15 @@ def merge(board_text: str, block: str) -> str:
         # they are not collapsed, each pass adds two more and the render stops being idempotent
         # (MUST #18) — the same input must produce byte-identical output.
         rest = board_text.lstrip("\n")
+        # Keep whatever preceded the block: the board's title and governance prose live there.
+        # The old code returned block + rest[first ##★:], which threw the title away and put the
+        # generated block at line 1. board_header_gate then failed on every run, and the board
+        # was rewritten each pass, so CI never settled.
         m = re.search(r"^##\s*★", rest, re.MULTILINE)
-        if m:
-            return block + "\n\n" + rest[m.start():]
-        return (block + "\n\n" + rest).rstrip("\n") + "\n"
+        cut = m.start() if m else len(rest)
+        head = rest[:cut].rstrip("\n")
+        tail = rest[cut:]
+        return (head + "\n\n" + block + "\n\n" + tail).rstrip("\n") + "\n"
     m = re.search(r"^##\s*★", board_text, re.MULTILINE)
     if m:
         return board_text[: m.start()] + block + "\n\n" + board_text[m.start():]
