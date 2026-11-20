@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "669401124c4a7713b30f1c2d07f78d426140aa7fe1cb0d2f2c2b94435e2d1af5",
-  "board_sha256": "5a349d4b1779b9ba88de64ad5f80ad7b3299acdb9da3121a51da7c25ad3dda9c",
+  "directive_sha256": "2972515cf533be9d068d957ab08dd595aa2d07c3553656d2d6e70daaf88131e6",
+  "board_sha256": "2c60b87b9adfd54adaa3e89f388cb797984ec8de52ba643d47e94eddd627739d",
   "laws": {
     "declared": [
       "MUST #20",
@@ -14,63 +14,63 @@
       "MUST #33",
       "MUST #35",
       "MUST #36",
-      "MUST #18",
-      "MUST #38",
-      "MUST #40",
-      "MUST #11",
-      "MUST #17",
       "NEVER #19",
       "NEVER #21",
-      "NEVER #11",
-      "SPI-1",
-      "SPI-11",
-      "SPI-12",
-      "SPI-13",
-      "SPI-14",
       "SPI-15",
-      "SPI-16",
-      "SPI-18",
-      "SPI-19",
       "SPI-2",
-      "SPI-21",
       "SPI-25",
       "SPI-26",
-      "SPI-29",
-      "SPI-30",
-      "SPI-31",
-      "SPI-32",
-      "SPI-33",
-      "SPI-34",
-      "SPI-35",
-      "SPI-36",
       "SPI-37",
       "SPI-38",
       "SPI-4",
-      "SPI-5",
-      "SPI-6",
-      "SPI-8"
+      "SPI-6"
     ],
     "derived_advisory": [
-      "MUST #13",
-      "MUST #37"
+      "MUST #38",
+      "MUST #40",
+      "SPI-16",
+      "SPI-19",
+      "SPI-29",
+      "SPI-30",
+      "SPI-32",
+      "SPI-33",
+      "SPI-34"
     ]
   },
   "targets": [
     {
       "target": "durable",
-      "path": "/tmp/rev/TASKS.md",
+      "path": "/workspace/project/TASKS.md",
       "status": "current",
       "detail": ""
     },
     {
-      "target": "session:18393131094c4acfb45d943764549f23",
-      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
       "status": "current",
       "detail": "mirror"
     },
     {
-      "target": "worktree:darkith-forge",
-      "path": "/workspace/project/darkith-forge/TASKS.md",
+      "target": "session:f947e4b540c24d1c97125691f3d14707",
+      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "status": "current",
+      "detail": "mirror"
+    },
+    {
+      "target": "worktree:failwt",
+      "path": "/tmp/failwt/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "worktree:fixwt",
+      "path": "/tmp/fixwt/TASKS.md",
+      "status": "current",
+      "detail": ""
+    },
+    {
+      "target": "worktree:pristine",
+      "path": "/tmp/pristine/TASKS.md",
       "status": "current",
       "detail": ""
     }
