@@ -43,6 +43,7 @@ LAWS = ROOT / "DARKITH.md"
 BEGIN = "<!--HOLOSTREAM-MAP:BEGIN-->"
 END = "<!--HOLOSTREAM-MAP:END-->"
 SCHEMA = 1
+PAGE_REL = "repo-holostream.html"
 
 
 def sh(cmd: list[str]) -> subprocess.CompletedProcess:
@@ -132,37 +133,65 @@ def parse_generated_gates() -> list[dict]:
 
 
 def parse_timeline() -> list[dict]:
-    """Commit history as spacetime frames: index, sha, epoch, subject, churn."""
-    raw = git("log --reverse --pretty=format:%H%x01%at%x01%s --name-status")
-    frames, wheels = [], {"A": 0, "M": 2, "D": 1}
+    """Commit history as spacetime frames: index, sha, epoch, subject, churn.
+
+    One git pass over --numstat: it carries add/del per path (the churn the viewer plots)
+    and the path itself — which yields the p flag the freshness gate uses to absorb the
+    map's own carrier commit (the commit that writes the map cannot be inside the map).
+    """
+    raw = git("log --reverse --pretty=format:%H%x01%at%x01%s --numstat")
+    frames = []
     for blob in (ln for ln in raw.split("\n") if ln.strip()):
         parts = blob.split("\x01")
         if len(parts) == 3:
             sha, t, subject = parts
             frames.append({"h": sha[:8], "t": int(t), "s": subject,
-                           "f": 0, "a": 0, "d": 0, "b": 0, "m": 0})
+                           "f": 0, "a": 0, "d": 0, "p": 0})
         elif len(parts) == 1 and frames:
-            code, _, _ = parts[0].partition("\t")
+            cols = parts[0].split("\t")
             frame = frames[-1]
             frame["f"] += 1
-            key = wheels.get(code, 0)
-            if key == 0:
-                frame["b"] += 1
-            elif key == 1:
-                frame["d"] += 1
-                frame["f"] -= 1
-            else:
-                frame["m"] += 1
-            numstat = parts[0].split("\t")
-            if len(numstat) >= 3:
-                frame["a"] += int(numstat[1]) if numstat[1].isdigit() else 0
-                frame["d"] += int(numstat[2]) if numstat[2].isdigit() else 0
+            path = cols[-1] if cols else ""
+            add = cols[0] if len(cols) >= 3 else "0"
+            dele = cols[1] if len(cols) >= 3 else "0"
+            if path == PAGE_REL:
+                frame["p"] = 1
+            frame["a"] += int(add) if add.isdigit() else 0
+            frame["d"] += int(dele) if dele.isdigit() else 0
     loc = 0
     for n, f in enumerate(frames):
         loc = max(0, loc + f["a"] - f["d"])
         f["loc"] = loc
         f["n"] = n + 1
     return frames
+
+
+def parse_dirs(treeish: str) -> dict:
+    """Tree mass from a commit's own blobs — byte-identical for the same commit on any
+    host, any worktree state, any point in a CI run. The carrier page itself is excluded
+    (its bytes ARE the map; counting it would make the map a component of its own mass)."""
+    dirs = {}
+    for ln in git(f"ls-tree -r -l {treeish}").splitlines():
+        parts = ln.split()
+        if len(parts) < 4 or "\t" not in ln:
+            continue
+        size, p = parts[3], ln.split("\t", 1)[1]
+        if not p or p == PAGE_REL:
+            continue
+        top = p.split("/")[0] if "/" in p else "(root)"
+        d = dirs.setdefault(top, {"files": 0, "bytes": 0})
+        d["files"] += 1
+        try:
+            d["bytes"] += int(size)
+        except ValueError:
+            pass
+    return dirs
+
+
+def dirs_at(treeish: str) -> list[dict]:
+    """The map's canonical dirs form (sorted list), derived purely from a commit's blobs."""
+    return sorted(({"dir": k, **v} for k, v in parse_dirs(treeish).items()),
+                  key=lambda d: -d["bytes"])
 
 
 def derive() -> dict:
@@ -237,18 +266,12 @@ def derive() -> dict:
         return min(b) if b else len(timeline)
 
     head = git("log -1 --pretty=format:%H%x20%s").strip()
-    dirs = {}
-    for p in git("ls-files").splitlines():
-        if not p.strip():
-            continue
-        try:
-            size = (ROOT / p).stat().st_size
-        except OSError:
-            size = 0
-        top = p.split("/")[0] if "/" in p else "(root)"
-        d = dirs.setdefault(top, {"files": 0, "bytes": 0})
-        d["files"] += 1
-        d["bytes"] += size
+    # Tree mass is read from COMMITTED BLOBS (`git ls-tree -l`), never the worktree: CI
+    # itself rewrites tracked proof (synchrony_pulse, stall_clock) mid-run, so a
+    # worktree-stat derivation could never match its own embedded copy two runs in a row
+    # and the freshness gate was false-alarm red on every runner. A map of HEAD does not
+    # depend on what a test run wrote two minutes ago; SPI-2 — the bytes are git's.
+    dirs = dirs_at("HEAD")
 
     return {
         "schema": SCHEMA,
@@ -258,9 +281,45 @@ def derive() -> dict:
         "edges": edges,
         "timeline": timeline,
         "birth": {n["id"]: node_birth(n) for n in nodes},
-        "dirs": sorted(({"dir": k, **v} for k, v in dirs.items()),
-                       key=lambda d: -d["bytes"]),
+        "dirs": dirs,
     }
+
+
+
+def compare(emb: dict, fresh: dict) -> tuple[bool, str]:
+    """The freshness law, stated once so gate and selftest cannot disagree.
+
+    A map of HEAD is fresh when the structure it depicts is still the structure at HEAD.
+    The subtlety is the regress: the commit that CARRIES the map changes HEAD, so a map
+    can never contain its own carrier frame. A carrier commit is identifiable — it
+    touches exactly one file, the page — and absorbing its frame is not weakening the
+    gate: any OTHER change with the map behind it is still stale, named to the frame.
+
+    Returns (fresh_and_unchanged_in_structure, reason).
+    """
+    if emb.get("head") == fresh["head"]:
+        for k in ("nodes", "edges", "birth"):
+            if emb.get(k) != fresh.get(k):
+                return False, f"structure field '{k}' differs from a fresh derivation"
+        if emb.get("dirs") != fresh.get("dirs"):
+            return False, "tree mass differs from a fresh derivation"
+        return True, "map is at HEAD"
+    tl = fresh.get("timeline", [])
+    if (len(tl) >= 2 and tl[-1].get("p") == 1
+            and str(emb.get("head", "")).startswith(tl[-2]["h"])):
+        for k in ("nodes", "edges", "birth"):
+            if emb.get(k) != fresh.get(k):
+                return False, (f"map behind HEAD but structure already differs "
+                               f"('{k}' vs fresh derivation)")
+        if emb.get("dirs") != dirs_at(tl[-2]["h"]):
+            return False, "map behind HEAD and tree mass already differs"
+        return True, ("absorbed the map-carrier commit "
+                      + tl[-1]["h"] + " (touches only the map page)")
+    behind = sum(1 for f in tl
+                 if str(emb.get("head", "")).startswith(f["h"]))
+    n_behind = (len(tl) - behind) if behind else -1
+    return False, (f"map is stale: HEAD has moved {n_behind} frame(s) past the map "
+                   f"and the newest commit carries more than the map itself")
 
 
 def canonical(m: dict) -> bytes:
@@ -318,18 +377,41 @@ def selftest() -> int:
     m1, m2 = derive(), derive()
     c1, c2 = canonical(m1), canonical(m2)
     ok = [("determinism: two derivations byte-identical", c1 == c2)]
+    ok.append(("self-consumption: fresh derivation excludes its own carrier page",
+               all(d["dir"] != PAGE_REL for d in m1["dirs"])))
     emb = embedded_map()
     ok.append(("embedded map present in page", emb is not None))
     if emb is not None:
-        fresh = canonical(derive())
-        ok.append(("embedded map equals fresh derivation (NOT stale)",
-                   hashlib.sha256(canonical(emb)).hexdigest()
-                   == hashlib.sha256(fresh).hexdigest()))
-        n, t, e = len(emb.get("nodes", [])), len(emb.get("timeline", [])), len(emb.get("edges", []))
+        passed, why = compare(emb, derive())
+        ok.append(("freshness contract: embedded map vs fresh — " + why, passed))
+        n, t, e = (len(emb.get("nodes", [])), len(emb.get("timeline", [])),
+                   len(emb.get("edges", [])))
         ok.append((f"map substantial ({n} nodes, {t} frames, {e} edges)",
                    n > 10 and t > 10 and e > 10))
         bad = sanity(emb)
         ok.append(("map structurally sound (no dangling refs)", not bad))
+
+    # the regress trials (MUST #18/#42): a real HEAD's frames, then synthetic HEAD moves
+    import copy
+    base = m1
+    map_only = copy.deepcopy(base)
+    map_only["head"] = "cafe0000 carrier commit"
+    map_only["timeline"] = map_only["timeline"] + [
+        {"h": "cafe0000", "t": 0, "s": "map: regenerate", "f": 1, "a": 0, "d": 0, "p": 1,
+         "loc": base["timeline"][-1]["loc"], "n": 0}]
+    ok.append(("regress: a map-carrier commit is absorbed (no eternal staleness)",
+               compare(base, map_only) == (True, compare(base, map_only)[1])
+               and compare(base, map_only)[0]))
+    src_change = copy.deepcopy(map_only)
+    src_change["timeline"][-1]["p"] = 0
+    ok.append(("regress: a source-carrying commit with the map behind it is STALE",
+               not compare(base, src_change)[0]))
+    drifted = copy.deepcopy(base)
+    drifted["nodes"] = drifted["nodes"] + [{"id": "x", "type": "tool", "name": "x",
+                                            "sub": "", "file": "x", "line": 0}]
+    ok.append(("regress: structure drift behind HEAD is caught",
+               not compare(drifted, map_only)[0]))
+
     for name, passed in ok:
         print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
         if not passed:
@@ -352,12 +434,13 @@ def main() -> int:
         if emb is None:
             print("gen_holostream: FAIL — no embedded map in repo-holostream.html")
             return 1
-        if canonical(emb) != canonical(m):
-            print("gen_holostream: FAIL — embedded repo map is STALE (MUST #42)")
+        fresh, why = compare(emb, m)
+        if not fresh:
+            print(f"gen_holostream: FAIL — {why} (MUST #42)")
             print("        run: python3 build/gen_holostream.py")
             return 1
-        print(f"gen_holostream: PASS — map fresh at {m['head'][:8]} "
-              f"({len(m['nodes'])} nodes, {len(m['timeline'])} frames)")
+        print(f"gen_holostream: PASS — {why} ({len(m['nodes'])} nodes, "
+              f"{len(m['timeline'])} frames)")
         return 0
     return inject(m)
 

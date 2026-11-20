@@ -38,11 +38,12 @@ def main() -> int:
         print("holostream: FAIL — repo-holostream.html carries no parsable embedded map")
         print("        run: python3 build/gen_holostream.py")
         return 1
-    if gen.canonical(emb) != gen.canonical(m):
-        print("holostream: FAIL — embedded repo map is STALE (MUST #42)")
+    fresh, why = gen.compare(emb, m)
+    if not fresh:
+        print(f"holostream: FAIL — {why} (MUST #42)")
         print("        run: python3 build/gen_holostream.py  (then commit the page)")
         return 1
-    print(f"holostream: PASS — map fresh at {m['head'][:8]} "
+    print(f"holostream: PASS — {why} "
           f"({len(m['nodes'])} nodes, {len(m['edges'])} edges, "
           f"{len(m['timeline'])} frames)")
     return 0
