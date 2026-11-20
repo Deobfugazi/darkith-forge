@@ -10,6 +10,7 @@ promises and must never break:
 
 Run:  python3 build/savf-cli-test.py
 """
+import json
 import pathlib
 import subprocess
 import sys
@@ -74,6 +75,48 @@ with tempfile.TemporaryDirectory() as td:
     check("scan: empty tree says nothing was examined",
           "SKIP" in (r.stdout + r.stderr) and "nothing was examined" in (r.stdout + r.stderr),
           (r.stdout + r.stderr)[-160:])
+
+# 6c. A source nested deeper than CPython's parser can follow is NOT invalid code.
+# There is a window (one expression of ~10k terms) where the file still compiles but
+# ast.parse raises RecursionError.  Reporting that as a high-severity PARSE would turn
+# the verdict into LIED and convict correct code -- the exact false accusation this
+# tool exists to prevent.  It must report a medium PARSE_DEPTH instead, still run the
+# token rules, and never exit 1 on its own depth limit.
+with tempfile.TemporaryDirectory() as td:
+    deep = pathlib.Path(td) / "deep.py"
+    deep.write_text("import notreal_pkg\n# TODO: fix\nx = " + "1+" * 9995 + "1\n")
+    r = run("scan", str(deep), "--json")
+    F = json.loads(r.stdout) if r.returncode in (0, 1) else []
+    rules = {f["rule"] for f in F}
+    check("scan: too-deep source is not called PARSE", "PARSE" not in rules, str(rules))
+    check("scan: too-deep source reports PARSE_DEPTH", "PARSE_DEPTH" in rules, str(rules))
+    check("scan: too-deep source still finds the phantom import",
+          any(f["rule"] == "PHANTOM_IMPORT" for f in F), str(rules))
+    check("scan: too-deep source still finds the TODO marker",
+          any(f["rule"] == "MARKER" for f in F), str(rules))
+    check("scan: PARSE_DEPTH is medium, not high",
+          all(f["sev"] == "medium" for f in F if f["rule"] == "PARSE_DEPTH"),
+          str([f["sev"] for f in F if f["rule"] == "PARSE_DEPTH"]))
+    # The exit code here is 1 because of the phantom import above, which is a real
+    # high finding.  A separate file proves the depth limit alone never fails a scan.
+    clean = pathlib.Path(td) / "deep_only.py"
+    clean.write_text("x = " + "1+" * 9995 + "1\n")
+    r2 = run("scan", str(clean), "--json")
+    F2 = json.loads(r2.stdout) if r2.returncode in (0, 1) else []
+    check("scan: depth limit alone does not fail the scan",
+          r2.returncode == 0, f"rc={r2.returncode} {r2.stdout[-160:]}")
+    check("scan: depth limit alone reports only medium findings",
+          F2 and all(f["sev"] == "medium" for f in F2), str(F2)[-200:])
+
+# 6d. A genuine syntax error is still high and still exits 1 -- the fix above must not
+# have blunted the real parse finding.
+with tempfile.TemporaryDirectory() as td:
+    bad = pathlib.Path(td) / "bad.py"
+    bad.write_text("def (:\n")
+    r = run("scan", str(bad), "--json")
+    check("scan: real syntax error is still PARSE", '"PARSE"' in r.stdout, r.stdout[-160:])
+    check("scan: real syntax error is still high", '"high"' in r.stdout, r.stdout[-160:])
+    check("scan: real syntax error still exits 1", r.returncode == 1, f"rc={r.returncode}")
 
 r = run("freeze", "definitely-not-here.py")
 check("freeze: a missing file exits non-zero", r.returncode != 0, r.stdout.strip())

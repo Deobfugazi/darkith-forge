@@ -20,7 +20,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 8,838 | `9a3d6bd21937` | TASKS — the durable board |
+| `TASKS.md` | 8,903 | `04a06a448a9c` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -51,8 +51,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
-| `darkith code studio.html` | 596,911 | `5cc122191d20` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,462,578 | `fd25081c0397` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith code studio.html` | 600,826 | `126923a21229` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,470,408 | `d8e2c0e99779` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
 | `darkith-omega-apps.html` | 7,073 | `428a803bf151` | DARKITH Ω — apps |
 | `darkith-omega-camera.html` | 10,016 | `425678dcb574` | DARKITH Ω — camera |
@@ -65,7 +65,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 458,525 | `fad6f5a27fda` | SAVF-1 Universal Audit Engine |
+| `savf.html` | 462,440 | `a81a7613d0bd` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 

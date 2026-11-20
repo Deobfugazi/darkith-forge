@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 8838,
+      "bytes": 8903,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "9a3d6bd21937d4a6fca6de64f2327d68488602da786c4eb01313a31f19622c11"
+      "sha256": "04a06a448a9cc05981241ae9091851e5a16069c1bc179c9c7ba93fc9caabf7ce"
     },
     {
       "bytes": 9608,
@@ -159,16 +159,16 @@
       "sha256": "ae16a99a055e902d0f0dec144134b660fbd9e76baee743a0a7d9cd868e5d32ab"
     },
     {
-      "bytes": 596911,
+      "bytes": 600826,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "5cc122191d2069d4190db9a4bba4ce30e6309ee459814dfef378e6699d865deb"
+      "sha256": "126923a212295ab8b082c4bc9a6a159cf39035023fe78634eb75a7f4e4e5d68c"
     },
     {
-      "bytes": 1462578,
+      "bytes": 1470408,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "fd25081c0397ed723ace3855f9435d9b8ef808ae9e4e6f3e354ac15733036a40"
+      "sha256": "d8e2c0e99779bcd5e283e0e0a32345124c1affae14ee5f457264d9320ad80141"
     },
     {
       "bytes": 279277,
@@ -243,10 +243,10 @@
       "sha256": "0bebef245cf4788e327c4ee0670dc39537d43be44f60e4aa750c1f635e9313a8"
     },
     {
-      "bytes": 458525,
+      "bytes": 462440,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "fad6f5a27fda35fe73e63ed14d44f1729f2713821c7bcaf25061e1a4917912c5"
+      "sha256": "a81a7613d0bd4428e73fb6c44caea9df0d4f72fd9a44420d0219eb0431f1fb67"
     },
     {
       "bytes": 11465,

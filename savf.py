@@ -226,22 +226,10 @@ def _finding(rule, phi, path, line, msg, sev):
     return {"rule": rule, "phi": phi, "file": path, "line": line, "msg": msg, "sev": sev}
 
 
-def scan_file(path, local, installed=None):
-    try:
-        # Decode exactly as CPython does: a UTF-8 BOM or a PEP 263 `coding:`
-        # cookie on line 1 or 2 selects the codec.  A file Python can run must
-        # never be reported as unparseable.
-        with tokenize.open(path) as fh:
-            src = fh.read()
-        tree = ast.parse(src, path)
-    except (SyntaxError, UnicodeDecodeError, LookupError, RecursionError, ValueError) as e:
-        # CPython's own compiler recurses, so a long enough expression raises
-        # RecursionError.  That is a failure to parse, not a reason to abort the
-        # whole scan: report it as a parse finding like any other.
-        return [_finding("PARSE", 1, path, getattr(e, "lineno", 0) or 0, f"cannot parse: {e}", "high")]
-    test_file = is_test_file(path)
+def _token_findings(src, path, test_file):
+    """Marker and mock-identifier rules.  These read tokens only, so they still
+    apply to a file whose tree could not be built."""
     F = []
-    # markers: comments and identifiers only (never string literals)
     try:
         for tok in tokenize.generate_tokens(io.StringIO(src).readline):
             if tok.type == tokenize.COMMENT and MARK.search(tok.string) and not test_file:
@@ -250,6 +238,117 @@ def scan_file(path, local, installed=None):
                 F.append(_finding("FAKE_DATA", 1, path, tok.start[0], f"mock-style identifier {tok.string}", "medium"))
     except tokenize.TokenError:
         pass
+    return F
+
+
+def _phantom_root(root, local, installed):
+    """True when an import root is not stdlib, not local, and not declared installed.
+    Shared by the tree path and the token path so both reach the same verdict."""
+    if root in STDLIB or root in local or root == "__future__":
+        return False
+    if installed is not None:
+        # An explicit set keeps the verdict identical on every host and
+        # every interpreter, instead of depending on what is installed.
+        return root not in installed
+    try:
+        return _LOAD_SPEC(root) is None
+    except (ImportError, ValueError):
+        return False
+
+
+def _import_findings_from_tokens(src, path, local, installed):
+    """PHANTOM_IMPORT from tokens alone, for a file whose tree could not be built.
+    `import a, b` and `from m import x` are read; a relative `from . import x` is
+    skipped because it names no root module."""
+    F = []
+    try:
+        toks = [t for t in tokenize.generate_tokens(io.StringIO(src).readline)
+                if t.type not in (tokenize.COMMENT, tokenize.NL)]
+    except tokenize.TokenError:
+        return F
+    i, n = 0, len(toks)
+    while i < n:
+        t = toks[i]
+        if t.type == tokenize.NAME and t.string == "import":
+            # `import a.b as c, d` — a root is the first NAME of each comma item.
+            i += 1
+            expect_root = True
+            while i < n and toks[i].type != tokenize.NEWLINE:
+                cur = toks[i]
+                if cur.type == tokenize.OP and cur.string == ",":
+                    expect_root = True
+                elif cur.type == tokenize.OP and cur.string == ".":
+                    expect_root = False          # dotted continuation of the same item
+                elif cur.type == tokenize.NAME and cur.string == "as":
+                    expect_root = False
+                elif cur.type == tokenize.NAME and expect_root:
+                    root = cur.string
+                    if _phantom_root(root, local, installed):
+                        F.append(_finding("PHANTOM_IMPORT", 2, path, cur.start[0],
+                                          f"'{root}' is not stdlib, installed, or local", "high"))
+                    expect_root = False
+                i += 1
+        elif t.type == tokenize.NAME and t.string == "from":
+            # `from m import x`; `from . import x` / `from .m import x` are relative
+            # and the token after `from` is an operator, so no root is read.
+            j = i + 1
+            if j < n and toks[j].type == tokenize.NAME:
+                root = toks[j].string
+                if _phantom_root(root, local, installed):
+                    F.append(_finding("PHANTOM_IMPORT", 2, path, toks[j].start[0],
+                                      f"'{root}' is not stdlib, installed, or local", "high"))
+            while i < n and toks[i].type != tokenize.NEWLINE:
+                i += 1
+        else:
+            i += 1
+    return F
+
+
+def scan_file(path, local, installed=None):
+    try:
+        # Decode exactly as CPython does: a UTF-8 BOM or a PEP 263 `coding:`
+        # cookie on line 1 or 2 selects the codec.  A file Python can run must
+        # never be reported as unparseable.
+        with tokenize.open(path) as fh:
+            src = fh.read()
+        tree = ast.parse(src, path)
+    except (RecursionError, MemoryError) as depth_err:
+        # CPython's parser recurses in C and both of its guards are unreachable from
+        # Python: deep nesting raises RecursionError, and a long chain of prefix
+        # operators ("not " * 20000) exhausts the C parser stack and raises
+        # MemoryError("Parser stack overflowed").  setrecursionlimit and a larger
+        # thread stack move neither.  Both therefore only ever mean "too deep to
+        # analyze" — never evidence that the source is malformed.  Reporting either
+        # as a PARSE finding would be a high-severity accusation that turns the
+        # verdict into LIED and convicts correct code, so it is reported as an
+        # unattested medium instead: the tree-based rules did not run, and the
+        # verdict falls back to REVIEW rather than a false pass or condemnation.
+        if isinstance(depth_err, MemoryError):
+            too_deep = ("nested too deeply for this scanner and for CPython's own compiler; "
+                        "the source is not shown to be invalid")
+        else:
+            too_deep = "compiles, but nested too deeply for this scanner to build an AST"
+            try:
+                compile(src, path, "exec")
+            except RecursionError:
+                too_deep = ("nested too deeply for this scanner and for CPython's own "
+                            "compiler; the source is not shown to be invalid")
+            except (SyntaxError, ValueError) as cexc:
+                # A real syntax fault that the parser reached before running out of depth.
+                return [_finding("PARSE", 1, path, getattr(cexc, "lineno", 0) or 0,
+                                 f"cannot parse: {cexc}", "high")]
+        # The token rules need no tree, so they still run and still report.  Without
+        # this a deeply nested file would come back cleaner than the same file one
+        # character shorter, which is the false-clean the whole tool exists to stop.
+        F = _token_findings(src, path, is_test_file(path))
+        F.extend(_import_findings_from_tokens(src, path, local, installed))
+        F.append(_finding("PARSE_DEPTH", 1, path, 0,
+                          too_deep + "; tree-based rules were not run", "medium"))
+        return F
+    except (SyntaxError, UnicodeDecodeError, LookupError, ValueError) as e:
+        return [_finding("PARSE", 1, path, getattr(e, "lineno", 0) or 0, f"cannot parse: {e}", "high")]
+    test_file = is_test_file(path)
+    F = _token_findings(src, path, test_file)
     # imports (phi2)
     mod_alias = {}
     for n in ast.walk(tree):

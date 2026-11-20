@@ -3092,6 +3092,70 @@ function dict(seed) {
     return scanSource(file, dec.text, opts);
   }
 
+  /* Rules that need no tree, for a source whose AST could not be built.  The
+     token rules and the import roots are read directly, so a too-deep file is
+     never reported cleaner than the same file one character shorter.  Mirrors
+     savf.py's _token_findings and _import_findings_from_tokens. */
+  function tokenOnlyFindings(tokens, file, testFile, opts) {
+    var F = [];
+    var markerToks = [];
+    tokens.forEach(function (tok) {
+      markerToks.push(tok);
+      if (tok.type === "STRING") {
+        var sub = global.PyAst.fstringFieldTokens(tok);
+        for (var k = 0; k < sub.length; k++) markerToks.push(sub[k]);
+      }
+    });
+    markerToks.forEach(function (tok) {
+      if (tok.type === "COMMENT" && MARK.test(tok.str) && !testFile)
+        F.push(finding("MARKER", 1, file, tok.line, "marker in comment: " + tok.str.trim().slice(0, 60), "medium"));
+      if (tok.type === "NAME" && FAKE_NAME.test(tok.str) && !testFile)
+        F.push(finding("FAKE_DATA", 1, file, tok.line, "mock-style identifier " + tok.str, "medium"));
+    });
+
+    var stdlib = dict(opts && opts.stdlib), local = dict(opts && opts.local);
+    var installed = dict();
+    if (opts && opts.installed) {
+      if (typeof opts.installed.forEach === "function") opts.installed.forEach(function (k) { installed[k] = 1; });
+      else Object.keys(opts.installed).forEach(function (k) { installed[k] = 1; });
+    }
+    function phantom(root) {
+      return !(stdlib[root] || installed[root] || local[root] || root === "__future__");
+    }
+    function report(root, line) {
+      if (phantom(root))
+        F.push(finding("PHANTOM_IMPORT", 2, file, line,
+                       "'" + root + "' is not stdlib, installed, or local", "high"));
+    }
+
+    var toks = tokens.filter(function (t) { return t.type !== "COMMENT" && t.type !== "NL"; });
+    var i = 0, n = toks.length;
+    while (i < n) {
+      var t = toks[i];
+      if (t.type === "NAME" && t.str === "import") {
+        /* `import a.b as c, d` -- the root is the first NAME of each comma item. */
+        i += 1;
+        var expectRoot = true;
+        while (i < n && toks[i].type !== "NEWLINE") {
+          var cur = toks[i];
+          if (cur.type === "OP" && cur.str === ",") expectRoot = true;
+          else if (cur.type === "OP" && cur.str === ".") expectRoot = false;
+          else if (cur.type === "NAME" && cur.str === "as") expectRoot = false;
+          else if (cur.type === "NAME" && expectRoot) { report(cur.str, cur.line); expectRoot = false; }
+          i += 1;
+        }
+      } else if (t.type === "NAME" && t.str === "from") {
+        /* `from m import x`; `from . import x` names no root (next token is OP). */
+        var j = i + 1;
+        if (j < n && toks[j].type === "NAME") report(toks[j].str, toks[j].line);
+        while (i < n && toks[i].type !== "NEWLINE") i += 1;
+      } else {
+        i += 1;
+      }
+    }
+    return F;
+  }
+
   /* opts: { stdlib: {name:1}, stdattrs: {mod:[attrs]}, local: {name:1} } */
   function scanSource(file, src, opts) {
     /* tokenize.open() removes a leading UTF-8 BOM before the source reaches the
@@ -3115,6 +3179,20 @@ function dict(seed) {
       var parsed = global.PyAst.parseWithTokens(src);
       tree = parsed.tree; tokens = parsed.tokens;
     } catch (e) {
+      /* A JS engine stack limit is not a verdict about the source.  The parser
+         recurses, so a long enough chain ("not " repeated 20000 times) raises
+         RangeError: Maximum call stack size exceeded.  CPython reaches its own
+         guard on the same input.  Reporting that as PARSE would be a
+         high-severity accusation that turns the verdict into LIED and convicts
+         correct code, so it is reported as an unattested medium instead, and the
+         rules that need no tree still run -- exactly as the CLI does. */
+      if (e && (e.name === "RangeError" || /call stack/i.test(String(e.message)))) {
+        var tokRes = global.PyLex.tokenize(src, { resumable: true });
+        return tokenOnlyFindings(tokRes.toks || [], file, isTestFile(file), opts)
+          .concat([finding("PARSE_DEPTH", 1, file, 0,
+            "nested too deeply for this scanner to build an AST; the source is not shown " +
+            "to be invalid; tree-based rules were not run", "medium")]);
+      }
       var m = /line (\d+)/.exec(e.message);
       var ln = e.line !== undefined ? e.line : (m ? parseInt(m[1], 10) : 0);
       var text = e.msg !== undefined ? e.msg : e.message;

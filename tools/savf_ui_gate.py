@@ -259,6 +259,26 @@ def run(shots_dir):
                 g.ck(rule in fo, "[" + label + "] finding " + rule, fo[:80])
             g.ck("pasted.py" in fo, "[" + label + "] finding names the file", fo[:80])
 
+            # A source deeper than the parser can follow must not be condemned.
+            # RangeError is a JS engine limit, not evidence of invalid code; the
+            # rules that need no tree must still run.  Reported as medium
+            # PARSE_DEPTH, never high PARSE.
+            deep = page.evaluate("""() => {
+                const src = 'import notreal_pkg\\n# TODO: deep\\nx = ' + 'not '.repeat(20000) + '1\\n';
+                const f = SavfScan.scanSource('deep.py', src,
+                    {stdlib:{}, local:{}, stdattrs:{}, installed:[]});
+                return {rules: f.map(x => x.rule), sev: f.map(x => x.rule + ':' + x.sev)};
+            }""")
+            g.ck("PARSE" not in deep["rules"], "[" + label + "] deep source is not PARSE", str(deep["rules"]))
+            g.ck("PARSE_DEPTH" in deep["rules"], "[" + label + "] deep source reports PARSE_DEPTH",
+                 str(deep["rules"]))
+            g.ck("PHANTOM_IMPORT" in deep["rules"],
+                 "[" + label + "] deep source still finds the phantom import", str(deep["rules"]))
+            g.ck("MARKER" in deep["rules"],
+                 "[" + label + "] deep source still finds the marker", str(deep["rules"]))
+            g.ck(all("PARSE_DEPTH:medium" == s for s in deep["sev"] if s.startswith("PARSE_DEPTH")),
+                 "[" + label + "] PARSE_DEPTH is medium", str(deep["sev"]))
+
             go("gates")
             n = page.eval_on_selector_all("#gateGrid .gate", "e => e.length")
             g.ck(n == 11, "[" + label + "] all 11 gates rendered", n)
