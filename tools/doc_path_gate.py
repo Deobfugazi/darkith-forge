@@ -40,6 +40,8 @@ ALLOWLIST = {
     "delivery/c7_patched_sources.zip", "delivery/darkith-one-shot.sh", "tree_omega/", "lib/",
     # build output named in prose (produced inside the APK by the chain, never a repo path)
     "classes.dex", "base.apk", "aligned.apk", "app-signed.apk",
+    # generated mirror written beside a session board by tools/praxis_propagate.py
+    "PRAXIS.md",
 }
 
 # Extensions that mark a token as a file path (not prose).

@@ -71,6 +71,14 @@ if have python3; then
     if [ -f tools/board_gate.py ]; then
       run "board gate"                    python3 tools/board_gate.py
     fi
+    # Praxis gate: the order in force must be present on EVERY board that can steer work —
+    # the durable board, each live session board, each sibling worktree. MUST #26 pushes the
+    # board; this makes the directive itself travel with it, so no worker carries out a
+    # superseded order. Read-only: --check never repairs what it inspects.
+    if [ -f tools/praxis_propagate.py ]; then
+      run "praxis calibration (MUST #33)"  python3 tools/praxis_propagate.py --selftest
+      run "praxis propagation gate"       python3 tools/praxis_propagate.py --check
+    fi
     # Law gate: SPI-15 — a law that is not an executable gate is a note. Enforces the
     # prime directive (DARKITH.md §30) and that every declared NEVER/MUST/SPI names a
     # gate that exists, or is explicitly marked as not-yet-gated.

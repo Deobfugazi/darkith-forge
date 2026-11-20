@@ -483,42 +483,85 @@ is documentation, not a law. A law that is not executed is not a law.
 
 ─── THE ANTI-DIVERGENCE LAWS ───
 
-NEVER #11 (One Tree): NEVER keep two divergent copies of the same file. When two
-copies differ, one is reconciled into the other and the loser deleted, or frozen
-read-only with a dated supersession note. Two live copies is a defect in itself,
-independent of their contents.
+─── NEVER #11 (ONE TREE) ───
+GATE: tools/fork_integrity_gate.sh
+NEVER keep two divergent copies of the same file. When two copies differ, one is
+reconciled into the other and the loser deleted, or frozen read-only with a dated
+supersession note. Two live copies is a defect in itself, independent of their contents.
+Enforced twice, because one measurement can be wrong: `tools/fork_integrity_gate.sh`
+refuses a stale fork with no dated supersession note, and the D-2 fork-singularity block
+in `tools/ci.sh` fails on any basename present at two tracked paths with different bytes.
+`tools/kb_index.py` adds the third leg — a declared mirror pair that drifts fails the index.
 
-NEVER #12 (No Foreign Symbol): NEVER reference a symbol defined in a different
-tree. If the definition is not in the same tree, the reference is a phantom —
-author the definition or remove the reference. Never borrow a symbol across a fork.
+─── NEVER #12 (NO FOREIGN SYMBOL) ───
+GATE: tools/delivery_gate.sh
+NEVER reference a symbol defined in a different tree. If the definition is not in the same
+tree, the reference is a phantom — author the definition or remove the reference. Never
+borrow a symbol across a fork. `tools/delivery_gate.sh` compiles the tree against a real
+android.jar, so a borrowed symbol surfaces as an unresolved reference and fails the run.
 
-NEVER #13 (No Unproven Currency): NEVER declare a tree current without a clean
-compile of that exact tree. Currency is proven by the compiler, not asserted.
+─── NEVER #13 (NO UNPROVEN CURRENCY) ───
+GATE: tools/delivery_gate.sh
+NEVER declare a tree current without a clean compile of that exact tree. Currency is proven
+by the compiler, not asserted. `tools/delivery_gate.sh` records `L-07-fork-singularity OPEN`
+when kotlinc or android.jar is absent, so an unproven tree is never recorded as current.
 
-MUST #10 (Byte-Diff Every Fork): Before any tree is declared current, byte-compare
-it against every other fork. Every divergence is listed and resolved explicitly.
-No divergence is resolved by assumption.
+─── MUST #10 (BYTE-DIFF EVERY FORK) ───
+GATE: tools/fork_integrity_gate.sh
+Before any tree is declared current, byte-compare it against every other fork. Every
+divergence is listed and resolved explicitly. No divergence is resolved by assumption.
+`tools/fork_integrity_gate.sh` enumerates the forks and byte-compares them.
 
-MUST #11 (Compile Is The Proof): Every reconciliation ends with a clean compile of
-the reconciled tree against a real android.jar. Zero errors is the only accepted
-result. A tree that has not compiled has not been reconciled.
+─── MUST #11 (COMPILE IS THE PROOF) ───
+GATE: tools/delivery_gate.sh
+Every reconciliation ends with a clean compile of the reconciled tree against a real
+android.jar. Zero errors is the only accepted result. A tree that has not compiled has not
+been reconciled. `tools/delivery_gate.sh` is the compiler run; a skip is an untrusted result.
 
-MUST #12 (Version Every Input): Manifest, res/, assets/, build.sh, and the
-toolchain pin live in the tree. If the chain reads it, the tree carries it.
+─── MUST #12 (VERSION EVERY INPUT) ───
+GATE: tools/blueprint_gate.py
+Manifest, res/, assets/, build.sh, and the toolchain pin live in the tree. If the chain reads
+it, the tree carries it. `tools/blueprint_gate.py` fails on a build input the tree does not
+carry, so the chain cannot depend on a file only one machine has.
 
-MUST #13 (Ledger Entries Are Gates): Every entry in this ledger is converted into
-a check the pipeline runs. A failure class with no gate is re-opened, not closed.
+─── MUST #13 (LEDGER ENTRIES ARE GATES) ───
+GATE: tools/law_gate.py
+Every entry in this ledger is converted into a check the pipeline runs. A failure class with
+no gate is re-opened, not closed. `tools/law_gate.py` enforces it on every law heading, and
+by the baseline first principle it now also fails a law declared without a heading at all —
+because an unheaded law is not an ungated law, it is a law no gate can even see.
 
 ─── THE EXTENDED SOVEREIGN SANDBOX PROTOCOL (SPI-12 to SPI-15) ───
 
-SPI-12: One authoritative tree. Forks are reconciled or deleted — never both kept
-        live. The authoritative tree carries a dated RECONCILIATION note.
-SPI-13: Every referenced symbol resolves within the tree. The compile is the proof;
-        the compiler is the only judge of a symbol's existence.
-SPI-14: Every build input is versioned in the tree. Nothing the chain reads lives
-        outside it.
-SPI-15: A ledger entry that is not an executable gate is not a law. It is a note.
-        Notes do not prevent recurrence; gates do.
+─── SPI-12 (ONE AUTHORITATIVE TREE) ───
+GATE: tools/fork_integrity_gate.sh
+One authoritative tree. Forks are reconciled or deleted — never both kept live. The
+authoritative tree carries a dated RECONCILIATION note. `tools/fork_integrity_gate.sh`
+reads that note and fails when a stale fork survives without one; the same gate carries
+NEVER #11's two further legs, so tree singularity is measured three ways against one truth.
+
+─── SPI-13 (EVERY SYMBOL RESOLVES IN-TREE) ───
+GATE: tools/delivery_gate.sh
+Every referenced symbol resolves within the tree. The compile is the proof; the compiler
+is the only judge of a symbol's existence. `tools/delivery_gate.sh` runs the real kotlinc
+proof over the tree and records `L-07-fork-singularity OPEN` when kotlinc or android.jar is
+absent — a skipped compile is an untrusted result, never a pass. `tools/syntax_gate.py`
+covers the narrower defect class (unclosed/orphan block comments) but cannot prove a file
+compiles, and does not claim to.
+
+─── SPI-14 (EVERY BUILD INPUT IS VERSIONED) ───
+GATE: tools/blueprint_gate.py
+Every build input is versioned in the tree. Nothing the chain reads lives outside it.
+`tools/blueprint_gate.py` walks what the chain reads and fails on an input that is not
+tracked, so a build cannot depend on a file only one machine has.
+
+─── SPI-15 (A LAW WITHOUT A GATE IS A NOTE) ───
+GATE: tools/law_gate.py
+A ledger entry that is not an executable gate is not a law. It is a note. Notes do not
+prevent recurrence; gates do. `tools/law_gate.py` enforces this on every NEVER/MUST/SPI
+heading: each must name a gate that exists on disk or carry `[NOTE: not yet gated]`, and a
+law declared only as prose has no heading at all, so this gate cannot see it — which is
+why a prose-only law is the failure mode this law exists to abolish, not an exemption from it.
 
 ─── THE COMPILER AS THE ONLY SYNTAX JUDGE (W-023, restated) ───
 A character-level scanner is not the compiler. A naive comment scan false-flags
@@ -1170,3 +1213,62 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
   Self-test: `python3 tools/authority_gate.py --selftest` proves the detector fires on a
   real stall and stays silent on a clean tree.
+  ---
+
+  §33 — THE PRAXIS PROPAGATION LAW (2026-11-18)
+
+  ─── SPI-29 (THE ORDER TRAVELS WITH THE BOARD) ───
+  GATE: tools/praxis_propagate.py
+  A directive inscribed once is a directive known to one agent. The Operator runs several
+  agents in parallel (MUST #27) across several tabs, branches and worktrees, and every one of
+  them reads a DIFFERENT board. MUST #26 pushes the durable board so parallel workers can see
+  it, but a pushed board is only visible to a worker that reads that board. A worker on a
+  sibling branch, or in a session whose tracker is its own `TASKS.json`, does not.
+
+  So the ORDER must travel, not just the board: the directive in force and the laws coupled to
+  it are mirrored into every board that can steer work — the durable board, each live session
+  board, each sibling worktree — by `tools/praxis_propagate.py`. Propagation is DERIVED from
+  the durable board on every run, never remembered, so a mirror cannot drift from its source
+  without the next run overwriting it and `--check` failing first.
+
+  DECLARATION IS MANDATORY. The directive must carry `**Coupled laws:** ...` naming its laws.
+  The tool fails closed when that line is absent, and fails again when it names a law that has
+  no heading in this file. It will suggest a term-matched set as a HINT, and never propagate
+  one: a lexical match is not an order, and a bot that promotes a substring hit to a law is
+  inventing law, which is the one thing an inscriber must never do.
+
+  A SESSION BOARD IS NOT OURS TO RESHAPE. `TASKS.json` is a JSON list owned by the task
+  tracker that reads it. The mirror is written as `PRAXIS.md` beside it, never by rewriting
+  the tracker's file, because a propagator that corrupts the board it propagates to has
+  destroyed the thing it was sent to inform.
+
+  THE GATE IS READ-ONLY. `--check` never repairs. A gate that fixes what it inspects cannot
+  report drift, because it destroys the evidence before judging it — measured: an earlier
+  version silently repaired the sibling worktree and exited 0.
+
+  ---
+
+  §34 — THE GATEKEEPER'S BASELINE FIRST PRINCIPLE (2026-11-18)
+
+  ─── SPI-30 (NO HEADING, NO CLOSURE) ───
+  GATE: tools/law_gate.py
+  A LAW MUST BE ENROLLED BEFORE IT CAN BE ENFORCED, AND ENROLMENT IS A HEADING.
+  The heading form `─── NEVER #n (TITLE) ───` followed by `GATE: tools/<gate>` is the only shape
+  the ledger scanner reads. A law written as inline prose is not an ungated law — it is a law
+  NO GATE CAN SEE. The scanner steps over it, the run prints PASS, and the law is silently
+  unclosed. That is worse than a missing gate, because a missing gate is visible and a skipped
+  heading is not.
+
+  Therefore `tools/law_gate.py` fails on any line where a law id is declared in prose
+  (`NEVER #n (…)` or `SPI-n:` at line start) without a corresponding heading. The charge names
+  the line number, so closure is mechanical: recast as a heading, name a gate, run the gate.
+
+  THIS LAW WAS BORN FROM ITS OWN VIOLATION. Six laws — NEVER #12, NEVER #13, MUST #10,
+  MUST #11, MUST #12, MUST #13 — were declared as prose for the whole life of the ledger. The
+  gate reported "all 47 law(s) name an existing gate" while never once reading them. The
+  count was wrong and the PASS was a lie of omission. After the fix the count is 53. The
+  difference between 47 and 53 is the measure of what the gatekeeper had been skipping.
+
+  A GATEKEEPER THAT SKIPS HEADINGS IS A FILTER THAT REPORTS SUCCESS ON THE INPUT IT DECLINED
+  TO READ. Skipping is not leniency; it is the stall wearing a green badge. The baseline is
+  absolute: no heading, no closure, no PASS.

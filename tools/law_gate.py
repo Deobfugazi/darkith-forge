@@ -12,8 +12,18 @@ This is deliberately exact and small: it does not try to prove a law is *enforce
 that it is *declared with a gate*. The stronger claim (the gate actually checks the law)
 is each gate's own job.
 
+BASELINE FIRST PRINCIPLE — NO HEADING, NO CLOSURE.
+This gate once matched only the `─── NEVER #18 (…) ───` heading form, so a law written as
+inline prose was not merely ungated, it was INVISIBLE: the scan stepped over it and the gate
+still printed PASS. Six laws (NEVER #12/#13, MUST #10-#13) were declared that way and no
+gate ever saw them. A gatekeeper that skips headings is not a gatekeeper — it is a filter
+that reports success on the input it declined to read. So an unheaded law declaration is now
+itself a FAIL, with the line number, because the defect is not "this law has no gate" but
+"this law was never enrolled in the ledger at all".
+
 Fails if:
   - DARKITH.md has no §30 PRIME OMEGA DIRECTIVE (the prime directive must exist);
+  - a law is declared WITHOUT a heading (invisible to every gate — the baseline violation);
   - a NEVER/MUST/SPI heading names no gate and carries no `[NOTE: not yet gated]` marker;
   - a named gate path does not exist on disk.
 """
@@ -30,6 +40,19 @@ LAW = re.compile(r"───\s*((?:NEVER|MUST|SPI)-?\s*#?\d+)\s*(?:\(([^)]*)\))?
 GATE = re.compile(r"tools/[\w.-]+\.(?:py|sh|js)")
 NOTE = "[NOTE: not yet gated]"
 
+# A law declaration in prose: the id at the start of a line, followed by "(" or ":".
+# Deliberately anchored to line start so a passing mention mid-sentence is not a declaration.
+INLINE = re.compile(r"^[ \t]*(?:[-*][ \t]+)?((?:NEVER|MUST|SPI)[ \t]*#?\d+)[ \t]*[(:]")
+
+
+def law_id(tok: str) -> str:
+    """Canonical id: 'NEVER #11', 'never 11', 'SPI-2', 'MUST-12' -> comparable form."""
+    m = re.match(r"(NEVER|MUST|SPI)\s*-?\s*#?\s*(\d+)$", tok.upper().strip())
+    if not m:
+        return tok.upper().strip()
+    kind, num = m.group(1), m.group(2)
+    return f"SPI-{num}" if kind == "SPI" else f"{kind} #{num}"
+
 
 def law_blocks(text: str):
     """Yield (law_id, title, body) for each law heading."""
@@ -37,7 +60,28 @@ def law_blocks(text: str):
     hits = [(i, m) for i, line in enumerate(lines) for m in [LAW.search(line)] if m]
     for idx, (i, m) in enumerate(hits):
         end = hits[idx + 1][0] if idx + 1 < len(hits) else len(lines)
-        yield m.group(1), (m.group(2) or "").strip(), "\n".join(lines[i:end])
+        yield law_id(m.group(1)), (m.group(2) or "").strip(), "\n".join(lines[i:end])
+
+
+def unheaded_laws(text: str) -> list[tuple[int, str, str]]:
+    """Law declarations with no heading: (line_number, law_id, the line).
+
+    A heading line is excluded by construction — if the line carries a `───` law heading,
+    LAW.search() matches it and the id is already enrolled in the ledger.
+    """
+    headed = set()
+    for line in text.splitlines():
+        m = LAW.search(line)
+        if m:
+            headed.add(law_id(m.group(1)))
+    out = []
+    for n, line in enumerate(text.splitlines(), 1):
+        if LAW.search(line):
+            continue
+        m = INLINE.match(line)
+        if m and law_id(m.group(1)) not in headed:
+            out.append((n, law_id(m.group(1)), line.strip()))
+    return out
 
 
 def main() -> int:
@@ -51,19 +95,26 @@ def main() -> int:
         return 1
 
     fails, ungated, gated = [], [], 0
-    for law_id, title, body in law_blocks(text):
+    for law_id_s, title, body in law_blocks(text):
         gates = GATE.findall(body)
         if gates:
             gated += 1
             for g in gates:
                 if not (ROOT / g).exists():
-                    fails.append(f"{law_id} names a gate that does not exist: {g}")
+                    fails.append(f"{law_id_s} names a gate that does not exist: {g}")
         elif NOTE in body:
-            fails.append(f"{law_id}: carries '{NOTE}' — notes are forbidden; build the gate")
+            fails.append(f"{law_id_s}: carries '{NOTE}' — notes are forbidden; build the gate")
         else:
             fails.append(
-                f"{law_id} ({title[:44]}) names no gate and carries no '{NOTE}' marker "
+                f"{law_id_s} ({title[:44]}) names no gate and carries no '{NOTE}' marker "
                 f"(SPI-15: an ungated law is a note)")
+
+    # Baseline first principle: a law with no heading is not in the ledger at all.
+    for n, lid, line in unheaded_laws(text):
+        fails.append(
+            f"{lid} is declared WITHOUT a heading at DARKITH.md:{n} — invisible to every gate "
+            f"(NO HEADING, NO CLOSURE). Recast it as '─── {lid} (TITLE) ───' + 'GATE: tools/…'. "
+            f"Line: {line[:72]}")
 
     if fails:
         print(f"law_gate: FAIL — {len(fails)} problem(s):")
@@ -72,7 +123,7 @@ def main() -> int:
         return 1
 
     print(f"law_gate: PASS — prime directive present; all {gated} law(s) name an existing gate "
-          f"(zero notes)")
+          f"(zero notes, zero unheaded)")
     return 0
 
 
