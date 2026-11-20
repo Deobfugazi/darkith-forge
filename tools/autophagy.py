@@ -196,8 +196,20 @@ def verdict(rows, passes, residue):
 
 
 def main():
-    dry = "--check" in sys.argv
+    # Heal only when heal is what was asked for. This tool used to treat every flag except
+    # --check as permission to repair, so `--selftest` (what CI passes) ran all 15 repair
+    # commands, dirtied 7 tracked files, and the gates downstream failed on CI's own writes.
+    # A read-only flag must be read-only; an unrecognised flag is not a licence to mutate.
+    dry = "--check" in sys.argv or "--selftest" in sys.argv
+    heal_requested = not any(a.startswith("-") for a in sys.argv[1:])
     do_commit = "--commit" in sys.argv
+
+    if "--selftest" in sys.argv:
+        # Prove the registry loads and every class declares both a detector and a repair.
+        bad = [c.name for c in CLASSES if not c.detect or not c.repair]
+        print(f"autophagy selftest: {len(CLASSES)} class(es), "
+              f"{len(bad)} incomplete" + (f": {bad}" if bad else ""))
+        return 0 if not bad and CLASSES else 1
 
     rows, passes, residue = [], 0, []
     for passes in range(1, MAX_PASSES + 1):
@@ -217,7 +229,7 @@ def main():
     else:
         residue = [(c, "still dirty after MAX_PASSES") for c in CLASSES if dirty(c)]
 
-    if not dry:
+    if heal_requested:
         # The verdict must describe the tree as it is NOW, not as it was three repairs ago.
         # A class repaired early can be fixed again by a later class's write, and reporting
         # that as residue is a false alarm; the reverse — reporting clean when it is not —
