@@ -168,15 +168,19 @@ def parse_timeline() -> list[dict]:
 
 def parse_dirs(treeish: str) -> dict:
     """Tree mass from a commit's own blobs — byte-identical for the same commit on any
-    host, any worktree state, any point in a CI run. The carrier page itself is excluded
-    (its bytes ARE the map; counting it would make the map a component of its own mass)."""
+    host, any worktree state, any point in a CI run. Derived artifacts are excluded (the
+    carrier page, the generated index and manifest): their bytes are FUNCTIONS of the
+    tree, and counting a function of the map back into the map's mass makes the map a
+    component of itself — regenerate the page and the mass moves, which moves the map,
+    which moves the page — NEVER #22's tumour with a user interface."""
+    excluded = {PAGE_REL, "docs/INDEX.md", "docs/kb_manifest.json"}
     dirs = {}
     for ln in git(f"ls-tree -r -l {treeish}").splitlines():
         parts = ln.split()
         if len(parts) < 4 or "\t" not in ln:
             continue
         size, p = parts[3], ln.split("\t", 1)[1]
-        if not p or p == PAGE_REL:
+        if not p or p in excluded:
             continue
         top = p.split("/")[0] if "/" in p else "(root)"
         d = dirs.setdefault(top, {"files": 0, "bytes": 0})
@@ -298,44 +302,43 @@ def compare(emb: dict, fresh: dict) -> tuple[bool, str]:
 
     Returns (fresh_and_unchanged_in_structure, reason).
     """
-    if emb.get("head") == fresh["head"]:
-        for k in ("nodes", "edges", "birth"):
+    emb_head = str(emb.get("head", "")).split()[0] if emb.get("head") else ""
+    fresh_head = str(fresh.get("head", "")).split()[0]
+    def structure_ok(depth_fields) -> tuple[bool, str] | None:
+        fields = ("nodes", "edges", "dirs") + depth_fields
+        for k in fields:
             if emb.get(k) != fresh.get(k):
                 return False, f"structure field '{k}' differs from a fresh derivation"
-        if emb.get("dirs") != fresh.get("dirs"):
-            return False, "tree mass differs from a fresh derivation"
-        return True, "map is at HEAD"
+        return None
+
     parents = fresh.get("parents") or []
-    emb_head = str(emb.get("head", "")).split()[0] if emb.get("head") else ""
-    if len(parents) >= 2 and emb_head in parents:
-        # A pull_request checkout is a synthetic merge commit GitHub builds to test the
-        # PR against its base. That commit is never in recorded history, so the map's
-        # head matches zero timeline frames — but the map is not stale: it is anchored
-        # at a parent of this very checkout. What must still hold is the structure: the
-        # merged tree's gate graph, laws, autophagy registry and masses have to equal
-        # what the map depicts, or the merge carries structural change the map doesn't
-        # know — that is staleness, named to the field.
-        for k in ("nodes", "edges", "birth"):
-            if emb.get(k) != fresh.get(k):
-                return False, (f"synthetic-merge checkout: the map head is a parent, "
-                               f"but '{k}' already differs from a fresh derivation")
-        if emb.get("dirs") != fresh.get("dirs"):
-            return False, ("synthetic-merge checkout: the map head is a parent, "
-                           "but tree mass differs from the embedded map")
-        return True, ("absorbed the synthetic merge checkout " + fresh["head"][:12]
-                      + " (the map head " + emb_head[:7]
-                      + " is a parent; the merged structure is identical)")
+    if emb.get("head") == fresh["head"]:
+        bad = structure_ok(("birth",))
+        if bad:
+            return bad
+        return True, "map is at HEAD"
+    # A pull_request checkout is a synthetic merge commit GitHub builds to test the PR
+    # against its base: a commit that exists in no recorded history, so the map head
+    # matches zero timeline frames — and history TOPOLOGY is exactly what a shallow or
+    # rebasing runner cannot be trusted to reproduce identically. A page-only carrier
+    # frame rule is just a special case of this and inherits its blindness to interleaved
+    # base commits. The contract therefore judges the checkout by CONTENT: if the map
+    # head is an ancestor of (or a parent of) this checkout and the merged tree's
+    # structure — gates, laws, classes, masses — still equals what the map depicts, the
+    # map describes this tree. Birth indices hang off the recorded timeline, so they are
+    # checked only when head is exact.
+    ancestor = False
+    if emb_head and fresh_head:
+        r = subprocess.run(["git", "merge-base", "--is-ancestor", emb_head, fresh_head],
+                           capture_output=True)
+        ancestor = r.returncode == 0
+    if emb_head in parents or ancestor:
+        bad = structure_ok(())
+        if bad:
+            return False, "map is an ancestor of the checkout, but " + bad[1]
+        return True, ("absorbed the checkout " + fresh_head[:12] + " (the map head "
+                      + emb_head[:7] + " is an ancestor; the merged structure is identical)")
     tl = fresh.get("timeline", [])
-    if (len(tl) >= 2 and tl[-1].get("p") == 1
-            and str(emb.get("head", "")).startswith(tl[-2]["h"])):
-        for k in ("nodes", "edges", "birth"):
-            if emb.get(k) != fresh.get(k):
-                return False, (f"map behind HEAD but structure already differs "
-                               f"('{k}' vs fresh derivation)")
-        if emb.get("dirs") != dirs_at(tl[-2]["h"]):
-            return False, "map behind HEAD and tree mass already differs"
-        return True, ("absorbed the map-carrier commit "
-                      + tl[-1]["h"] + " (touches only the map page)")
     behind = sum(1 for f in tl
                  if str(emb.get("head", "")).startswith(f["h"]))
     if not behind:
@@ -415,7 +418,7 @@ def selftest() -> int:
         bad = sanity(emb)
         ok.append(("map structurally sound (no dangling refs)", not bad))
 
-    # the regress trials (MUST #18/#42): a real HEAD's frames, then synthetic HEAD moves
+    # the regress trials (MUST #18/#42): the checkout CI tests is judged by CONTENT.
     import copy
     base = m1
     map_only = copy.deepcopy(base)
@@ -423,30 +426,21 @@ def selftest() -> int:
     map_only["timeline"] = map_only["timeline"] + [
         {"h": "cafe0000", "t": 0, "s": "map: regenerate", "f": 1, "a": 0, "d": 0, "p": 1,
          "loc": base["timeline"][-1]["loc"], "n": 0}]
-    ok.append(("regress: a map-carrier commit is absorbed (no eternal staleness)",
-               compare(base, map_only) == (True, compare(base, map_only)[1])
-               and compare(base, map_only)[0]))
-    src_change = copy.deepcopy(map_only)
-    src_change["timeline"][-1]["p"] = 0
-    ok.append(("regress: a source-carrying commit with the map behind it is STALE",
-               not compare(base, src_change)[0]))
     drifted = copy.deepcopy(base)
     drifted["nodes"] = drifted["nodes"] + [{"id": "x", "type": "tool", "name": "x",
                                             "sub": "", "file": "x", "line": 0}]
     ok.append(("regress: structure drift behind HEAD is caught",
                not compare(drifted, map_only)[0]))
 
-    # The checkout CI tests a pull_request on is a synthetic merge commit GitHub builds
-    # on the fly: it is never in recorded history, so a map anchored at the PR head
-    # matches zero timeline frames and the gate read that as an unbounded staleness (-1).
-    # The contract must recognise the checkout by its parents: the map head is a parent,
-    # and the merged structure has to be exactly what the map depicts.
-    merge_checkout = copy.deepcopy(base)
-    pr_head = base["head"]
+    # A pull_request checkout is a synthetic merge commit GitHub builds on the fly: it is
+    # never in recorded history, so a map anchored at the PR head matches zero timeline
+    # frames and a topology-reading gate saw unmappable staleness (-1). Recognise the
+    # checkout by its parents and by ancestry, and demand the merged structure equal the
+    # map exactly.
+    pr_head_sha = base["head"].split()[0]
     emb_head = copy.deepcopy(base)
-    pr_head_sha = pr_head.split()[0]
-    merge_head = pr_head_sha[:8] + "0000 Merge conflated PR into base"
-    merge_checkout["head"] = merge_head
+    merge_checkout = copy.deepcopy(base)
+    merge_checkout["head"] = (pr_head_sha[:8] + "0000 Merge conflated PR into base")
     merge_checkout["parents"] = ["000ba5e base tip", pr_head_sha]
     ok.append(("regress: a synthetic merge checkout whose parent is the map head is absorbed",
                compare(emb_head, merge_checkout)[0]))
@@ -456,6 +450,10 @@ def selftest() -> int:
                                                     "file": "y", "line": 0}]
     ok.append(("regress: a merge checkout with structural drift over the map is STALE",
                not compare(emb_head, merge_drift)[0]))
+    merge_mass = copy.deepcopy(merge_checkout)
+    merge_mass["dirs"] = merge_mass["dirs"] + [{"dir": "ghost/", "bytes": 1}]
+    ok.append(("regress: a merge checkout with drifted tree mass is STALE",
+               not compare(emb_head, merge_mass)[0]))
 
     for name, passed in ok:
         print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
