@@ -972,8 +972,8 @@ class Pipeline:
 
     def board_block(self, closed: bool, task_queue, skips,
                     s16_status: str = "PASS") -> str:
-        status_map = {"PASS": "done", "FAIL": "in_progress", "SKIP": "todo",
-                      "INACTIVE": "blocked"}
+        status_map = {"PASS": "done", "FAIL": "in_progress", "SKIP": "skipped",
+                      "INACTIVE": "inactive"}
         lines = [
             f"cycle `{self.cycle}` - verdict: "
             + ("CYCLE CLOSED (all stages evidence-sealed)"
