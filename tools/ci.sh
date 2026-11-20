@@ -109,6 +109,12 @@ if have python3; then
     if [ -f tools/board_gate.py ]; then
       run "board gate"                    python3 tools/board_gate.py
     fi
+    # Serial revival contract: enforce receipt-chain semantics, four-state integrity,
+    # authorization boundaries, generated-output protection, and failure routing.
+    if [ -f tools/serial_revival.py ] && [ -f tools/test_serial_revival.py ]; then
+      run "serial revival contract self-test" python3 tools/serial_revival.py selftest
+      run "serial revival contract tests" python3 tools/test_serial_revival.py
+    fi
     # Praxis gate: the order in force must be present on EVERY board that can steer work —
     # the durable board, each live session board, each sibling worktree. MUST #26 pushes the
     # board; this makes the directive itself travel with it, so no worker carries out a
