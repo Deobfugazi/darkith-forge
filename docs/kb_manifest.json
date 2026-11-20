@@ -3,10 +3,10 @@
   "count": 66,
   "files": [
     {
-      "bytes": 75905,
+      "bytes": 77322,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "27da0a07834f69ec2cf4ca762fa1df27b8217da258c86dc211e43fab31b6b3b7"
+      "sha256": "b385ffc237e3028185488de35cbc758de2b667dbd8c926e2d7f99a99215cef88"
     },
     {
       "bytes": 101928,
@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 15410,
+      "bytes": 20462,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "2c60b87b9adfd54adaa3e89f388cb797984ec8de52ba643d47e94eddd627739d"
+      "sha256": "612f3862ba25279e9a14e9bd35f4e64ef70bf88972d25885ce2c5098976c833a"
     },
     {
       "bytes": 9608,
