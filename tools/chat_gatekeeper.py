@@ -313,8 +313,11 @@ def merge(board_text: str, block: str) -> str:
         m = re.search(r"^##\s*★", rest, re.MULTILINE)
         cut = m.start() if m else len(rest)
         head = rest[:cut].rstrip("\n")
-        tail = rest[cut:]
-        return (head + "\n\n" + block + "\n\n" + tail).rstrip("\n") + "\n"
+        tail = rest[cut:].rstrip("\n")
+        # Drop empty parts: a block at the very top has no head, and an empty part would
+        # otherwise contribute its own separator and shift the file by two newlines a pass.
+        parts = [x for x in (head, block, tail) if x]
+        return "\n\n".join(parts) + "\n"
     m = re.search(r"^##\s*★", board_text, re.MULTILINE)
     if m:
         return board_text[: m.start()] + block + "\n\n" + board_text[m.start():]
