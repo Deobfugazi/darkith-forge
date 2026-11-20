@@ -83,6 +83,8 @@ BOARD_END = "<!-- REVITALIZATION:END -->"
 
 GENESIS = "GENESIS"
 STATES = ("PASS", "FAIL", "SKIP", "INACTIVE")
+LOW_RISK_REPAIR_CLASSES = {"test-only", "docs-index", "board-propagation",
+                           "formatting", "generated-regeneration"}
 DRIFT_EXEMPT_PREFIX = "proof/revitalization/"
 GENERATED_PREFIXES = ("tools/generated/", "build/gen/", "delivery/", "dl/", "dist/", "proof/")
 GENERATED_FILES = {"docs/INDEX.md", "docs/kb_manifest.json"}
@@ -623,6 +625,9 @@ class Pipeline:
                 and task.get("repair_boundary") != "UNCONFIRMED"
             )
             decision_class = planned.get("class", "HUMAN_REQUIRED")
+            if (decision_class == "AUTO_APPROVED"
+                    and planned.get("risk_class") not in LOW_RISK_REPAIR_CLASSES):
+                decision_class = "HUMAN_REQUIRED"
             if not governance_complete:
                 decision_class = "HUMAN_REQUIRED"
             decisions.append({"task": task["id"], "class": decision_class,
@@ -1504,7 +1509,7 @@ def selftest() -> int:
     (plan_dir / "repair_plan.json").write_text(json.dumps({
         "_law": "I10 - detection autonomous, mutation bounded",
         "repairs": [
-            {"task": "ANY", "class": "AUTO_APPROVED",
+            {"task": "ANY", "class": "AUTO_APPROVED", "risk_class": "test-only",
              "edits": [{"target": "repairable.txt",
                         "old": "block-a", "new": "fixed"}],
              "regenerate": ["python3 -c \"print('regen')\""],
@@ -1529,7 +1534,7 @@ def selftest() -> int:
     real_id = s08["details"]["tasks"][0]["id"]
     (plan_dir / "repair_plan.json").write_text(json.dumps({
         "repairs": [
-            {"task": real_id, "class": "AUTO_APPROVED",
+            {"task": real_id, "class": "AUTO_APPROVED", "risk_class": "test-only",
              "edits": [{"target": "repairable.txt",
                         "old": "block-a", "new": "fixed"}],
              "regenerate": ["python3 -c \"print('regen-1')\""],
