@@ -1668,6 +1668,15 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   Gate: `tools/holostream_gate.py --check` re-derives the map and fails CI if the bytes
   embedded in the page differ from the fresh derivation.
 
+  Found 2026-11-21 (collision with NEVER #23, same class): the freshness contract assumed
+  the CI checkout IS the commit the map was derived at. A pull_request runner builds a
+  synthetic merge of base + PR head — a commit that exists in no recorded history — so
+  the map's head matched zero timeline frames and the gate read it as unmapped staleness,
+  red on every PR regardless of truth. The contract now recognises the checkout by its
+  parents: a map whose head is a parent of it is absorbed iff the merged structure
+  (nodes, edges, births, masses) equals the map; any drift is still stale, named to the
+  field (`build/gen_holostream.py compare()`, selftest regress 10/11).
+
 ---
 
 ─── NEVER #23 (A CONTRACT MAY NOT DEPEND ON INTERPRETER WEATHER) ───

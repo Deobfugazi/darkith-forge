@@ -282,6 +282,7 @@ def derive() -> dict:
         "timeline": timeline,
         "birth": {n["id"]: node_birth(n) for n in nodes},
         "dirs": dirs,
+        "parents": git("log -1 --pretty=format:%P").strip().split(),
     }
 
 
@@ -304,6 +305,26 @@ def compare(emb: dict, fresh: dict) -> tuple[bool, str]:
         if emb.get("dirs") != fresh.get("dirs"):
             return False, "tree mass differs from a fresh derivation"
         return True, "map is at HEAD"
+    parents = fresh.get("parents") or []
+    emb_head = str(emb.get("head", "")).split()[0] if emb.get("head") else ""
+    if len(parents) >= 2 and emb_head in parents:
+        # A pull_request checkout is a synthetic merge commit GitHub builds to test the
+        # PR against its base. That commit is never in recorded history, so the map's
+        # head matches zero timeline frames — but the map is not stale: it is anchored
+        # at a parent of this very checkout. What must still hold is the structure: the
+        # merged tree's gate graph, laws, autophagy registry and masses have to equal
+        # what the map depicts, or the merge carries structural change the map doesn't
+        # know — that is staleness, named to the field.
+        for k in ("nodes", "edges", "birth"):
+            if emb.get(k) != fresh.get(k):
+                return False, (f"synthetic-merge checkout: the map head is a parent, "
+                               f"but '{k}' already differs from a fresh derivation")
+        if emb.get("dirs") != fresh.get("dirs"):
+            return False, ("synthetic-merge checkout: the map head is a parent, "
+                           "but tree mass differs from the embedded map")
+        return True, ("absorbed the synthetic merge checkout " + fresh["head"][:12]
+                      + " (the map head " + emb_head[:7]
+                      + " is a parent; the merged structure is identical)")
     tl = fresh.get("timeline", [])
     if (len(tl) >= 2 and tl[-1].get("p") == 1
             and str(emb.get("head", "")).startswith(tl[-2]["h"])):
@@ -317,7 +338,10 @@ def compare(emb: dict, fresh: dict) -> tuple[bool, str]:
                       + tl[-1]["h"] + " (touches only the map page)")
     behind = sum(1 for f in tl
                  if str(emb.get("head", "")).startswith(f["h"]))
-    n_behind = (len(tl) - behind) if behind else -1
+    if not behind:
+        return False, ("map is stale: its head is not in this checkout's history at all "
+                       "(not HEAD, not a map-carrier, not a parent of a merge checkout)")
+    n_behind = len(tl) - behind
     return False, (f"map is stale: HEAD has moved {n_behind} frame(s) past the map "
                    f"and the newest commit carries more than the map itself")
 
@@ -411,6 +435,27 @@ def selftest() -> int:
                                             "sub": "", "file": "x", "line": 0}]
     ok.append(("regress: structure drift behind HEAD is caught",
                not compare(drifted, map_only)[0]))
+
+    # The checkout CI tests a pull_request on is a synthetic merge commit GitHub builds
+    # on the fly: it is never in recorded history, so a map anchored at the PR head
+    # matches zero timeline frames and the gate read that as an unbounded staleness (-1).
+    # The contract must recognise the checkout by its parents: the map head is a parent,
+    # and the merged structure has to be exactly what the map depicts.
+    merge_checkout = copy.deepcopy(base)
+    pr_head = base["head"]
+    emb_head = copy.deepcopy(base)
+    pr_head_sha = pr_head.split()[0]
+    merge_head = pr_head_sha[:8] + "0000 Merge conflated PR into base"
+    merge_checkout["head"] = merge_head
+    merge_checkout["parents"] = ["000ba5e base tip", pr_head_sha]
+    ok.append(("regress: a synthetic merge checkout whose parent is the map head is absorbed",
+               compare(emb_head, merge_checkout)[0]))
+    merge_drift = copy.deepcopy(merge_checkout)
+    merge_drift["nodes"] = merge_drift["nodes"] + [{"id": "y", "type": "tool",
+                                                    "name": "y", "sub": "",
+                                                    "file": "y", "line": 0}]
+    ok.append(("regress: a merge checkout with structural drift over the map is STALE",
+               not compare(emb_head, merge_drift)[0]))
 
     for name, passed in ok:
         print(f"  [{'PASS' if passed else 'FAIL'}] {name}")

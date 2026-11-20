@@ -16,7 +16,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 75,905 | `27da0a07834f` | AGENTS.md — Darkith |
-| `DARKITH.md` | 108,849 | `c593e7276016` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 109,537 | `def68f4d16d5` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
@@ -65,7 +65,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
 | `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
-| `repo-holostream.html` | 127,611 | `396a37e8145e` | DARKITH Ω — repo holostream |
+| `repo-holostream.html` | 127,760 | `83f3a6ff5c29` | DARKITH Ω — repo holostream |
 | `savf.html` | 463,190 | `e37837910ad5` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
