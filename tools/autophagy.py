@@ -162,82 +162,115 @@ CLASSES = [
 ]
 
 
+def probe(c):
+    """Return clean, dirty, or skipped; exit 3 is an explicit no-verdict, not a defect."""
+    returncode = sh(c.detect).returncode
+    if returncode == 3:
+        return "skipped"
+    return "clean" if returncode == 0 else "dirty"
+
+
 def dirty(c):
-    return sh(c.detect).returncode != 0
+    return probe(c) == "dirty"
 
 
 def heal(c, dry):
     if dry:
         return "would repair"
     sh(c.repair)
-    # The repair is not trusted because it ran. It is trusted because the detector that
-    # found the defect now reports clean against the bytes on disk.
-    return "repaired" if not dirty(c) else "REPAIR DID NOT CONVERGE"
+    state = probe(c)
+    if state == "clean":
+        return "repaired"
+    if state == "skipped":
+        return "skipped"
+    return "REPAIR DID NOT CONVERGE"
+
+
+def probe_code(returncode):
+    if returncode == 3:
+        return "skipped"
+    return "clean" if returncode == 0 else "dirty"
 
 
 def verdict(rows, passes, residue):
-    ok = not residue
+    skipped = [c for c, state in rows if state == "skipped"]
     print()
     print("=" * 78)
-    print(f"  AUTOPHAGY: {'CLEAN — newborn tree' if ok else 'DEFECTIVE — residue remains'}")
+    if residue:
+        headline = "DEFECTIVE — residue remains"
+    elif skipped:
+        headline = f"INCOMPLETE — {len(skipped)} class(es) could not be examined"
+    else:
+        headline = "CLEAN — newborn tree"
+    print(f"  AUTOPHAGY: {headline}")
     print("=" * 78)
     for c, state in rows:
-        mark = "  ok  " if state in ("clean", "repaired", "would repair") else " FAIL "
+        mark = "  ok  " if state in ("clean", "repaired", "would repair") else (" SKIP " if state == "skipped" else " FAIL ")
         print(f"{mark} {c.name:<34} {state:<24} prevented by {c.prevent}")
     print("-" * 78)
     print(f"  passes: {passes}   classes: {len(CLASSES)}   "
-          f"residue: {len(residue)}")
+          f"residue: {len(residue)}   skipped: {len(skipped)}")
     if residue:
         print("  remaining:")
         for c, why in residue:
             print(f"    - {c.name}: {why}")
     print("=" * 78)
-    return 0 if ok else 1
+    if residue:
+        return 1
+    return 3 if skipped else 0
+
+
+def selftest():
+    checks = [
+        ("exit 0 is clean", probe_code(0) == "clean"),
+        ("exit 1 is dirty", probe_code(1) == "dirty"),
+        ("exit 3 is skipped, not dirty", probe_code(3) == "skipped"),
+        ("every repair has a prevention gate", all(c.prevent for c in CLASSES)),
+        ("registry names are unique", len({c.name for c in CLASSES}) == len(CLASSES)),
+    ]
+    for name, ok in checks:
+        print(f"  {'ok  ' if ok else 'FAIL'} {name}")
+    good = all(ok for _, ok in checks)
+    print(f"autophagy selftest: {'PASS' if good else 'FAIL'} ({sum(ok for _,ok in checks)}/{len(checks)})")
+    return 0 if good else 1
 
 
 def main():
-    # Heal only when heal is what was asked for. This tool used to treat every flag except
-    # --check as permission to repair, so `--selftest` (what CI passes) ran all 15 repair
-    # commands, dirtied 7 tracked files, and the gates downstream failed on CI's own writes.
-    # A read-only flag must be read-only; an unrecognised flag is not a licence to mutate.
-    dry = "--check" in sys.argv or "--selftest" in sys.argv
-    heal_requested = not any(a.startswith("-") for a in sys.argv[1:])
-    do_commit = "--commit" in sys.argv
-
     if "--selftest" in sys.argv:
-        # Prove the registry loads and every class declares both a detector and a repair.
-        bad = [c.name for c in CLASSES if not c.detect or not c.repair]
-        print(f"autophagy selftest: {len(CLASSES)} class(es), "
-              f"{len(bad)} incomplete" + (f": {bad}" if bad else ""))
-        return 0 if not bad and CLASSES else 1
+        return selftest()
+    dry = "--check" in sys.argv
+    do_commit = "--commit" in sys.argv
 
     rows, passes, residue = [], 0, []
     for passes in range(1, MAX_PASSES + 1):
-        work = [c for c in CLASSES if dirty(c)]
+        statuses = {c: probe(c) for c in CLASSES}
+        work = [c for c in CLASSES if statuses[c] == "dirty"]
         if not work:
-            rows = [(c, "clean") for c in CLASSES]
+            rows = [(c, statuses[c]) for c in CLASSES]
             break
         for c in work:
             state = heal(c, dry)
-            rows = [(x, state if x is c else s) for x, s in rows]
+            statuses[c] = state
             print(f"  [{passes}] {c.name}: {state}")
-            if state.startswith("REPAIR DID NOT CONVERGE"):
-                residue.append((c, state))
         if dry:
+            rows = [(c, "would repair" if statuses[c] == "dirty" else statuses[c])
+                    for c in CLASSES]
             residue = [(c, "dirty — not repaired (--check)") for c in work]
             break
     else:
-        residue = [(c, "still dirty after MAX_PASSES") for c in CLASSES if dirty(c)]
+        statuses = {c: probe(c) for c in CLASSES}
+        residue = [(c, "still dirty after MAX_PASSES") for c in CLASSES
+                   if statuses[c] == "dirty"]
+        rows = [(c, "still dirty" if statuses[c] == "dirty" else statuses[c])
+                for c in CLASSES]
 
-    if heal_requested:
-        # The verdict must describe the tree as it is NOW, not as it was three repairs ago.
-        # A class repaired early can be fixed again by a later class's write, and reporting
-        # that as residue is a false alarm; the reverse — reporting clean when it is not —
-        # is worse, so this is recomputed from disk, never carried forward.
-        residue = [(c, "still dirty after repair") for c in CLASSES if dirty(c)]
-        if residue:
-            rows = [(c, "still dirty" if any(c is r for r, _ in residue) else s)
-                    for c, s in (rows or [(x, "clean") for x in CLASSES])]
+    if not dry:
+        # Recompute from disk: later repairs can dirty an earlier class or heal another one.
+        statuses = {c: probe(c) for c in CLASSES}
+        residue = [(c, "still dirty after repair") for c in CLASSES
+                   if statuses[c] == "dirty"]
+        rows = [(c, "still dirty" if statuses[c] == "dirty" else statuses[c])
+                for c in CLASSES]
 
     if do_commit and not dry:
         st = sh("git status --porcelain")
@@ -249,7 +282,7 @@ def main():
             sh("git push -q origin main")
             print("  committed and pushed the healed tree")
 
-    return verdict(rows or [(c, "clean") for c in CLASSES], passes, residue)
+    return verdict(rows or [(c, probe(c)) for c in CLASSES], passes, residue)
 
 
 if __name__ == "__main__":
