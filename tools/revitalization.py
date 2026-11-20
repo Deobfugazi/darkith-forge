@@ -107,8 +107,8 @@ def tree_snapshot(root: pathlib.Path) -> dict:
         if not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
             continue
         rel = path.relative_to(root).as_posix()
-        if rel.startswith("proof/revitalization/"):
-            continue
+        if rel.startswith("proof/revitalization/") or rel == "proof/praxis_propagation.json":
+            continue  # the propagation receipt records per-run target states, not generated tissue
         try:
             out[rel] = sha(path.read_bytes())
         except OSError:
@@ -171,7 +171,8 @@ def is_exempt(path: str) -> bool:
     """The cycle's own output is never unexplained drift. Handles the git porcelain
     truncation: a wholly untracked `proof/` reports as `?? proof/`, an ancestor of
     the exempt prefix."""
-    return bool(path) and (path == DRIFT_EXEMPT_PREFIX.rstrip("/")
+    return bool(path) and (path == "proof/praxis_propagation.json"
+                           or path == DRIFT_EXEMPT_PREFIX.rstrip("/")
                            or path.startswith(DRIFT_EXEMPT_PREFIX)
                            or (DRIFT_EXEMPT_PREFIX.rstrip("/") + "/")
                            .startswith(path.rstrip("/") + "/"))
@@ -807,6 +808,11 @@ class Pipeline:
             changed = {p: {"before": before.get(p), "after": after_first.get(p)}
                        for p in sorted(set(before) | set(after_first))
                        if before.get(p) != after_first.get(p)}
+            if "praxis_propagate.py" in item["cmd"]:
+                receipt_path = self.root / "proof/praxis_propagation.json"
+                if receipt_path.is_file():
+                    changed["proof/praxis_propagation.json"] = {
+                        "before": "run-receipt", "after": sha(receipt_path.read_bytes())}
             item_holds = (h1["exit"] == 0 and h2["exit"] == 0
                           and after_first == after_second)
             holds = holds and item_holds
