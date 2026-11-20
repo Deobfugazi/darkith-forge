@@ -291,29 +291,29 @@ def render_orders(conv: str, orders: list[dict], occ: dict) -> str:
 
 
 def merge(board_text: str, block: str) -> str:
-    """Replace the gatekeeper block; insert before the first `## ★` if absent.
+    """Replace the gatekeeper block after the board's hand-written header.
 
     Every marker pair is removed, not just the first: a duplicated pair (which happened when
     praxis block-quoted this section) left orphan markers behind and the region multiplied on
-    each pass. One owner means one pair.
+    each pass. The prefix before the first section heading is never discarded: it contains the
+    board title and hand-written governance prose, which this generated block does not own.
     """
     if BEGIN in board_text and END in board_text:
         while BEGIN in board_text and END in board_text:
             pre, rest = board_text.split(BEGIN, 1)
             post = rest.split(END, 1)[1]
             board_text = pre + post
-        # Normalise the seam. Stripping the block leaves the newlines that surrounded it; if
-        # they are not collapsed, each pass adds two more and the render stops being idempotent
-        # (MUST #18) — the same input must produce byte-identical output.
-        rest = board_text.lstrip("\n")
-        m = re.search(r"^##\s*★", rest, re.MULTILINE)
-        if m:
-            return block + "\n\n" + rest[m.start():]
-        return (block + "\n\n" + rest).rstrip("\n") + "\n"
-    m = re.search(r"^##\s*★", board_text, re.MULTILINE)
+
+    # Insert immediately before the first directive/section heading, but after every byte of
+    # the authored preamble. Normalise only the seam so repeated merges remain byte-identical.
+    m = re.search(r"^##\\s*★", board_text, re.MULTILINE)
     if m:
-        return board_text[: m.start()] + block + "\n\n" + board_text[m.start():]
-    return board_text.rstrip() + "\n\n" + block + "\n"
+        pre = board_text[:m.start()].rstrip("\\n")
+        post = board_text[m.start():].lstrip("\\n")
+        if pre:
+            return pre + "\\n\\n" + block + "\\n\\n" + post.rstrip("\\n") + "\\n"
+        return block + "\\n\\n" + post.rstrip("\\n") + "\\n"
+    return board_text.rstrip("\\n") + "\\n\\n" + block + "\\n"
 
 
 def block_of(board_text: str) -> str:
@@ -500,11 +500,12 @@ def selftest() -> int:
     b2 = render_orders("c1", o1, m1["occupation"])
     chk("render is deterministic", b1 == b2)
 
-    # replace, never append
-    board = "## ★ OLD\n\nbody\n"
+    # replace, never append, and never consume the board's authored title
+    board = "# TASKS — the durable board\n\n## ★ OLD\n\nbody\n"
     merged = merge(board, b1)
     merged2 = merge(merged, b2)
-    chk("merge replaces", merged.count(BEGIN) == 1 and merged == merged2)
+    chk("merge preserves board title", merged.splitlines()[0] == "# TASKS — the durable board")
+    chk("merge replaces idempotently", merged.count(BEGIN) == 1 and merged == merged2)
 
     # occupation follows the pulse, not a guess
     chk("rest phase detected", occupation({"gapHours": 9.0, "currentPhase": "rest/digest/restore"})["state"] == "returning-from-rest")
