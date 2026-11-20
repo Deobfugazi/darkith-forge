@@ -73,10 +73,14 @@ def main() -> int:
             print(f"controller_gate: SKIP — could not compile harness: {e}")
             return 3
         if cc.returncode != 0 or not jar.exists():
-            errs = [l for l in (cc.stdout + cc.stderr).splitlines() if "error:" in l][:8]
+            output = (cc.stdout or "") + (cc.stderr or "")
             print("controller_gate: FAIL — harness did not compile, so the law was not run")
-            for l in errs:
-                print("  " + l)
+            print(f"  compiler exit={cc.returncode}; jar_exists={jar.exists()}; compiler={kotlinc}")
+            lines = output.splitlines()
+            for line in lines[-40:]:
+                print("  " + line)
+            if not lines:
+                print("  compiler produced no stdout/stderr; inspect process exit and runner memory")
             return 1
         try:
             r = subprocess.run(["java", "-jar", str(jar)], capture_output=True, text=True, timeout=300)
