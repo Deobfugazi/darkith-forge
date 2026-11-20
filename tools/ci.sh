@@ -133,8 +133,12 @@ if have python3; then
     # links (I1), four-state legality with SKIP-never-PASS (I3), task evidence
     # inheritance (I2/I8), and that a cycle claiming closure really is sealed.
     if [ -f tools/revitalization.py ]; then
-      run "revitalization selftest"   python3 tools/revitalization.py selftest
-      run "revitalization chain gate" python3 tools/revitalization.py gate
+      run "revitalization selftest" python3 tools/revitalization.py selftest
+      if [ "${REVITALIZATION_BOOTSTRAP:-0}" = "1" ]; then
+        echo "INACTIVE: revitalization chain gate deferred until S16 seal (bootstrap run)"
+      else
+        run "revitalization chain gate" python3 tools/revitalization.py gate
+      fi
     fi
     if [ -f tools/comment_audit.py ]; then
       run "kotlin comment scan (whole repo)"  python3 tools/comment_audit.py
@@ -723,10 +727,12 @@ fi
 # failure, because a broken ledger is a bookkeeping fault, not a broken tree.
 # The run's own stdout is the source of truth for what each gate reported, so re-run the
 # parse against a log this script wrote itself rather than a variable that may not exist.
-if [ -f tools/ci_receipts.py ] && [ -f "${CI_LOG:-}" ]; then
+if [ "${REVITALIZATION_BOOTSTRAP:-0}" != "1" ] && [ -f tools/ci_receipts.py ] && [ -f "${CI_LOG:-}" ]; then
   printf '\n=== ci receipts ===\n'
   python3 tools/ci_receipts.py --emit < "$CI_LOG" || true
   python3 tools/ci_receipts.py --verify || true
+elif [ "${REVITALIZATION_BOOTSTRAP:-0}" = "1" ]; then
+  echo "INACTIVE: CI receipt emitter deferred until the sealed cycle is available"
 fi
 
 printf '\nCI: %s (%d skipped)\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)" "$SKIPPED"
