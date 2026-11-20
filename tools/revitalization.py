@@ -807,9 +807,12 @@ class Pipeline:
 
     def s13_verify_blast(self, ops: dict, tasks) -> tuple:
         blast_ops = ops.get("blast", [])
-        targets = sorted({m["target"] for m
-                          in self.receipts["S10"]["details"].get("manifest", [])
-                          if m.get("applied")})
+        targets = sorted(
+            {m["target"] for m in self.receipts["S10"]["details"].get("manifest", [])
+             if m.get("applied")}
+            | {path for run in self.receipts.get("S11", {}).get("details", {}).get("runs", [])
+               for path in run.get("changed_outputs", {})}
+        )
         if not tasks and not targets:
             rec = self.emit("S13", "INACTIVE", {"runs": []}, {"runs": []},
                             reason="no repair this cycle")
@@ -866,9 +869,14 @@ class Pipeline:
         cp = git(self.root, "status", "--porcelain")
         dirty = [ln[3:].strip().strip('"')
                  for ln in cp.stdout.splitlines() if ln.strip()]
-        manifest_targets = {m["target"] for m
-                            in self.receipts["S10"]["details"].get("manifest", [])
-                            if m.get("applied")}
+        source_targets = {m["target"] for m
+                          in self.receipts["S10"]["details"].get("manifest", [])
+                          if m.get("applied")}
+        regenerated_targets = {
+            path for run in self.receipts.get("S11", {}).get("details", {}).get("runs", [])
+            for path in run.get("changed_outputs", {})
+        }
+        manifest_targets = source_targets | regenerated_targets
         dirty_paths = [p.split(" -> ")[0] for p in dirty]
         cycle_output = [p for p in dirty_paths if is_exempt(p)]
         drift = [p for p in dirty_paths
@@ -877,6 +885,8 @@ class Pipeline:
         details = {"dirty": dirty, "unexplained_drift": drift,
                    "cycle_output": cycle_output,
                    "manifest_targets": sorted(manifest_targets),
+                   "source_targets": sorted(source_targets),
+                   "regenerated_targets": sorted(regenerated_targets),
                    "regenerable_trees": [p for p in ("tools/generated", "build/gen")
                                          if (self.root / p).is_dir()],
                    "full_suite": suite}
@@ -897,9 +907,11 @@ class Pipeline:
         sealed = {
             "cycle_id": self.cycle,
             "revision": self.receipts["S01"]["details"]["commit"],
-            "changed_files": sorted({m["target"] for m
-                                     in self.receipts["S10"]["details"]
-                                     .get("manifest", []) if m.get("applied")}),
+            "changed_files": sorted(
+                {m["target"] for m in self.receipts["S10"]["details"]
+                 .get("manifest", []) if m.get("applied")}
+                | {path for run in self.receipts.get("S11", {}).get("details", {}).get("runs", [])
+                   for path in run.get("changed_outputs", {})}),
             "stage_files": stage_files,
             "commands": [{"probe": r["probe"], "cmd": r["cmd"]} for r in
                          self.receipts["S04"]["details"]["probes"]],
@@ -966,10 +978,11 @@ class Pipeline:
         rec = self.emit("S16", "PASS" if can_close else "FAIL", input_obj,
                         {"closed": can_close, "task_queue": task_queue,
                          "regression_queue": [],
-                         "changed_nodes": sorted({m["target"] for m in
-                                                  self.receipts["S10"]["details"]
-                                                  .get("manifest", [])
-                                                  if m.get("applied")}),
+                         "changed_nodes": sorted(
+                             {m["target"] for m in self.receipts["S10"]["details"]
+                              .get("manifest", []) if m.get("applied")}
+                             | {path for run in self.receipts.get("S11", {}).get("details", {}).get("runs", [])
+                                for path in run.get("changed_outputs", {})}),
                          "skips": skips, "newly_skipped": newly_skipped,
                          "board_block": block, "board_sha256": board_hash},
                         evidence=["TASKS.md"],
