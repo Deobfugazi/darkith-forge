@@ -1,21 +1,21 @@
 {
-  "issued": "2026-11-20T12:59:44.966046",
+  "issued": "2026-11-20T15:21:39.647626",
   "occupation": {
-    "gapHours": 0.012,
-    "phase": "wake/active",
+    "gapHours": 0.01,
+    "phase": "rest/digest/restore",
     "state": "engaged"
   },
-  "orders": 3,
+  "orders": 15,
   "targets": [
     {
-      "orders": 3,
+      "orders": 15,
       "status": "pinged",
-      "target": "/workspace/project/TASKS.md"
+      "target": "/workspace/project/darkith-forge/TASKS.md"
     },
     {
-      "orders": 3,
+      "orders": 15,
       "status": "pinged",
-      "target": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json"
+      "target": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json"
     }
   ]
 }
