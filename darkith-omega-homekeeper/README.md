@@ -14,6 +14,7 @@ This is the executable specification and codebase for the **Darkith Omega Homeke
 - `src/cli.ts`: The `omega-hk` command-line interface (`demo`, `verify`, `render`, `sweep`).
 - `src/sample.ts`: The sample admitted Unit used by `demo` and the reader gates.
 - `src/tests.ts`: The test runner (A1–A9, separation of powers, omega).
+- `tools/build_master.py`: Regenerates `../darkith-omega-master.html` from the verified bytes on disk (idempotent: two runs are byte-identical, MUST #18).
 
 ## How to Run the Tests
 
@@ -26,7 +27,7 @@ npm install
 npm test
 ```
 
-This will compile the TypeScript (strict mode) and execute the test suite (13 passing, 0 failed).
+This will compile the TypeScript (strict mode) and execute the test suite (17 passing, 0 failed).
 
 ## Command Line
 

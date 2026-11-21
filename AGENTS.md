@@ -38,13 +38,16 @@ this law closes.
 - **Save before session end:** `bash tools/continuity.sh "what changed"`
 - See `RESUME.md` for the full protocol. Secrets (the APK signing key) never enter git.
 
-## 0a. THE PAIR LAW (MUST #37) — Python ships its .js SAVF twin
-Python is the authority; the `.js` in `app/src/main/assets/vendor/` is its universally
-frontend webview html friendly accompaniment. Every Python surface that states a law must
-ship a WebView-runnable twin, and the two must agree **byte-exactly** on identity (sha256
-vectors, GENESIS anchor, receipt_id, fire order) — not merely "both work". `tools/nodal_gate.py`
-proves it and fails closed on divergence. First carrier: `nodal/` + `vendor/nodal.js`
-(Auto-Nodal Co-ordina-Sync).
+## 0a. THE TRIPLE LAW (MUST #37) — Python ships its .js and .ts primitives
+Python is the authority; the `app/src/main/assets/vendor/` twins are its universally
+agnostic accompaniments: `.js` for the WebView, and `.ts` as a base primitive in its
+own right — `.py`, `.js`, `.ts` parities fully integrative, no language a second-class
+citizen. Every Python surface that states a law must ship runnable twins in BOTH
+`.js` and `.ts`, and all three must agree **byte-exactly** on identity (sha256
+vectors, GENESIS anchor, receipt_id, fire order) — not merely "all work".
+`tools/nodal_gate.py` proves the triad and fails closed on any divergence. First
+tri-carrier: `nodal/` + `vendor/nodal.js` + `vendor/nodal.ts` (Auto-Nodal
+Co-ordina-Sync).
 
 ## 0b. TWO TABS = TWO SANDBOXES (they share ONLY the git remote)
 Two OpenHands tabs run in **separate ephemeral sandboxes**. They do NOT share a

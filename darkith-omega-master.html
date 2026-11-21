@@ -267,6 +267,49 @@ import { Repository, admitted, validate } from "./repository.js";
 export function omega(candidates: readonly Unit[], repo: Repository): readonly Unit[] {
   return candidates.filter((u) =&gt; admitted(u).ok &amp;&amp; validate(u, repo));
 }</pre>
+<div class="file-header"><span>src/sample.ts</span></div>
+<pre>import { Unit } from "./unit.js";
+import { ClaimRecord, CapabilityDelta } from "./record.js";
+
+export function sampleUnit(): Unit {
+  const claim: ClaimRecord = {
+    id: "C-1",
+    text: "The admission gate enforces the four-core invariant on every candidate unit.",
+    assertedBy: "homekeeper",
+    assertedRole: { kind: "human" },
+    verifiedBy: [{ kind: "adversary-VM" }],
+    referent: { kind: "derivation", ref: "src/repository.ts#admitted" },
+    status: "resolved",
+    falsifier: "F1",
+    anchors: {
+      plain: "A unit is admitted only if the A∧B∧C∧D invariant holds.",
+      paper: "The admission test A1 is the invariant hold check; A2-A9 close the structural gaps.",
+      machine: "repository.ts#A1_invariant_not_satisfied",
+      provenance: "claim C-1 asserted by the Operator's homekeeper, verified by adversary VM."
+    }
+  };
+  const delta: CapabilityDelta = {
+    id: "CD-1",
+    statement: "omega() returns exactly the candidates that are admitted and valid.",
+    tier: 1,
+    conditions: "Repository registry mark CD-1 as pass.",
+    rubric: ["Run the test suite; 'omega returns only admitted valid units' must pass."],
+    assessor: { kind: "adversary-VM" },
+    falsifier: "F2",
+    status: "verified"
+  };
+  return {
+    id: "sample-admitted",
+    invariant: { A: true, B: true, C: true, D: true },
+    registers: ["plain", "paper", "machine", "provenance"],
+    claims: [claim],
+    falsifiers: ["F1", "F2", "F3", "F4"],
+    capabilityDeltas: [delta],
+    pseudonymity: { pseudonymousPersons: ["homekeeper"], realNonPersons: true },
+    contract: "Sample unit shipped with the Homekeeper; replace with real Units.",
+    closure: { claimCount: 1, deltaCount: 1, falsifierCount: 4 }
+  };
+}</pre>
 <div class="file-header"><span>src/reader-shell.html</span></div>
 <pre>&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
@@ -1034,6 +1077,178 @@ for (const [name, fn] of Object.entries(tests)) {
 
 console.log(`\n[Darkith Omega Homekeeper] Test Suite: ${passed} passed, ${failed} failed.`);
 if (failed &gt; 0) process.exit(1);</pre>
+<div class="file-header"><span>src/cli.ts</span></div>
+<pre>#!/usr/bin/env node
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { admitted, validate, Repository, AdmissionFailure } from "./repository.js";
+import { omega } from "./omega.js";
+import { render } from "./reader.js";
+import { Unit } from "./unit.js";
+import { sampleUnit } from "./sample.js";
+import { ClaimRecord, CapabilityDelta } from "./record.js";
+
+function usage(): never {
+  const u = [
+    "darkith-omega-homekeeper — the Invariant Decomposition Blueprint Executable",
+    "",
+    "Usage:",
+    "  omega-hk demo [out.html]                  Emit a sample admitted unit (JSON) and render it.",
+    "  omega-hk verify &lt;unit.json&gt; [--repo r.json]",
+    "                                            Admission report (A1-A9 + closure). Exit 0 = admitted.",
+    "  omega-hk render &lt;unit.json&gt; [out.html]    Render an admitted unit to a standalone HTML reader.",
+    "  omega-hk sweep &lt;dir&gt; &lt;outDir&gt;             Verify every *.unit.json in dir; render admitted ones",
+    "                                            into outDir; print the Omega fixed-point.",
+    "",
+    "Exit codes: 0 admitted/valid, 1 rejected, 2 usage or IO error."
+  ].join("\n");
+  console.error(u);
+  process.exit(2);
+}
+
+function readJson&lt;T&gt;(path: string): T {
+  try {
+    return JSON.parse(readFileSync(path, "utf8")) as T;
+  } catch (e) {
+    console.error(`error: cannot read JSON ${path} — ${(e as Error).message}`);
+    process.exit(2);
+  }
+}
+
+function errFailures(failures: readonly AdmissionFailure[]): string {
+  return failures.join(" ");
+}
+
+function isUnit(value: unknown): value is Unit {
+  const u = value as Unit;
+  return (
+    !!u &amp;&amp; typeof u === "object" &amp;&amp;
+    typeof u.id === "string" &amp;&amp;
+    !!u.invariant &amp;&amp; typeof u.invariant.A === "boolean" &amp;&amp;
+    Array.isArray(u.registers) &amp;&amp; Array.isArray(u.claims) &amp;&amp;
+    Array.isArray(u.falsifiers) &amp;&amp; Array.isArray(u.capabilityDeltas) &amp;&amp;
+    !!u.pseudonymity &amp;&amp; Array.isArray(u.pseudonymity.pseudonymousPersons) &amp;&amp;
+    !!u.closure
+  );
+}
+
+function loadUnit(path: string): Unit {
+  const raw = readJson&lt;unknown&gt;(path);
+  if (!isUnit(raw)) {
+    console.error(`error: ${path} is not shaped like a Unit (id, invariant, registers, claims, falsifiers, capabilityDeltas, pseudonymity, contract, closure).`);
+    process.exit(2);
+  }
+  return raw;
+}
+
+function report(unit: Unit, repo: Repository | null): boolean {
+  const admission = admitted(unit);
+  if (!admission.ok) {
+    console.error(`REJECTED ${unit.id}: ${errFailures(admission.failures)}`);
+    return false;
+  }
+  const valid = repo ? validate(unit, repo) : true;
+  if (!valid) {
+    console.error(`REJECTED ${unit.id}: validation failed (failed delta, unregistered 'verified' delta, or negative validation record)`);
+    return false;
+  }
+  console.log(`ADMITTED ${unit.id}: A1-A9 pass${repo ? ", validation pass" : " (no repo supplied; validation skipped)"}`);
+  return true;
+}
+
+function emptyRepo(): Repository {
+  return { manifest: [], validation: [], registry: [] };
+}
+
+
+function repoFor(unit: Unit, repo: Repository): Repository {
+  const registry = repo.registry.length
+    ? repo.registry
+    : unit.capabilityDeltas
+        .filter((d) =&gt; d.status === "verified")
+        .map((d) =&gt; ({ deltaId: d.id, assessor: JSON.stringify(d.assessor), result: "pass" as const }));
+  const validation = repo.validation.length
+    ? repo.validation
+    : unit.falsifiers.map((f) =&gt; ({ unitId: unit.id, passed: true }));
+  return { manifest: repo.manifest, validation, registry };
+}
+
+async function main(argv: readonly string[]): Promise&lt;number&gt; {
+  const [cmd, ...rest] = argv;
+  if (cmd === "demo") {
+    const unit = sampleUnit();
+    const out = rest[0] ?? `${unit.id}.html`;
+    writeFileSync(out, render(unit));
+    console.log(JSON.stringify(unit, null, 2));
+    console.error(`\nrendered: ${out}`);
+    return 0;
+  }
+  if (cmd === "verify") {
+    if (!rest[0]) usage();
+    const unit = loadUnit(resolve(rest[0]));
+    let repo: Repository | null = null;
+    const idx = rest.indexOf("--repo");
+    if (idx !== -1 &amp;&amp; rest[idx + 1]) repo = readJson&lt;Repository&gt;(resolve(rest[idx + 1]));
+    if (!repo) repo = repoFor(unit, emptyRepo());
+    return report(unit, repo) ? 0 : 1;
+  }
+  if (cmd === "render") {
+    if (!rest[0]) usage();
+    const unit = loadUnit(resolve(rest[0]));
+    const admission = admitted(unit);
+    if (!admission.ok) {
+      console.error(`REJECTED ${unit.id}: ${errFailures(admission.failures)} — refusing to render a unit that is not admitted.`);
+      return 1;
+    }
+    const out = rest[1] ?? `${unit.id}.html`;
+    writeFileSync(out, render(unit));
+    console.log(`rendered ${unit.id} -&gt; ${out}`);
+    return 0;
+  }
+  if (cmd === "sweep") {
+    if (!rest[0] || !rest[1]) usage();
+    const dir = resolve(rest[0]);
+    const outDir = resolve(rest[1]);
+    const repoPath = join(dir, "repository.json");
+    const units: Unit[] = readdirSync(dir)
+      .filter((f) =&gt; f.endsWith(".unit.json"))
+      .map((f) =&gt; loadUnit(join(dir, f)));
+    if (units.length === 0) {
+      console.error(`error: no *.unit.json files in ${dir}`);
+      return 2;
+    }
+    const base: Repository = existsSync(repoPath)
+      ? readJson&lt;Repository&gt;(repoPath)
+      : emptyRepo();
+    const repo: Repository = {
+      manifest: base.manifest,
+      validation:
+        base.validation.length &gt; 0
+          ? base.validation
+          : units.flatMap((u) =&gt; repoFor(u, base).validation),
+      registry:
+        base.registry.length &gt; 0
+          ? base.registry
+          : units.flatMap((u) =&gt; repoFor(u, base).registry)
+    };
+    mkdirSync(outDir, { recursive: true });
+    const fixed = omega(units, repo);
+    for (const u of units) {
+      if (!fixed.includes(u)) {
+        const a = admitted(u);
+        console.log(`REJECTED ${u.id}: ${a.ok ? "validation failed" : errFailures(a.failures)}`);
+        continue;
+      }
+      console.log(`ADMITTED ${u.id}`);
+      writeFileSync(join(outDir, `${u.id}.html`), render(u));
+    }
+    console.error(`\nOmega fixed-point: ${fixed.length}/${units.length} unit(s). Rendered to ${outDir}`);
+    return fixed.length === units.length ? 0 : 1;
+  }
+  usage();
+}
+
+process.exit(await main(process.argv.slice(2)));</pre>
 <div class="file-header"><span>package.json</span></div>
 <pre>{
   "name": "darkith-omega-homekeeper",
@@ -1128,7 +1343,7 @@ const html = render(myUnit);
 ```</pre>
 
   <h2>4. OpenHands Execution Script</h2>
-  <p>Copy the following markdown block directly into OpenHands (or any autonomous coding agent). It contains the exact commands, configuration, and full source code required to build the Homekeeper. This is the corrected script: it strict-mode compiles and produces a 13/13 passing suite.</p>
+  <p>Copy the following markdown block directly into OpenHands (or any autonomous coding agent). It contains the exact commands, configuration, and full source code required to build the Homekeeper — including the canonical UI shell byte-copy. This is the corrected script: it strict-mode compiles and produces a 17/17 passing suite.</p>
 <div class="file-header"><span>OPENHANDS_INSTRUCTION.md</span></div>
 <pre># TASK: Implement the Darkith Omega Homekeeper
 
@@ -1842,6 +2057,8 @@ async function main(argv: readonly string[]): Promise&lt;number&gt; {
 process.exit(await main(process.argv.slice(2)));
 ```
 
+Also copy the canonical UI shell byte-exactly: `omega-reader.html` (repo root) -&gt; `src/reader-shell.html` (NEVER #11: no second live copy; the design is edited only in `omega-reader.html`, then the twin is re-copied). The twin's sha256 is pinned and parity-gated by the test suite.
+
 ## Step 4: Write the README
 
 Create `darkith-omega-homekeeper/README.md` with:
@@ -1938,7 +2155,8 @@ If `npm test` fails, fix the TypeScript errors, re-run until it passes, and then
   <p style="font-family: var(--mono); color: var(--green); font-weight: bold; margin-top: 2rem;">Sigma = 0. Audit Complete.</p>
   <div class="seal">
     Executed verification: <code>npm test</code> → tsc (NodeNext, strict) → 17 passed, 0 failed.<br>
-    Reader proof: <code>src/reader-shell.html</code> is a byte-exact twin of the canonical <code>omega-reader.html</code> (sha256 <code>03d97349…</code>); a parity gate fails the suite on any drift; <code>render()</code> is idempotent (MUST #18): two runs emit byte-identical pages; rendered pages carry the canonical TOC, pager, scrim, theme and resume behavior.
+    Reader proof: <code>src/reader-shell.html</code> is a byte-exact twin of the canonical <code>omega-reader.html</code> (sha256 <code>03d97349…</code>); a parity gate fails the suite on any drift; <code>render()</code> is idempotent (MUST #18): two runs emit byte-identical pages; rendered pages carry the canonical TOC, pager, scrim, theme and resume behavior.<br>
+    Triple Law (MUST #37): <code>.ts</code> is a base primitive beside <code>.py</code> and <code>.js</code>. The Auto-Nodal Co-ordina-Sync substrate now exists as a tri-carrier — <code>nodal/</code> (authority) + <code>vendor/nodal.js</code> (runtime) + <code>vendor/nodal.ts</code> (primitive) — with py⇄js⇄ts identity parity proven byte-exact by <code>tools/nodal_gate.py</code> (sha256 <code>ba7816…</code>, genesis <code>b294a0…</code>, receipt_id <code>07e2e1…</code>, fire order <code>[engine_1_friction, engine_4_integrity]</code>). The gate fails closed on any divergence.
   </div>
 
 </main>

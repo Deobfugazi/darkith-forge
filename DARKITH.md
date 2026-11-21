@@ -1208,7 +1208,7 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   so two tabs firing a pulse cannot race on `git add -A`, on the two commits, or on the push. The
   lock blocks rather than skips — a skipped pulse is the very stall this law forbids.
 
-  ─── MUST #37 (PYTHON IS THE AUTHORITY; EVERY PYTHON SURFACE SHIPS ITS .JS SAVF TWIN) ───
+  ─── MUST #37 (PYTHON IS THE AUTHORITY; EVERY PYTHON SURFACE SHIPS ITS .JS AND .TS PRIMITIVES) ───
   GATE: tools/nodal_gate.py
   A Python surface that has no universally frontend webview html friendly accompaniment is a
   surface the Operator cannot run. The phone has no PC, the app is a WebView, and a build step
@@ -1216,28 +1216,34 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   the design philosophy, not a preference: Python translates directly to its .js SAVF coupling,
   single-file, offline, dependency-free, runnable in any WebView and in Node.
 
-  THE PAIR, AND WHAT MAKES IT ONE SYSTEM:
+  THE TRIAD, AND WHAT MAKES IT ONE SYSTEM:
   - Python is the AUTHORITY. It proves the laws on source bytes (SPI-2: read the bytes).
   - The .js twin is the RUNTIME. It enforces the same laws where the product actually runs.
+  - The .ts twin is the PRIMITIVE. `.ts` is a base type alongside `.py` and `.js` —
+    `.py — .js — .ts` parities fully integrative, no language a second-class citizen.
   - PARITY IS BYTE-EXACT, NOT APPROXIMATE. The twin must produce the same sha256 vectors, the
     same GENESIS anchor, the same receipt_id for the same receipt, and the same fire order for
     the same graph. A twin that "also works" but hashes differently is a SECOND system wearing
     the same name — two sources of truth, which is exactly what SPI-12 forbids.
 
-  `tools/nodal_gate.py` proves all three: the Python suite passes, the .js twin enforces the
-  same laws under Node, and the two agree byte-for-byte. It FAILS CLOSED on divergence and
-  names the diverging field — proven by injecting a one-token genesis drift, which turned the
-  gate red with `parity divergence on genesis: python='b294a0…' js='0ec9a4…'`.
+  `tools/nodal_gate.py` proves the triad: the Python suite passes, the .js twin and the .ts
+  twin enforce the same laws under Node, and all three agree byte-for-byte. It FAILS CLOSED
+  on divergence and names the diverging field — proven by injecting a one-token drift:
+  in the .js twin it turned the gate red with `parity divergence on genesis:
+  python='b294a0…' js='0ec9a4…'`, in the .ts twin with
+  `parity divergence on sha256_abc: python='ba7816…' ts='a37cd4…'`.
 
-  THIS LAW'S FIRST CARRIER: `nodal/` (schema, ledger, bot, engine) and its twin
-  `app/src/main/assets/vendor/nodal.js`. The Auto-Nodal Co-ordina-Sync substrate — an
+  THIS LAW'S FIRST TRI-CARRIER: `nodal/` (schema, ledger, bot, engine) and its twins
+  `app/src/main/assets/vendor/nodal.js` + `app/src/main/assets/vendor/nodal.ts`. The Auto-Nodal Co-ordina-Sync substrate — an
   append-only hash-chained receipt ledger, a total-function bot contract, and the coordination
   layer that orders, reconciles, and propagates degraded state. Every gate in it is a total
   function: it returns a receipt for every input and never enters a waiting state, because a
   gate that can wait is the stall this whole board exists to abolish.
 
-  HONEST DEGRADATION: no `node` -> the .js half is SKIPPED and the gate says so. A skip is
-  never a PASS, and a missing twin is a FAIL — the Python half alone does not satisfy this law.
+  HONEST DEGRADATION: no `node` -> the .js/.ts halves are SKIPPED and the gate says so; no
+  node with `--experimental-strip-types` -> the .ts half is SKIPPED and the gate says so.
+  A skip is never a PASS, and a missing twin is a FAIL — the Python half alone does not
+  satisfy this law.
 
 ─── NEVER #21 (NO WAITING FOR APPROVAL THAT ALREADY EXISTS — THE ANTI-STALL LAW) ───
   GATE: tools/authority_gate.py
