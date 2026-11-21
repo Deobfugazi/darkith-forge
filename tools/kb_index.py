@@ -64,9 +64,15 @@ SELF = {"docs/INDEX.md", "docs/kb_manifest.json"}
 GOVERNANCE = {"README.md", "AGENTS.md", "DARKITH.md", "RESUME.md", "TASKS.md", "DEFICITS.json"}
 READABLE_EXTS = {".md", ".txt", ".html"}
 
-# The one declared mirror: one page under two names by design (the app ships the asset; the
-# repo-root copy is the browser copy). Declared here once; the gate keeps them byte-identical.
-MIRRORS = [("app/src/main/assets/darkith_ui.html", "darkith-inscriber.html")]
+# Declared mirrors: one page under two names by design. Declared here once; the gate keeps
+# each pair byte-identical.
+# - darkith_ui.html ships inside the app; darkith-inscriber.html is the browser copy.
+# - omega-reader.html is the canonical reader shell; the homekeeper's twin is its byte-exact
+#   copy (NEVER #11: one live design, spliced by src/reader.ts, parity-gated by the suite).
+MIRRORS = [
+    ("app/src/main/assets/darkith_ui.html", "darkith-inscriber.html"),
+    ("omega-reader.html", "darkith-omega-homekeeper/src/reader-shell.html"),
+]
 
 REGISTERS = [
     ("A-apparatus", "Governance — the machine+human laws (read first)"),
@@ -103,10 +109,13 @@ def register_of(path: str) -> str | None:
     if path.startswith("app/src/main/assets/") or path.startswith("omega-app/src/main/assets/"):
         return "D-asset"
     if path.startswith("kit/"):
-        # The portable apparatus: the single-file toolkit and its carry instructions. It is
-        # neither corpus nor build config — it is the thing the Operator takes to the next
-        # account, so it gets its own register rather than being filed as docs.
         return "G-apparatus-portable"
+    if path.startswith("darkith-omega-homekeeper/"):
+        # The Homekeeper: its docs are corpus; its shipped/gated HTML shell is an asset —
+        # same boundary rule as the root web apps (content vs build-coupled surface).
+        if path.endswith(".html"):
+            return "D-asset"
+        return "B-knowledge"
     if path.startswith("proof/"):
         return "E-evidence"
     if path in CONFIG:
