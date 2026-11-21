@@ -28,6 +28,10 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.darkith.transliaison.core.AlertBridge
+import com.darkith.transliaison.core.AlertBus
+import com.darkith.transliaison.core.AlertSurface
+import com.darkith.transliaison.core.Watchdog
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
@@ -42,6 +46,7 @@ class HomekeeperActivity : Activity() {
     private var progressBar: ProgressBar? = null
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
     private val FILE_CHOOSER_RESULT_CODE = 1
+    private var alerts: AlertSurface? = null
 
     /** Set by DeviceBridge before a startActivityForResult call: (resultId, outputPath). */
     var pendingDeviceIntent: Pair<String, String>? = null
@@ -116,6 +121,7 @@ class HomekeeperActivity : Activity() {
             }
 
             addJavascriptInterface(HomekeeperBridge(this@HomekeeperActivity), "darkith")
+            addJavascriptInterface(AlertBridge(this@HomekeeperActivity), "alert")
             loadUrl("file:///android_asset/homekeeper.html")
         }
 
@@ -125,6 +131,9 @@ class HomekeeperActivity : Activity() {
             FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         )
         setContentView(root)
+
+        alerts = AlertSurface.attachTo(this)
+        Watchdog.start(this)
     }
 
     // ------------------------------------------------------------------ permissions
@@ -467,6 +476,8 @@ class HomekeeperActivity : Activity() {
         try {
             browserView?.destroy()
         } catch (_: Exception) {}
+        alerts?.let { AlertBus.detach(it); it.detachAll() }
+        alerts = null
         super.onDestroy()
     }
 }
