@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**69 readable files across 8 registers.**
+**77 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -29,9 +29,15 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
+| `docs/DEFICIT_LEDGER.md` | 5,487 | `6a132f64cc94` | DARKITH — COMPLETE DEFICIT LEDGER |
+| `docs/FAILURE-MODE-LEDGER.md` | 9,387 | `588bb52faf27` | DARKITH — FAILURE MODE LEDGER |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
+| `docs/GITHUB-STUDIO-MANUAL.md` | 18,292 | `fbf7d5d0f43a` | GITHUB STUDIO — the uncut operator manual |
+| `docs/RECONCILIATION.md` | 6,440 | `4799c40f7cb3` | DARKITH — OMEGA SINGULARITY RECONCILIATION |
+| `docs/RECOVERY_MANIFEST.md` | 1,423 | `0cc6e23164c8` | Recovery manifest — reconstructed from the conversation event store |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
+| `docs/VERSION.md` | 3,378 | `74c7e4304658` | DARKITH — VERSION RECORD |
 | `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
 | `docs/evidence/SECTOR-PAIN-LEDGER.md` | 5,077 | `9d6b452e87d8` | Sector pain ledger — primary-source observations |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
@@ -51,6 +57,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
+| `d-arkith-omega.html` | 1,422,589 | `f68d8b3d8482` | DARKITH Ω — terminal + local assistant |
 | `darkith code studio.html` | 601,576 | `5cd553c1653f` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,471,908 | `877e35c5d3d1` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
@@ -83,7 +90,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `app/src/main/assets/darkith_ui.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 490,080 | `f3c83ac2f31c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,790 | `a37cd725501b` | SAVF-1 Universal Audit Engine |
-| `omega-app/src/main/assets/omega_studio.html` | 1,320,193 | `891c68154cc5` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `omega-app/src/main/assets/github_console.html` | 20,516 | `2d2333b818b4` | GitHub Console |
+| `omega-app/src/main/assets/omega_studio.html` | 1,320,579 | `ad4206e03c6f` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 
 ## E-evidence — Machine-generated proof
 

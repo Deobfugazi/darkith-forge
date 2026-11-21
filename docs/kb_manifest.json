@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 69,
+  "count": 77,
   "files": [
     {
       "bytes": 78895,
@@ -57,10 +57,40 @@
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
     },
     {
+      "bytes": 5487,
+      "path": "docs/DEFICIT_LEDGER.md",
+      "register": "B-knowledge",
+      "sha256": "6a132f64cc94505f3d507d2510fb5af1c2d49bb988962fe476c432c5a466a013"
+    },
+    {
+      "bytes": 9387,
+      "path": "docs/FAILURE-MODE-LEDGER.md",
+      "register": "B-knowledge",
+      "sha256": "588bb52faf271092a053a0005c562287c14b2150615dd856d4ff3fcbe2260e33"
+    },
+    {
       "bytes": 70065,
       "path": "docs/GITHUB-CICD-AGENTS-KB.md",
       "register": "B-knowledge",
       "sha256": "759522f608b42d9d4c12c136c3e3b3bc6df5150259870331be6d1b887398a54c"
+    },
+    {
+      "bytes": 18292,
+      "path": "docs/GITHUB-STUDIO-MANUAL.md",
+      "register": "B-knowledge",
+      "sha256": "fbf7d5d0f43aba977a6d7187d249e8862d2243a0110f5681cba97010a0a457e5"
+    },
+    {
+      "bytes": 6440,
+      "path": "docs/RECONCILIATION.md",
+      "register": "B-knowledge",
+      "sha256": "4799c40f7cb3ad7b9687f259993a41382bdb35e14545af279801f8a11b111e4d"
+    },
+    {
+      "bytes": 1423,
+      "path": "docs/RECOVERY_MANIFEST.md",
+      "register": "B-knowledge",
+      "sha256": "0cc6e23164c833e7d06caa9b28f691a4402275d410ba7ee4821a0231c6803523"
     },
     {
       "bytes": 3960,
@@ -73,6 +103,12 @@
       "path": "docs/UPDATES.md",
       "register": "B-knowledge",
       "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
+    },
+    {
+      "bytes": 3378,
+      "path": "docs/VERSION.md",
+      "register": "B-knowledge",
+      "sha256": "74c7e43046589dce021808cea3b52830d825e879d5fb159fd94393900a1d3003"
     },
     {
       "bytes": 4950,
@@ -157,6 +193,12 @@
       "path": "clearanceloop.html",
       "register": "C-skillbase",
       "sha256": "ae16a99a055e902d0f0dec144134b660fbd9e76baee743a0a7d9cd868e5d32ab"
+    },
+    {
+      "bytes": 1422589,
+      "path": "d-arkith-omega.html",
+      "register": "C-skillbase",
+      "sha256": "f68d8b3d848235b5cc76afadc0555e96e0eedb9e914c2136eff8b4442cf35b59"
     },
     {
       "bytes": 601576,
@@ -321,10 +363,16 @@
       "sha256": "a37cd725501b496cc1112aa706b314d665e134c047a515246a6c0ec0d22e175a"
     },
     {
-      "bytes": 1320193,
+      "bytes": 20516,
+      "path": "omega-app/src/main/assets/github_console.html",
+      "register": "D-asset",
+      "sha256": "2d2333b818b4cc0194bca7153eb1b838b663615b6495f8d9d47d930161db9da0"
+    },
+    {
+      "bytes": 1320579,
       "path": "omega-app/src/main/assets/omega_studio.html",
       "register": "D-asset",
-      "sha256": "891c68154cc50531170f26dee3e030295f76aad233bc5d82e1304bd1623f4982"
+      "sha256": "ad4206e03c6fd77bdec212da08ebfcc30687472ad8bc67abdf7c8053aa2cbaa8"
     },
     {
       "bytes": 11203,
