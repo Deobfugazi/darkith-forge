@@ -1,5 +1,8 @@
 {
   "name": "darkith-omega-homekeeper",
+  "bin": {
+    "omega-hk": "dist/cli.js"
+  },
   "version": "1.0.0",
   "description": "The Invariant Decomposition Blueprint Executable",
   "main": "dist/index.js",
