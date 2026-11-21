@@ -31,6 +31,7 @@ import android.widget.TextView
 import com.darkith.transliaison.core.AlertBridge
 import com.darkith.transliaison.core.AlertBus
 import com.darkith.transliaison.core.AlertSurface
+import com.darkith.transliaison.core.PendingPump
 import com.darkith.transliaison.core.Watchdog
 import org.json.JSONObject
 import java.io.File
@@ -134,6 +135,9 @@ class HomekeeperActivity : Activity() {
 
         alerts = AlertSurface.attachTo(this)
         Watchdog.start(this)
+        // Start the decision timer. Without this, Pending never sweeps and a missed alert
+        // sits open forever — the backlog DecisionProtocol exists to prevent.
+        PendingPump.start()
     }
 
     // ------------------------------------------------------------------ permissions
@@ -478,6 +482,7 @@ class HomekeeperActivity : Activity() {
         } catch (_: Exception) {}
         alerts?.let { AlertBus.detach(it); it.detachAll() }
         alerts = null
+        PendingPump.stop()
         super.onDestroy()
     }
 }

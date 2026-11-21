@@ -921,6 +921,7 @@ const App={
     {id:'sys7',label:'Vault',glyph:SVG.cpu,action:'aegis://vault',category:'System',count:0},
     {id:'sys8',label:'Logs',glyph:SVG.logs,action:'aegis://logs',category:'System',count:0},
     {id:'sys9',label:'Codebase',glyph:SVG.code,action:'aegis://codebase',category:'System',count:0},
+    {id:'sys10',label:'GitHub',glyph:SVG.code,action:'aegis://github',category:'Network',count:0},
     {id:'sys10',label:'Tasks',glyph:SVG.cpu,action:'aegis://tasks',category:'System',count:0},
     {id:'sys11',label:'Terminal',glyph:SVG.cpu,action:'aegis://term',category:'System',count:0}
   ],
@@ -1255,7 +1256,8 @@ const App={
     // B: aegis://
     const m=input.replace(/^aegis:\/\//i,'');
     if(m==='help'||m===''){this.toggleLogs(true);['aegis://term  aegis://codebase  aegis://settings  aegis://spinner','aegis://tasks  aegis://bookmarks  aegis://drawer  aegis://logs  aegis://home','aegis://fs/<folder>  aegis://app/<id>','>command  = run a shell command in the Terminal, e.g.  >ls /sdcard/   (no space or dash before the command)','aegis://forgetest  = build + install a tiny test APK',
-        'aegis://omega  = open the live GL surface   |   aegis://ir  = render the current tab as IR on it','aegis://presence  = owner-pattern + audit ledger status  (presence-reset clears it)','https://..  /sdcard/path  = web / file'].forEach(l=>this.log(l,'ok'));return}
+        'aegis://omega  = open the live GL surface   |   aegis://ir  = render the current tab as IR on it',
+        'aegis://github  = the GitHub console: action buttons, label filters, live activity sort','aegis://presence  = owner-pattern + audit ledger status  (presence-reset clears it)','https://..  /sdcard/path  = web / file'].forEach(l=>this.log(l,'ok'));return}
     if(m==='forge')return this.openUnifiedEditor(null);
     if(m==='omega')return this.openOmegaScreen();
     if(m==='ir'||m==='irrender')return this.forgeIrRender();
@@ -1263,6 +1265,7 @@ const App={
     if(m==='settings'||m.startsWith('settings/')){this.nav('settings');const p=m.split('/')[1];if(p)setTimeout(()=>this.settingsGo(p),60);return}
     if(m==='spinner')return this.nav('spinner');
     if(m==='codebase')return this.view==='codebase'?this.renderUnifiedCodebase():this.nav('codebase');
+    if(m==='github'||m==='gh')return this.openTab({uri:'file:///android_asset/github_console.html',title:'GitHub Console',content:'file:///android_asset/github_console.html',isUrl:true});
     if(m==='tasks')return this.toggleVault(true);
     if(m==='bookmarks')return this.nav('bookmarks');
     if(m==='drawer')return this.openDrawer();

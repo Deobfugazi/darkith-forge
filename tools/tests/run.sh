@@ -26,6 +26,13 @@ echo "== running tests =="
 kotlin -classpath "$WORK/pure:$WORK/t" CommentScanTestKt || exit 1
 
 echo
+echo "== Pending (the timer that fires DecisionProtocol) =="
+kotlinc "$SRC/DecisionProtocol.kt" "$SRC/Pending.kt" "$HERE/PendingTest.kt" \
+  -d "$WORK/pend" -nowarn 2>"$WORK/pend.log"
+if [ $? -ne 0 ]; then echo "PENDING COMPILE FAILED"; cat "$WORK/pend.log"; exit 1; fi
+kotlin -classpath "$WORK/pend" PendingTestKt || exit 1
+
+echo
 echo "== scanning the real tree =="
 kotlinc "$HERE/ScanTree.kt" -classpath "$WORK/pure" -d "$WORK/s" -nowarn 2>"$WORK/s.log"
 if [ $? -ne 0 ]; then echo "SCANNER COMPILE FAILED"; cat "$WORK/s.log"; exit 1; fi
