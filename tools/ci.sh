@@ -592,16 +592,18 @@ files = subprocess.run(["git","ls-files","-z"], capture_output=True, text=True).
 # basename across them is not a fork — only divergence WITHIN a tree is. Scope
 # the comparison per tree; shared/root files use the "" tree.
 def tree_of(f):
-    # A sealed cycle's receipt directory is its own tree for the same reason app/
-    # and omega-app/ are: each cycle is independent evidence, so S01_BASELINE.json
-    # in cycle A and in cycle B are two records, not two copies of one file.
-    # Comparing them would report every successive cycle as a fork of the last.
+    # EVERY top-level directory is its own tree: each package is independent evidence
+    # and content (app/, omega-app/, proof/revitalization/<cycle>/, a spec package like
+    # darkith-omega-homekeeper/ with its own README). A shared basename across packages
+    # is not a fork — only divergence WITHIN one tree is. Root-level files use "".
+    head = f.split("/",1)[0]
+    if head in ("app","omega-app"):
+        return head
     if f.startswith("proof/revitalization/"):
         rest = f.split("/", 3)
         if len(rest) == 4 and rest[2] != "":
             return "proof/revitalization/" + rest[2]
-    head = f.split("/",1)[0]
-    return head if head in ("app","omega-app") else ""
+    return head if "/" in f else ""
 by = collections.defaultdict(list)
 for f in files:
     # EXEMPT Android resource-qualifier dirs: the SAME basename in different
@@ -639,7 +641,8 @@ PYGATE
   # byte-identical — drift is a fork (NEVER #11) even though the basenames differ, which the
   # basename-based D-2 above cannot see. The app ships assets/darkith_ui.html; the repo-root
   # studio is the same page for browser use, and tools/test_inscriber.js drives the studio.
-  for pair in "app/src/main/assets/darkith_ui.html:darkith-inscriber.html"; do
+  for pair in "app/src/main/assets/darkith_ui.html:darkith-inscriber.html" \
+              "omega-reader.html:darkith-omega-homekeeper/src/reader-shell.html"; do
     a="${pair%%:*}"; b="${pair##*:}"
     if [ -f "$a" ] && [ -f "$b" ]; then
       if cmp -s "$a" "$b"; then
