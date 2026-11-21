@@ -568,7 +568,9 @@ td.mono{font-family:var(--mono);font-size:11px}
       <p class="sub"><code>savf.py</code> is the reference implementation. Use it when a gate needs a real process: reach, mutate, manifest over many files, and the full gate run.</p>
       <pre class="out">savf.py selftest
 savf.py scan PATH --json
+savf.py axis --p0 "0,0,0" --p1 "2,4,6" --s 0.5 --tau 1
 savf.py gate --root . --src pkg --test-cmd "python -m pytest" --reach-test "pytest -q"</pre>
+      <p class="sub" style="margin-top:8px">A pole is one quoted string, comma- or space-separated, so any dimension works: <code>--p0 "0 0 0"</code>. Quote it, because a negative coordinate such as <code>--p1 "-1 2 3"</code> would otherwise read as a flag.</p>
     </div>
   </section>
 </main>

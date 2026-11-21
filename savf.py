@@ -1050,10 +1050,14 @@ def _normalize_argv(argv):
 
 
 def _parse_pt(s):
+    """Read a pole from "0,0,0", "0 0 0", or an already-split sequence."""
+    if isinstance(s, (list, tuple)):
+        s = ",".join(str(x) for x in s)
+    parts = [p for p in str(s).replace(",", " ").split() if p]
     try:
-        return tuple(float(x) for x in s.split(","))
+        return tuple(float(p) for p in parts)
     except ValueError:
-        raise SystemExit(f"point must be comma-separated numbers, got {s!r}")
+        raise SystemExit(f"point must be numbers, got {s!r}")
 
 
 def _load_json_arg(path):
@@ -1072,7 +1076,13 @@ def main(argv=None):
     sp = ap.add_subparsers(dest="cmd", required=True)
 
     a = sp.add_parser("axis", help="evaluate P(s;tau) on an axis")
-    a.add_argument("--p0", required=True); a.add_argument("--p1", required=True)
+    # One string, split on commas or spaces.  A multi-token nargs form is not
+    # used because argparse stops consuming at a negative number ("--p1 -1.5 8")
+    # and negative coordinates are the common case.
+    a.add_argument("--p0", required=True, metavar="P0",
+                   help='start pole, e.g. "0,0,0" or "0 0 0" (quote it)')
+    a.add_argument("--p1", required=True, metavar="P1",
+                   help='far pole, e.g. "2,4,6" or "2 4 6" (quote it)')
     a.add_argument("--s", type=float, required=True); a.add_argument("--tau", type=int, required=True, choices=[1, -1])
     c = sp.add_parser("sign", help="sign of a physical move in a named chart")
     c.add_argument("--chart", choices=sorted(CHARTS), required=True)
@@ -1171,7 +1181,10 @@ def main(argv=None):
     elif A.cmd == "ledger":
         rows, bad = ledger(_load_json_arg(A.file), A.run)
         for r in rows:
-            print(f"{r['id']:8s} {r['kind']}->{r['effective']}  {r['status']:11s} {r['note']}")
+            # A claim may arrive with no id at all; that is a finding to report,
+            # not a reason to crash the formatter.
+            cid = r["id"] if r["id"] is not None else "(no id)"
+            print(f"{str(cid):8s} {r['kind']}->{r['effective']}  {r['status']:11s} {r['note']}")
         print(f"{len(rows)} claims, {bad} problem(s)")
         return 1 if bad else 0
     elif A.cmd == "verdict":

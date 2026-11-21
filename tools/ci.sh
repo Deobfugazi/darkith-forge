@@ -402,6 +402,19 @@ fi
     run "savf cli/browser parity" node tools/test_savf_parity.js
   fi
 
+  # The claims ledger: a claim without evidence must never verify, and a
+  # malformed claim must be reported rather than crash the validator.
+  if have node && [ -f tools/test_savf_ledger.js ]; then
+    run "savf ledger" node tools/test_savf_ledger.js
+  fi
+
+  # The axis CLI: the one function the formulary rests on, reached from a shell.
+  # Covers 1D/2D/3D poles, negative coordinates, the reflection law, and the
+  # error paths that must exit non-zero rather than return a wrong answer.
+  if have node && [ -f tools/test_savf_axis_cli.js ]; then
+    run "savf axis cli" node tools/test_savf_axis_cli.js
+  fi
+
   # The reader's interaction surface, driven in a real browser from file://. The
   # shim test above proves the corpus and renderer; only a real click proves the
   # listeners are wired. Skipped when playwright is absent.

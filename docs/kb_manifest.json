@@ -231,10 +231,10 @@
       "sha256": "9cf24b11b3ee803c53ea96db7b480e291a519c800bf1a04e37f7fc7c85595e42"
     },
     {
-      "bytes": 2777428,
+      "bytes": 2777616,
       "path": "omega-reader.html",
       "register": "C-skillbase",
-      "sha256": "164ffe98803b3eaa41054e498f33af9c93d6abb5a5f70a7c6794109c3f91647b"
+      "sha256": "bef321c81548c81df9d952c507e3c5f82e4afd4ffe8f798b23d15c4dc6de7983"
     },
     {
       "bytes": 89894,
@@ -243,10 +243,10 @@
       "sha256": "0bebef245cf4788e327c4ee0670dc39537d43be44f60e4aa750c1f635e9313a8"
     },
     {
-      "bytes": 467700,
+      "bytes": 468017,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "6dc986c0c57c4518f1ef97d338b0f727bde798a325300d628a65430c052f4aa0"
+      "sha256": "e366e0f7a4ea359c38b3d84f0a420f4fb0bb147cda47449e1349f63e04217856"
     },
     {
       "bytes": 11465,

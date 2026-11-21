@@ -1043,3 +1043,40 @@ than the same file one character shorter.
 A browser engine that parses where another gives up is a capability gap, not a
 disagreement. Gates over multiple engines must assert the shared findings and the absence
 of a false high-severity accusation, not an exact rule list.
+
+### An option that takes a vector must survive negative numbers
+
+`argparse` with `nargs="+"` stops consuming tokens at anything that looks like a flag, so
+`--p1 -1.5 8 7` silently drops the tail and the command dies with "unrecognized arguments".
+Negative coordinates are the common case in a coordinate frame, so the axis pole is taken as
+ONE quoted string (`"0,0,0"` or `"0 0 0"`) that `_parse_pt` splits on commas or whitespace.
+
+The failure mode to guard against is not the error message but the silent wrong answer: an
+audit tool that accepts `--p0 1 2 3`, uses `1`, and ignores `2 3` would compute a 1D axis
+from what the caller meant as 3D. `tools/test_savf_axis_cli.js` asserts that three bare
+tokens exit non-zero, alongside 1D/2D/3D poles, negative coordinates, and the reflection law.
+
+### Editing a bundled surface invalidates every artifact built from it
+
+`savf.html` is embedded in `omega-reader.html` as a document and hashed into
+`delivery/index.html`, `delivery/darkith-one-shot.sh`, the repo ZIP, and `docs/INDEX.md`.
+Changing one byte of it fails the reader's byte-identity test, the KB index check, the
+delivery check, and the one-shot payload check. Rebuild in dependency order:
+
+    python3 tools/kb_index.py --write
+    python3 tools/reader_build.py
+    python3 build/sync-delivery.py
+    python3 build/make-repo-zip.py
+    python3 build/sync-delivery.py      # again: the zip changed index.html's hashes
+    python3 build/make-oneshot.py
+    python3 build/verify.py --fast
+
+`sync-delivery.py` and `make-repo-zip.py` are mutually recursive (the zip contains
+`delivery/index.html`, whose printed hashes the zip then invalidates). Running sync a second
+time after the zip is what settles it, not a single pass.
+
+### The remaining CI failures are git-state, not defects
+
+`convergence_gate`, `board_pulse`, `stall_clock` and `authority_gate` fail whenever there is
+uncommitted drift or a local commit ahead of `origin/main`. They are satisfied by committing
+and pushing, not by editing code. Read their message before treating a red CI as a bug.

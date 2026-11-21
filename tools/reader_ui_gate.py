@@ -158,6 +158,19 @@ def run():
                     check(f"{tag} no horizontal overflow", overflow <= 0,
                                     f"{overflow}px")
 
+                    # Every control in the sidebar drawer must clear the 44px
+                    # touch floor. Inline prose links are exempt (WCAG 2.5.8).
+                    page.evaluate("() => document.querySelector('#menuBtn').click()")
+                    page.wait_for_timeout(400)
+                    small = page.evaluate(
+                        "() => [...document.querySelectorAll('#side button')]"
+                        ".filter(e => { const r = e.getBoundingClientRect();"
+                        "  return r.height > 0 && r.height < 44; })"
+                        ".map(e => (e.textContent || '').trim().slice(0, 20)"
+                        "  + ':' + Math.round(e.getBoundingClientRect().height))")
+                    check(f"{tag} sidebar targets clear 44px", not small,
+                                    "; ".join(small[:3]))
+
                 check(f"{tag} no page errors", not errors,
                                 "; ".join(errors[:2]))
 

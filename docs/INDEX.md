@@ -63,9 +63,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
-| `omega-reader.html` | 2,777,428 | `164ffe98803b` | Library — DARKITH knowledge base |
+| `omega-reader.html` | 2,777,616 | `bef321c81548` | Library — DARKITH knowledge base |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 467,700 | `6dc986c0c57c` | SAVF-1 Universal Audit Engine |
+| `savf.html` | 468,017 | `e366e0f7a4ea` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 
