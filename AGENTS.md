@@ -1052,22 +1052,6 @@ a yes is a stall, and a stall is the failure mode this law exists to forbid.
 Scope: every board, every parallel agent, every session carrying this directive.
 Budget: 0 seconds. There is no waiting window to spend.
 
-### Browser engines do not share an error dialect
-
-The webapp ships one engine but runs on three, and a capability guard that fires on one
-browser can be silent on another. An exhausted JS stack is `RangeError` "Maximum call stack
-size exceeded" on Chromium and Safari, but `InternalError` "too much recursion" on Firefox.
-Matching only the Chromium wording left Firefox condemning valid deep source as `PARSE/high`.
-
-Two rules follow. First, detect engine capability limits by both the error name and the
-message, never by one engine's phrasing. Second, a capability limit is never a verdict on
-the input: fall back to the token-only rules so a file is never reported cleaner (or dirtier)
-than the same file one character shorter.
-
-A browser engine that parses where another gives up is a capability gap, not a
-disagreement. Gates over multiple engines must assert the shared findings and the absence
-of a false high-severity accusation, not an exact rule list.
-
 ## A seal is only a seal if its evidence can leave the machine
 
 The revitalization seal cited `S16_POST_SEAL.log` as evidence while `.gitignore` dropped

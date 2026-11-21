@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "8b0c0512198041dc606e1a1c640fc1e0b3a8032da901d60d9c5837083f3be4e7",
-  "board_sha256": "031c019594871395e0f73e8b71b138e2b27c3c7157b77bd8537ea0e059d455c2",
+  "directive_sha256": "0c54f74154ad7fe31b22bd3c950ac4b0f35c607cb556e6f555c09ee7b9896ea8",
+  "board_sha256": "eb72e4ff34348bc992a77f27a4b0c09603708b633f6051c0b8eaeca4ea499383",
   "laws": {
     "declared": [
       "MUST #20",
@@ -23,6 +23,7 @@
       "SPI-6"
     ],
     "derived_advisory": [
+      "MUST #31",
       "MUST #37",
       "MUST #38",
       "MUST #40",
@@ -31,6 +32,7 @@
       "SPI-19",
       "SPI-21",
       "SPI-25",
+      "SPI-29",
       "SPI-31",
       "SPI-39"
     ]
@@ -39,26 +41,26 @@
     {
       "target": "durable",
       "path": "/workspace/project/darkith-forge/TASKS.md",
-      "status": "current",
-      "detail": ""
+      "status": "updated",
+      "detail": "31923->32251 B"
     },
     {
       "target": "session:18393131094c4acfb45d943764549f23",
       "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
+      "status": "updated",
+      "detail": "mirror beside board"
     },
     {
       "target": "worktree:base_wt",
       "path": "/tmp/base_wt/TASKS.md",
-      "status": "current",
-      "detail": ""
+      "status": "updated",
+      "detail": "5838->6166 B"
     },
     {
       "target": "worktree:readme_wt",
       "path": "/tmp/readme_wt/TASKS.md",
-      "status": "current",
-      "detail": ""
+      "status": "updated",
+      "detail": "5838->6166 B"
     }
   ],
   "mode": "apply",
