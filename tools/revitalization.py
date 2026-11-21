@@ -847,7 +847,16 @@ class Pipeline:
 
     def run_cmd(self, cmd: str) -> dict:
         try:
-            cp = subprocess.run(shlex.split(cmd), cwd=str(self.root),
+            argv = shlex.split(cmd)
+        except ValueError as exc:
+            # A malformed repair command must fail its own receipt, never abort
+            # the cycle: an unrecorded crash violates I6 (failure is loud AND
+            # leaves evidence) and strands every other task in the run.
+            msg = f"command could not be parsed: {exc}"
+            return {"cmd": cmd, "exit": None, "tail": msg,
+                    "tail_sha256": sha(msg.encode("utf-8")), "state": "FAIL"}
+        try:
+            cp = subprocess.run(argv, cwd=str(self.root),
                                 capture_output=True, text=True, timeout=600)
             tail = (cp.stdout + cp.stderr)[-4000:]
             tail_sha = sha(tail.encode("utf-8") or b"ok")
