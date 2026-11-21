@@ -57,20 +57,8 @@
       "detail": "mirror"
     },
     {
-      "target": "worktree:failwt",
-      "path": "/tmp/failwt/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "worktree:fixwt",
-      "path": "/tmp/fixwt/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "worktree:pristine",
-      "path": "/tmp/pristine/TASKS.md",
+      "target": "worktree:branchwt",
+      "path": "/tmp/branchwt/TASKS.md",
       "status": "current",
       "detail": ""
     }

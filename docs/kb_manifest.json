@@ -9,10 +9,10 @@
       "sha256": "27da0a07834f69ec2cf4ca762fa1df27b8217da258c86dc211e43fab31b6b3b7"
     },
     {
-      "bytes": 101928,
+      "bytes": 101932,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "b2af0a14fd3104b61a92979e27e4627e8ebfffb405db6295aa9abce57c8106e2"
+      "sha256": "c1f13c22d728ad286301f88755146a0b033c26b879bc126ba35147bb510d8c9d"
     },
     {
       "bytes": 3356,
@@ -159,16 +159,16 @@
       "sha256": "ae16a99a055e902d0f0dec144134b660fbd9e76baee743a0a7d9cd868e5d32ab"
     },
     {
-      "bytes": 601576,
+      "bytes": 603010,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
-      "sha256": "5cd553c1653f01a6c66bde2745a0e6cdd07fb04510cb8f05c6bc7c55e87e1780"
+      "sha256": "e43c9fc371921ae98510e219000b7abd266e9459e724ad2a402943f065c4449e"
     },
     {
-      "bytes": 1471908,
+      "bytes": 1474776,
       "path": "darkith home forge.html",
       "register": "C-skillbase",
-      "sha256": "877e35c5d3d17689f4dba8f9fcf673bc0982fe1dd208c9967116c3e7a56dcd96"
+      "sha256": "d8679bedd69b213117d2d2ae39efd78741d846c3f111d87f34f65adb766de7eb"
     },
     {
       "bytes": 279277,
@@ -231,10 +231,10 @@
       "sha256": "9cf24b11b3ee803c53ea96db7b480e291a519c800bf1a04e37f7fc7c85595e42"
     },
     {
-      "bytes": 24606,
+      "bytes": 2777280,
       "path": "omega-reader.html",
       "register": "C-skillbase",
-      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
+      "sha256": "c2341c1a5d3f8377af164a44fb890910af4b85c6fa8c0f9b8574d969caa5b4f1"
     },
     {
       "bytes": 89894,
@@ -243,10 +243,10 @@
       "sha256": "0bebef245cf4788e327c4ee0670dc39537d43be44f60e4aa750c1f635e9313a8"
     },
     {
-      "bytes": 463190,
+      "bytes": 467700,
       "path": "savf.html",
       "register": "C-skillbase",
-      "sha256": "e37837910ad5dbd0e1e472cb7ced1777758929a569139e61a4e6ed86b6787f1e"
+      "sha256": "6dc986c0c57c4518f1ef97d338b0f727bde798a325300d628a65430c052f4aa0"
     },
     {
       "bytes": 11465,

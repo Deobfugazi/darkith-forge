@@ -297,6 +297,14 @@ td.mono{font-family:var(--mono);font-size:11px}
   .verdict h3{font-size:17px}
   main{padding:12px 10px 96px}
 }
+@media (max-width:600px){
+  /* Seven sections do not fit one 340px row, and a hidden scroll strip buries
+     Freeze, Self-test and Help with no affordance. Wrapping keeps every section
+     visible and tappable. The height stays at the 44px touch floor: shrinking it
+     to buy a second row trades an unreachable control for a missed tap. */
+  nav{flex-wrap:wrap;overflow:visible;gap:4px}
+  nav button{min-height:44px;padding:0 11px;font-size:12.5px}
+}
 @media (max-width:344px){
   /* 320px phones (Galaxy Fold cover, older Androids) need their own short forms
      rather than an ellipsis, so the name and the promise stay readable. */
@@ -1359,6 +1367,9 @@ function dict(seed) {
       mod = this.expectName().str;
       while (this.atOp(".")) { this.next(); mod += "." + this.expectAttrName().str; }
     }
+    /* CPython requires a module after 'from' unless the statement is relative:
+       'from import x' is a syntax error, 'from . import x' is not. */
+    if (!mod && !level) this.err("expected module name after 'from'");
     if (!this.atName("import")) this.err("expected 'import'");
     this.next();
     if (this.atOp("*")) { this.next(); names.push(N("alias", t, { name: "*", asname: null })); }
@@ -3647,24 +3658,59 @@ function dict(seed) {
   }
 
   /* ---------- ledger ---------- */
+  /* Ids on a derived_from cycle. Found up front because eff() memoises into
+     `res` before recursing, which hides back edges from it. */
+  function cycleIds(byId) {
+    var onCycle = dict(), color = dict(), stack = [];
+    function visit(cid) {
+      color[cid] = 1; stack.push(cid);
+      var c = byId[cid], parents = (c && c.derived_from) || [];
+      parents.forEach(function (p) {
+        if (!(p in byId)) return;
+        var st = color[p] || 0;
+        if (st === 1) {
+          stack.slice(stack.indexOf(p)).forEach(function (x) { onCycle[x] = true; });
+        } else if (st === 0) { visit(p); }
+      });
+      stack.pop(); color[cid] = 2;
+    }
+    Object.keys(byId).forEach(function (cid) { if (!color[cid]) visit(cid); });
+    return onCycle;
+  }
+
   function ledger(claims) {
     if (!Array.isArray(claims)) throw new Error("ledger expects an array of claim objects");
-    var byId = dict(), res = dict(), visiting = dict();
-    claims.forEach(function (c) { byId[c && c.id] = c; });
+    var byId = dict(), res = dict(), visiting = dict(), dupes = dict();
+    claims.forEach(function (c) {
+      var cid = c && c.id;
+      if (cid !== undefined && Object.prototype.hasOwnProperty.call(byId, cid)) dupes[cid] = true;
+      byId[cid] = c;
+    });
+    var cyc = cycleIds(byId);
 
     function eff(c) {
       var cid = c && c.id, k = c && c.kind;
       if (cid !== undefined && Object.prototype.hasOwnProperty.call(res, cid)) return res[cid];
       if (visiting[cid]) {
-        var cyc = { id: cid, kind: k, effective: k, status: "invalid", note: "cycle in derived_from" };
-        res[cid] = cyc;
-        return cyc;
+        return { id: cid, kind: k, effective: k, status: "invalid", note: "cycle in derived_from" };
       }
       visiting[cid] = true;
       var r = { id: cid, kind: k, effective: k, status: "", note: "" };
+      if (cid === undefined || cid === null || cid === "") {
+        r.status = "invalid"; r.note = "claim has no id";
+        delete visiting[cid];
+        return r;
+      }
+      if (dupes[cid]) {
+        r.status = "invalid"; r.note = "duplicate id";
+        delete visiting[cid];
+        return r;
+      }
       res[cid] = r;
       var ev = (c && c.evidence) || {};
-      if (KINDS.indexOf(k) < 0) {
+      if (cyc[cid]) {
+        r.status = "invalid"; r.note = "cycle in derived_from";
+      } else if (KINDS.indexOf(k) < 0) {
         r.status = "invalid"; r.note = "unknown kind";
       } else if (k === "D") {
         r.status = "declared";
@@ -3700,8 +3746,7 @@ function dict(seed) {
       return r;
     }
 
-    claims.forEach(function (c) { eff(c); });
-    var rows = Object.keys(res).map(function (k) { return res[k]; });
+    var rows = claims.map(eff);
     var bad = rows.filter(function (r) {
       return r.status === "invalid" || r.status === "failed" || r.status === "unsupported";
     }).length;
@@ -3899,6 +3944,15 @@ function dict(seed) {
     });
     var btns = document.querySelectorAll("nav button");
     for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-selected", String(btns[i].dataset.tab === name));
+    var active = $("tab-" + name);
+    /* Keep the selected tab in view horizontally. scrollIntoView would also
+       move the window, and the tab lives inside the sticky header, so adjust
+       the strip's own scrollLeft instead. */
+    var strip = active && active.parentNode;
+    if (strip && strip.scrollWidth > strip.clientWidth) {
+      var want = active.offsetLeft - (strip.clientWidth - active.offsetWidth) / 2;
+      strip.scrollLeft = Math.max(0, want);
+    }
     if (location.hash.slice(1) !== name) {
       try { history.replaceState(null, "", "#" + name); } catch (e) { /* file:// may refuse */ }
     }
@@ -4314,7 +4368,16 @@ function dict(seed) {
       d.addEventListener("drop", function (e) {
         if (e.dataTransfer && e.dataTransfer.files.length) onDone(e.dataTransfer.files);
       });
-      i.addEventListener("change", function () { if (i.files.length) onDone(i.files); });
+      /* Reset value after every read. A file input fires 'change' only when the
+         selection differs from the previous one, so re-picking the same paths
+         (the normal way to re-check files you just edited) would otherwise be
+         ignored and the stale hash map would be reported as current. */
+      i.addEventListener("change", function () {
+        if (!i.files.length) return;
+        var fl = i.files;
+        onDone(fl);
+        i.value = "";
+      });
     }
     hook("freezeDrop", "freezeInput", function (fl) {
       readAll(fl, function (map) {
@@ -4334,6 +4397,19 @@ function dict(seed) {
     $("freezeRun").addEventListener("click", function () {
       var out = $("freezeOut");
       if (!Object.keys(frozenFiles).length) { out.innerHTML = '<div class="note bad-note">Choose files first.</div>'; return; }
+      /* Re-freezing over an existing lock erases the evidence that something
+         changed, which is exactly the tamper this tool exists to catch. Python
+         refuses without --force; the browser asks twice instead. */
+      var prior = $("lockBox").value.trim();
+      if (prior && !$("freezeRun").dataset.armed) {
+        $("freezeRun").dataset.armed = "1";
+        out.innerHTML = '<div class="note bad-note"><b>A lock already exists.</b><br>' +
+          "Overwriting it discards the seal you froze earlier, so any drift since then stops being visible. " +
+          "Press <b>Freeze</b> again to overwrite.</div>";
+        toast("Press Freeze again to overwrite the lock");
+        return;
+      }
+      delete $("freezeRun").dataset.armed;
       var exempt = $("lockExempt").value.split(",").map(function (x) { return x.trim(); }).filter(Boolean);
       var lock = A.freeze(frozenFiles, {
         thresholds: { theta_mut: Number($("thrMut").value), theta_cov: Number($("thrCov").value) },
@@ -4427,8 +4503,19 @@ function dict(seed) {
     d.addEventListener("drop", function (e) {
       if (e.dataTransfer && e.dataTransfer.files.length) go(e.dataTransfer.files);
     });
-    fi.addEventListener("change", function () { if (fi.files.length) go(fi.files); });
-    si.addEventListener("change", function () { if (si.files.length) go(si.files); });
+    /* Clear after read so re-picking the same files after an edit re-audits. */
+    fi.addEventListener("change", function () {
+      if (!fi.files.length) return;
+      var fl = fi.files;
+      go(fl);
+      fi.value = "";
+    });
+    si.addEventListener("change", function () {
+      if (!si.files.length) return;
+      var fl = si.files;
+      go(fl);
+      si.value = "";
+    });
     $("pickFolder").addEventListener("click", function () { fi.click(); });
     $("pickFiles").addEventListener("click", function () { si.click(); });
     $("loadDemo").addEventListener("click", function () { runAudit(DEMO); });
@@ -4453,6 +4540,25 @@ function dict(seed) {
     });
   }
 
+  /* The header is sticky and its height changes with the tab row wrapping, so a
+     fixed scroll-padding-top hides whatever we scroll or focus under it. Track
+     the measured height instead. */
+  function syncScrollPadding() {
+    var header = document.querySelector("header");
+    if (!header) return;
+    function apply() {
+      var h = Math.round(header.getBoundingClientRect().height);
+      document.documentElement.style.scrollPaddingTop = (h + 8) + "px";
+    }
+    apply();
+    if (window.ResizeObserver) {
+      try { new ResizeObserver(apply).observe(header); } catch (e) { /* older engines */ }
+    } else {
+      window.addEventListener("resize", apply);
+    }
+    window.addEventListener("orientationchange", function () { setTimeout(apply, 120); });
+  }
+
   function boot() {
     initTheme();
     initTabs();
@@ -4462,6 +4568,7 @@ function dict(seed) {
     initSeal();
     initSelf();
     initKeys();
+    syncScrollPadding();
     renderManual();
     renderGates({}, {});
     var noStore = false;

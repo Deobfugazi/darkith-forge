@@ -778,25 +778,75 @@ def run_evidence(ev, timeout=120):
     return ok, hashlib.sha256(out.encode()).hexdigest()[:12]
 
 
+def _cid(v):
+    """Ids are object keys on the JS side, so 1 and "1" collide there. Normalise
+    the same way here to keep the two implementations indistinguishable."""
+    return None if v is None else (v if isinstance(v, str) else str(v))
+
+
+def _cycle_ids(by_id):
+    """Ids that sit on a derived_from cycle.  A cycle is found up front because
+    eff() memoises into `res` before recursing, which hides back edges from it."""
+    on_cycle, color, stack = set(), {}, []
+
+    def visit(cid):
+        color[cid] = 1
+        stack.append(cid)
+        c = by_id.get(cid)
+        for p in (c.get("derived_from") or []) if isinstance(c, dict) else []:
+            p = _cid(p)
+            if p not in by_id:
+                continue
+            st = color.get(p, 0)
+            if st == 1:
+                on_cycle.update(stack[stack.index(p):])
+            elif st == 0:
+                visit(p)
+        stack.pop()
+        color[cid] = 2
+
+    for cid in by_id:
+        if color.get(cid, 0) == 0:
+            visit(cid)
+    return on_cycle
+
+
 def ledger(claims, run=False):
     if not isinstance(claims, list):
         raise SystemExit("ledger expects a JSON array of claim objects")
-    by_id, res, visiting = {c.get("id"): c for c in claims}, {}, set()
+    by_id, res, visiting = {}, {}, set()
+    dupes = set()
+    for c in claims:
+        cid = _cid(c.get("id")) if isinstance(c, dict) else None
+        if cid in by_id:
+            dupes.add(cid)
+        by_id[cid] = c
+    cyc = _cycle_ids(by_id)
     bad = 0
 
     def eff(c):
-        cid, k = c.get("id"), c.get("kind")
+        raw, k = c.get("id"), c.get("kind")
+        cid = _cid(raw)
         if cid in res:
             return res[cid]
         if cid in visiting:
-            r = {"id": cid, "kind": k, "effective": k, "status": "invalid", "note": "cycle in derived_from"}
-            res[cid] = r
-            return r
+            return {"id": raw, "kind": k, "effective": k, "status": "invalid",
+                    "note": "cycle in derived_from"}
         visiting.add(cid)
-        r = {"id": cid, "kind": k, "effective": k, "status": "", "note": ""}
+        r = {"id": raw, "kind": k, "effective": k, "status": "", "note": ""}
+        if cid is None or cid == "":
+            r.update(status="invalid", note="claim has no id")
+            visiting.discard(cid)
+            return r
+        if cid in dupes:
+            r.update(status="invalid", note="duplicate id")
+            visiting.discard(cid)
+            return r
         res[cid] = r
         ev = c.get("evidence") or {}
-        if k not in KINDS:
+        if cid in cyc:
+            r.update(status="invalid", note="cycle in derived_from")
+        elif k not in KINDS:
             r.update(status="invalid", note="unknown kind")
         elif k == "D":
             r["status"] = "declared"
@@ -811,7 +861,7 @@ def ledger(claims, run=False):
             else:
                 r["status"] = "unrun"
         elif k == "R":
-            parents = c.get("derived_from") or []
+            parents = [_cid(p) for p in (c.get("derived_from") or [])]
             if not parents or any(p not in by_id for p in parents):
                 r.update(status="invalid", note="derived_from missing or unknown id")
             else:
@@ -828,9 +878,7 @@ def ledger(claims, run=False):
         visiting.discard(cid)
         return r
 
-    for c in claims:
-        eff(c)
-    rows = list(res.values())
+    rows = [eff(c) for c in claims]
     bad = sum(1 for r in rows if r["status"] in ("invalid", "failed", "unsupported"))
     return rows, bad
 

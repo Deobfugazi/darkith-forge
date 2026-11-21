@@ -16,7 +16,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 75,905 | `27da0a07834f` | AGENTS.md — Darkith |
-| `DARKITH.md` | 101,928 | `b2af0a14fd31` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 101,932 | `c1f13c22d728` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
@@ -51,8 +51,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
-| `darkith code studio.html` | 601,576 | `5cd553c1653f` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,471,908 | `877e35c5d3d1` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith code studio.html` | 603,010 | `e43c9fc37192` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,474,776 | `d8679bedd69b` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
 | `darkith-omega-apps.html` | 7,073 | `428a803bf151` | DARKITH Ω — apps |
 | `darkith-omega-camera.html` | 10,016 | `425678dcb574` | DARKITH Ω — camera |
@@ -63,9 +63,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
-| `omega-reader.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
+| `omega-reader.html` | 2,777,280 | `c2341c1a5d3f` | Library — DARKITH knowledge base |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 463,190 | `e37837910ad5` | SAVF-1 Universal Audit Engine |
+| `savf.html` | 467,700 | `6dc986c0c57c` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 

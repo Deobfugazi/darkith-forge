@@ -385,10 +385,21 @@ if have node && [ -f tools/test_darktools.js ]; then
   run "darktools unit tests" node tools/test_darktools.js
 fi
 
-  # The four-register reader (omega-reader.html): dependency-free DOM-shim test. Proves
-  # the routing is bounds-safe and the machine/provenance registers are HTML-escaped.
+  # The four-register reader (omega-reader.html): dependency-free test. Proves the
+  # embedded corpus decodes and agrees with the index, that every document is
+  # byte-identical on disk, that the renderer emits only whitelisted tags under
+  # hostile input, that an unclosed fence cannot swallow a document, that outline
+  # ids match the rendered headings, that search returns what exists (including a
+  # match at offset 0), and that the file on disk is the current build.
   if have node && [ -f tools/test_omega_reader.js ]; then
     run "omega reader tests" node tools/test_omega_reader.js
+  fi
+
+  # The SAVF-1 engine: savf.py (CLI) and savf.html (browser) must agree. The test
+  # drives the real Python CLI and the real browser script over the same corpus of
+  # synthetic sources and fails on any disagreement in findings or verdict.
+  if have node && [ -f tools/test_savf_parity.js ]; then
+    run "savf cli/browser parity" node tools/test_savf_parity.js
   fi
 
   # The Icon Forge (icon_forge.html): the visual-affordance specialist. Dependency-free

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="Offline reader for the DARKITH knowledge-skill library.">
+<title>Library — DARKITH knowledge base</title>
+<style>
+:root{
+  --bg:#0e1013; --bg2:#14171c; --bg3:#1b1f26; --line:#262b33; --line2:#333a45;
+  --ink:#e6e9ef; --dim:#a9b2bf; --faint:#858f9c;
+  --accent:#ff8a3d; --accent-ink:#1a0e05;
+  --ok:#3ddc84; --warn:#f2c14e; --bad:#ff6b6b;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --read:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --fs:16px; --lh:1.68;
+  --side:19rem;
+}
+html[data-theme="light"]{
+  --bg:#fbfaf7; --bg2:#f2efe8; --bg3:#e9e5dc; --line:#dcd7cc; --line2:#c9c3b6;
+  --ink:#1b1b1b; --dim:#57544e; --faint:#635f58;
+  --accent:#a8501c; --accent-ink:#fff;
+  --ok:#127a44; --warn:#8a6100; --bad:#b3261e;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
+  font-size:var(--fs);line-height:var(--lh);
+  -webkit-text-size-adjust:100%;overscroll-behavior-y:none;
+}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- top bar ---------- */
+#bar{
+  position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:.4rem;
+  padding:.5rem .6rem;background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  padding-top:max(.5rem,env(safe-area-inset-top));
+}
+#bar .grow{flex:1}
+.ibtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:38px;height:38px;padding:0 .5rem;border-radius:9px;
+  background:transparent;border:1px solid transparent;color:var(--dim);
+  cursor:pointer;flex:0 0 auto;-webkit-tap-highlight-color:transparent;
+}
+.ibtn:hover{color:var(--ink);background:var(--bg3);border-color:var(--line)}
+.ibtn[aria-expanded="true"],.ibtn.on{color:var(--accent);border-color:var(--line2);background:var(--bg3)}
+#brand{display:flex;align-items:baseline;gap:.45rem;min-width:0;font-weight:650;letter-spacing:-.01em}
+#brand .dot{color:var(--accent);font-size:1.05em;line-height:1}
+#brand .sub{font-weight:400;font-size:.76rem;color:var(--faint);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+#searchOpen{flex:1 1 auto;min-width:0;justify-content:flex-start;gap:.5rem;
+  border:1px solid var(--line);background:var(--bg2);color:var(--faint);
+  font-size:.86rem;max-width:26rem}
+#searchOpen kbd{margin-left:auto}
+kbd{font-family:var(--mono);font-size:.7rem;border:1px solid var(--line2);
+  border-bottom-width:2px;border-radius:5px;padding:.05rem .32rem;color:var(--faint)}
+
+/* ---------- shell ---------- */
+#shell{display:flex;min-height:calc(100% - 55px);align-items:flex-start}
+#side{
+  width:var(--side);flex:0 0 var(--side);position:sticky;top:55px;
+  height:calc(100vh - 55px);overflow-y:auto;border-right:1px solid var(--line);
+  padding:.7rem .55rem 3rem;background:var(--bg);
+  scrollbar-width:thin;
+}
+#side .grp{margin:0 0 .9rem}
+#side .grphead{
+  display:flex;align-items:center;gap:.4rem;width:100%;padding:.34rem .5rem;
+  background:none;border:0;border-radius:7px;cursor:pointer;text-align:left;
+  font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  font-weight:700;
+}
+#side .grphead:hover{color:var(--ink);background:var(--bg2)}
+#side .grphead .n{margin-left:auto;font-family:var(--mono);font-size:.68rem;
+  letter-spacing:0;color:var(--faint)}
+#side .grphead .caret{transition:transform .16s;font-size:.62rem;opacity:.75}
+#side .grp[data-open="false"] .caret{transform:rotate(-90deg)}
+#side .grp[data-open="false"] .items{display:none}
+#side .items{display:flex;flex-direction:column;gap:1px;margin-top:.15rem}
+.doc{
+  display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
+  padding:.42rem .55rem .42rem .72rem;border-radius:7px;color:var(--dim);
+  font-size:.845rem;line-height:1.35;border-left:2px solid transparent;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.doc:hover{background:var(--bg2);color:var(--ink)}
+.doc[aria-current="true"]{background:var(--bg3);color:var(--ink);
+  border-left-color:var(--accent);font-weight:600}
+.doc .sz{font-family:var(--mono);font-size:.66rem;color:var(--faint);margin-left:.35rem}
+#scrim{position:fixed;inset:0;background:#000a;z-index:35;opacity:0;pointer-events:none;
+  transition:opacity .2s}
+#scrim.on{opacity:1;pointer-events:auto}
+
+/* ---------- main ---------- */
+#main{flex:1 1 auto;min-width:0;display:flex;justify-content:center}
+#doc{
+  width:100%;max-width:52rem;padding:2rem 1.5rem 6rem;min-width:0;
+}
+@media (max-width:900px){
+  #side{position:fixed;left:0;top:0;height:100dvh;z-index:36;
+    transform:translateX(-102%);transition:transform .22s ease;
+    width:min(21rem,86vw);flex-basis:auto;padding-top:calc(55px + env(safe-area-inset-top))}
+  #side.open{transform:none}
+  #doc{padding:1.15rem .95rem 5rem}
+  /* Touch: a 25px row is a mis-tap waiting to happen. Give every entry a
+     full 44px target and let the label wrap instead of truncating. */
+  #side .doc{padding:.72rem .6rem .72rem .72rem;font-size:.9rem;
+    min-height:44px;white-space:normal;overflow:visible;text-overflow:clip;
+    display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+  #side .doc .sz{margin-left:auto;flex:0 0 auto}
+  #side .grphead{min-height:40px;font-size:.72rem}
+  .ibtn{min-width:44px;height:44px}
+  #bar{padding-top:max(.4rem,env(safe-area-inset-top))}
+}
+
+/* ---------- article typography ---------- */
+#doc h1,#doc h2,#doc h3,#doc h4{
+  font-family:var(--ui);line-height:1.25;letter-spacing:-.015em;
+  scroll-margin-top:4.2rem;
+}
+#doc h1{font-size:1.62em;margin:0 0 .55rem}
+#doc h2{font-size:1.26em;margin:2.1em 0 .5em;padding-bottom:.28em;
+  border-bottom:1px solid var(--line)}
+#doc h3{font-size:1.07em;margin:1.7em 0 .4em}
+#doc h4{font-size:.96em;margin:1.4em 0 .3em;color:var(--dim);
+  text-transform:uppercase;letter-spacing:.06em;font-size:.78em}
+#doc p{margin:0 0 .95em;font-family:var(--read);font-size:1.005em}
+#doc li{font-family:var(--read);margin:.2em 0}
+#doc ul,#doc ol{margin:0 0 .95em;padding-left:1.35em}
+#doc a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;
+  text-decoration-thickness:1px}
+#doc blockquote{margin:0 0 .95em;padding:.1em 0 .1em .9em;border-left:3px solid var(--line2);
+  color:var(--dim)}
+#doc hr{border:0;border-top:1px solid var(--line);margin:1.8em 0}
+#doc code{font-family:var(--mono);font-size:.86em;background:var(--bg2);
+  border:1px solid var(--line);border-radius:5px;padding:.08em .32em;
+  overflow-wrap:anywhere}
+#doc pre{
+  font-family:var(--mono);font-size:.815em;line-height:1.55;background:var(--bg2);
+  border:1px solid var(--line);border-radius:10px;padding:.85rem .95rem;
+  overflow-x:auto;margin:0 0 1.1em;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+#doc pre:focus-visible,#doc table:focus-visible,#doc .srcview:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+#doc pre code{background:none;border:0;padding:0;font-size:1em;overflow-wrap:normal}
+#doc table{border-collapse:collapse;width:100%;margin:0 0 1.1em;
+  font-size:.86em;display:block;overflow-x:auto;scrollbar-width:thin}
+#doc th,#doc td{border:1px solid var(--line);padding:.4em .6em;text-align:left;
+  vertical-align:top}
+#doc th{background:var(--bg2);font-weight:650}
+#doc img{max-width:100%;height:auto;border-radius:8px}
+#doc .plain{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--read);
+  font-size:.96em;margin:0}
+#doc .srcview{white-space:pre;overflow-x:auto;font-family:var(--mono);
+  font-size:.8em;line-height:1.5;margin:0}
+
+/* ---------- doc header ---------- */
+#dochead{border-bottom:1px solid var(--line);padding-bottom:.85rem;margin-bottom:1.4rem}
+#dochead .path{font-family:var(--mono);font-size:.74rem;color:var(--faint);
+  overflow-wrap:anywhere}
+#dochead h1{margin:.35rem 0 .3rem}
+#dochead .meta{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;
+  font-size:.72rem;color:var(--faint)}
+.pill{display:inline-flex;align-items:center;gap:.3rem;border:1px solid var(--line2);
+  border-radius:999px;padding:.1rem .55rem;font-size:.7rem;color:var(--dim);
+  background:var(--bg2)}
+.pill.acc{border-color:color-mix(in srgb,var(--accent) 45%,transparent);
+  color:var(--accent)}
+
+/* ---------- outline ---------- */
+#outline{margin:0 0 1.6rem;padding:.7rem .9rem;background:var(--bg2);
+  border:1px solid var(--line);border-radius:10px;font-size:.82rem}
+#outline[hidden]{display:none}
+#outline .oh{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:.4rem}
+#outline a{display:block;color:var(--dim);text-decoration:none;padding:.16rem 0;
+  border-radius:4px;line-height:1.35}
+#outline a:hover{color:var(--accent)}
+#outline a.lv3{padding-left:.9rem;font-size:.94em;color:var(--faint)}
+
+/* ---------- search ---------- */
+#searchWrap{position:fixed;inset:0;z-index:60;display:none;
+  background:color-mix(in srgb,var(--bg) 75%,#000);backdrop-filter:blur(4px);
+  padding:max(1rem,env(safe-area-inset-top)) 1rem 1rem}
+#searchWrap.on{display:flex;flex-direction:column;align-items:center}
+#searchBox{width:100%;max-width:46rem;background:var(--bg2);border:1px solid var(--line2);
+  border-radius:13px;display:flex;flex-direction:column;max-height:100%;
+  box-shadow:0 20px 60px #0008;overflow:hidden}
+#searchRow{display:flex;align-items:center;gap:.5rem;padding:.55rem .7rem;
+  border-bottom:1px solid var(--line)}
+#q{flex:1;background:none;border:0;outline:none;font-size:1rem;min-width:0;padding:.3rem 0}
+#q::placeholder{color:var(--faint)}
+#results{overflow-y:auto;padding:.4rem;flex:1}
+.res{display:block;width:100%;text-align:left;background:none;border:0;
+  border-radius:8px;padding:.5rem .6rem;cursor:pointer;color:inherit}
+.res:hover,.res.sel{background:var(--bg3)}
+.res .rt{font-size:.86rem;font-weight:600;color:var(--ink);display:flex;
+  gap:.45rem;align-items:baseline}
+.res .rp{font-family:var(--mono);font-size:.68rem;color:var(--faint);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res .rs{font-size:.78rem;color:var(--dim);margin-top:.15rem;line-height:1.4;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.res mark{background:color-mix(in srgb,var(--accent) 30%,transparent);
+  color:inherit;border-radius:3px;padding:0 .1em}
+#resultCount{font-size:.72rem;color:var(--faint);padding:.3rem .7rem .5rem}
+
+/* ---------- misc ---------- */
+#status{position:fixed;left:50%;bottom:1.1rem;transform:translateX(-50%) translateY(2rem);
+  z-index:70;background:var(--bg3);border:1px solid var(--line2);border-radius:999px;
+  padding:.45rem 1rem;font-size:.8rem;color:var(--ink);opacity:0;pointer-events:none;
+  transition:opacity .18s,transform .18s;box-shadow:0 8px 30px #0006;
+  max-width:calc(100vw - 2rem);text-align:center}
+#status.on{opacity:1;transform:translateX(-50%)}
+#empty{color:var(--faint);font-size:.9rem;padding:1rem 0}
+#empty .big{font-size:1.5rem;color:var(--accent);margin-bottom:.4rem}
+.err{color:var(--bad);font-family:var(--mono);font-size:.82rem;
+  white-space:pre-wrap;overflow-wrap:anywhere}
+@media print{
+  #bar,#side,#scrim,#outline,#searchWrap,#status{display:none!important}
+  #shell{display:block}
+  #doc{max-width:none;padding:0}
+  body{background:#fff;color:#000}
+  #doc a{color:#000}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<a class="sr" href="#doc">Skip to document</a>
+
+<header id="bar">
+  <button class="ibtn" id="menuBtn" aria-label="Library contents" aria-expanded="false"
+          aria-controls="side">☰</button>
+  <div id="brand">
+    <span class="dot" aria-hidden="true">Ω</span>
+    <span>Library</span>
+    <span class="sub" id="brandSub"></span>
+  </div>
+  <span class="grow"></span>
+  <button class="ibtn" id="searchOpen" aria-label="Search the library">
+    <span aria-hidden="true">⌕</span>
+    <span>Search</span>
+    <kbd>/</kbd>
+  </button>
+  <button class="ibtn" id="fontBtn" aria-label="Text size" title="Text size">A<span style="font-size:.72em">a</span></button>
+  <button class="ibtn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">◐</button>
+</header>
+
+<div id="scrim"></div>
+
+<div id="shell">
+  <nav id="side" aria-label="Library contents">
+    <div id="sideBody"></div>
+  </nav>
+  <div id="main">
+    <article id="doc" tabindex="-1" aria-live="polite"></article>
+  </div>
+</div>
+
+<div id="searchWrap" role="dialog" aria-modal="true" aria-label="Search the library">
+  <div id="searchBox">
+    <div id="searchRow">
+      <span aria-hidden="true" style="color:var(--faint)">⌕</span>
+      <input id="q" type="search" placeholder="Search every document…" autocomplete="off"
+             spellcheck="false" aria-label="Search query">
+      <button class="ibtn" id="searchClose" aria-label="Close search">✕</button>
+    </div>
+    <div id="resultCount"></div>
+    <div id="results" aria-label="Search results"></div>
+  </div>
+</div>
+
+<div id="status" role="status" aria-live="polite"></div>
+
+<script>
+/*__INFLATE__*/
+</script>
+<script id="corpus-b64" type="text/plain">__PAYLOAD_B64__</script>
+<script>
+"use strict";
+(function () {
+
+/* ============================================================
+   State
+   ============================================================ */
+var CORPUS = null;                 /* [{p,r,n,h,t}] */
+var BY_PATH = Object.create(null);
+var SEARCH_INDEX = null;           /* [lowercased text] */
+var state = { path: null, query: "", sel: 0, results: [], font: 0, open: {} };
+var FONTS = [15, 16, 17, 18, 19, 20];
+
+var REG_LABEL = {
+  "A-apparatus": "Governance",
+  "B-knowledge": "Knowledge",
+  "C-skillbase": "Skill surfaces",
+  "D-asset": "Runtime assets",
+  "E-evidence": "Evidence",
+  "F-config": "Configuration",
+  "G-apparatus-portable": "Portable apparatus"
+};
+var REG_ORDER = ["A-apparatus","B-knowledge","C-skillbase","E-evidence",
+                 "D-asset","F-config","G-apparatus-portable"];
+
+var $ = function (id) { return document.getElementById(id); };
+
+/* ============================================================
+   Small helpers
+   ============================================================ */
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function bytes(n) {
+  if (n < 1024) return n + " B";
+  if (n < 1048576) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + " KB";
+  return (n / 1048576).toFixed(1) + " MB";
+}
+function baseName(p) { var i = p.lastIndexOf("/"); return i < 0 ? p : p.slice(i + 1); }
+function ext(p) { var b = baseName(p), i = b.lastIndexOf("."); return i < 0 ? "" : b.slice(i + 1).toLowerCase(); }
+
+function toast(msg) {
+  var s = $("status");
+  s.textContent = msg;
+  s.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function () { s.classList.remove("on"); }, 2200);
+}
+
+/* ============================================================
+   Boot: inflate the corpus, then paint
+   ============================================================ */
+function boot() {
+  var t0 = Date.now();
+  try {
+    var b64 = document.getElementById("corpus-b64").textContent.trim();
+    var bin = atob(b64);
+    var bytesArr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytesArr[i] = bin.charCodeAt(i);
+    var json = Inflate.utf8(Inflate.gunzip(bytesArr));
+    CORPUS = JSON.parse(json);
+  } catch (e) {
+    $("doc").innerHTML = '<div id="empty"><div class="big">Corpus could not be opened</div>' +
+      '<p>The embedded library payload failed to decode. This is a build fault, not a problem with your files.</p>' +
+      '<p class="err">' + esc(e && e.message || e) + "</p></div>";
+    return;
+  }
+
+  CORPUS.sort(function (a, b) { return a.p < b.p ? -1 : a.p > b.p ? 1 : 0; });
+  for (var j = 0; j < CORPUS.length; j++) BY_PATH[CORPUS[j].p] = CORPUS[j];
+
+  $("brandSub").textContent = CORPUS.length + " documents · offline";
+  document.title = "Library — " + CORPUS.length + " documents";
+
+  try {
+    var saved = localStorage.getItem("darkith.reader.theme");
+    if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+    var f = parseInt(localStorage.getItem("darkith.reader.font") || "0", 10);
+    if (f >= 0 && f < FONTS.length) { state.font = f; applyFont(); }
+    var last = localStorage.getItem("darkith.reader.last");
+    if (last && BY_PATH[last]) state.path = last;
+  } catch (e) { /* storage may be denied on file:// — the reader still works */ }
+
+  renderSide();
+
+  var want = null;
+  var h = location.hash.replace(/^#\/?/, "");
+  if (h) { try { want = decodeURIComponent(h); } catch (e) { want = h; } }
+  if (want && BY_PATH[want]) open(want, true);
+  else if (state.path) open(state.path, true);
+  else openDefault();
+
+  var dt = Date.now() - t0;
+  if (dt > 900) toast("Library opened in " + (dt / 1000).toFixed(1) + " s");
+}
+
+function openDefault() {
+  var order = ["README.md", "DARKITH.md", "AGENTS.md", "docs/INDEX.md"];
+  for (var i = 0; i < order.length; i++) if (BY_PATH[order[i]]) return open(order[i], true);
+  if (CORPUS.length) open(CORPUS[0].p, true);
+}
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+function renderSide() {
+  var groups = Object.create(null);
+  CORPUS.forEach(function (d) {
+    (groups[d.r] = groups[d.r] || []).push(d);
+  });
+  var html = "";
+  REG_ORDER.forEach(function (reg) {
+    var list = groups[reg];
+    if (!list || !list.length) return;
+    var isOpen = state.open[reg] !== false;
+    html += '<div class="grp" data-reg="' + esc(reg) + '" data-open="' + isOpen + '">' +
+      '<button class="grphead" aria-expanded="' + isOpen + '">' +
+        '<span class="caret" aria-hidden="true">▾</span>' +
+        '<span>' + esc(REG_LABEL[reg] || reg) + "</span>" +
+        '<span class="n">' + list.length + "</span>" +
+      "</button>" +
+      '<div class="items">';
+    list.forEach(function (d) {
+      html += '<button class="doc" data-path="' + esc(d.p) + '" title="' + esc(d.p) + '">' +
+        esc(baseName(d.p)) + '<span class="sz">' + bytes(d.n) + "</span></button>";
+    });
+    html += "</div></div>";
+  });
+  $("sideBody").innerHTML = html || '<div id="empty">No documents indexed.</div>';
+
+  $("sideBody").addEventListener("click", function (e) {
+    var head = e.target.closest(".grphead");
+    if (head) {
+      var grp = head.parentNode;
+      var open = grp.dataset.open !== "false";
+      grp.dataset.open = String(!open);
+      head.setAttribute("aria-expanded", String(!open));
+      state.open[grp.dataset.reg] = !open;
+      return;
+    }
+    var btn = e.target.closest(".doc");
+    if (btn) { open(btn.dataset.path); closeSide(); }
+  });
+}
+
+function markSide() {
+  var els = $("sideBody").querySelectorAll(".doc");
+  for (var i = 0; i < els.length; i++) {
+    els[i].setAttribute("aria-current", String(els[i].dataset.path === state.path));
+  }
+  var cur = $("sideBody").querySelector('.doc[aria-current="true"]');
+  if (cur && cur.scrollIntoView) {
+    try { cur.scrollIntoView({ block: "nearest" }); } catch (e) {}
+  }
+}
+
+function openSide() { $("side").classList.add("open"); $("scrim").classList.add("on");
+  $("menuBtn").setAttribute("aria-expanded", "true"); }
+function closeSide() { $("side").classList.remove("open"); $("scrim").classList.remove("on");
+  $("menuBtn").setAttribute("aria-expanded", "false"); }
+
+/* ============================================================
+   Markdown — escaped first, then a fixed tag whitelist.
+   Nothing from the corpus can introduce an element or attribute.
+   ============================================================ */
+var SAFE_HREF = /^(https?:|mailto:|#|\/|\.{1,2}\/)/i;
+
+function inline(text) {
+  var s = esc(text);
+  s = s.replace(/`([^`]+)`/g, function (_, c) { return "<code>" + c + "</code>"; });
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+  s = s.replace(/(^|[\s(])_([^_\s][^_]*)_/g, "$1<em>$2</em>");
+  s = s.replace(/~~([^~]+)~~/g, "<del>$1</del>");
+  s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (m, label, href) {
+    var raw = href.replace(/&amp;/g, "&");
+    if (!SAFE_HREF.test(raw)) return label;
+    var out = raw.replace(/"/g, "%22").replace(/</g, "%3C").replace(/>/g, "%3E");
+    return '<a href="' + out + '" rel="noopener noreferrer">' + label + "</a>";
+  });
+  s = s.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, function (m, pre, url) {
+    return pre + '<a href="' + url + '" rel="noopener noreferrer">' + url + "</a>";
+  });
+  return s;
+}
+
+function slug(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "s";
+}
+
+function markdown(src) {
+  var lines = String(src).replace(/\r\n?/g, "\n").replace(/^\uFEFF/, "").split("\n");
+  var out = [], i = 0, usedSlug = Object.create(null);
+
+  function uniqSlug(t) {
+    var base = slug(t), s = base, k = 2;
+    while (usedSlug[s]) { s = base + "-" + k++; }
+    usedSlug[s] = 1;
+    return s;
+  }
+
+  while (i < lines.length) {
+    var line = lines[i];
+
+    /* fenced code */
+    var fence = /^\s*(```+|~~~+)\s*([\w+-]*)\s*$/.exec(line);
+    if (fence) {
+      var mark = fence[1].charAt(0), lang = fence[2], buf = [];
+      var closeRx = new RegExp("^\\s*" + mark + "{" + fence[1].length + ",}\\s*$");
+      var start = i;
+      i++;
+      while (i < lines.length && !closeRx.test(lines[i])) { buf.push(lines[i]); i++; }
+      /* An unclosed fence is a defect in the document, not a licence to swallow
+         everything after it. Stop at the next heading or at a line that starts a
+         new fence, and keep rendering the rest of the file. */
+      if (i >= lines.length) {
+        var cut = -1;
+        for (var k = 0; k < buf.length; k++) {
+          if (/^#{1,6}\s/.test(buf[k])) { cut = k; break; }
+        }
+        if (cut > 0) {
+          var rest = buf.splice(cut);
+          i = start + 1 + cut;
+          out.push('<pre tabindex="0"><code' + (lang ? ' class="lang-' + esc(lang) + '"' : "") + ">" +
+                   esc(buf.join("\n")) + "</code></pre>");
+          continue;
+        }
+      }
+      if (i < lines.length) i++;
+      out.push('<pre tabindex="0"><code' + (lang ? ' class="lang-' + esc(lang) + '"' : "") + ">" +
+               esc(buf.join("\n")) + "</code></pre>");
+      continue;
+    }
+
+    /* setext heading: a title line underlined with = or - */
+    if (i + 1 < lines.length && line.trim() && !/^\s*([-*_])(\s*\1){2,}\s*$/.test(line) &&
+        /^(={3,}|-{3,})\s*$/.test(lines[i + 1])) {
+      var slvl = lines[i + 1].charAt(0) === "=" ? 1 : 2;
+      var sid = uniqSlug(line.trim());
+      out.push("<h" + slvl + ' id="' + sid + '">' + inline(line.trim()) + "</h" + slvl + ">");
+      i += 2; continue;
+    }
+
+    /* heading */
+    var hd = /^(#{1,6})\s+(.*?)\s*#*\s*$/.exec(line);
+    if (hd) {
+      var lvl = hd[1].length, text = hd[2], id = uniqSlug(text);
+      out.push("<h" + lvl + ' id="' + id + '">' + inline(text) + "</h" + lvl + ">");
+      i++; continue;
+    }
+
+    /* hr */
+    if (/^\s*([-*_])(\s*\1){2,}\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+
+    /* table */
+    if (line.indexOf("|") >= 0 && i + 1 < lines.length &&
+        /^\s*\|?[\s:|-]+\|[\s:|-]*$/.test(lines[i + 1]) && /-/.test(lines[i + 1])) {
+      var rows = [];
+      var head = splitRow(line);
+      i += 2;
+      while (i < lines.length && lines[i].indexOf("|") >= 0 && lines[i].trim()) {
+        rows.push(splitRow(lines[i])); i++;
+      }
+      var t = '<table tabindex="0"><thead><tr>';
+      head.forEach(function (c) { t += "<th>" + inline(c) + "</th>"; });
+      t += "</tr></thead><tbody>";
+      rows.forEach(function (r) {
+        t += "<tr>";
+        for (var c = 0; c < head.length; c++) t += "<td>" + inline(r[c] || "") + "</td>";
+        t += "</tr>";
+      });
+      out.push(t + "</tbody></table>");
+      continue;
+    }
+
+    /* blockquote */
+    if (/^\s*>/.test(line)) {
+      var q = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) {
+        q.push(lines[i].replace(/^\s*>\s?/, "")); i++;
+      }
+      out.push("<blockquote>" + markdown(q.join("\n")) + "</blockquote>");
+      continue;
+    }
+
+    /* list */
+    var li = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/.exec(line);
+    if (li) {
+      var ordered = /\d/.test(li[2]);
+      var tag = ordered ? "ol" : "ul";
+      var items = [];
+      var baseIndent = li[1].length;
+      while (i < lines.length) {
+        var m2 = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/.exec(lines[i]);
+        if (m2 && m2[1].length === baseIndent) { items.push(m2[3]); i++; }
+        else if (m2 && m2[1].length > baseIndent) {
+          items[items.length - 1] += "\n" + lines[i].trim(); i++;
+        } else if (lines[i].trim() === "") {
+          var nxt = lines[i + 1] || "";
+          var m3 = /^(\s*)([-*+]|\d+[.)])\s+/.exec(nxt);
+          if (m3 && m3[1].length === baseIndent) { i++; }
+          else break;
+        } else break;
+      }
+      var lh = "<" + tag + ">";
+      items.forEach(function (it) { lh += "<li>" + inline(it) + "</li>"; });
+      out.push(lh + "</" + tag + ">");
+      continue;
+    }
+
+    /* blank */
+    if (!line.trim()) { i++; continue; }
+
+    /* paragraph */
+    var para = [];
+    while (i < lines.length && lines[i].trim() &&
+           !/^\s*(#{1,6}\s|>|```|~~~)/.test(lines[i]) &&
+           !/^(\s*)([-*+]|\d+[.)])\s+/.test(lines[i]) &&
+           !/^\s*([-*_])(\s*\1){2,}\s*$/.test(lines[i])) {
+      para.push(lines[i]); i++;
+    }
+    if (para.length) out.push("<p>" + inline(para.join(" ")) + "</p>");
+    else i++;
+  }
+  return out.join("\n");
+}
+
+function splitRow(row) {
+  var s = row.trim().replace(/^\|/, "").replace(/\|$/, "");
+  return s.split("|").map(function (c) { return c.trim(); });
+}
+
+/* A .txt file is not automatically structureless: several documents in this
+   corpus carry markdown headings and fences. Sniff for real structure before
+   deciding, so a structured .txt gets headings and a prose .txt stays literal. */
+function looksLikeMarkdown(src) {
+  var lines = String(src).replace(/\r\n?/g, "\n").split("\n");
+  var heads = 0, fences = 0, lists = 0, tables = 0, probes = 0;
+  var inFence = false;
+  for (var i = 0; i < lines.length && probes < 4000; i++, probes++) {
+    var l = lines[i];
+    if (/^\s*(```|~~~)/.test(l)) { inFence = !inFence; fences++; continue; }
+    /* A leading # inside a fence is a shell comment, not a heading. Counting it
+       would turn a bash transcript into a document with fifty "headings". */
+    if (inFence) continue;
+    if (/^#{1,6}\s+\S/.test(l)) heads++;
+    else if (/^\s*([-*+]|\d+[.)])\s+\S/.test(l)) lists++;
+    else if (l.indexOf("|") >= 0 && i + 1 < lines.length &&
+             /^\s*\|?[\s:|-]+\|[\s:|-]*$/.test(lines[i + 1]) && /-/.test(lines[i + 1])) tables++;
+  }
+  var score = heads * 3 + fences * 2 + tables * 3 + (lists >= 4 ? 2 : 0);
+  return score >= 6 || heads >= 2;
+}
+
+/* ============================================================
+   Outline
+   ============================================================ */
+function outlineFor(doc) {
+  var e = ext(doc.p);
+  if (e !== "md" && e !== "markdown") {
+    if (!(e === "txt" || e === "" || e === "text") || !looksLikeMarkdown(doc.t)) return [];
+  }
+  var src = doc.t.replace(/\r\n?/g, "\n");
+  var lines = src.split("\n"), heads = [], fence = false, seen = Object.create(null);
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i];
+    if (/^\s*(```|~~~)/.test(l)) { fence = !fence; continue; }
+    if (fence) continue;
+    var m = /^(#{1,3})\s+(.*?)\s*#*\s*$/.exec(l);
+    if (!m) continue;
+    var text = m[2].replace(/[*_`]/g, "").trim();
+    if (!text) continue;
+    var base = slug(text), s = base, k = 2;
+    while (seen[s]) { s = base + "-" + k++; }
+    seen[s] = 1;
+    heads.push({ lvl: m[1].length, text: text, id: s });
+  }
+  return heads;
+}
+
+/* ============================================================
+   Render one document
+   ============================================================ */
+function open(path, quiet) {
+  var doc = BY_PATH[path];
+  if (!doc) { toast("Not in the library: " + path); return; }
+
+  state.path = path;
+  markSide();
+  if (!quiet) closeSide();
+  try { localStorage.setItem("darkith.reader.last", path); } catch (e) {}
+  try { history.replaceState(null, "", "#/" + encodeURI(path)); } catch (e) {}
+
+  var e = ext(path);
+  var body, kind;
+  if (e === "md" || e === "markdown") { body = markdown(doc.t); kind = "Markdown"; }
+  else if (e === "html" || e === "htm") {
+    body = '<pre class="srcview" tabindex="0"><code>' + esc(doc.t) + "</code></pre>";
+    kind = "HTML source (shown as text, never executed)";
+  } else if (e === "json") {
+    body = '<pre class="srcview" tabindex="0"><code>' + esc(doc.t) + "</code></pre>";
+    kind = "JSON";
+  } else if (e === "py" || e === "js" || e === "sh" || e === "kt" || e === "css") {
+    body = '<pre class="srcview" tabindex="0"><code>' + esc(doc.t) + "</code></pre>";
+    kind = e.toUpperCase() + " source";
+  } else if (e === "txt" || e === "" || e === "text") {
+    if (looksLikeMarkdown(doc.t)) { body = markdown(doc.t); kind = "Text (markdown structure)"; }
+    else { body = '<div class="plain">' + esc(doc.t) + "</div>"; kind = "Plain text"; }
+  } else {
+    body = '<div class="plain">' + esc(doc.t) + "</div>";
+    kind = "Plain text";
+  }
+
+  var heads = outlineFor(doc);
+  var outline = "";
+  if (heads.length > 1) {
+    outline = '<nav id="outline" aria-label="Document outline"><div class="oh">In this document</div>' +
+      heads.filter(function (h) { return h.lvl <= 3; }).map(function (h) {
+        return '<a class="lv' + h.lvl + '" href="#' + h.id + '" data-anchor="' + h.id + '">' +
+          esc(h.text) + "</a>";
+      }).join("") + "</nav>";
+  }
+
+  $("doc").innerHTML =
+    '<header id="dochead">' +
+      '<div class="path">' + esc(doc.p) + "</div>" +
+      "<h1>" + esc(baseName(doc.p)) + "</h1>" +
+      '<div class="meta">' +
+        '<span class="pill acc">' + esc(REG_LABEL[doc.r] || doc.r) + "</span>" +
+        '<span class="pill">' + esc(kind) + "</span>" +
+        '<span class="pill">' + bytes(doc.n) + "</span>" +
+        '<span class="pill">sha256 ' + esc(doc.h) + "…</span>" +
+      "</div>" +
+    "</header>" +
+    outline +
+    '<div id="docbody">' + body + "</div>";
+
+  var ob = $("outline");
+  if (ob) {
+    ob.addEventListener("click", function (ev) {
+      var a = ev.target.closest("a[data-anchor]");
+      if (!a) return;
+      ev.preventDefault();
+      var t = document.getElementById(a.dataset.anchor);
+      if (t) { t.scrollIntoView({ block: "start", behavior: "smooth" }); }
+    });
+  }
+
+  window.scrollTo(0, 0);
+  $("doc").focus({ preventScroll: true });
+}
+
+/* ============================================================
+   Search
+   ============================================================ */
+function buildIndex() {
+  if (SEARCH_INDEX) return SEARCH_INDEX;
+  SEARCH_INDEX = CORPUS.map(function (d) { return d.t.toLowerCase(); });
+  return SEARCH_INDEX;
+}
+
+function search(raw) {
+  var q = raw.trim().toLowerCase();
+  if (!q) return [];
+  var idx = buildIndex(), hits = [];
+  for (var i = 0; i < CORPUS.length; i++) {
+    var text = CORPUS[i].t, low = idx[i];
+    var at = low.indexOf(q), count = 0, first = at;
+    while (at !== -1 && count < 200) { count++; at = low.indexOf(q, at + q.length); }
+    if (first < 0) continue;   /* offset 0 is a real match; 0 is falsy */
+    /* score: filename match is strong, then hit count, then earlier position */
+    var nameHit = CORPUS[i].p.toLowerCase().indexOf(q) >= 0;
+    hits.push({ doc: CORPUS[i], first: first, count: count,
+                score: (nameHit ? 1000 : 0) + Math.min(count, 100) });
+  }
+  hits.sort(function (a, b) {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.doc.p < b.doc.p ? -1 : 1;
+  });
+  return hits.slice(0, 60);
+}
+
+function snippet(text, at, qlen) {
+  var start = Math.max(0, at - 60), end = Math.min(text.length, at + qlen + 110);
+  var s = text.slice(start, end).replace(/\s+/g, " ");
+  var lead = start > 0 ? "… " : "", tail = end < text.length ? " …" : "";
+  return lead + s + tail;
+}
+
+function highlight(text, q) {
+  var s = esc(text);
+  if (!q) return s;
+  var rx = new RegExp("(" + q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+  return s.replace(rx, "<mark>$1</mark>");
+}
+
+function renderResults() {
+  var q = state.query.trim();
+  var box = $("results");
+  if (!q) {
+    $("resultCount").textContent = "";
+    box.innerHTML = '<div id="empty">Type to search ' + CORPUS.length +
+      " documents. Results match anywhere in the text.</div>";
+    return;
+  }
+  state.results = search(q);
+  state.sel = 0;
+  $("resultCount").textContent = state.results.length
+    ? state.results.length + (state.results.length === 60 ? "+" : "") +
+      " document" + (state.results.length === 1 ? "" : "s") + " match"
+    : "";
+  if (!state.results.length) {
+    box.innerHTML = '<div id="empty">No document contains “' + esc(q) + "”.</div>";
+    return;
+  }
+  box.innerHTML = state.results.map(function (h, i) {
+    return '<button class="res' + (i === 0 ? " sel" : "") + '" data-i="' + i + '">' +
+      '<span class="rt">' + highlight(baseName(h.doc.p), q) +
+        '<span class="rp">' + esc(h.doc.p) + "</span></span>" +
+      '<span class="rs">' + highlight(snippet(h.doc.t, h.first, q.length), q) + "</span>" +
+      "</button>";
+  }).join("");
+}
+
+function moveSel(delta) {
+  if (!state.results.length) return;
+  var next = state.sel + delta;
+  if (next < 0) next = state.results.length - 1;
+  if (next >= state.results.length) next = 0;
+  state.sel = next;
+  var els = $("results").querySelectorAll(".res");
+  for (var i = 0; i < els.length; i++) els[i].classList.toggle("sel", i === next);
+  if (els[next] && els[next].scrollIntoView) {
+    try { els[next].scrollIntoView({ block: "nearest" }); } catch (e) {}
+  }
+}
+
+function openSearch() {
+  $("searchWrap").classList.add("on");
+  $("searchOpen").setAttribute("aria-expanded", "true");
+  renderResults();
+  setTimeout(function () { $("q").focus(); }, 20);
+}
+function closeSearch() {
+  $("searchWrap").classList.remove("on");
+  $("searchOpen").setAttribute("aria-expanded", "false");
+}
+
+/* ============================================================
+   Controls
+   ============================================================ */
+function applyFont() {
+  var px = FONTS[state.font] || 16;
+  document.documentElement.style.setProperty("--fs", px + "px");
+}
+
+$("menuBtn").addEventListener("click", function () {
+  if ($("side").classList.contains("open")) closeSide(); else openSide();
+});
+$("scrim").addEventListener("click", closeSide);
+
+$("themeBtn").addEventListener("click", function () {
+  var next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("darkith.reader.theme", next); } catch (e) {}
+});
+
+$("fontBtn").addEventListener("click", function () {
+  state.font = (state.font + 1) % FONTS.length;
+  applyFont();
+  try { localStorage.setItem("darkith.reader.font", String(state.font)); } catch (e) {}
+  toast("Text size " + FONTS[state.font] + " px");
+});
+
+$("searchOpen").addEventListener("click", openSearch);
+$("searchClose").addEventListener("click", closeSearch);
+$("searchWrap").addEventListener("click", function (e) {
+  if (e.target === $("searchWrap")) closeSearch();
+});
+
+var qTimer = null;
+$("q").addEventListener("input", function () {
+  clearTimeout(qTimer);
+  var v = this.value;
+  qTimer = setTimeout(function () { state.query = v; renderResults(); }, 90);
+});
+
+$("q").addEventListener("keydown", function (e) {
+  if (e.key === "ArrowDown") { e.preventDefault(); moveSel(1); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); moveSel(-1); }
+  else if (e.key === "Enter") {
+    e.preventDefault();
+    var hit = state.results[state.sel];
+    if (hit) { closeSearch(); open(hit.doc.p); }
+  } else if (e.key === "Escape") { e.preventDefault(); closeSearch(); }
+});
+
+$("results").addEventListener("click", function (e) {
+  var b = e.target.closest(".res");
+  if (!b) return;
+  var hit = state.results[+b.dataset.i];
+  if (hit) { closeSearch(); open(hit.doc.p); }
+});
+
+document.addEventListener("keydown", function (e) {
+  var t = e.target;
+  var typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
+  if (e.key === "/" && !typing) { e.preventDefault(); openSearch(); return; }
+  if (typing) return;
+  if (e.key === "Escape") { closeSide(); closeSearch(); return; }
+  if (e.key === "t") { $("themeBtn").click(); return; }
+  if (e.key === "d") { $("menuBtn").click(); return; }
+  if (e.key === "j" || e.key === "ArrowRight") { step(1); }
+  if (e.key === "k" || e.key === "ArrowLeft") { step(-1); }
+});
+
+function step(delta) {
+  var i = -1;
+  for (var k = 0; k < CORPUS.length; k++) if (CORPUS[k].p === state.path) { i = k; break; }
+  if (i < 0) return;
+  var n = i + delta;
+  if (n < 0 || n >= CORPUS.length) return;
+  open(CORPUS[n].p);
+}
+
+window.addEventListener("hashchange", function () {
+  var h = location.hash.replace(/^#\/?/, "");
+  if (!h) return;
+  var p;
+  try { p = decodeURIComponent(h); } catch (e) { p = h; }
+  if (BY_PATH[p] && p !== state.path) open(p);
+});
+
+/* expose a small surface for scripted checks */
+window.DarkithLibrary = {
+  corpus: function () { return CORPUS; },
+  open: open,
+  search: search,
+  state: state
+};
+
+boot();
+})();
+</script>
+</body>
+</html>

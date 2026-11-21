@@ -5212,6 +5212,9 @@ function dict(seed) {
       mod = this.expectName().str;
       while (this.atOp(".")) { this.next(); mod += "." + this.expectAttrName().str; }
     }
+    /* CPython requires a module after 'from' unless the statement is relative:
+       'from import x' is a syntax error, 'from . import x' is not. */
+    if (!mod && !level) this.err("expected module name after 'from'");
     if (!this.atName("import")) this.err("expected 'import'");
     this.next();
     if (this.atOp("*")) { this.next(); names.push(N("alias", t, { name: "*", asname: null })); }
@@ -7500,24 +7503,59 @@ function dict(seed) {
   }
 
   /* ---------- ledger ---------- */
+  /* Ids on a derived_from cycle. Found up front because eff() memoises into
+     `res` before recursing, which hides back edges from it. */
+  function cycleIds(byId) {
+    var onCycle = dict(), color = dict(), stack = [];
+    function visit(cid) {
+      color[cid] = 1; stack.push(cid);
+      var c = byId[cid], parents = (c && c.derived_from) || [];
+      parents.forEach(function (p) {
+        if (!(p in byId)) return;
+        var st = color[p] || 0;
+        if (st === 1) {
+          stack.slice(stack.indexOf(p)).forEach(function (x) { onCycle[x] = true; });
+        } else if (st === 0) { visit(p); }
+      });
+      stack.pop(); color[cid] = 2;
+    }
+    Object.keys(byId).forEach(function (cid) { if (!color[cid]) visit(cid); });
+    return onCycle;
+  }
+
   function ledger(claims) {
     if (!Array.isArray(claims)) throw new Error("ledger expects an array of claim objects");
-    var byId = dict(), res = dict(), visiting = dict();
-    claims.forEach(function (c) { byId[c && c.id] = c; });
+    var byId = dict(), res = dict(), visiting = dict(), dupes = dict();
+    claims.forEach(function (c) {
+      var cid = c && c.id;
+      if (cid !== undefined && Object.prototype.hasOwnProperty.call(byId, cid)) dupes[cid] = true;
+      byId[cid] = c;
+    });
+    var cyc = cycleIds(byId);
 
     function eff(c) {
       var cid = c && c.id, k = c && c.kind;
       if (cid !== undefined && Object.prototype.hasOwnProperty.call(res, cid)) return res[cid];
       if (visiting[cid]) {
-        var cyc = { id: cid, kind: k, effective: k, status: "invalid", note: "cycle in derived_from" };
-        res[cid] = cyc;
-        return cyc;
+        return { id: cid, kind: k, effective: k, status: "invalid", note: "cycle in derived_from" };
       }
       visiting[cid] = true;
       var r = { id: cid, kind: k, effective: k, status: "", note: "" };
+      if (cid === undefined || cid === null || cid === "") {
+        r.status = "invalid"; r.note = "claim has no id";
+        delete visiting[cid];
+        return r;
+      }
+      if (dupes[cid]) {
+        r.status = "invalid"; r.note = "duplicate id";
+        delete visiting[cid];
+        return r;
+      }
       res[cid] = r;
       var ev = (c && c.evidence) || {};
-      if (KINDS.indexOf(k) < 0) {
+      if (cyc[cid]) {
+        r.status = "invalid"; r.note = "cycle in derived_from";
+      } else if (KINDS.indexOf(k) < 0) {
         r.status = "invalid"; r.note = "unknown kind";
       } else if (k === "D") {
         r.status = "declared";
@@ -7553,8 +7591,7 @@ function dict(seed) {
       return r;
     }
 
-    claims.forEach(function (c) { eff(c); });
-    var rows = Object.keys(res).map(function (k) { return res[k]; });
+    var rows = claims.map(eff);
     var bad = rows.filter(function (r) {
       return r.status === "invalid" || r.status === "failed" || r.status === "unsupported";
     }).length;
