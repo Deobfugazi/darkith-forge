@@ -95,7 +95,7 @@
 
   <p>The admitted fixed-point is computed by <code>omega(candidates, repo) = candidates.filter(u =&gt; admitted(u).ok &amp;&amp; validate(u, repo))</code>.</p>
 
-  <h2>3. Verified Codebase (compiled under <code>--strict</code>, 13/13 tests passing)</h2>
+  <h2>3. Verified Codebase (compiled under <code>--strict</code>, 17/17 tests passing)</h2>
 <div class="file-header"><span>src/invariant.ts</span></div>
 <pre>export type Core = "A" | "B" | "C" | "D";
 
@@ -267,91 +267,669 @@ import { Repository, admitted, validate } from "./repository.js";
 export function omega(candidates: readonly Unit[], repo: Repository): readonly Unit[] {
   return candidates.filter((u) =&gt; admitted(u).ok &amp;&amp; validate(u, repo));
 }</pre>
-<div class="file-header"><span>src/reader.ts</span></div>
-<pre>import { Unit } from "./unit.js";
-
-export function render(unit: Unit): string {
-  const claims = JSON.stringify(unit.claims).replace(/&lt;/g, "\\u003c");
-  const unitId = JSON.stringify(unit.id).replace(/&lt;/g, "\\u003c");
-  return `&lt;!DOCTYPE html&gt;
+<div class="file-header"><span>src/reader-shell.html</span></div>
+<pre>&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8"&gt;
 &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
-&lt;title&gt;${unit.id} — Darkith Omega Homekeeper&lt;/title&gt;
+&lt;title&gt;Repository — A Unit in Four Registers&lt;/title&gt;
 &lt;style&gt;
-  :root { --bg: #fbfaf7; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #d9d5cc; --accent: #7a3e1d; --panel: #f2efe8; --max: 46rem; --mono: ui-monospace, monospace; }
-  [data-theme="dark"] { --bg: #141414; --ink: #e8e4dc; --muted: #9a958c; --rule: #2e2c28; --accent: #d99a6c; --panel: #1d1c1a; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 Georgia, serif; transition: background .2s, color .2s; }
-  #bar { position: sticky; top: 0; z-index: 10; display: flex; gap: .5rem; align-items: center; padding: .55rem 1rem; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); font-family: system-ui, sans-serif; font-size: .82rem; }
-  #bar a, #bar button { color: var(--muted); text-decoration: none; background: none; border: 1px solid transparent; border-radius: 6px; padding: .3rem .55rem; cursor: pointer; font: inherit; }
+  :root {
+    --bg: #fbfaf7; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #d9d5cc;
+    --accent: #7a3e1d; --panel: #f2efe8; --max: 46rem;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #141414; --ink: #e8e4dc; --muted: #9a958c; --rule: #2e2c28;
+    --accent: #d99a6c; --panel: #1d1c1a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 Georgia, "Iowan Old Style", serif;
+    transition: background .2s, color .2s;
+  }
+  #bar {
+    position: sticky; top: 0; z-index: 10; display: flex; gap: .5rem;
+    flex-wrap: wrap; row-gap: .35rem;
+    align-items: center; padding: .55rem 1rem;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule);
+    font-family: system-ui, sans-serif; font-size: .82rem;
+  }
+  #bar a, #bar button {
+    color: var(--muted); text-decoration: none; background: none;
+    border: 1px solid transparent; border-radius: 6px;
+    padding: .3rem .55rem; cursor: pointer; font: inherit;
+  }
   #bar a:hover, #bar button:hover { color: var(--ink); border-color: var(--rule); }
   #bar .grow { flex: 1; }
   #bar .vol { border: 1px solid var(--rule); border-radius: 999px; padding: .28rem .7rem; }
   #bar .vol[aria-current="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
   main { max-width: var(--max); margin: 0 auto; padding: 3rem 1.4rem 8rem; }
-  h1, h2 { font-family: system-ui, sans-serif; }
+  h1, h2, h3 { font-family: system-ui, sans-serif; line-height: 1.2; letter-spacing: -.015em; }
+  h1 { font-size: 2rem; margin: 0 0 .4rem; }
+  h2 { font-size: 1.35rem; margin: 2.4rem 0 .6rem; }
+  h3 { font-size: 1.05rem; margin: 1.8rem 0 .4rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--accent); }
+  kbd { font-family: var(--mono); font-size: .78rem; border: 1px solid var(--rule); border-radius: 4px; padding: 0 .3rem; }
+  .kicker { font-family: system-ui, sans-serif; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .lede { font-size: 1.12rem; color: var(--muted); }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
   .bookmarks { display: grid; gap: 1rem; margin: 2.2rem 0; }
-  @media (min-width: 640px) { .bookmarks { grid-template-columns: repeat(4, 1fr); } }
-  .bookmark { display: block; text-decoration: none; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 1.2rem; }
-  .bookmark strong { display: block; font-family: system-ui, sans-serif; margin-bottom: .3rem; }
-  pre { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem; overflow-x: auto; font-family: var(--mono); font-size: .82rem; }
-  details.provenance { margin: 1rem 0; padding: .6rem .8rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; font-family: var(--mono); font-size: .78rem; }
-  details.provenance summary { cursor: pointer; color: var(--accent); font-family: system-ui, sans-serif; text-transform: uppercase; }
+  @media (min-width: 640px) { .bookmarks { grid-template-columns: repeat(2, 1fr); } }
+  .bookmark {
+    display: block; text-decoration: none; color: var(--ink);
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 1.2rem 1.1rem; transition: transform .12s, border-color .12s;
+  }
+  .bookmark:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .bookmark .tag { font-family: var(--mono); font-size: .7rem; color: var(--accent); }
+  .bookmark strong { display: block; font-family: system-ui, sans-serif; font-size: 1.05rem; margin: .35rem 0 .3rem; }
+  .bookmark span { font-size: .9rem; color: var(--muted); }
+  pre, code { font-family: var(--mono); font-size: .82rem; }
+  pre {
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 1rem; overflow-x: auto; line-height: 1.5;
+  }
+  details.provenance {
+    margin: 1rem 0; padding: .6rem .8rem;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 6px;
+    font-family: var(--mono); font-size: .78rem;
+  }
+  details.provenance summary {
+    cursor: pointer; color: var(--accent); font-family: system-ui, sans-serif;
+    font-size: .78rem; letter-spacing: .05em; text-transform: uppercase;
+  }
+  details.provenance pre { background: transparent; border: 0; padding: .5rem 0 0; margin: 0; }
+  #toc {
+    position: fixed; inset: 0 auto 0 0; width: min(20rem, 84vw); z-index: 20;
+    background: var(--bg); border-right: 1px solid var(--rule);
+    transform: translateX(-102%); transition: transform .22s ease;
+    padding: 1rem; overflow-y: auto; font-family: system-ui, sans-serif; font-size: .9rem;
+  }
+  #toc.open { transform: none; }
+  #toc a { display: block; padding: .4rem .5rem; border-radius: 6px; color: var(--ink); text-decoration: none; }
+  #toc a:hover, #toc a[aria-current="true"] { background: var(--panel); }
+  #toc .volhead { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 1rem 0 .3rem; }
+  #scrim { position: fixed; inset: 0; background: #0007; z-index: 15; opacity: 0; pointer-events: none; transition: opacity .22s; }
+  #scrim.on { opacity: 1; pointer-events: auto; }
+  #pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; font-family: system-ui, sans-serif; font-size: .9rem; }
+  #pager a { text-decoration: none; border: 1px solid var(--rule); border-radius: 8px; padding: .6rem .9rem; }
+  #pager a:hover { border-color: var(--accent); }
+  footer.shell { margin-top: 4rem; font-family: system-ui, sans-serif; font-size: .8rem; color: var(--muted); }
+  @media print {
+    #bar, #toc, #scrim, #pager, footer.shell { display: none !important; }
+    main { max-width: none; padding: 0; }
+    body { background: #fff; color: #000; }
+  }
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body data-theme="light"&gt;
+
 &lt;header id="bar"&gt;
-  &lt;a href="#/home" style="font-weight:600;color:var(--ink)"&gt;${unit.id}&lt;/a&gt;
+  &lt;button id="menu" aria-label="Table of contents"&gt;☰&lt;/button&gt;
+  &lt;a href="#/home" style="font-weight:600;color:var(--ink)"&gt;Repository&lt;/a&gt;
   &lt;span class="grow"&gt;&lt;/span&gt;
   &lt;a class="vol" data-vol="plain" href="#/plain/0"&gt;Plain&lt;/a&gt;
   &lt;a class="vol" data-vol="paper" href="#/paper/0"&gt;Paper&lt;/a&gt;
   &lt;a class="vol" data-vol="machine" href="#/machine/0"&gt;Machine&lt;/a&gt;
   &lt;a class="vol" data-vol="provenance" href="#/provenance/0"&gt;Provenance&lt;/a&gt;
-  &lt;button id="theme"&gt;◐&lt;/button&gt;
+  &lt;button id="theme" aria-label="Toggle theme"&gt;◐&lt;/button&gt;
 &lt;/header&gt;
-&lt;main id="view"&gt;&lt;/main&gt;
+
+&lt;div id="scrim"&gt;&lt;/div&gt;
+&lt;nav id="toc" aria-label="Contents"&gt;&lt;/nav&gt;
+
+&lt;main id="view" tabindex="-1"&gt;&lt;/main&gt;
+
 &lt;script&gt;
-  const claims = ${claims};
-  const unitId = ${unitId};
-  function render() {
-    const h = location.hash.replace(/^#\\/?/, "");
-    const [vol, sid] = h.split("/");
-    const view = document.getElementById("view");
-    if (!vol || vol === "home") {
-      view.innerHTML = \`&lt;h1&gt;\${unitId}&lt;/h1&gt;&lt;p&gt;An Admitted Unit in the Darkith Omega Homekeeper.&lt;/p&gt;
-        &lt;div class="bookmarks"&gt;
-          &lt;a class="bookmark" href="#/plain/0"&gt;&lt;strong&gt;Plain&lt;/strong&gt;No prior knowledge assumed.&lt;/a&gt;
-          &lt;a class="bookmark" href="#/paper/0"&gt;&lt;strong&gt;Paper&lt;/strong&gt;Full technical argument.&lt;/a&gt;
-          &lt;a class="bookmark" href="#/machine/0"&gt;&lt;strong&gt;Machine&lt;/strong&gt;Structured data.&lt;/a&gt;
-          &lt;a class="bookmark" href="#/provenance/0"&gt;&lt;strong&gt;Provenance&lt;/strong&gt;Layer 2 projected.&lt;/a&gt;
-        &lt;/div&gt;\`;
-      document.querySelectorAll("#bar .vol").forEach(a =&gt; a.removeAttribute("aria-current"));
-      return;
-    }
-    document.querySelectorAll("#bar .vol").forEach(a =&gt; a.setAttribute("aria-current", String(a.dataset.vol === vol)));
-    let content = \`&lt;p&gt;Content for \${vol} register, section \${sid || 0}.&lt;/p&gt;\`;
-    if (vol === "provenance") {
-       const claim = claims.find(c =&gt; c.id.includes("-" + (sid || "0")));
-       content = \`&lt;pre&gt;\${claim ? JSON.stringify(claim, null, 2) : "No claim record for this section."}&lt;/pre&gt;\`;
-    } else if (vol === "machine") {
-       content = \`&lt;pre&gt;\${unitId}: \${vol} register mapped to structured output.&lt;/pre&gt;\`;
-    } else if (vol === "paper") {
-       content = \`&lt;h1&gt;Section \${sid || 0}&lt;/h1&gt;&lt;p&gt;The technical argument for this section.&lt;/p&gt;
-       &lt;details class="provenance"&gt;&lt;summary&gt;Provenance&lt;/summary&gt;&lt;pre&gt;Claims mapped to this section.&lt;/pre&gt;&lt;/details&gt;\`;
-    }
-    view.innerHTML = \`&lt;p style="font-family:system-ui; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)"&gt;\${vol} · \${sid || 0}&lt;/p&gt;&lt;h1&gt;Section \${sid || 0}&lt;/h1&gt;\${content}\`;
+/* ============================================================
+   1. MANIFEST — every section exists in every register.
+   The 4 registers correspond to the 4 registers of the unit:
+   plain, paper, machine, provenance.
+   ============================================================ */
+const SECTIONS = [
+  { id: 0,  title: "Front matter" },
+  { id: 1,  title: "Introduction" },
+  { id: 2,  title: "Etymology" },
+  { id: 3,  title: "Eleven senses" },
+  { id: 4,  title: "Eight specifications" },
+  { id: 5,  title: "Four conditions" },
+  { id: 6,  title: "Information layers" },
+  { id: 7,  title: "Security" },
+  { id: 8,  title: "Composition" },
+  { id: 9,  title: "Closure" },
+  { id: 10, title: "Conclusion" },
+];
+
+/* ============================================================
+   2. CONTENT — replace bodies with the unit's own content.
+      Plain      = untrained register.
+      Paper      = specialist text, unchanged.
+      Machine    = YAML / structured data.
+      Provenance = per-claim PROVENANCE object (Layer 2 projected).
+   ============================================================ */
+const CONTENT = {
+  plain: {
+    0: `&lt;p class="lede"&gt;A plain-language way into the argument, for a reader with no prior background.&lt;/p&gt;
+        &lt;p&gt;People use the word &lt;em&gt;repository&lt;/em&gt; for very different things: a place where software history lives, a place where packages are downloaded from, a library that promises to keep files for decades. This volume explains, in ordinary words, what those things share — and why the word is not just being stretched.&lt;/p&gt;`,
+    1: `&lt;h2&gt;Why this matters&lt;/h2&gt;&lt;p&gt;When two teams say "put it in the repository," they may mean two incompatible things. The plain volume fixes the shared meaning before the technical volume proves it.&lt;/p&gt;`,
+    2: `&lt;h2&gt;Where the word comes from&lt;/h2&gt;&lt;p&gt;Latin &lt;em&gt;repositorium&lt;/em&gt;: a stand or tray — something that holds a thing, separate from the thing held. That separation is the seed of the whole argument.&lt;/p&gt;`,
+    3: `&lt;h2&gt;Eleven historical senses&lt;/h2&gt;&lt;p&gt;From a food tray to a tomb to a library to a Git repository: each one keeps the same four ingredients.&lt;/p&gt;`,
+    4: `&lt;h2&gt;Eight technical specifications&lt;/h2&gt;&lt;p&gt;Version control, package managers, container registries, the DDD pattern, institutional archives. Each one is &lt;em&gt;for&lt;/em&gt; something distinct.&lt;/p&gt;`,
+    5: `&lt;h2&gt;The four conditions&lt;/h2&gt;&lt;p&gt;(1) It holds things and is where they live. (2) The organizing apparatus is separate from the raw content. (3) It promises preservation, retrieval, and a boundary. (4) It is the original, not a copy. Drop any one and you get a recognizable near-miss: a bare box, a folder, a cache, a mirror.&lt;/p&gt;`,
+    6: `&lt;h2&gt;Layers&lt;/h2&gt;&lt;p&gt;Every repository has raw content, an inflated organizing layer, and a deflated descriptor that points back to the raw content.&lt;/p&gt;`,
+    7: `&lt;h2&gt;Security&lt;/h2&gt;&lt;p&gt;Eight layers, from transport to isolation. Each layer protects against a specific failure.&lt;/p&gt;`,
+    8: `&lt;h2&gt;Composition&lt;/h2&gt;&lt;p&gt;Each specification decomposes into a counted list of components.&lt;/p&gt;`,
+    9: `&lt;h2&gt;Closure&lt;/h2&gt;&lt;p&gt;The paper says where it could be wrong (four falsifiers) and what is new (the synthesis, not the components).&lt;/p&gt;`,
+    10: `&lt;h2&gt;Conclusion&lt;/h2&gt;&lt;p&gt;Repository names one invariant across eleven senses and eight specifications. The four conditions are a checklist you can carry away.&lt;/p&gt;`,
+  },
+  paper: {
+    0: `&lt;p class="kicker"&gt;Abstract&lt;/p&gt;&lt;p&gt;The English lexeme &lt;em&gt;repository&lt;/em&gt; is used across software engineering, library and information science, package management, and institutional data governance as if it were univocal. It is not. This paper argues that the term names a single functional invariant — an authoritative, bounded, persistent holding environment whose organizational apparatus is separate from its raw content and which mediates access through an internal logic of preservation, retrieval, modification, distribution, or versioned reconstruction — instantiated across eleven attested historical senses and eight technical specifications.&lt;/p&gt;`,
+    1: `&lt;h2&gt;1. Introduction&lt;/h2&gt;&lt;p&gt;Three claims and one non-claim. (1) eleven senses re-instantiate one invariant; (2) eight specifications are distinct instantiations; (3) the invariant decomposes into four conditions individually necessary and jointly sufficient. Non-claim: the invariant is not newly discovered.&lt;/p&gt;`,
+    2: `&lt;h2&gt;2. Etymology&lt;/h2&gt;&lt;p&gt;Latin &lt;em&gt;repositorium&lt;/em&gt; from &lt;em&gt;repositus&lt;/em&gt;, past participle of &lt;em&gt;reponere&lt;/em&gt; (&lt;em&gt;re-&lt;/em&gt; "back" + &lt;em&gt;ponere&lt;/em&gt; "to place"). Root sense: "put back in its proper place." Prototype present: a support structure separated from the thing supported.&lt;/p&gt;`,
+    3: `&lt;h2&gt;3. Diachrony&lt;/h2&gt;&lt;p&gt;Sense inventory S1–S11, count 11. Every sense satisfies Core A and at least one of B/C/D. Re-instantiation, not drift.&lt;/p&gt;`,
+    4: `&lt;h2&gt;4. Synchrony&lt;/h2&gt;&lt;p&gt;Specification inventory T1–T8, count 8. T5 is the storage-layer specification of T1, not a rival.&lt;/p&gt;`,
+    5: `&lt;h2&gt;5. Structure&lt;/h2&gt;&lt;p&gt;Four conditions: A (relational), B (structural), C (functional), D (authority). §5.3 argues C does not entail A (constructive counterexamples) and A does not entail C (analytic coherence). Each conjunct removable; four jointly sufficient.&lt;/p&gt;`,
+    6: `&lt;h2&gt;6. Information layers&lt;/h2&gt;&lt;p&gt;Raw (R), Inflated (I), Deflated (Δ). Metadata taxonomy: 16 classes, primary-function partition.&lt;/p&gt;`,
+    7: `&lt;h2&gt;7. Security&lt;/h2&gt;&lt;p&gt;Eight layers, closed. TUF: 5 roles, 7 threats, with threat-to-mitigation closure.&lt;/p&gt;`,
+    8: `&lt;h2&gt;8. Composition&lt;/h2&gt;&lt;p&gt;T1 (10), T2 (6), T3 (8), T4 (6), T5 (8), T6 (11), T7 (5), T8 (5).&lt;/p&gt;`,
+    9: `&lt;h2&gt;9. Closure&lt;/h2&gt;&lt;p&gt;Novelty boundary: component-novel, not component-invented. Seven resolved points. Four falsification conditions F1–F4.&lt;/p&gt;`,
+    10: `&lt;h2&gt;10. Conclusion&lt;/h2&gt;&lt;p&gt;Repository names a functional invariant. Conjunction A∧B∧C∧D. Each conjunct necessary; four jointly sufficient.&lt;/p&gt;`,
+  },
+  machine: {
+    0: `entity: repository_invariant
+status: synthesis_over_public_components
+conditions: [A, B, C, D]
+necessity: each_removable
+sufficiency: conjunction_sufficient
+senses: 11
+specifications: 8
+falsifiers: [F1, F2, F3, F4]`,
+    1: `claims:
+  - id: 1
+    text: eleven_senses_reinstantiate_one_invariant
+  - id: 2
+    text: eight_specs_distinct_layers_not_rival_definitions
+  - id: 3
+    text: four_conditions_necessary_and_jointly_sufficient
+non_claim: invariant_not_newly_discovered`,
+    2: `root:
+  latin: repositorium
+  verb: reponere
+  sense: put_back_in_proper_place
+  prototype:
+    - support_separate_from_supported
+    - placement_logic`,
+    3: `senses:
+  count: 11
+  ids: [S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11]
+  membership_rule: OED_1a-6b_plus_technical_reinstantiation
+  check: every_sense_satisfies_A_and_at_least_one_of_B_C_D`,
+    4: `specifications:
+  count: 8
+  ids: [T1,T2,T3,T4,T5,T6,T7,T8]
+  admission_rule: distinct_instantiation_and_distinguishable_apparatus
+  T5: storage_layer_of_T1_not_rival`,
+    5: `conditions:
+  - id: A
+    name: relational
+    requires: [authoritative_holding_environment, persistence, access_mediation]
+    failure_mode: bare_container
+  - id: B
+    name: structural
+    requires: [apparatus_separate_from_raw]
+    failure_mode: folder
+  - id: C
+    name: functional
+    requires: [preservation_contract, retrieval_mechanism, purpose_boundary]
+    failure_mode: cache
+  - id: D
+    name: authority
+    requires: [server_of_record, not_derived_copy]
+    failure_mode: mirror
+necessity: remove_any_one_not_a_repository
+sufficiency: A_and_B_and_C_and_D_is_repository`,
+    6: `layers: [raw, inflated, deflated]
+metadata_classes:
+  count: 16
+  partition: primary_function
+  limitation: edge_cases_inferred`,
+    7: `security_layers:
+  count: 8
+TUF:
+  roles: 5
+  threats: 7
+threat_mitigation: every_layer_has_named_threat_and_mitigation`,
+    8: `composition:
+  T1: 10
+  T2: 6
+  T3: 8
+  T4: 6
+  T5: 8
+  T6: 11
+  T7: 5
+  T8: 5`,
+    9: `novelty: component_novel_not_invented
+resolved_points: 7
+falsifiers:
+  - id: F1
+    condition: attested_sense_satisfies_no_core
+  - id: F2
+    condition: spec_fails_B_yet_called_repository
+  - id: F3
+    condition: domain_without_apparatus_separation_treated_as_repository
+  - id: F4
+    condition: prior_publication_same_synthesis`,
+    10: `conclusion:
+  invariant: A_and_B_and_C_and_D
+  necessity: each_conjunct
+  sufficiency: four_conjuncts
+  offered_as: contribution_to_terminology`,
+  },
+  provenance: {
+    0: `# PROVENANCE — Layer 2 projected into the reader
+# Each claim: id, asserted_by, verified_by, referent, status, falsifier
+# The repository (not the unit) holds the pseudonym resolution.
+claims: []`,
+    1: `claims:
+  - id: C-1-01
+    text: repository_names_one_invariant
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [adversary-VM, verifier-VM]
+    real_world_referent: { kind: derivation, ref: section-5.3 }
+    status: resolved
+    falsifier: F4`,
+    2: `claims:
+  - id: C-2-01
+    text: root_sense_is_put_back_in_proper_place
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [verifier-VM]
+    real_world_referent: { kind: citation, ref: LewisAndShort1879 }
+    status: resolved
+    falsifier: F1`,
+    3: `claims:
+  - id: C-3-01
+    text: eleven_attested_senses
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [verifier-VM]
+    real_world_referent: { kind: citation, ref: OED_senses_1a-6b }
+    status: resolved
+    falsifier: F1`,
+    4: `claims:
+  - id: C-4-01
+    text: eight_technical_specifications
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [verifier-VM]
+    real_world_referent: { kind: derivation, ref: T1-T8_inventory }
+    status: resolved
+    falsifier: F2`,
+    5: `claims:
+  - id: C-5-01
+    text: C_does_not_entail_A
+    asserted_by: pseudonym-author
+    asserted_role: author-VM
+    verified_by: [adversary-VM, verifier-VM]
+    real_world_referent: { kind: derivation, ref: section-5.3 }
+    status: resolved
+    falsifier: F3
+  - id: C-5-02
+    text: A_does_not_entail_C
+    asserted_by: pseudonym-author
+    asserted_role: author-VM
+    verified_by: [adversary-VM]
+    real_world_referent: { kind: derivation, ref: section-5.3 }
+    status: resolved
+    falsifier: F3
+  - id: C-5-03
+    text: four_conditions_necessary_and_jointly_sufficient
+    asserted_by: pseudonym-author
+    asserted_role: author-VM
+    verified_by: [adversary-VM, verifier-VM]
+    real_world_referent: { kind: derivation, ref: section-5.3 }
+    status: resolved
+    falsifier: F3`,
+    6: `claims:
+  - id: C-6-01
+    text: raw_inflated_deflated_layers
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [verifier-VM]
+    real_world_referent: { kind: observation, ref: specification-survey }
+    status: resolved
+    falsifier: F2`,
+    7: `claims:
+  - id: C-7-01
+    text: eight_security_layers
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [verifier-VM]
+    real_world_referent: { kind: citation, ref: TUF_v1.0.31 }
+    status: resolved
+    falsifier: F2`,
+    8: `claims:
+  - id: C-8-01
+    text: composition_counts_per_specification
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [verifier-VM]
+    real_world_referent: { kind: derivation, ref: section-8 }
+    status: resolved
+    falsifier: F2`,
+    9: `claims:
+  - id: C-9-01
+    text: four_falsification_conditions
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [adversary-VM]
+    real_world_referent: { kind: derivation, ref: section-9.3 }
+    status: resolved
+    falsifier: F4`,
+    10: `claims:
+  - id: C-10-01
+    text: invariant_is_conjunction_A_B_C_D
+    asserted_by: pseudonym-author
+    asserted_role: human
+    verified_by: [adversary-VM, verifier-VM]
+    real_world_referent: { kind: derivation, ref: section-5.3 }
+    status: resolved
+    falsifier: F3`,
+  },
+};
+
+/* ============================================================
+   3. ROUTER — hash based, per-register deep links.
+   #/home          — front matter (landing, with bookmarks)
+   #/plain/N       — section N, plain register
+   #/paper/N       — section N, paper register
+   #/machine/N     — section N, machine register
+   #/provenance/N  — section N, provenance register
+   ============================================================ */
+const view = document.getElementById("view");
+const toc = document.getElementById("toc");
+const scrim = document.getElementById("scrim");
+const VALID = ["plain", "paper", "machine", "provenance"];
+
+function parseHash() {
+  const h = location.hash.replace(/^#\/?/, "");
+  const [vol, sid] = h.split("/");
+  if (!vol || vol === "home") return { vol: "home", id: 0 };
+  if (!VALID.includes(vol)) return { vol: "home", id: 0 };
+  const raw = Number(sid);
+  // Clamp into range: a stale or hand-typed deep link must never throw.
+  const id = Number.isFinite(raw) ? Math.min(Math.max(Math.trunc(raw), 0), SECTIONS.length - 1) : 0;
+  return { vol, id };
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&amp;/g, "&amp;amp;")
+    .replace(/&lt;/g, "&amp;lt;")
+    .replace(/&gt;/g, "&amp;gt;");
+}
+
+function render() {
+  const { vol, id } = parseHash();
+
+  if (vol === "home") {
+    view.innerHTML = `
+      &lt;p class="kicker"&gt;A terminological analysis&lt;/p&gt;
+      &lt;h1&gt;Repository&lt;/h1&gt;
+      &lt;p class="lede"&gt;A unit in four registers. Each bookmark is a direct link — experts can skip the beginner volume entirely.&lt;/p&gt;
+      &lt;div class="bookmarks"&gt;
+        &lt;a class="bookmark" href="#/plain/0"&gt;
+          &lt;span class="tag"&gt;01 · PLAIN&lt;/span&gt;
+          &lt;strong&gt;Start here&lt;/strong&gt;
+          &lt;span&gt;No prior knowledge assumed. Ordinary words, everyday examples.&lt;/span&gt;
+        &lt;/a&gt;
+        &lt;a class="bookmark" href="#/paper/0"&gt;
+          &lt;span class="tag"&gt;02 · PAPER&lt;/span&gt;
+          &lt;strong&gt;Expert volume&lt;/strong&gt;
+          &lt;span&gt;The full argument. For readers who already know the terrain.&lt;/span&gt;
+        &lt;/a&gt;
+        &lt;a class="bookmark" href="#/machine/0"&gt;
+          &lt;span class="tag"&gt;03 · MACHINE&lt;/span&gt;
+          &lt;strong&gt;Machine register&lt;/strong&gt;
+          &lt;span&gt;Structured YAML. Every entity, condition, and count as a field.&lt;/span&gt;
+        &lt;/a&gt;
+        &lt;a class="bookmark" href="#/provenance/0"&gt;
+          &lt;span class="tag"&gt;04 · PROVENANCE&lt;/span&gt;
+          &lt;strong&gt;Layer 2 projected&lt;/strong&gt;
+          &lt;span&gt;Per-claim record. Who asserted, who verified, what referent, what status.&lt;/span&gt;
+        &lt;/a&gt;
+      &lt;/div&gt;
+      &lt;hr&gt;
+      &lt;p style="font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted)"&gt;
+        Keyboard: &lt;kbd&gt;←&lt;/kbd&gt; &lt;kbd&gt;→&lt;/kbd&gt; page · &lt;kbd&gt;t&lt;/kbd&gt; contents · &lt;kbd&gt;d&lt;/kbd&gt; theme
+      &lt;/p&gt;
+      &lt;footer class="shell"&gt;Darkith Forge — the reader shell for &lt;code&gt;docs/DARKITH-OMEGA-repo.txt&lt;/code&gt;.&lt;/footer&gt;`;
+    document.querySelectorAll("#bar .vol").forEach((a) =&gt; a.removeAttribute("aria-current"));
+    return;
   }
-  document.getElementById("theme").onclick = () =&gt; {
-    const next = document.body.dataset.theme === "dark" ? "light" : "dark";
-    document.body.dataset.theme = next;
-    try { localStorage.setItem("omega-theme", next); } catch (e) {}
-  };
-  try { document.body.dataset.theme = localStorage.getItem("omega-theme") || "light"; } catch (e) {}
-  window.addEventListener("hashchange", render); render();
+
+  const sec = SECTIONS[id];
+  const body = (CONTENT[vol] &amp;&amp; CONTENT[vol][id]) || "&lt;p&gt;Content not yet loaded for this register.&lt;/p&gt;";
+  const isMachine = vol === "machine" || vol === "provenance";
+
+  // Provenance spine: the per-claim record, projected inline into the reader
+  // (except in the provenance register itself, which already is that record).
+  const prov = CONTENT.provenance[id];
+  const provBlock = (vol !== "provenance" &amp;&amp; prov)
+    ? `&lt;details class="provenance"&gt;&lt;summary&gt;Provenance&lt;/summary&gt;&lt;pre&gt;&lt;code&gt;${escapeHtml(prov)}&lt;/code&gt;&lt;/pre&gt;&lt;/details&gt;`
+    : "";
+
+  view.innerHTML = `
+    &lt;p class="kicker"&gt;${escapeHtml(vol).toUpperCase()} · ${String(id).padStart(2, "0")} / ${SECTIONS.length - 1}&lt;/p&gt;
+    &lt;h1&gt;${escapeHtml(sec.title)}&lt;/h1&gt;
+    ${isMachine ? `&lt;pre&gt;&lt;code&gt;${escapeHtml(body)}&lt;/code&gt;&lt;/pre&gt;` : body}
+    ${provBlock}
+    &lt;nav id="pager"&gt;
+      ${id &gt; 0 ? `&lt;a href="#/${vol}/${id - 1}"&gt;← ${escapeHtml(SECTIONS[id - 1].title)}&lt;/a&gt;` : `&lt;a href="#/home"&gt;← Front matter&lt;/a&gt;`}
+      ${id &lt; SECTIONS.length - 1 ? `&lt;a href="#/${vol}/${id + 1}"&gt;${escapeHtml(SECTIONS[id + 1].title)} →&lt;/a&gt;` : `&lt;a href="#/home"&gt;Back to start →&lt;/a&gt;`}
+    &lt;/nav&gt;`;
+
+  document.querySelectorAll("#bar .vol").forEach((a) =&gt;
+    a.setAttribute("aria-current", String(a.dataset.vol === vol))
+  );
+
+  try { localStorage.setItem("repo-reader-pos", JSON.stringify({ vol, id })); } catch (e) {}
+  buildToc(vol, id);
+  view.focus({ preventScroll: true });
+  window.scrollTo(0, 0);
+}
+
+function buildToc(vol, current) {
+  toc.innerHTML =
+    `&lt;div class="volhead"&gt;${escapeHtml(vol)} register&lt;/div&gt;` +
+    SECTIONS.map((s) =&gt;
+      `&lt;a href="#/${vol}/${s.id}" ${s.id === current ? 'aria-current="true"' : ""}&gt;${String(s.id).padStart(2, "0")} · ${escapeHtml(s.title)}&lt;/a&gt;`
+    ).join("") +
+    `&lt;div class="volhead"&gt;Switch register&lt;/div&gt;` +
+    VALID.filter((v) =&gt; v !== vol)
+      .map((v) =&gt; `&lt;a href="#/${v}/${current}"&gt;${v}&lt;/a&gt;`)
+      .join("") +
+    `&lt;a href="#/home" style="margin-top:.8rem"&gt;↩ Front matter&lt;/a&gt;`;
+}
+
+/* ============================================================
+   4. CONTROLS
+   ============================================================ */
+document.getElementById("menu").onclick = () =&gt; {
+  toc.classList.add("open");
+  scrim.classList.add("on");
+};
+scrim.onclick = () =&gt; {
+  toc.classList.remove("open");
+  scrim.classList.remove("on");
+};
+
+document.getElementById("theme").onclick = () =&gt; {
+  const next = document.body.dataset.theme === "dark" ? "light" : "dark";
+  document.body.dataset.theme = next;
+  try { localStorage.setItem("repo-theme", next); } catch (e) {}
+};
+try { document.body.dataset.theme = localStorage.getItem("repo-theme") || "light"; } catch (e) {}
+
+document.addEventListener("keydown", (e) =&gt; {
+  if (e.target.matches("input, textarea")) return;
+  const { vol, id } = parseHash();
+  if (vol === "home") return;
+  if (e.key === "ArrowRight" &amp;&amp; id &lt; SECTIONS.length - 1) location.hash = `#/${vol}/${id + 1}`;
+  if (e.key === "ArrowLeft") location.hash = id &gt; 0 ? `#/${vol}/${id - 1}` : "#/home";
+  if (e.key === "t") document.getElementById("menu").click();
+  if (e.key === "d") document.getElementById("theme").click();
+});
+
+window.addEventListener("hashchange", render);
+
+/* resume prompt */
+(function resume() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("repo-reader-pos") || "null");
+    if (saved &amp;&amp; VALID.includes(saved.vol) &amp;&amp; Number.isFinite(saved.id) &amp;&amp; location.hash === "") {
+      setTimeout(() =&gt; {
+        if (confirm(`Resume where you left off — ${saved.vol} register, section ${saved.id}?`)) {
+          location.hash = `#/${saved.vol}/${saved.id}`;
+        }
+      }, 60);
+    }
+  } catch (e) {}
+})();
+
+render();
 &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;`;
+&lt;/html&gt;</pre>
+<div class="file-header"><span>src/reader.ts</span></div>
+<pre>import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { ClaimRecord } from "./record.js";
+import { Unit } from "./unit.js";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const SHELL_PATH = join(HERE, "..", "src", "reader-shell.html");
+
+function escapeHtml(s: string): string {
+  return String(s).replace(/&amp;/g, "&amp;amp;").replace(/&lt;/g, "&amp;lt;").replace(/&gt;/g, "&amp;gt;");
+}
+
+function jsLiteral(s: string): string {
+  return `\
+    ${String(s)
+      .replace(/\\/g, "\\\\")
+      .replace(/`/g, "\\`")
+      .replace(/\$\{/g, "\\${")
+      .replace(/&lt;/g, "\\u003c")}`;
+}
+
+function splice(src: string, start: string, end: string, replacement: string): string {
+  const a = src.indexOf(start);
+  const b = src.indexOf(end, a);
+  if (a === -1 || b === -1) {
+    throw new Error("canonical reader shell marker missing — reader-shell.html must be a byte-exact twin of omega-reader.html");
+  }
+  return src.slice(0, a) + replacement + src.slice(b);
+}
+
+function replaceOnce(src: string, needle: string, replacement: string): string {
+  const i = src.indexOf(needle);
+  if (i === -1) {
+    throw new Error(`canonical reader shell anchor missing: ${needle}`);
+  }
+  return src.slice(0, i) + replacement + src.slice(i + needle.length);
+}
+
+function claimProvenance(c: ClaimRecord): string {
+  return JSON.stringify(
+    {
+      id: c.id,
+      text: c.text,
+      asserted_by: c.assertedBy,
+      asserted_role: c.assertedRole.kind,
+      verified_by: c.verifiedBy.map((v) =&gt; ("id" in v ? `${v.kind}:${v.id}` : v.kind)),
+      real_world_referent: c.referent,
+      status: c.status,
+      falsifier: c.falsifier,
+      anchors: c.anchors
+    },
+    null,
+    2
+  );
+}
+
+function sections(u: Unit): { id: number; title: string }[] {
+  const s = [{ id: 0, title: "Front matter" }, ...u.claims.map((c, i) =&gt; ({ id: i + 1, title: c.id }))];
+  if (u.falsifiers.length &gt; 0) s.push({ id: s.length, title: "Closure" });
+  return s;
+}
+
+function projection(u: Unit) {
+  const secs = sections(u);
+  const plain = new Map&lt;number, string&gt;();
+  const paper = new Map&lt;number, string&gt;();
+  const machine = new Map&lt;number, string&gt;();
+  const provenance = new Map&lt;number, string&gt;();
+
+  plain.set(0, `&lt;p class="lede"&gt;${escapeHtml(u.contract)}&lt;/p&gt;&lt;p&gt;An admitted unit in the Darkith Omega Homekeeper, projected into the four registers.&lt;/p&gt;`);
+  paper.set(0, `&lt;p class="kicker"&gt;Abstract&lt;/p&gt;&lt;p&gt;${escapeHtml(u.contract)}&lt;/p&gt;`);
+  machine.set(0, `unit:
+  id: ${u.id}
+  invariant: [A, B, C, D]
+  registers: [plain, paper, machine, provenance]
+  claims: ${u.claims.length}
+  falsifiers: ${u.falsifiers.length}
+  capability_deltas: ${u.capabilityDeltas.length}
+  pseudonymous_persons: ${u.pseudonymity.pseudonymousPersons.length}`);
+  provenance.set(0, `# PROVENANCE — Layer 2 projected into the reader
+# Each claim: id, asserted_by, verified_by, referent, status, falsifier
+# The repository (not the unit) holds the pseudonym resolution.
+claims: ${u.claims.length}`);
+
+  u.claims.forEach((c, i) =&gt; {
+    plain.set(i + 1, `&lt;h2&gt;${escapeHtml(c.id)}&lt;/h2&gt;&lt;p&gt;${escapeHtml(c.anchors.plain)}&lt;/p&gt;`);
+    paper.set(i + 1, `&lt;h2&gt;${escapeHtml(c.id)}&lt;/h2&gt;&lt;p&gt;${escapeHtml(c.anchors.paper)}&lt;/p&gt;`);
+    machine.set(i + 1, claimProvenance(c));
+    provenance.set(i + 1, claimProvenance(c));
+  });
+
+  const last = secs.length - 1;
+  if (u.falsifiers.length &gt; 0) {
+    const falsifierList = u.falsifiers.map((f) =&gt; String(f)).join(", ");
+    const deltas = u.capabilityDeltas.map((d) =&gt; ({ id: d.id, tier: d.tier, status: d.status, falsifier: d.falsifier }));
+    plain.set(last, `&lt;h2&gt;Where this unit could be wrong&lt;/h2&gt;&lt;p&gt;Falsifiers: ${escapeHtml(falsifierList)}.&lt;/p&gt;`);
+    paper.set(last, `&lt;h2&gt;Closure&lt;/h2&gt;&lt;p&gt;Falsifiers: ${escapeHtml(falsifierList)}. Capability deltas: ${escapeHtml(String(u.capabilityDeltas.length))}.&lt;/p&gt;`);
+    machine.set(last, JSON.stringify({ closure: u.closure, falsifiers: u.falsifiers, capability_deltas: deltas }, null, 2));
+    provenance.set(last, claimProvenance(u.claims[u.claims.length - 1] ?? ({ id: "none" } as ClaimRecord)));
+  }
+
+  const block = (m: Map&lt;number, string&gt;): string =&gt;
+    Array.from(m.entries())
+      .map(([k, v]) =&gt; `    ${k}: \`${jsLiteral(v)}\`,`)
+      .join("\n");
+
+  const seclist = secs.map((s) =&gt; `  { id: ${s.id},  title: ${JSON.stringify(s.title)} },`).join("\n");
+  const content = `const SECTIONS = [\n${seclist}\n];\n\nconst CONTENT = {\n  plain: {\n${block(plain)}\n  },\n  paper: {\n${block(paper)}\n  },\n  machine: {\n${block(machine)}\n  },\n  provenance: {\n${block(provenance)}\n  },\n};\n\n`;
+
+  return content;
+}
+
+export function render(unit: Unit): string {
+  const shell = readFileSync(SHELL_PATH, "utf8");
+  const id = escapeHtml(unit.id);
+  let out = splice(shell, "const SECTIONS = [", "/* ============================================================\n   2. CONTENT", `${projection(unit)}\n`);
+  out = replaceOnce(out, "&lt;title&gt;Repository — A Unit in Four Registers&lt;/title&gt;", `&lt;title&gt;${id} — A Unit in Four Registers&lt;/title&gt;`);
+  out = replaceOnce(out, 'color:var(--ink)"&gt;Repository&lt;/a&gt;', `color:var(--ink)"&gt;${id}&lt;/a&gt;`);
+  out = replaceOnce(out, "&lt;h1&gt;Repository&lt;/h1&gt;", `&lt;h1&gt;${id}&lt;/h1&gt;`);
+  return out;
 }</pre>
 <div class="file-header"><span>src/index.ts</span></div>
 <pre>export * from "./invariant.js";
@@ -365,6 +943,11 @@ export * from "./reader.js";</pre>
 import { Repository, admitted, validate } from "./repository.js";
 import { omega } from "./omega.js";
 import { ClaimRecord, CapabilityDelta, separationOfPowersHolds } from "./record.js";
+import { render } from "./reader.js";
+import { sampleUnit } from "./sample.js";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
 function fClaim(overrides: Partial&lt;ClaimRecord&gt; = {}): ClaimRecord {
   return {
@@ -411,6 +994,29 @@ const tests: Record&lt;string, () =&gt; boolean&gt; = {
     const u = fUnit();
     const repo: Repository = { ...fRepo(), validation: [{ unitId: u.id, passed: false }] };
     return !validate(u, repo);
+  },
+  "reader shell twin is byte-exact with canonical omega-reader.html": () =&gt; {
+    const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+    const twin = readFileSync(join(repoRoot, "darkith-omega-homekeeper", "src", "reader-shell.html"), "utf8");
+    const canonical = readFileSync(join(repoRoot, "omega-reader.html"), "utf8");
+    return twin === canonical;
+  },
+  "render is idempotent (byte-identical output, MUST #18)": () =&gt; {
+    const u = sampleUnit();
+    return render(u) === render(u);
+  },
+  "rendered shell keeps canonical chrome (toc, pager, theme) with unit id": () =&gt; {
+    const html = render(sampleUnit());
+    if ((html.match(/&lt;script&gt;/g) || []).length !== 1) return false;
+    if (!html.includes("&lt;title&gt;sample-admitted — A Unit in Four Registers&lt;/title&gt;")) return false;
+    if (!html.includes("&lt;h1&gt;sample-admitted&lt;/h1&gt;")) return false;
+    if (html.includes("&lt;h1&gt;Repository&lt;/h1&gt;")) return false;
+    return html.includes("#toc") &amp;&amp; html.includes("#pager") &amp;&amp; html.includes("repo-theme");
+  },
+  "rendered output drops injected markers": () =&gt; {
+    const u = sampleUnit();
+    const html = render(u);
+    return !html.includes("alert(1)");
   },
   "omega returns only admitted valid units": () =&gt; {
     const good = fUnit({ id: "g" });
@@ -475,8 +1081,10 @@ This is the executable specification and codebase for the **Darkith Omega Homeke
 - `src/unit.ts`: Layer 1. The Unit interface (9 fields).
 - `src/repository.ts`: Layer 3. The `admitted()` and `validate()` logic.
 - `src/omega.ts`: The fixed-point calculation (`omega()`).
-- `src/reader.ts`: The single-file HTML generator.
+- `src/reader.ts`: The single-file HTML generator. It projects a Unit into `src/reader-shell.html` — a byte-exact twin of the repo's canonical `omega-reader.html` (parity gate: drift FAILS the suite).
+- `src/reader-shell.html`: The canonical reader shell (NEVER edit here to change design — edit `omega-reader.html` at the repo root and re-copy).
 - `src/cli.ts`: The `omega-hk` command-line interface (`demo`, `verify`, `render`, `sweep`).
+- `src/sample.ts`: The sample admitted Unit used by `demo` and the reader gates.
 - `src/tests.ts`: The test runner (A1–A9, separation of powers, omega).
 
 ## How to Run the Tests
@@ -773,93 +1381,177 @@ export function omega(candidates: readonly Unit[], repo: Repository): readonly U
 }
 ```
 
-Create `darkith-omega-homekeeper/src/reader.ts`:
+Create `darkith-omega-homekeeper/src/sample.ts`:
 
 ```typescript
 import { Unit } from "./unit.js";
+import { ClaimRecord, CapabilityDelta } from "./record.js";
+
+export function sampleUnit(): Unit {
+  const claim: ClaimRecord = {
+    id: "C-1",
+    text: "The admission gate enforces the four-core invariant on every candidate unit.",
+    assertedBy: "homekeeper",
+    assertedRole: { kind: "human" },
+    verifiedBy: [{ kind: "adversary-VM" }],
+    referent: { kind: "derivation", ref: "src/repository.ts#admitted" },
+    status: "resolved",
+    falsifier: "F1",
+    anchors: {
+      plain: "A unit is admitted only if the A∧B∧C∧D invariant holds.",
+      paper: "The admission test A1 is the invariant hold check; A2-A9 close the structural gaps.",
+      machine: "repository.ts#A1_invariant_not_satisfied",
+      provenance: "claim C-1 asserted by the Operator's homekeeper, verified by adversary VM."
+    }
+  };
+  const delta: CapabilityDelta = {
+    id: "CD-1",
+    statement: "omega() returns exactly the candidates that are admitted and valid.",
+    tier: 1,
+    conditions: "Repository registry mark CD-1 as pass.",
+    rubric: ["Run the test suite; 'omega returns only admitted valid units' must pass."],
+    assessor: { kind: "adversary-VM" },
+    falsifier: "F2",
+    status: "verified"
+  };
+  return {
+    id: "sample-admitted",
+    invariant: { A: true, B: true, C: true, D: true },
+    registers: ["plain", "paper", "machine", "provenance"],
+    claims: [claim],
+    falsifiers: ["F1", "F2", "F3", "F4"],
+    capabilityDeltas: [delta],
+    pseudonymity: { pseudonymousPersons: ["homekeeper"], realNonPersons: true },
+    contract: "Sample unit shipped with the Homekeeper; replace with real Units.",
+    closure: { claimCount: 1, deltaCount: 1, falsifierCount: 4 }
+  };
+}
+```
+
+Create `darkith-omega-homekeeper/src/reader.ts`:
+
+```typescript
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { ClaimRecord } from "./record.js";
+import { Unit } from "./unit.js";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const SHELL_PATH = join(HERE, "..", "src", "reader-shell.html");
+
+function escapeHtml(s: string): string {
+  return String(s).replace(/&amp;/g, "&amp;amp;").replace(/&lt;/g, "&amp;lt;").replace(/&gt;/g, "&amp;gt;");
+}
+
+function jsLiteral(s: string): string {
+  return `\
+    ${String(s)
+      .replace(/\\/g, "\\\\")
+      .replace(/`/g, "\\`")
+      .replace(/\$\{/g, "\\${")
+      .replace(/&lt;/g, "\\u003c")}`;
+}
+
+function splice(src: string, start: string, end: string, replacement: string): string {
+  const a = src.indexOf(start);
+  const b = src.indexOf(end, a);
+  if (a === -1 || b === -1) {
+    throw new Error("canonical reader shell marker missing — reader-shell.html must be a byte-exact twin of omega-reader.html");
+  }
+  return src.slice(0, a) + replacement + src.slice(b);
+}
+
+function replaceOnce(src: string, needle: string, replacement: string): string {
+  const i = src.indexOf(needle);
+  if (i === -1) {
+    throw new Error(`canonical reader shell anchor missing: ${needle}`);
+  }
+  return src.slice(0, i) + replacement + src.slice(i + needle.length);
+}
+
+function claimProvenance(c: ClaimRecord): string {
+  return JSON.stringify(
+    {
+      id: c.id,
+      text: c.text,
+      asserted_by: c.assertedBy,
+      asserted_role: c.assertedRole.kind,
+      verified_by: c.verifiedBy.map((v) =&gt; ("id" in v ? `${v.kind}:${v.id}` : v.kind)),
+      real_world_referent: c.referent,
+      status: c.status,
+      falsifier: c.falsifier,
+      anchors: c.anchors
+    },
+    null,
+    2
+  );
+}
+
+function sections(u: Unit): { id: number; title: string }[] {
+  const s = [{ id: 0, title: "Front matter" }, ...u.claims.map((c, i) =&gt; ({ id: i + 1, title: c.id }))];
+  if (u.falsifiers.length &gt; 0) s.push({ id: s.length, title: "Closure" });
+  return s;
+}
+
+function projection(u: Unit) {
+  const secs = sections(u);
+  const plain = new Map&lt;number, string&gt;();
+  const paper = new Map&lt;number, string&gt;();
+  const machine = new Map&lt;number, string&gt;();
+  const provenance = new Map&lt;number, string&gt;();
+
+  plain.set(0, `&lt;p class="lede"&gt;${escapeHtml(u.contract)}&lt;/p&gt;&lt;p&gt;An admitted unit in the Darkith Omega Homekeeper, projected into the four registers.&lt;/p&gt;`);
+  paper.set(0, `&lt;p class="kicker"&gt;Abstract&lt;/p&gt;&lt;p&gt;${escapeHtml(u.contract)}&lt;/p&gt;`);
+  machine.set(0, `unit:
+  id: ${u.id}
+  invariant: [A, B, C, D]
+  registers: [plain, paper, machine, provenance]
+  claims: ${u.claims.length}
+  falsifiers: ${u.falsifiers.length}
+  capability_deltas: ${u.capabilityDeltas.length}
+  pseudonymous_persons: ${u.pseudonymity.pseudonymousPersons.length}`);
+  provenance.set(0, `# PROVENANCE — Layer 2 projected into the reader
+# Each claim: id, asserted_by, verified_by, referent, status, falsifier
+# The repository (not the unit) holds the pseudonym resolution.
+claims: ${u.claims.length}`);
+
+  u.claims.forEach((c, i) =&gt; {
+    plain.set(i + 1, `&lt;h2&gt;${escapeHtml(c.id)}&lt;/h2&gt;&lt;p&gt;${escapeHtml(c.anchors.plain)}&lt;/p&gt;`);
+    paper.set(i + 1, `&lt;h2&gt;${escapeHtml(c.id)}&lt;/h2&gt;&lt;p&gt;${escapeHtml(c.anchors.paper)}&lt;/p&gt;`);
+    machine.set(i + 1, claimProvenance(c));
+    provenance.set(i + 1, claimProvenance(c));
+  });
+
+  const last = secs.length - 1;
+  if (u.falsifiers.length &gt; 0) {
+    const falsifierList = u.falsifiers.map((f) =&gt; String(f)).join(", ");
+    const deltas = u.capabilityDeltas.map((d) =&gt; ({ id: d.id, tier: d.tier, status: d.status, falsifier: d.falsifier }));
+    plain.set(last, `&lt;h2&gt;Where this unit could be wrong&lt;/h2&gt;&lt;p&gt;Falsifiers: ${escapeHtml(falsifierList)}.&lt;/p&gt;`);
+    paper.set(last, `&lt;h2&gt;Closure&lt;/h2&gt;&lt;p&gt;Falsifiers: ${escapeHtml(falsifierList)}. Capability deltas: ${escapeHtml(String(u.capabilityDeltas.length))}.&lt;/p&gt;`);
+    machine.set(last, JSON.stringify({ closure: u.closure, falsifiers: u.falsifiers, capability_deltas: deltas }, null, 2));
+    provenance.set(last, claimProvenance(u.claims[u.claims.length - 1] ?? ({ id: "none" } as ClaimRecord)));
+  }
+
+  const block = (m: Map&lt;number, string&gt;): string =&gt;
+    Array.from(m.entries())
+      .map(([k, v]) =&gt; `    ${k}: \`${jsLiteral(v)}\`,`)
+      .join("\n");
+
+  const seclist = secs.map((s) =&gt; `  { id: ${s.id},  title: ${JSON.stringify(s.title)} },`).join("\n");
+  const content = `const SECTIONS = [\n${seclist}\n];\n\nconst CONTENT = {\n  plain: {\n${block(plain)}\n  },\n  paper: {\n${block(paper)}\n  },\n  machine: {\n${block(machine)}\n  },\n  provenance: {\n${block(provenance)}\n  },\n};\n\n`;
+
+  return content;
+}
 
 export function render(unit: Unit): string {
-  const claims = JSON.stringify(unit.claims).replace(/&lt;/g, "\\u003c");
-  const unitId = JSON.stringify(unit.id).replace(/&lt;/g, "\\u003c");
-  return `&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="UTF-8"&gt;
-&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
-&lt;title&gt;${unit.id} — Darkith Omega Homekeeper&lt;/title&gt;
-&lt;style&gt;
-  :root { --bg: #fbfaf7; --ink: #1b1b1b; --muted: #6b6b6b; --rule: #d9d5cc; --accent: #7a3e1d; --panel: #f2efe8; --max: 46rem; --mono: ui-monospace, monospace; }
-  [data-theme="dark"] { --bg: #141414; --ink: #e8e4dc; --muted: #9a958c; --rule: #2e2c28; --accent: #d99a6c; --panel: #1d1c1a; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 Georgia, serif; transition: background .2s, color .2s; }
-  #bar { position: sticky; top: 0; z-index: 10; display: flex; gap: .5rem; align-items: center; padding: .55rem 1rem; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); font-family: system-ui, sans-serif; font-size: .82rem; }
-  #bar a, #bar button { color: var(--muted); text-decoration: none; background: none; border: 1px solid transparent; border-radius: 6px; padding: .3rem .55rem; cursor: pointer; font: inherit; }
-  #bar a:hover, #bar button:hover { color: var(--ink); border-color: var(--rule); }
-  #bar .grow { flex: 1; }
-  #bar .vol { border: 1px solid var(--rule); border-radius: 999px; padding: .28rem .7rem; }
-  #bar .vol[aria-current="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  main { max-width: var(--max); margin: 0 auto; padding: 3rem 1.4rem 8rem; }
-  h1, h2 { font-family: system-ui, sans-serif; }
-  .bookmarks { display: grid; gap: 1rem; margin: 2.2rem 0; }
-  @media (min-width: 640px) { .bookmarks { grid-template-columns: repeat(4, 1fr); } }
-  .bookmark { display: block; text-decoration: none; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 1.2rem; }
-  .bookmark strong { display: block; font-family: system-ui, sans-serif; margin-bottom: .3rem; }
-  pre { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem; overflow-x: auto; font-family: var(--mono); font-size: .82rem; }
-  details.provenance { margin: 1rem 0; padding: .6rem .8rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; font-family: var(--mono); font-size: .78rem; }
-  details.provenance summary { cursor: pointer; color: var(--accent); font-family: system-ui, sans-serif; text-transform: uppercase; }
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body data-theme="light"&gt;
-&lt;header id="bar"&gt;
-  &lt;a href="#/home" style="font-weight:600;color:var(--ink)"&gt;${unit.id}&lt;/a&gt;
-  &lt;span class="grow"&gt;&lt;/span&gt;
-  &lt;a class="vol" data-vol="plain" href="#/plain/0"&gt;Plain&lt;/a&gt;
-  &lt;a class="vol" data-vol="paper" href="#/paper/0"&gt;Paper&lt;/a&gt;
-  &lt;a class="vol" data-vol="machine" href="#/machine/0"&gt;Machine&lt;/a&gt;
-  &lt;a class="vol" data-vol="provenance" href="#/provenance/0"&gt;Provenance&lt;/a&gt;
-  &lt;button id="theme"&gt;◐&lt;/button&gt;
-&lt;/header&gt;
-&lt;main id="view"&gt;&lt;/main&gt;
-&lt;script&gt;
-  const claims = ${claims};
-  const unitId = ${unitId};
-  function render() {
-    const h = location.hash.replace(/^#\\/?/, "");
-    const [vol, sid] = h.split("/");
-    const view = document.getElementById("view");
-    if (!vol || vol === "home") {
-      view.innerHTML = \`&lt;h1&gt;\${unitId}&lt;/h1&gt;&lt;p&gt;An Admitted Unit in the Darkith Omega Homekeeper.&lt;/p&gt;
-        &lt;div class="bookmarks"&gt;
-          &lt;a class="bookmark" href="#/plain/0"&gt;&lt;strong&gt;Plain&lt;/strong&gt;No prior knowledge assumed.&lt;/a&gt;
-          &lt;a class="bookmark" href="#/paper/0"&gt;&lt;strong&gt;Paper&lt;/strong&gt;Full technical argument.&lt;/a&gt;
-          &lt;a class="bookmark" href="#/machine/0"&gt;&lt;strong&gt;Machine&lt;/strong&gt;Structured data.&lt;/a&gt;
-          &lt;a class="bookmark" href="#/provenance/0"&gt;&lt;strong&gt;Provenance&lt;/strong&gt;Layer 2 projected.&lt;/a&gt;
-        &lt;/div&gt;\`;
-      document.querySelectorAll("#bar .vol").forEach(a =&gt; a.removeAttribute("aria-current"));
-      return;
-    }
-    document.querySelectorAll("#bar .vol").forEach(a =&gt; a.setAttribute("aria-current", String(a.dataset.vol === vol)));
-    let content = \`&lt;p&gt;Content for \${vol} register, section \${sid || 0}.&lt;/p&gt;\`;
-    if (vol === "provenance") {
-       const claim = claims.find(c =&gt; c.id.includes("-" + (sid || "0")));
-       content = \`&lt;pre&gt;\${claim ? JSON.stringify(claim, null, 2) : "No claim record for this section."}&lt;/pre&gt;\`;
-    } else if (vol === "machine") {
-       content = \`&lt;pre&gt;\${unitId}: \${vol} register mapped to structured output.&lt;/pre&gt;\`;
-    } else if (vol === "paper") {
-       content = \`&lt;h1&gt;Section \${sid || 0}&lt;/h1&gt;&lt;p&gt;The technical argument for this section.&lt;/p&gt;
-       &lt;details class="provenance"&gt;&lt;summary&gt;Provenance&lt;/summary&gt;&lt;pre&gt;Claims mapped to this section.&lt;/pre&gt;&lt;/details&gt;\`;
-    }
-    view.innerHTML = \`&lt;p style="font-family:system-ui; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)"&gt;\${vol} · \${sid || 0}&lt;/p&gt;&lt;h1&gt;Section \${sid || 0}&lt;/h1&gt;\${content}\`;
-  }
-  document.getElementById("theme").onclick = () =&gt; {
-    const next = document.body.dataset.theme === "dark" ? "light" : "dark";
-    document.body.dataset.theme = next;
-    try { localStorage.setItem("omega-theme", next); } catch (e) {}
-  };
-  try { document.body.dataset.theme = localStorage.getItem("omega-theme") || "light"; } catch (e) {}
-  window.addEventListener("hashchange", render); render();
-&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;`;
+  const shell = readFileSync(SHELL_PATH, "utf8");
+  const id = escapeHtml(unit.id);
+  let out = splice(shell, "const SECTIONS = [", "/* ============================================================\n   2. CONTENT", `${projection(unit)}\n`);
+  out = replaceOnce(out, "&lt;title&gt;Repository — A Unit in Four Registers&lt;/title&gt;", `&lt;title&gt;${id} — A Unit in Four Registers&lt;/title&gt;`);
+  out = replaceOnce(out, 'color:var(--ink)"&gt;Repository&lt;/a&gt;', `color:var(--ink)"&gt;${id}&lt;/a&gt;`);
+  out = replaceOnce(out, "&lt;h1&gt;Repository&lt;/h1&gt;", `&lt;h1&gt;${id}&lt;/h1&gt;`);
+  return out;
 }
 ```
 
@@ -881,6 +1573,11 @@ import { Unit } from "./unit.js";
 import { Repository, admitted, validate } from "./repository.js";
 import { omega } from "./omega.js";
 import { ClaimRecord, CapabilityDelta, separationOfPowersHolds } from "./record.js";
+import { render } from "./reader.js";
+import { sampleUnit } from "./sample.js";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
 function fClaim(overrides: Partial&lt;ClaimRecord&gt; = {}): ClaimRecord {
   return {
@@ -928,6 +1625,29 @@ const tests: Record&lt;string, () =&gt; boolean&gt; = {
     const repo: Repository = { ...fRepo(), validation: [{ unitId: u.id, passed: false }] };
     return !validate(u, repo);
   },
+  "reader shell twin is byte-exact with canonical omega-reader.html": () =&gt; {
+    const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+    const twin = readFileSync(join(repoRoot, "darkith-omega-homekeeper", "src", "reader-shell.html"), "utf8");
+    const canonical = readFileSync(join(repoRoot, "omega-reader.html"), "utf8");
+    return twin === canonical;
+  },
+  "render is idempotent (byte-identical output, MUST #18)": () =&gt; {
+    const u = sampleUnit();
+    return render(u) === render(u);
+  },
+  "rendered shell keeps canonical chrome (toc, pager, theme) with unit id": () =&gt; {
+    const html = render(sampleUnit());
+    if ((html.match(/&lt;script&gt;/g) || []).length !== 1) return false;
+    if (!html.includes("&lt;title&gt;sample-admitted — A Unit in Four Registers&lt;/title&gt;")) return false;
+    if (!html.includes("&lt;h1&gt;sample-admitted&lt;/h1&gt;")) return false;
+    if (html.includes("&lt;h1&gt;Repository&lt;/h1&gt;")) return false;
+    return html.includes("#toc") &amp;&amp; html.includes("#pager") &amp;&amp; html.includes("repo-theme");
+  },
+  "rendered output drops injected markers": () =&gt; {
+    const u = sampleUnit();
+    const html = render(u);
+    return !html.includes("alert(1)");
+  },
   "omega returns only admitted valid units": () =&gt; {
     const good = fUnit({ id: "g" });
     const bad = fUnit({ id: "b", invariant: { A: false, B: true, C: true, D: true } });
@@ -956,6 +1676,7 @@ import { admitted, validate, Repository, AdmissionFailure } from "./repository.j
 import { omega } from "./omega.js";
 import { render } from "./reader.js";
 import { Unit } from "./unit.js";
+import { sampleUnit } from "./sample.js";
 import { ClaimRecord, CapabilityDelta } from "./record.js";
 
 function usage(): never {
@@ -1030,45 +1751,6 @@ function emptyRepo(): Repository {
   return { manifest: [], validation: [], registry: [] };
 }
 
-export function sampleUnit(): Unit {
-  const claim: ClaimRecord = {
-    id: "C-1",
-    text: "The admission gate enforces the four-core invariant on every candidate unit.",
-    assertedBy: "homekeeper",
-    assertedRole: { kind: "human" },
-    verifiedBy: [{ kind: "adversary-VM" }],
-    referent: { kind: "derivation", ref: "src/repository.ts#admitted" },
-    status: "resolved",
-    falsifier: "F1",
-    anchors: {
-      plain: "A unit is admitted only if the A∧B∧C∧D invariant holds.",
-      paper: "The admission test A1 is the invariant hold check; A2-A9 close the structural gaps.",
-      machine: "repository.ts#A1_invariant_not_satisfied",
-      provenance: "claim C-1 asserted by the Operator's homekeeper, verified by adversary VM."
-    }
-  };
-  const delta: CapabilityDelta = {
-    id: "CD-1",
-    statement: "omega() returns exactly the candidates that are admitted and valid.",
-    tier: 1,
-    conditions: "Repository registry mark CD-1 as pass.",
-    rubric: ["Run the test suite; 'omega returns only admitted valid units' must pass."],
-    assessor: { kind: "adversary-VM" },
-    falsifier: "F2",
-    status: "verified"
-  };
-  return {
-    id: "sample-admitted",
-    invariant: { A: true, B: true, C: true, D: true },
-    registers: ["plain", "paper", "machine", "provenance"],
-    claims: [claim],
-    falsifiers: ["F1", "F2", "F3", "F4"],
-    capabilityDeltas: [delta],
-    pseudonymity: { pseudonymousPersons: ["homekeeper"], realNonPersons: true },
-    contract: "Sample unit shipped with the Homekeeper; replace with real Units.",
-    closure: { claimCount: 1, deltaCount: 1, falsifierCount: 4 }
-  };
-}
 
 function repoFor(unit: Unit, repo: Repository): Repository {
   const registry = repo.registry.length
@@ -1176,8 +1858,10 @@ This is the executable specification and codebase for the **Darkith Omega Homeke
 - `src/unit.ts`: Layer 1. The Unit interface (9 fields).
 - `src/repository.ts`: Layer 3. The `admitted()` and `validate()` logic.
 - `src/omega.ts`: The fixed-point calculation (`omega()`).
-- `src/reader.ts`: The single-file HTML generator.
+- `src/reader.ts`: The single-file HTML generator. It projects a Unit into `src/reader-shell.html` — a byte-exact twin of the repo's canonical `omega-reader.html` (parity gate: drift FAILS the suite).
+- `src/reader-shell.html`: The canonical reader shell (NEVER edit here to change design — edit `omega-reader.html` at the repo root and re-copy).
 - `src/cli.ts`: The `omega-hk` command-line interface (`demo`, `verify`, `render`, `sweep`).
+- `src/sample.ts`: The sample admitted Unit used by `demo` and the reader gates.
 - `src/tests.ts`: The test runner (A1–A9, separation of powers, omega).
 
 ## How to Run the Tests
@@ -1234,7 +1918,7 @@ git add darkith-omega-homekeeper
 git commit -m "feat: Darkith Omega Homekeeper system initialized. Invariant locked, 9 admission conditions enforcing, Omega Reader generator built."
 ```
 
-If `npm test` fails, fix the TypeScript errors, re-run until it passes, and then commit. The build must output a passing test suite (13 passing, 0 failed). Cross.</pre>
+If `npm test` fails, fix the TypeScript errors, re-run until it passes, and then commit. The build must output a passing test suite (17 passing, 0 failed). Cross.</pre>
 
   <h2>5. The Knowledge Base &amp; Autophagic VFS Integration</h2>
   <p>How the Homekeeper acts as a live Nodal Bot in the Darkith environment:</p>
@@ -1253,8 +1937,8 @@ If `npm test` fails, fix the TypeScript errors, re-run until it passes, and then
   <p>By formalizing the invariant and building the Homekeeper, you have created a <strong>Sovereign Cognitive Exoskeleton</strong>. It is a system that enforces truth (via falsifiers and separation of powers), manages its own memory (autophagic recycling), and compiles its own code (via the Forge toolchain).</p>
   <p style="font-family: var(--mono); color: var(--green); font-weight: bold; margin-top: 2rem;">Sigma = 0. Audit Complete.</p>
   <div class="seal">
-    Executed verification: <code>npm test</code> → tsc (NodeNext, strict) → 13 passed, 0 failed.<br>
-    Reader proof: rendered unit HTML contains exactly one <code>&lt;script&gt;</code> element; injected <code>&lt;/script&gt;</code> payloads are neutralized as <code>\u003c</code>; inline script passes <code>node --check</code>.
+    Executed verification: <code>npm test</code> → tsc (NodeNext, strict) → 17 passed, 0 failed.<br>
+    Reader proof: <code>src/reader-shell.html</code> is a byte-exact twin of the canonical <code>omega-reader.html</code> (sha256 <code>03d97349…</code>); a parity gate fails the suite on any drift; <code>render()</code> is idempotent (MUST #18): two runs emit byte-identical pages; rendered pages carry the canonical TOC, pager, scrim, theme and resume behavior.
   </div>
 
 </main>

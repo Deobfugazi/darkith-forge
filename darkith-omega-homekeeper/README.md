@@ -9,8 +9,10 @@ This is the executable specification and codebase for the **Darkith Omega Homeke
 - `src/unit.ts`: Layer 1. The Unit interface (9 fields).
 - `src/repository.ts`: Layer 3. The `admitted()` and `validate()` logic.
 - `src/omega.ts`: The fixed-point calculation (`omega()`).
-- `src/reader.ts`: The single-file HTML generator.
+- `src/reader.ts`: The single-file HTML generator. It projects a Unit into `src/reader-shell.html` — a byte-exact twin of the repo's canonical `omega-reader.html` (parity gate: drift FAILS the suite).
+- `src/reader-shell.html`: The canonical reader shell (NEVER edit here to change design — edit `omega-reader.html` at the repo root and re-copy).
 - `src/cli.ts`: The `omega-hk` command-line interface (`demo`, `verify`, `render`, `sweep`).
+- `src/sample.ts`: The sample admitted Unit used by `demo` and the reader gates.
 - `src/tests.ts`: The test runner (A1–A9, separation of powers, omega).
 
 ## How to Run the Tests

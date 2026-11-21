@@ -2,6 +2,11 @@ import { Unit } from "./unit.js";
 import { Repository, admitted, validate } from "./repository.js";
 import { omega } from "./omega.js";
 import { ClaimRecord, CapabilityDelta, separationOfPowersHolds } from "./record.js";
+import { render } from "./reader.js";
+import { sampleUnit } from "./sample.js";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
 function fClaim(overrides: Partial<ClaimRecord> = {}): ClaimRecord {
   return {
@@ -48,6 +53,29 @@ const tests: Record<string, () => boolean> = {
     const u = fUnit();
     const repo: Repository = { ...fRepo(), validation: [{ unitId: u.id, passed: false }] };
     return !validate(u, repo);
+  },
+  "reader shell twin is byte-exact with canonical omega-reader.html": () => {
+    const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+    const twin = readFileSync(join(repoRoot, "darkith-omega-homekeeper", "src", "reader-shell.html"), "utf8");
+    const canonical = readFileSync(join(repoRoot, "omega-reader.html"), "utf8");
+    return twin === canonical;
+  },
+  "render is idempotent (byte-identical output, MUST #18)": () => {
+    const u = sampleUnit();
+    return render(u) === render(u);
+  },
+  "rendered shell keeps canonical chrome (toc, pager, theme) with unit id": () => {
+    const html = render(sampleUnit());
+    if ((html.match(/<script>/g) || []).length !== 1) return false;
+    if (!html.includes("<title>sample-admitted — A Unit in Four Registers</title>")) return false;
+    if (!html.includes("<h1>sample-admitted</h1>")) return false;
+    if (html.includes("<h1>Repository</h1>")) return false;
+    return html.includes("#toc") && html.includes("#pager") && html.includes("repo-theme");
+  },
+  "rendered output drops injected markers": () => {
+    const u = sampleUnit();
+    const html = render(u);
+    return !html.includes("alert(1)");
   },
   "omega returns only admitted valid units": () => {
     const good = fUnit({ id: "g" });
