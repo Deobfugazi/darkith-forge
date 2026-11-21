@@ -601,7 +601,9 @@ def tree_of(f):
         if len(rest) == 4 and rest[2] != "":
             return "proof/revitalization/" + rest[2]
     head = f.split("/",1)[0]
-    return head if head in ("app","omega-app") else ""
+    if head in ("app","omega-app"):
+        return head
+    return head if "/" in f else ""
 by = collections.defaultdict(list)
 for f in files:
     # EXEMPT Android resource-qualifier dirs: the SAME basename in different
@@ -639,7 +641,7 @@ PYGATE
   # byte-identical — drift is a fork (NEVER #11) even though the basenames differ, which the
   # basename-based D-2 above cannot see. The app ships assets/darkith_ui.html; the repo-root
   # studio is the same page for browser use, and tools/test_inscriber.js drives the studio.
-  for pair in "app/src/main/assets/darkith_ui.html:darkith-inscriber.html"; do
+  for pair in "app/src/main/assets/darkith_ui.html:darkith-inscriber.html" "omega-reader.html:darkith-omega-homekeeper/src/reader-shell.html"; do
     a="${pair%%:*}"; b="${pair##*:}"
     if [ -f "$a" ] && [ -f "$b" ]; then
       if cmp -s "$a" "$b"; then

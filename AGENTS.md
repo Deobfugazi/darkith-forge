@@ -1092,3 +1092,25 @@ Two scanner bugs worth remembering, both of which produced false "unclosed comme
 findings that looked like real defects: ignoring backslash escapes in `"..."` (so `"\""`
 desynchronises string state), and ignoring `"""` raw strings. A parser that disagrees with
 the project gate should be suspected before the project is.
+
+## Never run `chat_gatekeeper.py --write` inside a worktree (2026-11-21)
+
+`tools/chat_gatekeeper.py --write` **rebuilds** `TASKS.md` and `proof/chat_gatekeeper.json`
+from whatever session events it can see under `/workspace/conversations`. In a worktree
+that is not the Operator's live session, it sees only the current conversation and
+silently drops the rest of the history.
+
+Measured: `ingested` went **16 → 1** and `TASKS.md` lost **163 lines** (357 → 299),
+including the full operator-order log. The write reports success.
+
+Treat the ingest gate as expected-red in a worktree. Do not "fix" it by running `--write`;
+that converts a red gate into destroyed evidence. If it must be regenerated, do it in the
+Operator's primary checkout where the transcript is complete, and diff the result against
+`origin/main` before committing.
+
+Same class of trap: `tools/autophagy.py --help` performs repairs as a side effect. Read the
+source before invoking a gate tool with an exploratory flag.
+
+**Generalisation:** before committing, run `git diff --stat origin/main` and account for
+every file. A +214 README change that also shows `-263` in a proof file is data loss, not
+churn.
