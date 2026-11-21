@@ -427,27 +427,48 @@ class Pipeline:
     def run_probe(self, cmd: str) -> dict:
         t0 = time.monotonic()
         try:
-            cp = subprocess.run(shlex.split(cmd), cwd=str(self.root),
-                                capture_output=True, text=True, timeout=600)
-            rc = cp.returncode
-            tail = (cp.stdout + cp.stderr)[-4000:]
-            state = "PASS" if rc == 0 else ("SKIP" if rc == 3 else "FAIL")
-            reason = None if rc == 0 else f"exit {rc}"
-        except FileNotFoundError as exc:
-            rc, tail, reason, state = None, "", f"runtime absent: {exc}", "SKIP"
+            argv = shlex.split(cmd)
+        except ValueError as exc:
+            rc, tail, reason, state = None, "", f"unresolvable command: {exc}", "SKIP"
+        else:
+            try:
+                cp = subprocess.run(argv, cwd=str(self.root),
+                                    capture_output=True, text=True, timeout=600)
+                rc = cp.returncode
+                tail = (cp.stdout + cp.stderr)[-4000:]
+                state = "PASS" if rc == 0 else ("SKIP" if rc == 3 else "FAIL")
+                reason = None if rc == 0 else f"exit {rc}"
+            except FileNotFoundError as exc:
+                rc, tail, reason, state = None, "", f"runtime absent: {exc}", "SKIP"
         return {"probe": None, "cmd": cmd, "exit": rc,
                 "duration_s": round(time.monotonic() - t0, 3),
                 "state": state, "reason": reason, "tail": tail}
 
     def command_for_gate(self, gate_name: str) -> str:
-        """Recover the concrete command bound to a CI label from ci.sh."""
+        """Recover the concrete command bound to a CI label from ci.sh.
+
+        ci.sh wraps long commands in backslash line continuations (and the fork
+        singularity check is an inline heredoc, not a `run` line at all) - so a bare
+        single-line regex resolves those labels to a literal backslash or UNRESOLVED.
+        Join continuations and refuse to return an empty/placeholder command.
+        """
         path = self.root / "tools/ci.sh"
         if not path.is_file():
             return "UNRESOLVED"
-        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-            m = re.search(r'\brun\s+"([^"]+)"\s+(.+)$', line.strip())
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        i = 0
+        while i < len(lines):
+            m = re.search(r'\brun\s+"([^"]+)"\s+(.+)$', lines[i].strip())
             if m and m.group(1) == gate_name:
-                return m.group(2).strip()
+                cmd = m.group(2).strip()
+                while cmd.endswith("\\") and i + 1 < len(lines):
+                    i += 1
+                    cmd = (cmd[:-1]).rstrip() + " " + lines[i].strip().lstrip("\\").strip()
+                cmd = cmd.strip()
+                if not cmd:
+                    return "UNRESOLVED"
+                return cmd
+            i += 1
         return "UNRESOLVED"
 
     def run_repository_ci(self, stage_id: str) -> tuple:

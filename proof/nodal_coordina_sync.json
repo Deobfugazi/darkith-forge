@@ -26,6 +26,24 @@
         "engine_1_friction",
         "engine_4_integrity"
       ]
+    },
+    "ts": {
+      "sha256_abc": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+      "genesis": "b294a04aa705012c05fd0fe5763e3df2a14cb2d88fd15959ed2e60bb6966a87f",
+      "receipt_id": "07e2e1f0a94609d539116f466bd7f75dff45f8bc41b784d20128cb8035c225a3",
+      "fire_order": [
+        "engine_1_friction",
+        "engine_4_integrity"
+      ]
+    }
+  },
+  "ts_suite": {
+    "passed": true,
+    "summary": "21/21",
+    "typecheck": {
+      "tool": "darkith-omega-homekeeper/node_modules/.bin/tsc",
+      "passed": true,
+      "stderr": ""
     }
   },
   "verdict": "PASS",

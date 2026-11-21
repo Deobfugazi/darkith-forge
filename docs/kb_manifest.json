@@ -1,18 +1,18 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 66,
+  "count": 69,
   "files": [
     {
-      "bytes": 78895,
+      "bytes": 79092,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "3ce9e45e338035bcf6d30cf68c14373ba3b8c3403ecd482a74a798dad7eb2830"
+      "sha256": "a864918fa442acfc25d07cf441676cc138e4379fb6e7e8df55ce1dfb58028b6b"
     },
     {
-      "bytes": 102461,
+      "bytes": 102912,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "16f9c621a4529d5d59ab5113e5642d398fd25aaf5048d2ceb8bf8a2f530e4aa2"
+      "sha256": "ba48d58d36f1762644283d67e11d57e2485ea9dd5d7a44ea2945cb6e986c9bc5"
     },
     {
       "bytes": 3356,
@@ -21,10 +21,10 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 68196,
+      "bytes": 79123,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "b2394283f3bf137b926dde013079a31849f9a44ae30c866c3d2b1a1d288a0578"
+      "sha256": "3b6bd1a4401507fb8dec21cba10e3e4d33d1309111f880449432ad06591093af"
     },
     {
       "bytes": 8801,
@@ -37,6 +37,12 @@
       "path": "TASKS.md",
       "register": "A-apparatus",
       "sha256": "4671daa37f7bca8ae6996c2114fd1976c8e62ad2d49743d28be1a7fc79c4f0f1"
+    },
+    {
+      "bytes": 2634,
+      "path": "darkith-omega-homekeeper/README.md",
+      "register": "B-knowledge",
+      "sha256": "eca08731720990bc7839f6cf96dc4f6ce9c936d317659c467091512642910c0c"
     },
     {
       "bytes": 9608,
@@ -207,6 +213,12 @@
       "sha256": "ac55dcbb4e8eb0ec9379e5c46f4acc304e17226a6cfb60232b18da245aa5a068"
     },
     {
+      "bytes": 95927,
+      "path": "darkith-omega-master.html",
+      "register": "C-skillbase",
+      "sha256": "8c2a007de4a21b56adadeff242040fbc212888aa55809d01013f4384a9769fb9"
+    },
+    {
       "bytes": 60965,
       "path": "darkith-omega-media-player.html",
       "register": "C-skillbase",
@@ -315,6 +327,12 @@
       "sha256": "a37cd725501b496cc1112aa706b314d665e134c047a515246a6c0ec0d22e175a"
     },
     {
+      "bytes": 24606,
+      "path": "darkith-omega-homekeeper/src/reader-shell.html",
+      "register": "D-asset",
+      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
+    },
+    {
       "bytes": 1320193,
       "path": "omega-app/src/main/assets/omega_studio.html",
       "register": "D-asset",
@@ -403,6 +421,10 @@
     {
       "a": "app/src/main/assets/darkith_ui.html",
       "b": "darkith-inscriber.html"
+    },
+    {
+      "a": "omega-reader.html",
+      "b": "darkith-omega-homekeeper/src/reader-shell.html"
     }
   ],
   "registers": {
