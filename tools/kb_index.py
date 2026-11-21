@@ -66,7 +66,12 @@ READABLE_EXTS = {".md", ".txt", ".html"}
 
 # The one declared mirror: one page under two names by design (the app ships the asset; the
 # repo-root copy is the browser copy). Declared here once; the gate keeps them byte-identical.
-MIRRORS = [("app/src/main/assets/darkith_ui.html", "darkith-inscriber.html")]
+MIRRORS = [
+    ("app/src/main/assets/darkith_ui.html", "darkith-inscriber.html"),
+    # The homekeeper Node app ships the same reader page the root serves, so the CLI and
+    # the app cannot disagree about what a record looks like.
+    ("omega-reader.html", "darkith-omega-homekeeper/src/reader-shell.html"),
+]
 
 REGISTERS = [
     ("A-apparatus", "Governance — the machine+human laws (read first)"),
@@ -76,6 +81,7 @@ REGISTERS = [
     ("E-evidence", "Machine-generated proof"),
     ("F-config", "Build configuration — dependency manifests"),
     ("G-apparatus-portable", "Portable apparatus — the one-file toolkit that travels"),
+    ("H-homekeeper-app", "Homekeeper Node app — the invariant blueprint, executable"),
 ]
 
 # Build configuration: dependency manifests + the fracture-scout query manifest (both are
@@ -107,6 +113,8 @@ def register_of(path: str) -> str | None:
         # neither corpus nor build config — it is the thing the Operator takes to the next
         # account, so it gets its own register rather than being filed as docs.
         return "G-apparatus-portable"
+    if path.startswith("darkith-omega-homekeeper/"):
+        return "H-homekeeper-app"
     if path.startswith("proof/"):
         return "E-evidence"
     if path in CONFIG:

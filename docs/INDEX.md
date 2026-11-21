@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**66 readable files across 7 registers.**
+**69 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -20,7 +20,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 23,958 | `4671daa37f7b` | TASKS — the durable board |
+| `TASKS.md` | 18,207 | `547ceaa1a105` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -59,6 +59,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-clock.html` | 13,690 | `c16768265a04` | DARKITH Ω — clock |
 | `darkith-omega-contacts.html` | 9,864 | `7f954c522108` | DARKITH Ω — contacts |
 | `darkith-omega-files.html` | 28,833 | `ac55dcbb4e8e` | DARKITH Ω — files |
+| `darkith-omega-master.html` | 86,698 | `0e3c055ccfdb` | DARKITH Ω — Master Blueprint &amp; Executable Specification |
 | `darkith-omega-media-player.html` | 60,965 | `afe4285205cb` | DARKITH Ω — media player |
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
@@ -112,9 +113,17 @@ content (B), one retrieval surface (C), one canonical copy (D).
 |---|---|---|---|
 | `kit/COORDINASYNC.md` | 3,235 | `5ccc1e4fbe07` | co-ordinasync — the portable invariant toolkit (MUST #40) |
 
+## H-homekeeper-app — Homekeeper Node app — the invariant blueprint, executable
+
+| file | bytes | sha256 | what it is |
+|---|---|---|---|
+| `darkith-omega-homekeeper/README.md` | 2,479 | `beea5851ef25` | Darkith Omega Homekeeper |
+| `darkith-omega-homekeeper/src/reader-shell.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
+
 ## Declared mirrors (one surface, two names — kept byte-identical)
 
 - `app/src/main/assets/darkith_ui.html` == `darkith-inscriber.html`
+- `omega-reader.html` == `darkith-omega-homekeeper/src/reader-shell.html`
 
 ## The laws this index enforces
 

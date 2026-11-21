@@ -601,7 +601,11 @@ def tree_of(f):
         if len(rest) == 4 and rest[2] != "":
             return "proof/revitalization/" + rest[2]
     head = f.split("/",1)[0]
-    return head if head in ("app","omega-app") else ""
+    # A nested project directory is its own tree, exactly like app/ and omega-app/.
+    # The homekeeper Node app has its own README, package.json and src/, none of which
+    # are copies of the root equivalents; treating them as one tree reports a fork
+    # between two unrelated documents.
+    return head if head in ("app","omega-app","darkith-omega-homekeeper") else ""
 by = collections.defaultdict(list)
 for f in files:
     # EXEMPT Android resource-qualifier dirs: the SAME basename in different

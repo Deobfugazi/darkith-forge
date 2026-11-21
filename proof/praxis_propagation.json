@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
-  "directive_sha256": "2972515cf533be9d068d957ab08dd595aa2d07c3553656d2d6e70daaf88131e6",
-  "board_sha256": "2c60b87b9adfd54adaa3e89f388cb797984ec8de52ba643d47e94eddd627739d",
+  "directive_sha256": "8b0c0512198041dc606e1a1c640fc1e0b3a8032da901d60d9c5837083f3be4e7",
+  "board_sha256": "031c019594871395e0f73e8b71b138e2b27c3c7157b77bd8537ea0e059d455c2",
   "laws": {
     "declared": [
       "MUST #20",
@@ -9,7 +9,6 @@
       "MUST #22",
       "MUST #26",
       "MUST #27",
-      "MUST #28",
       "MUST #30",
       "MUST #33",
       "MUST #35",
@@ -18,59 +17,46 @@
       "NEVER #21",
       "SPI-15",
       "SPI-2",
-      "SPI-25",
-      "SPI-26",
       "SPI-37",
       "SPI-38",
       "SPI-4",
       "SPI-6"
     ],
     "derived_advisory": [
+      "MUST #37",
       "MUST #38",
       "MUST #40",
-      "SPI-16",
+      "SPI-11",
+      "SPI-17",
       "SPI-19",
-      "SPI-29",
-      "SPI-30",
-      "SPI-32",
-      "SPI-33",
-      "SPI-34"
+      "SPI-21",
+      "SPI-25",
+      "SPI-31",
+      "SPI-39"
     ]
   },
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/TASKS.md",
+      "path": "/workspace/project/darkith-forge/TASKS.md",
       "status": "current",
       "detail": ""
     },
     {
-      "target": "session:f947e4b540c24d1c97125691f3d14707",
-      "path": "/var/openhands/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
+      "target": "session:18393131094c4acfb45d943764549f23",
+      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
       "status": "current",
       "detail": "mirror"
     },
     {
-      "target": "session:f947e4b540c24d1c97125691f3d14707",
-      "path": "/workspace/conversations/f947e4b540c24d1c97125691f3d14707/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
-    },
-    {
-      "target": "worktree:failwt",
-      "path": "/tmp/failwt/TASKS.md",
+      "target": "worktree:base_wt",
+      "path": "/tmp/base_wt/TASKS.md",
       "status": "current",
       "detail": ""
     },
     {
-      "target": "worktree:fixwt",
-      "path": "/tmp/fixwt/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "worktree:pristine",
-      "path": "/tmp/pristine/TASKS.md",
+      "target": "worktree:readme_wt",
+      "path": "/tmp/readme_wt/TASKS.md",
       "status": "current",
       "detail": ""
     }

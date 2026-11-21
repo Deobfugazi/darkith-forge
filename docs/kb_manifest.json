@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 66,
+  "count": 69,
   "files": [
     {
       "bytes": 78895,
@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 23958,
+      "bytes": 18207,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "4671daa37f7bca8ae6996c2114fd1976c8e62ad2d49743d28be1a7fc79c4f0f1"
+      "sha256": "547ceaa1a1057b256ba5ce15812fc49b577890dd96fb76b8a8ff3d8f2f42186d"
     },
     {
       "bytes": 9608,
@@ -205,6 +205,12 @@
       "path": "darkith-omega-files.html",
       "register": "C-skillbase",
       "sha256": "ac55dcbb4e8eb0ec9379e5c46f4acc304e17226a6cfb60232b18da245aa5a068"
+    },
+    {
+      "bytes": 86698,
+      "path": "darkith-omega-master.html",
+      "register": "C-skillbase",
+      "sha256": "0e3c055ccfdb904771948696f8874ec57ab47a1c03816e61b9923fe35adad079"
     },
     {
       "bytes": 60965,
@@ -397,12 +403,28 @@
       "path": "kit/COORDINASYNC.md",
       "register": "G-apparatus-portable",
       "sha256": "5ccc1e4fbe07096e9b1b3e05f2e7001e66ed51cb5a7ee51bf4871bbd0ead24e9"
+    },
+    {
+      "bytes": 2479,
+      "path": "darkith-omega-homekeeper/README.md",
+      "register": "H-homekeeper-app",
+      "sha256": "beea5851ef25e0acab2bd9cb05a5949ae7d34b075a0dd9f2a3777bb31a001cf7"
+    },
+    {
+      "bytes": 24606,
+      "path": "darkith-omega-homekeeper/src/reader-shell.html",
+      "register": "H-homekeeper-app",
+      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     }
   ],
   "mirrors": [
     {
       "a": "app/src/main/assets/darkith_ui.html",
       "b": "darkith-inscriber.html"
+    },
+    {
+      "a": "omega-reader.html",
+      "b": "darkith-omega-homekeeper/src/reader-shell.html"
     }
   ],
   "registers": {
@@ -412,6 +434,7 @@
     "D-asset": "Shipped runtime assets",
     "E-evidence": "Machine-generated proof",
     "F-config": "Build configuration \u2014 dependency manifests",
-    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels"
+    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels",
+    "H-homekeeper-app": "Homekeeper Node app \u2014 the invariant blueprint, executable"
   }
 }

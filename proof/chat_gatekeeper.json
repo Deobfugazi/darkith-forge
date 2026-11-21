@@ -1,58 +1,9 @@
 {
-  "block_sha256": "a3bc3f2daa6173c6c31e97a1ec00352f0b1ad41010319d21160167fbbd03c6b3",
+  "block_sha256": "38d783832776908e0692df77ee0eae850922dfa97a64885eb18e7f2a92de6089",
   "conversation": "18393131094c4acfb45d943764549f23",
   "ingested": [
     {
-      "index": 18433,
-      "kind": "order",
-      "laws": [
-        "MUST #26",
-        "MUST #27",
-        "MUST #33",
-        "SPI-15"
-      ],
-      "sha256": "824de68c38af98f456560cab7fbf2c3d90dc8b37f8e2e2fdd8e8c761f95f441c",
-      "timestamp": "2026-11-20T02:32:29.872371"
-    },
-    {
-      "index": 18743,
-      "kind": "forbid",
-      "laws": [
-        "MUST #33",
-        "SPI-15"
-      ],
-      "sha256": "b1287388f80dd91c8d75015db5aa354ec5277f3c17639a583c9fecb7c96f4855",
-      "timestamp": "2026-11-20T02:51:38.502944"
-    },
-    {
-      "index": 18889,
-      "kind": "order",
-      "laws": [
-        "MUST #30",
-        "MUST #35",
-        "MUST #36",
-        "NEVER #19",
-        "NEVER #21"
-      ],
-      "sha256": "7fcf24aac22ae3e8577bf2860f112159de39f4e264dbf3a83b5fbbd501f58785",
-      "timestamp": "2026-11-20T02:56:31.182258"
-    },
-    {
-      "index": 19223,
-      "kind": "order",
-      "laws": [
-        "MUST #21",
-        "MUST #22",
-        "MUST #30",
-        "MUST #33",
-        "NEVER #19",
-        "SPI-15"
-      ],
-      "sha256": "badfc16873766154d8fef226af9cbc8454668c9b147b227357b7ffe055076ca4",
-      "timestamp": "2026-11-20T03:09:04.363629"
-    },
-    {
-      "index": 19615,
+      "index": 24241,
       "kind": "forbid",
       "laws": [
         "MUST #20",
@@ -60,7 +11,6 @@
         "MUST #22",
         "MUST #26",
         "MUST #27",
-        "MUST #28",
         "MUST #30",
         "MUST #33",
         "MUST #35",
@@ -69,221 +19,141 @@
         "NEVER #21",
         "SPI-15",
         "SPI-2",
-        "SPI-25",
-        "SPI-26",
-        "SPI-37",
-        "SPI-38",
         "SPI-4",
         "SPI-6"
       ],
-      "sha256": "0a432870f2b43ac99a2a744391db756e375d8991c80ccd04ff4686b060c8b408",
-      "timestamp": "2026-11-20T03:32:35.449943"
+      "sha256": "7c0be01179366b5ed05d0d9e7e4a7b122cda98f9092c209ada37a5c3602ff1f3",
+      "timestamp": "2026-11-21T08:25:28.430885"
     },
     {
-      "index": 19751,
-      "kind": "forbid",
-      "laws": [
-        "MUST #33",
-        "SPI-15",
-        "SPI-37",
-        "SPI-38"
-      ],
-      "sha256": "4978f7d9507b1efe4522103b2e0d3dc4e49bb0aca1ba6516fb349f3a9d6b9201",
-      "timestamp": "2026-11-20T03:44:07.411935"
-    },
-    {
-      "index": 19894,
-      "kind": "forbid",
-      "laws": [
-        "MUST #33",
-        "SPI-15"
-      ],
-      "sha256": "aaab60b2a17d8381bbd25223caf5d532a46237ae679a4fc1df5af197632212e2",
-      "timestamp": "2026-11-20T03:51:48.975890"
-    },
-    {
-      "index": 20043,
-      "kind": "forbid",
-      "laws": [],
-      "sha256": "d171efca3e5fc9e8de5f7bb51f63eb30a9d017db3605efd336ef5c1f64ae39dc",
-      "timestamp": "2026-11-20T04:03:19.585240"
-    },
-    {
-      "index": 20396,
-      "kind": "forbid",
-      "laws": [
-        "SPI-37",
-        "SPI-38"
-      ],
-      "sha256": "7feb199120e8bf2b11d14f27ff3c9f1a166a19ada9b58d8e620a4c8efa457417",
-      "timestamp": "2026-11-20T04:52:25.588268"
-    },
-    {
-      "index": 20600,
+      "index": 24904,
       "kind": "order",
-      "laws": [
-        "MUST #26",
-        "MUST #27",
-        "MUST #28",
-        "MUST #33",
-        "SPI-15",
-        "SPI-25",
-        "SPI-26"
-      ],
-      "sha256": "967aa1ec7e6b7ed80878ee1f212b870b80de0bb20baa7d18476c06bcad5bdfeb",
-      "timestamp": "2026-11-20T05:04:14.897413"
-    },
-    {
-      "index": 20647,
-      "kind": "forbid",
-      "laws": [
-        "MUST #26",
-        "MUST #27",
-        "MUST #33",
-        "MUST #35",
-        "MUST #36",
-        "NEVER #21",
-        "SPI-15"
-      ],
-      "sha256": "71bad9fd3825ea2173b2ca4a289af53bceb8372770baacd6ed91d70e872224a1",
-      "timestamp": "2026-11-20T05:19:37.871695"
-    },
-    {
-      "index": 20724,
-      "kind": "forbid",
-      "laws": [
-        "MUST #26",
-        "MUST #27",
-        "MUST #33",
-        "MUST #35",
-        "MUST #36",
-        "NEVER #21",
-        "SPI-15"
-      ],
-      "sha256": "0336bbc688d38e6ce0581e1000736afb032bb4426740f555008a28496d2b30aa",
-      "timestamp": "2026-11-20T05:22:16.666703"
-    },
-    {
-      "index": 21389,
-      "kind": "forbid",
-      "laws": [
-        "MUST #21",
-        "MUST #22",
-        "MUST #28",
-        "MUST #35",
-        "MUST #36",
-        "NEVER #21",
-        "SPI-25",
-        "SPI-26",
-        "SPI-37",
-        "SPI-38"
-      ],
-      "sha256": "22815ce50c23f33a62b1c31d104e47f14d2ead072645fcefe545bc903e2e39e5",
-      "timestamp": "2026-11-20T06:32:25.733555"
-    },
-    {
-      "index": 21433,
-      "kind": "forbid",
-      "laws": [
-        "MUST #21",
-        "MUST #22",
-        "MUST #26",
-        "MUST #27",
-        "MUST #28",
-        "MUST #35",
-        "MUST #36",
-        "NEVER #21",
-        "SPI-25",
-        "SPI-26",
-        "SPI-37",
-        "SPI-38"
-      ],
-      "sha256": "1ccfa978007ed1295ed75a3927804393e2bfa9ed41146be6796521a5c78cbb16",
-      "timestamp": "2026-11-20T06:35:30.375923"
-    },
-    {
-      "index": 22129,
-      "kind": "forbid",
       "laws": [],
-      "sha256": "0158492cfa11e711bfab8ae7be785e0911cb777bcff2e438cac067d81db684da",
-      "timestamp": "2026-11-20T15:21:39.647626"
+      "sha256": "96ca958a8027f1c822c0f52a0e582d4de50731296dbb4209c9995afc7da20735",
+      "timestamp": "2026-11-21T16:18:11.098231"
     },
     {
-      "index": 22669,
+      "index": 25423,
       "kind": "forbid",
       "laws": [
         "MUST #20",
-        "MUST #21",
-        "MUST #22",
         "MUST #26",
         "MUST #27",
-        "MUST #28",
         "MUST #30",
-        "MUST #33",
         "MUST #35",
         "MUST #36",
-        "MUST#18",
-        "MUST#20",
-        "MUST#21",
-        "MUST#22",
-        "MUST#26",
-        "MUST#27",
-        "MUST#28",
-        "MUST#30",
-        "MUST#33",
-        "MUST#35",
-        "MUST#36",
-        "MUST#38",
-        "MUST#40",
-        "MUST-11",
-        "MUST-17",
-        "MUST-18",
         "NEVER #19",
         "NEVER #21",
-        "NEVER#11",
-        "NEVER#19",
-        "NEVER#21",
-        "SPI-1",
-        "SPI-11",
-        "SPI-12",
-        "SPI-13",
-        "SPI-14",
-        "SPI-15",
-        "SPI-16",
-        "SPI-18",
-        "SPI-19",
         "SPI-2",
-        "SPI-21",
-        "SPI-25",
-        "SPI-26",
-        "SPI-29",
-        "SPI-30",
-        "SPI-31",
-        "SPI-32",
-        "SPI-33",
-        "SPI-34",
-        "SPI-35",
-        "SPI-36",
-        "SPI-37",
-        "SPI-38",
         "SPI-4",
-        "SPI-5",
-        "SPI-6",
-        "SPI-8"
+        "SPI-6"
       ],
-      "sha256": "1f26c4ac771ea8ca0bcfd37834c02b5f687e8b60f24b92d2ac4feb689ef1cc00",
-      "timestamp": "2026-11-20T18:29:29.618260"
+      "sha256": "166ad7e130f177e186341b3cc8d0ec6f36e45b62e8169670b4ac68f34b8013bf",
+      "timestamp": "2026-11-21T16:45:18.355266"
+    },
+    {
+      "index": 25454,
+      "kind": "forbid",
+      "laws": [],
+      "sha256": "3e044bcf81fef2ad6cb65cac6883105ce03e3beebc0e7e0edbc347f11f6c84ba",
+      "timestamp": "2026-11-21T17:00:18.931061"
+    },
+    {
+      "index": 25997,
+      "kind": "forbid",
+      "laws": [],
+      "sha256": "425c6fdd6962b28adc5c16dc403167b8018519b68b29769d063af9cbb93e796e",
+      "timestamp": "2026-11-21T17:44:25.920666"
+    },
+    {
+      "index": 26146,
+      "kind": "order",
+      "laws": [],
+      "sha256": "09ab19a3f03dea2bea28febd41842d246687714adc6bd349bb818de2868d43a5",
+      "timestamp": "2026-11-21T17:49:52.317526"
+    },
+    {
+      "index": 26768,
+      "kind": "order",
+      "laws": [
+        "MUST #20",
+        "MUST #26",
+        "MUST #27",
+        "SPI-2",
+        "SPI-4",
+        "SPI-6"
+      ],
+      "sha256": "f4cf255b35de7eeb979451739ad1d80a153aa2ab26c9671a4d47d18da2bc9c8e",
+      "timestamp": "2026-11-21T18:41:03.416154"
+    },
+    {
+      "index": 26969,
+      "kind": "forbid",
+      "laws": [],
+      "sha256": "7092c4280e2792b21a4a3e114070c90f2019454f20ea4c4936c178c7686fa373",
+      "timestamp": "2026-11-21T18:57:44.670557"
+    },
+    {
+      "index": 27154,
+      "kind": "forbid",
+      "laws": [
+        "MUST #26",
+        "MUST #27",
+        "MUST #33",
+        "SPI-15",
+        "SPI-37",
+        "SPI-38"
+      ],
+      "sha256": "7affa408ae2d9d24240701082b2a48b93dcd785e1f7e7033bb40aaa2b128a6b8",
+      "timestamp": "2026-11-21T19:23:15.061325"
+    },
+    {
+      "index": 27531,
+      "kind": "forbid",
+      "laws": [
+        "MUST #35",
+        "MUST #36",
+        "NEVER #21",
+        "SPI-37",
+        "SPI-38"
+      ],
+      "sha256": "f9a74786faa8e9b7d116122e7db65a565fbaf4f0c4afaa3398f0cbb00d7353d0",
+      "timestamp": "2026-11-21T19:46:44.043520"
+    },
+    {
+      "index": 27586,
+      "kind": "forbid",
+      "laws": [
+        "MUST #33",
+        "SPI-15"
+      ],
+      "sha256": "624a0dd666003ed231c6a634cf1e656700bab726bcd9698c74d644b27a4ef997",
+      "timestamp": "2026-11-21T20:06:59.693698"
+    },
+    {
+      "index": 27639,
+      "kind": "order",
+      "laws": [],
+      "sha256": "fcfd3322fde8f7250aca7e58346b1c3df1cbe2eff9855ee890203cd1769e36a3",
+      "timestamp": "2026-11-21T20:08:49.501424"
+    },
+    {
+      "index": 27725,
+      "kind": "order",
+      "laws": [],
+      "sha256": "9fb7dc653599d0cf6f7cea0138282dab636e48ad848107182ed2388f1d04b118",
+      "timestamp": "2026-11-21T20:18:25.705365"
     }
   ],
   "occupation": {
-    "gapHours": 0.013,
+    "gapHours": 0.0,
     "phase": "rest/digest/restore",
     "state": "engaged"
   },
   "watermark": {
     "conversation": "18393131094c4acfb45d943764549f23",
-    "ingested_total": 16,
-    "last_index": 22669,
-    "last_timestamp": "2026-11-20T18:29:29.618260"
+    "ingested_total": 13,
+    "last_index": 27725,
+    "last_timestamp": "2026-11-21T20:18:25.705365"
   }
 }
