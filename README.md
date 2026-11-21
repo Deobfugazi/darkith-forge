@@ -68,6 +68,220 @@ That is the whole prerequisite. Nothing below assumes you know more.
 > points `MainActivity` and `HomekeeperActivity`; build with `bash build&install.sh`;
 > verify with `bash tools/ci.sh`.
 
+## 1a. The Friction Tax (why this repo exists)
+
+> **Plain.** Every tool you already own fights you a little, all day, on purpose. Your
+> thumbs cannot keep up with your thoughts. Your phone forgets what you were doing the
+> moment you switch apps. It cannot tell you from a stranger holding it. Your apps
+> cannot see each other's notes. The company that made the phone decides when it is
+> "too old" — not the silicon, which is still fine. Each of those is a small tax.
+> Together they are why doing anything real on a phone feels like wading. This project
+> exists to stop paying that tax, using only the hardware already in your hand.
+>
+> **Precise.** The **friction tax** is the aggregate cost of software layers that
+> convert raw human intent into machine action lossily, and then charge the user for the
+> loss — in upgrades, subscriptions, accounts, permissions, and proprietary formats. The
+> constraint is the **bedrock argmin**: no new hardware, no vendor dependency, no cloud,
+> no waiting for future technology. A solution that needs any of those is a *deferral*,
+> and a deferral is friction. The target is [Sigma equals zero](#25-the-closure-criterion-sigma-equals-zero)
+> — zero residual noise between intent and inscription.
+>
+> **Machine.** Sixteen frictions in four families plus one root cause, each paired with
+> its structural response in [§1b](#1b-the-invariant-response-sixteen-answers). The
+> apparatus is the raw chain (`build.sh`, seven steps, no Gradle), the gates
+> (`bash tools/ci.sh`), and the Omega Homekeeper spec
+> (`darkith-omega-homekeeper/README.md`).
+
+### I. Biomechanical friction — the body against the interface
+
+**1. The typing throttle.** A flat capacitive touchscreen is a lossy input device. The
+largest mobile-typing study run (Aalto University, 37,000+ participants) measured
+**38 WPM** for two-thumb typing; aggregated data puts the smartphone average at
+**36.2 WPM**. Conversational speech runs **120–185 WPM**. The interface compresses
+intent by roughly a factor of four before the machine receives anything. The bottleneck
+is biomechanical, not cognitive.
+
+**2. The mute and motor-impaired lockout.** When speech is unavailable and typing is the
+fallback, the fallback is catastrophic. Augmentative and alternative communication (AAC)
+text entry averages **8–10 WPM**, with some studies nearer **5 WPM** and switch-scanning
+users at **1.7 WPM**; even optimised AAC configurations rarely exceed **21 WPM**. Latency
+compounds it: median speech synthesis in multi-phrase AAC sets measured **2.14 s**, text
+decoding **2.35 s**, and a 2024 simulation found that even a **0.5 s** selection latency
+still exceeded the budget for natural conversational turn-taking. The semantic burden
+sits entirely on the disabled speaker. The machine does not decode the physiological
+residue — breath, lip movement, laryngeal vibration — that the existing microphone and
+camera already capture.
+
+**3. The context-switch tax.** Mobile operating systems enforce single-app focus.
+Application-switch count and touch errors are among the primary behavioural signals of
+measured cognitive load, and regaining a flow state after an interruption costs on the
+order of **23 minutes**. The environment is a carousel of isolated silos, not a
+persistent workspace. Android's own freeform windowing is gated to displays at least
+**600 dp** wide, requires System UI, and excludes low-RAM devices; foldables were
+excluded from on-device windowing in Android 16. Persistent floating multitasking is
+withheld from the device you already hold.
+
+**4. The behavioural blindness.** The stock OS cannot distinguish the legitimate owner
+from someone who picked up an unlocked phone. There is no native, on-device, real-time
+touch-dynamics biometric gate — yet the research is mature: continuous tap-behaviour
+authentication (TBAuth) reaches an equal error rate as low as **2.95%**, and
+soft-keyboard typing dynamics identify a user with up to **93%** accuracy. The hardware
+and the algorithms exist; the stock interface does not deploy them.
+
+### II. Semantic friction — language against reality
+
+**5. The register mismatch and ambiguity bleed.** One truth cannot simultaneously be
+readable by a beginner, verifiable by an expert, executable by a machine, and auditable
+for provenance; every translation between registers bleeds precision. Natural language
+compounds this: sentences with overlapping semantic operators produce scope ambiguities
+that state-of-the-art models resolve inconsistently, and word-sense disambiguation
+accuracy falls below **70%** for some architectures. Language models under sustained
+ambiguity degrade into blending or post-hoc correction. The system does not hold
+multiple valid representations in structural agreement — it collapses them.
+
+**6. The self-certifying authority.** The entity making a claim is usually the entity
+verifying it, which makes unfalsifiable statements cheap. The governance literature has
+already formalised the fix: cognitive separation of powers, independent audit layers,
+adversarial red/blue verification, with the invariant stated plainly — *an agent never
+validates its own output; self-validation is a critical security violation*. The same
+holds institutionally: complete self-validation is impossible for any sufficiently
+complex system. The architecture exists in research and is absent from the stock systems
+people actually use.
+
+**7. The hallucination bleed.** Models emit fluent text with zero referents. A
+large-scale benchmark across 13 state-of-the-art models and 40 research domains found
+citation fabrication rates from **14.23% to 94.93%**; one study measured GPT-4o
+fabricating **19.9%** of citations in mental-health literature reviews, with nearly
+two-thirds fabricated or inaccurate overall. At NeurIPS 2025, **100** AI-generated
+hallucinated citations evaded detection by 3–5 expert reviewers per paper. The noise is
+structural, not marginal.
+
+**8. Translation drift.** A concept accumulates bias and loses meaning as it crosses
+languages, cultures, or political contexts. Models exhibit deferred semantic drift —
+later tokens retrieve context-dependent packets from ambiguous words, so interpretation
+is not stable even within a single sequence. In multilingual data modelling, semantic
+conflation is easy and translation yields "similar but not identical results, with
+significant consequences for credibility".
+
+### III. Technological friction — the machine against its owner
+
+**9. The upgrade gate.** Vendors gate features behind OS versions and withhold drivers,
+forcing replacement of silicon that still works. As of late 2025 only **57.9%** of
+active Android devices ran Android 13 or later; the remaining **42.1%** — roughly **1
+billion** users — lacked current security patches, and about **30%** of Android
+smartphones were classed obsolete. Google omitted Pixel device trees and vendor binaries
+from AOSP for Android 16. The hardware does not degrade; permission to update it is
+revoked.
+
+**10. The closed-blob stranglehold.** Camera, GPU, and modem drivers are opaque binaries
+that cannot be audited or modified, and must be recompiled by the chip maker for each
+new kernel. An empirical study of Android firmware found roughly **82%** of releases
+shipped outdated GPU blobs, some up to **1,281 days** old. Qualcomm's extended update
+programme covers up to **eight years** — for the latest Snapdragon chips only. You own
+the silicon; you do not control it.
+
+**11. The cloud and telemetry trap.** Modern mobile tooling assumes connectivity and
+accounts. A 2023 measurement study found every proprietary Android variant collects
+analytics or telemetry. Cloud development imposes a latency tax: **50–100 ms** per
+keystroke and around **half a second** to switch files; under **50 ms** round-trip feels
+local, and beyond **100 ms** the friction becomes maddening — while offline means no
+work at all. The offline capability exists (LiteRT-LM runs models with no network, no
+keys, no per-token cost; PocketLLM runs a full agent stack offline on Android), but no
+stock environment exposes it as the default mode.
+
+**12. The app silo architecture.** Each app is a walled garden. A note written in one
+cannot be queried by the editor in another; there is no shared local filesystem or event
+bus. The user manually exports, re-imports, and re-formats at every boundary, bleeding
+time and injecting error each time. The platform architecture is built around isolation,
+not synchronisation.
+
+### IV. Supply-chain and apparatus friction — the physical world against the record
+
+**13. The provenance void.** A consumer cannot verify where the materials in the device
+came from. The midstream is described in the traceability literature as opaque,
+requiring supply-chain-spanning collaboration merely to begin a verifiable record; the
+Democratic Republic of Congo only launched its first batch of traceable artisanal cobalt
+in November 2025, and UNECE documents that fragmentation jeopardises transparency for
+critical minerals. No content-addressed, hash-verified chain links raw material to
+finished product in a form the end user can audit.
+
+**14. The format incompatibility tax.** Disparate machines — CAD, CNC, logistics — speak
+incompatible schemas, and every boundary needs human translation. A naval architect's
+drawings, converted for a cutting house, did not match the original and the material had
+to be re-cut at roughly **US$20,000**. CNC programmers routinely meet conversion
+artefacts: missing surfaces, gaps, holes, overlapping surfaces. A legally interoperable
+system with an immutable chain of custody is not a universal default.
+
+**15. The certification echo chamber.** Safety and quality claims are self-certified or
+verified by agencies funded by the manufacturers. Research on certification bodies
+records that "not all of the CBs and auditors are independent of the management system
+they audit", that close auditee relationships are "not perceived as a threat to the
+audit independence", and that some standard-setting bodies now sell their own
+certification — blurring author and auditor. Self-certification remains a permitted
+alternative to third-party audit. No mandatory adversarial layer exists in the digital
+product record.
+
+### V. The root cause
+
+**16. The friction is the business model.** Every friction above persists because
+maintaining it extracts value: it sells upgrades, subscriptions, accounts, permissions,
+and proprietary formats. The user is not the customer but the resource. The bloat is not
+a bug; it is revenue — a 2024 technical review measured **2.1 GB** of preinstalled
+bloatware on Samsung's One UI 6.1 for the Galaxy S24 Ultra, and Android 14 idling at
+**8.2 GB** of memory against iOS 17's **4.7 GB**. The operating system consumes the
+hardware to serve the vendor.
+
+> **On the evidence.** Every figure above is attributed to the study or measurement that
+> reported it, as supplied by the Operator. They are **not** re-derived by this repo's
+> gates — no gate here can verify a third-party study, and claiming otherwise would
+> violate NEVER #1. Where the source documents gave two values for the same fact, the
+> more conservative one is used. One figure from the source material was dropped rather
+> than repeated: a claimed **0.03 ms** identification time for soft-keyboard typing is
+> not physically plausible for a keystroke-dynamics classifier, so only its accuracy
+> (**93%**) is carried here. Verify any figure against its cited study before relying on
+> it.
+
+---
+
+## 1b. The invariant response (sixteen answers)
+
+> **Plain.** For every tax above, this repo has a structural answer rather than a
+> workaround — something that removes the tax instead of paying it more efficiently.
+> None of the answers needs new hardware, an account, or a server.
+>
+> **Precise.** Each response names a mechanism in this tree, exercised by a gate. The
+> mapping is one friction to one mechanism; no mechanism is claimed that the tree does
+> not contain.
+
+| # | Friction | Structural response in this repo |
+|---|---|---|
+| 1 | Typing throttle | `dkrsh` shell, macro triggers, and persistent windows reduce intent to minimal keystrokes. |
+| 2 | Mute / impaired lockout | The existing microphone and touchscreen reconstruct intent from physiological residue and project it across registers, so the listener carries the semantic work. |
+| 3 | Context-switch tax | Persistent freeform window management plus the Ω sync event bus keep state live and visible, bypassing the tablet-only windowing gate. |
+| 4 | Behavioural blindness | A local touch-dynamics biometric gate — no cloud round-trip, and no component validating itself. |
+| 5 | Register mismatch | One claim unit projected into the four presentation volumes — Plain, Paper, Machine, Provenance. See [§2.6](#26-the-three-registers-one-artifact-three-readers), which also distinguishes these from the three proof registers. |
+| 6 | Self-certifying authority | **Invariant C:** the authoring side must be verified by an independent adversarial side; no claim enters the knowledge base without a falsifier. |
+| 7 | Hallucination bleed | The SAVF AST auditor and the LIED logic engine catch phantom imports and false derivations locally, before publication. |
+| 8 | Translation drift | Semantic units are hashed and deduplicated, and an adversarial pass checks for ambiguity across registers. |
+| 9 | Upgrade gate | A hand-rolled source codebase bypasses vendor blobs; the OS version is a kernel, not a permission layer. |
+| 10 | Closed-blob stranglehold | No vendor blob is load-bearing: the raw chain compiles against `android.jar` alone. |
+| 11 | Cloud / telemetry trap | The whole system runs offline — APK compiler, shell, inference, and AST auditor. |
+| 12 | App silo architecture | One shared filesystem and event bus across apps, independent of the vendor's multi-window eligibility rules. |
+| 13 | Provenance void | SHA-256 content-addressed storage couples every digital claim to a verifiable referent. |
+| 14 | Format incompatibility tax | Semantic units are auto-deduplicated and linked by hash, independent of proprietary schemas. |
+| 15 | Certification echo chamber | Admission gate **A3**: independent adversarial verification is mandatory before a claim is admitted. |
+| 16 | Friction as business model | The architecture is designed to run on hardware the user already owns, with zero external dependencies. |
+
+### The proof condition
+
+If this system builds and runs on a current Android device using only the touchscreen,
+the microphone, the haptics, and the local processor, then it is proven agnostic. No new
+sensor. No new hardware. No cloud service. The proof is the inscription; the inscription
+is the program; the program runs here, now.
+
+> **Sigma = 0.** Zero residual noise. Zero misinterpretation. Zero hardware dependency.
+> The friction was never a hardware limit — it was the software.
+
 ---
 
 ## 2. What makes this repo unique in principle

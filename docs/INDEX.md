@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**66 readable files across 7 registers.**
+**69 readable files across 7 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -18,7 +18,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `AGENTS.md` | 78,895 | `3ce9e45e3380` | AGENTS.md — Darkith |
 | `DARKITH.md` | 102,461 | `16f9c621a452` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
+| `README.md` | 83,163 | `1087e6c711d8` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
 | `TASKS.md` | 23,958 | `4671daa37f7b` | TASKS — the durable board |
 
@@ -26,6 +26,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
+| `darkith-omega-homekeeper/README.md` | 2,479 | `beea5851ef25` | Darkith Omega Homekeeper |
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
@@ -59,6 +60,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-clock.html` | 13,690 | `c16768265a04` | DARKITH Ω — clock |
 | `darkith-omega-contacts.html` | 9,864 | `7f954c522108` | DARKITH Ω — contacts |
 | `darkith-omega-files.html` | 28,833 | `ac55dcbb4e8e` | DARKITH Ω — files |
+| `darkith-omega-master.html` | 86,698 | `0e3c055ccfdb` | DARKITH Ω — Master Blueprint &amp; Executable Specification |
 | `darkith-omega-media-player.html` | 60,965 | `afe4285205cb` | DARKITH Ω — media player |
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
@@ -82,6 +84,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `app/src/main/assets/darkith_ui.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 490,080 | `f3c83ac2f31c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,790 | `a37cd725501b` | SAVF-1 Universal Audit Engine |
+| `darkith-omega-homekeeper/src/reader-shell.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 | `omega-app/src/main/assets/omega_studio.html` | 1,320,193 | `891c68154cc5` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 
 ## E-evidence — Machine-generated proof
@@ -115,6 +118,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 ## Declared mirrors (one surface, two names — kept byte-identical)
 
 - `app/src/main/assets/darkith_ui.html` == `darkith-inscriber.html`
+- `omega-reader.html` == `darkith-omega-homekeeper/src/reader-shell.html`
 
 ## The laws this index enforces
 
