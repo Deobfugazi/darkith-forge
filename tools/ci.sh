@@ -402,6 +402,13 @@ fi
     run "savf cli/browser parity" node tools/test_savf_parity.js
   fi
 
+  # The reader's interaction surface, driven in a real browser from file://. The
+  # shim test above proves the corpus and renderer; only a real click proves the
+  # listeners are wired. Skipped when playwright is absent.
+  if have python3 && [ -f tools/reader_ui_gate.py ]; then
+    run "reader ui gate" python3 tools/reader_ui_gate.py
+  fi
+
   # The Icon Forge (icon_forge.html): the visual-affordance specialist. Dependency-free
   # DOM/canvas-shim test that evaluates the REAL script. Proves sha256, the deterministic
   # ZIP (CRC-verified), absolute-only pathData for VectorDrawable, safe-zone geometry, the

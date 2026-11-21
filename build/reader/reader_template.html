@@ -422,10 +422,12 @@ function renderSide() {
     var head = e.target.closest(".grphead");
     if (head) {
       var grp = head.parentNode;
-      var open = grp.dataset.open !== "false";
-      grp.dataset.open = String(!open);
-      head.setAttribute("aria-expanded", String(!open));
-      state.open[grp.dataset.reg] = !open;
+      /* Not `open`: `var` hoists to the whole handler and would shadow the
+         global open() that the document branch below calls. */
+      var isOpen = grp.dataset.open !== "false";
+      grp.dataset.open = String(!isOpen);
+      head.setAttribute("aria-expanded", String(!isOpen));
+      state.open[grp.dataset.reg] = !isOpen;
       return;
     }
     var btn = e.target.closest(".doc");
