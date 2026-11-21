@@ -133,6 +133,21 @@ CLASSES = [
            "ci: kb_index",
            "docs/INDEX.md + kb_manifest.json are generated; a stale index is a lie about the tree"),
 
+    Class_("board law citations are real",
+           "python3 tools/board_law_gate.py",
+           "python3 tools/board_law_gate.py",
+           "ci: board law citations",
+           "a board that cites a law which does not exist teaches the next agent to obey "
+           "an invention and to doubt a real law; the gate is the only thing that can "
+           "tell the two apart"),
+
+    Class_("phantom gate command",
+           "python3 tools/revitalization.py --check-gate-commands",
+           "python3 tools/revitalization.py --check-gate-commands",
+           "ci: revitalization selftest",
+           "a gate whose recovered command is a line-continuation backslash fails without "
+           "running, manufacturing a defect with no root cause that no repair can close"),
+
     # Found 2026-11-20: tree_omega/ sat gitignored in the working directory holding a second
     # app/src. The unit ledger judged a Kotlin file that is not in the repository at all, so
     # the defect was invisible to every reviewer and loud in CI.

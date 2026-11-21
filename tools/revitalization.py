@@ -70,6 +70,9 @@ import sys
 import tempfile
 import time
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import board_priority  # noqa: E402  (path set above; sibling module)
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REV = ROOT / "proof" / "revitalization"
 CURRENT = REV / "CURRENT"
@@ -440,14 +443,26 @@ class Pipeline:
                 "state": state, "reason": reason, "tail": tail}
 
     def command_for_gate(self, gate_name: str) -> str:
-        """Recover the concrete command bound to a CI label from ci.sh."""
+        """Recover the concrete command bound to a CI label from ci.sh.
+
+        `run` is called with a line continuation when the command is long, so the
+        label and its command sit on different physical lines. Reading physical lines
+        alone yields '\\' as the command, which then "FAILs" without ever executing —
+        a phantom defect that no repair can close, because there is nothing to repair.
+        Logical lines are joined first.
+        """
         path = self.root / "tools/ci.sh"
         if not path.is_file():
             return "UNRESOLVED"
-        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        logical = raw.replace("\\\r\n", " ").replace("\\\n", " ")
+        for line in logical.splitlines():
             m = re.search(r'\brun\s+"([^"]+)"\s+(.+)$', line.strip())
             if m and m.group(1) == gate_name:
-                return m.group(2).strip()
+                cmd = m.group(2).strip()
+                # A bare continuation or empty tail is not a command; report it as
+                # unresolved so the receipt names the real state instead of a fake FAIL.
+                return cmd if cmd and cmd != "\\" else "UNRESOLVED"
         return "UNRESOLVED"
 
     def run_repository_ci(self, stage_id: str) -> tuple:
@@ -1180,13 +1195,17 @@ class Pipeline:
             rel = str(self.receipt_path(sid).relative_to(self.root))
             lines.append(f"| {sid} | {name} | {status_map[rec['status']]} | {rel} |")
         if task_queue:
-            lines += ["", "Tasks:", ""]
-            for t in task_queue:
-                tag = "REOPENED" if t.get("reopened") else "new"
-                lines.append(f"- **{t['id']}** ({tag}, {t['status']}): probes "
-                             f"`{', '.join(t.get('probes', []))}`; root cause "
-                             f"`{t.get('root_cause', 'UNCONFIRMED')}`; governing "
-                             f"`{t['governing_file']} / {t.get('governing_clause', 'UNCONFIRMED')}`")
+            # Sequenced by severity, then blast radius, then discovery order. The board
+            # used to print discovery order, which is an accident of which probe ran
+            # first and says nothing about what must precede what.
+            sequenced = board_priority.sequence(task_queue)
+            lines += ["", "### MUST — sequenced by severity, then blast radius", "",
+                      "An unchecked box is a MUST: open work, and unapproved to close "
+                      "until its own probe returns PASS. Each MUST lists the failure "
+                      "modes that make skipping it destructive (corrupting) or "
+                      "substandard (deficiency)."]
+            lines += [""]
+            lines += board_priority.render(sequenced, closed)
         if skips:
             lines += ["", "Named skips this cycle (SKIP is never PASS): "
                       + ", ".join(skips) + "."]
@@ -1846,6 +1865,43 @@ def selftest() -> int:
     return 1
 
 
+def check_gate_commands(root: pathlib.Path = ROOT) -> int:
+    """Fail if any `run "label"` in ci.sh recovers a non-command.
+
+    The recovered command is what S04 executes to judge a gate. When it comes back as
+    a bare backslash the probe "fails" without running, so the cycle reports a defect
+    with no root cause and no repair can close it. Every label ci.sh defines must
+    resolve to a real command.
+    """
+    ci = root / "tools" / "ci.sh"
+    if not ci.is_file():
+        print("gate-command check: SKIP — no tools/ci.sh")
+        return 3
+    text = ci.read_text(encoding="utf-8", errors="replace")
+    logical = text.replace("\\\r\n", " ").replace("\\\n", " ")
+    labels = re.findall(r'\brun\s+"([^"]+)"', logical)
+    probe = Pipeline.__new__(Pipeline)
+    probe.root = root
+    # A label built at runtime (`run "generated $(basename ...)" ...`) cannot be matched
+    # statically. That is a real boundary of this check, not a pass: it is counted and
+    # named, so the number is visible instead of silently absent.
+    dynamic = [label for label in labels if "$(" in label or "$" in label]
+    static = [label for label in labels if label not in dynamic]
+    bad = [label for label in static if probe.command_for_gate(label) == "UNRESOLVED"]
+    if bad:
+        print(f"gate-command check: FAIL — {len(bad)} of {len(static)} static gate(s) "
+              f"resolve to no command:")
+        for label in bad:
+            print(f"  {label}")
+        return 1
+    print(f"gate-command check: PASS — {len(static)} static gate(s) resolve to runnable "
+          f"commands; {len(dynamic)} runtime-built label(s) cannot be checked statically "
+          f"(named, not skipped)")
+    for label in dynamic:
+        print(f"  runtime label (uncheckable here): {label}")
+    return 0
+
+
 def main(argv: list) -> int:
     ap = argparse.ArgumentParser(
         description="sixteen-stage serial corrective cycle (I1-I10)")
@@ -1853,7 +1909,11 @@ def main(argv: list) -> int:
                     choices=("run", "gate", "selftest", "write-board"))
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--operator", default="agent")
+    ap.add_argument("--check-gate-commands", action="store_true",
+                    help="verify every ci.sh gate label recovers a real command")
     args = ap.parse_args(argv[1:])
+    if args.check_gate_commands:
+        return check_gate_commands(ROOT)
     if args.command == "selftest":
         return selftest()
     if args.command == "run":

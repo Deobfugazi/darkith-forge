@@ -109,6 +109,14 @@ if have python3; then
     if [ -f tools/board_gate.py ]; then
       run "board gate"                    python3 tools/board_gate.py
     fi
+    # The board's priority taxonomy is a claim about the law. A fabricated NEVER is
+    # worse than no NEVER: it reads as binding and is not.
+    if [ -f tools/board_law_gate.py ]; then
+      run "board law citations"           python3 tools/board_law_gate.py
+    fi
+    if [ -f tools/tests/board_priority_test.py ]; then
+      run "board priority engine"         python3 tools/tests/board_priority_test.py
+    fi
     # Praxis gate: the order in force must be present on EVERY board that can steer work —
     # the durable board, each live session board, each sibling worktree. MUST #26 pushes the
     # board; this makes the directive itself travel with it, so no worker carries out a

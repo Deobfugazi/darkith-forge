@@ -1,0 +1,1216 @@
+
+=== repo gate (build/verify.py --fast) ===
+[1/7] sync
+      check: in sync
+      integrate-prerunner: in sync
+      delivery: no index.html bundle (regenerable, not committed) — skip
+      repo zip: absent (regenerable, not committed) — skip
+      legacy zips: absent (regenerable, not committed) — skip
+[2/7] parity (JS core vs savf.py)
+      clean.py         cli= 0 js= 0 verdict=REVIEW   match
+      stub.py          cli= 2 js= 2 verdict=LIED     match
+      phantom.py       cli= 2 js= 2 verdict=LIED     match
+      markers.py       cli= 2 js= 2 verdict=REVIEW   match
+      swallow.py       cli= 1 js= 1 verdict=REVIEW   match
+      taut.py          cli= 0 js= 0 verdict=REVIEW   match
+      mock.py          cli= 0 js= 0 verdict=REVIEW   match
+      syntax.py        cli= 1 js= 1 verdict=LIED     match
+      empty.py         cli= 0 js= 0 verdict=REVIEW   match
+      unicode.py       cli= 2 js= 2 verdict=LIED     match
+      crlf.py          cli= 1 js= 1 verdict=LIED     match
+      nested.py        cli= 1 js= 1 verdict=REVIEW   match
+      phantom_attr.py  cli= 1 js= 1 verdict=LIED     match
+[4/7] omega
+      OMEGA: PASS  (18 passed, 0 failed)
+[6/7] savf cli
+      SAVF-CLI: PASS (42/42)
+[7/7] encoding (BOM + PEP 263 cookie, py + JS core)
+      plain_utf8.py          cpython=ok  py=ok  js=ok  match
+      bom_utf8.py            cpython=ok  py=ok  js=ok  match
+      bom_todo.py            cpython=ok  py=ok  js=ok  match
+      latin1_cookie.py       cpython=ok  py=ok  js=ok  match
+      cp1252_cookie.py       cpython=ok  py=ok  js=ok  match
+      utf8_cookie.py         cpython=ok  py=ok  js=ok  match
+      cookie_line2.py        cpython=ok  py=ok  js=ok  match
+      no_cookie_latin1.py    cpython=no  py=no  js=no  match
+      unknown_cookie.py      cpython=no  py=no  js=no  match
+      bom_and_latin1.py      cpython=no  py=no  js=no  match
+      only_bom.py            cpython=ok  py=ok  js=ok  match
+      null_bytes.py          cpython=no  py=no  js=no  match
+
+  sync     PASS
+  parity   PASS
+  omega    PASS
+  savf-cli PASS
+  encoding PASS
+
+VERIFY: PASS
+--- repo gate (build/verify.py --fast): PASS
+
+=== savf cli contract ===
+  ok   selftest exits 0
+  ok   selftest reports ok
+  ok   --version prints a version
+  ok   axis: midpoint of (0,0)->(10,0) is (5,0)
+  ok   axis: tau=-1 reverses start/end
+  ok   axis: s outside [0,1] exits non-zero
+  ok   axis: s outside [0,1] has no traceback
+  ok   axis: s outside [0,1] explains the range
+  ok   axis: negative poles parse without a flag error
+  ok   axis: negative poles give the right point
+  ok   axis: a space-separated negative tau parses
+  ok   scan: missing path exits non-zero
+  ok   scan: missing path says so
+  ok   scan: empty tree exits 3 (skip), not 0
+  ok   scan: empty tree says nothing was examined
+  ok   scan: too-deep source is not called PARSE
+  ok   scan: too-deep source reports PARSE_DEPTH
+  ok   scan: too-deep source still finds the phantom import
+  ok   scan: too-deep source still finds the TODO marker
+  ok   scan: PARSE_DEPTH is medium, not high
+  ok   scan: depth limit alone does not fail the scan
+  ok   scan: depth limit alone reports only medium findings
+  ok   scan: real syntax error is still PARSE
+  ok   scan: real syntax error is still high
+  ok   scan: real syntax error still exits 1
+  ok   freeze: a missing file exits non-zero
+  ok   freeze: a missing file names the path, no traceback
+  ok   scan: phantom import is a high finding
+  ok   verdict: malformed JSON exits non-zero
+  ok   verdict: malformed JSON has no traceback
+  ok   sign: raster R2L is -1
+  ok   sign: sbaf0 R2L is +1
+  ok   freeze: seals a file
+  ok   freeze: writes its lock into the CWD, not the repo
+  ok   check-freeze: clean after freeze
+  ok   check-freeze: detects tampering
+  ok   reach: missing --src exits non-zero
+  ok   reach: missing --src says so, no traceback
+  ok   mutate: missing --src exits non-zero
+  ok   mutate: missing --src says so, no traceback
+  ok   reach: empty --src tree exits non-zero
+  ok   reach: empty --src tree says so
+
+SAVF-CLI: PASS (42/42)
+--- savf cli contract: PASS
+
+=== darkbot self-test ===
+  ok   compare_versions('1.0.0', '1.0.0') == 0
+  ok   compare_versions('1.0.0', '1.0.1') == -1
+  ok   compare_versions('1.0.1', '1.0.0') == 1
+  ok   compare_versions('1.0', '1.0.0') == 0
+  ok   compare_versions('2.0.0', '1.9.9') == 1
+  ok   compare_versions('1.10.0', '1.9.0') == 1
+  ok   compare_versions('1.0.0', '1.0.0rc1') == 1
+  ok   compare_versions('1.0.0rc1', '1.0.0') == -1
+  ok   compare_versions('1.0.0a1', '1.0.0b1') == -1
+  ok   compare_versions('0.0.1', '0.1.0') == -1
+  ok   parses 2 deps, ignoring comments/blanks
+  ok   reads pypi foo 1.2.3
+  ok   reads npm bar 4.5.6
+  ok   rejects a malformed line
+[2026-11-22 05:23:44]   wrote /tmp/tmpjcmq1169/req.txt (1 pypi entries)
+  ok   export writes pypi pins only
+  ok   update rewrites pin and keeps comment
+
+DARKBOT: PASS (16 passed, 0 failed)
+--- darkbot self-test: PASS
+secret_gate: PASS — no credential-shaped string in 458 tracked file(s)
+
+=== secret gate self-test ===
+  ok   detector fires: github-token
+  ok   detector fires: github-pat
+  ok   detector fires: aws-access-key
+  ok   detector fires: slack-token
+  ok   detector fires: openai-key
+  ok   detector fires: google-api-key
+  ok   detector fires: private-key
+  ok   detector fires: url-embedded-cred
+  ok   detector fires: slack-webhook
+  ok   detector fires: generic-assignment
+  ok   clean text passes: 'the remote is https://github.com/owner/r'
+  ok   clean text passes: 'set GITHUB_TOKEN in the environment; nev'
+  ok   clean text passes: 'password: <redacted>'
+  ok   clean text passes: 'api_key = "your-key-here"'
+  ok   clean text passes: 'ghp_short'
+  ok   clean text passes: 'see docs/INDEX.md for the register list'
+  ok   redact() masks the value
+
+SECRET GATE: PASS (0 failed)
+--- secret gate self-test: PASS
+
+=== fracture scout self-test ===
+  ok   OR splits alternatives
+  ok   quoted phrase stays whole across OR
+  ok   AND within an alternative, OR between
+  ok   a bare term is one alternative
+  ok   a leading OR does not make an empty alternative
+  ok   arxiv folds alternatives into one search_query
+  ok   hn fans out one request per OR alternative
+  ok   github fans out and pins is:issue on each
+  ok   nvd maps severity: to the cvssV3Severity filter param
+  ok   parentheses distribute into DNF
+  ok   a grouped OR under AND expands correctly
+  ok   an admitted-unresolved title outscores a plain topic
+  ok   weight multiplies the score
+  ok   rank puts the fracture first
+  ok   rank is order-independent (deterministic)
+  ok   parses 2 rows, ignoring comments/blanks
+  ok   reads source, expr, weight
+  ok   weight defaults to 1
+  ok   rejects a one-token line
+  ok   rejects an unknown source
+  ok   the shipped manifest parses (9 rows)
+  ok   every shipped row names a known source
+
+FRACTURE SCOUT: PASS (0 failed)
+--- fracture scout self-test: PASS
+
+=== kotlin syntax gate ===
+syntax_gate: PASS — 72 .kt file(s), every block comment closed.
+--- kotlin syntax gate: PASS
+
+=== API-level gate ===
+api_level_gate: PASS — 69 .kt file(s), no unguarded high-API call
+--- API-level gate: PASS
+
+=== icon gate ===
+icon_gate: PASS — icon + roundIcon declared, 5 legacy PNG(s), adaptive xml present
+--- icon gate: PASS
+
+=== board gate ===
+board_gate: PASS — 16 board row(s); every done item carries evidence
+--- board gate: PASS
+
+=== praxis calibration (MUST #33) ===
+  [PASS] strip(merge(x)) == x  (round-trip restores authored bytes)
+  [PASS] merge(merge(x)) == merge(x)  (idempotent, no append growth)
+  [PASS] NEGATIVE: clean board reports 'current'
+  [PASS] POSITIVE: bare board differs from propagated board
+  [PASS] SENSITIVITY: no declaration -> declared_laws() empty
+  [PASS] SPECIFICITY: declaration parsed exactly
+  [PASS] missing law detected
+  [PASS] truncated block is stripped to EOF
+  [PASS] normalise 'never 19' -> 'NEVER #19'
+  [PASS] normalise 'SPI-2' -> 'SPI-2'
+praxis selftest: PASS — 10/10 trials
+--- praxis calibration (MUST #33): PASS
+
+=== praxis propagation gate ===
+  [=] durable                      current      
+  [=] session:18393131094c4acfb45d943764549f23 current      mirror
+  [=] worktree:base_wt             current      
+  [=] worktree:readme_wt           current      
+  directive: DIRECTIVE PRIME TASK — the Operator's orders, ingested from 
+  laws declared: ['MUST #20', 'MUST #21', 'MUST #22', 'MUST #26', 'MUST #27', 'MUST #30', 'MUST #33', 'MUST #35', 'MUST #36', 'NEVER #19', 'NEVER #21', 'SPI-15', 'SPI-2', 'SPI-37', 'SPI-38', 'SPI-4', 'SPI-6'] | derived (advisory): ['MUST #37', 'MUST #38', 'MUST #40', 'SPI-11', 'SPI-17', 'SPI-19', 'SPI-21', 'SPI-25', 'SPI-31', 'SPI-39']
+praxis: PASS — 4 board(s) agree on the order in force
+--- praxis propagation gate: PASS
+
+=== loophole closure (SPI-31/32) ===
+loophole_gate: PASS — 34 gate(s) inspected, no skip-as-pass, no vacuous pass
+--- loophole closure (SPI-31/32): PASS
+
+=== closed briefings stay closed ===
+closed_briefings: PASS — 1 closed briefing(s), 2 board(s) scanned, none re-opened
+--- closed briefings stay closed: PASS
+
+=== revitalization selftest ===
+== sandbox 1: clean tree, probe passes -> cycle closes ==
+=== revitalization cycle 20261121T212347Z040 ===
+  S01 BASELINE       PASS
+  S02 INVENTORY      PASS
+  S03 TOPOLOGY       PASS
+  S04 DIAGNOSTIC     PASS
+  S05 CLASSIFY       PASS
+  S06 TRACE          PASS
+  S07 GOVERN         INACTIVE
+  S08 TASK           PASS
+  S09 AUTHORIZE      INACTIVE - no repairs open this cycle
+  S10 REPAIR         INACTIVE - no repairs owed this cycle (no defect found)
+  S11 REGENERATE     INACTIVE - no source change requires regeneration this cycle
+  S12 VERIFY-LOCAL   INACTIVE - no repair to verify this cycle
+  S13 VERIFY-BLAST   INACTIVE - no repair this cycle
+  S14 RECONCILE      PASS
+  S15 SEAL           PASS
+  S16 BOARD+ROTATE   PASS
+=== CYCLE CLOSED (16/16 staged, evidence-sealed) ===
+  ok   clean cycle exits 0 (closed) - got 0
+  ok   gate PASSes the clean sealed chain
+  ok   S16 records the cycle as closed
+  ok   S16 board block seals 16 staged rows
+== sandbox 2: idempotency (I7) ==
+ revitalization: idempotent no-op (I7) - cycle 20261121T212347Z040 already closed on this exact content hash; nothing to duplicate.
+  ok   re-running a closed cycle is a no-op exit 0 - got 0
+  ok   no duplicate cycle dir was created (I7) - ['20261121T212347Z040']
+== sandbox 3: failing probe -> defect + task (I6); SKIP never PASS (I3) ==
+=== revitalization cycle 20261121T212347Z123 ===
+  S01 BASELINE       PASS
+  S02 INVENTORY      PASS
+  S03 TOPOLOGY       PASS
+  S04 DIAGNOSTIC     PASS
+  S05 CLASSIFY       PASS
+  S06 TRACE          PASS - 1 defect(s): p-bad
+  S07 GOVERN         FAIL
+  S08 TASK           FAIL - 1 corrective task(s) for 1 defect(s) open
+  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261121T212347Z123-001=HUMAN_REQUIRED
+  S10 REPAIR         FAIL - 1 edit(s)/authorization(s) unresolved
+  S11 REGENERATE     INACTIVE - no source change requires regeneration this cycle
+  S12 VERIFY-LOCAL   FAIL - repaired behavior not demonstrated yet (I4: detection is not verification)
+  S13 VERIFY-BLAST   INACTIVE - no source mutation occurred; task remains open until S10 authorization
+  S14 RECONCILE      PASS
+  S15 SEAL           FAIL - evidence sealed around OPEN defects - closure blocked per I8
+  S16 BOARD+ROTATE   FAIL - closure blocked: 1 corrective task(s) open
+=== CYCLE OPEN - 1 corrective task(s): ['REV-20261121T212347Z123-001'] ===
+  ok   defect cycle exits 1 (failure is loud, I6) - got 1
+  ok   failing probe classified FAIL (I3) - {'p-bad': 'FAIL', 'p-skip': 'SKIP'}
+  ok   exit-3 probe classified SKIP, never PASS (I3) - {'p-bad': 'FAIL', 'p-skip': 'SKIP'}
+  ok   task carries defect + governing + commit + evidence (I2)
+  ok   cycle refuses closure while a task is open (I8)
+  ok   gate PASSes an honest OPEN chain
+== sandbox 4: same-baseline rerun with open tasks defers (I1/I7) ==
+ revitalization: UPSTREAM_STALE (I1/I7) - cycle 20261121T212347Z123 is not closed and its open task(s) hold the mandate; deferring to the next tick. exit 2
+  ok   open-mandate rerun defers with exit 2 (never waits, never skips) - got 2
+== sandbox 5: tamper detection ==
+  ok   a bit-flipped FAIL->PASS receipt is detected - S08: receipt_sha256 mismatch (tampered or stale)
+  ok   even a rehashed forgery is rejected by the parent binding - I1: S09 parent hash is not its predecessor's receipt
+  ok   a gap in the serial chain is detected (I1) - I1 chain gap: S08 missing while 15 later receipt(s) exist
+== sandbox 6: no chain -> named SKIP (never pass) ==
+  ok   no receipts -> named SKIP (exit 3)
+== sandbox 7: S10 executes only AUTO_APPROVED repairs (I10) ==
+=== revitalization cycle 20261121T212347Z250 ===
+  S01 BASELINE       PASS
+  S02 INVENTORY      PASS
+  S03 TOPOLOGY       PASS
+  S04 DIAGNOSTIC     PASS
+  S05 CLASSIFY       PASS
+  S06 TRACE          PASS - 1 defect(s): p-bad
+  S07 GOVERN         PASS
+  S08 TASK           FAIL - 1 corrective task(s) for 1 defect(s) open
+  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261121T212347Z250-001=HUMAN_REQUIRED
+  S10 REPAIR         FAIL - 1 edit(s)/authorization(s) unresolved
+  S11 REGENERATE     INACTIVE - no source change requires regeneration this cycle
+  S12 VERIFY-LOCAL   FAIL - repaired behavior not demonstrated yet (I4: detection is not verification)
+  S13 VERIFY-BLAST   INACTIVE - no source mutation occurred; task remains open until S10 authorization
+  S14 RECONCILE      PASS
+  S15 SEAL           FAIL - evidence sealed around OPEN defects - closure blocked per I8
+  S16 BOARD+ROTATE   FAIL - closure blocked: 1 corrective task(s) open
+=== CYCLE OPEN - 1 corrective task(s): ['REV-20261121T212347Z250-001'] ===
+  ok   HUMAN_REQUIRED repair is NOT applied under I10 - {'blast': [], 'manifest': [], 'matched_tasks': [], 'pending_human': ['REV-20261121T212347Z250-001'], 'plan_present': False, 'regenerate': [], 'verify': []}
+  ok   bounded mutation: target untouched without authorization
+=== revitalization cycle 20261121T212347Z318 ===
+  S01 BASELINE       PASS
+  S02 INVENTORY      PASS
+  S03 TOPOLOGY       PASS
+  S04 DIAGNOSTIC     PASS
+  S05 CLASSIFY       PASS
+  S06 TRACE          PASS - 1 defect(s): p-bad
+  S07 GOVERN         PASS
+  S08 TASK           FAIL - 1 corrective task(s) for 1 defect(s) open
+  S09 AUTHORIZE      PASS - authorization boundary recorded (I10): REV-20261121T212347Z250-001=AUTO_APPROVED
+  S10 REPAIR         PASS
+  S11 REGENERATE     PASS
+  S12 VERIFY-LOCAL   PASS
+  S13 VERIFY-BLAST   PASS
+  S14 RECONCILE      PASS
+  S15 SEAL           PASS
+  S16 BOARD+ROTATE   PASS
+=== CYCLE CLOSED (16/16 staged, evidence-sealed) ===
+  ok   AUTO_APPROVED repair executes end-to-end (exit 0) - got 0
+  ok   the authorized edit actually landed (root-level file changed)
+  ok   same signature REOPENS the original task, never duplicates it (I9) - ['REV-20261121T212347Z250-001']
+  ok   gate PASSes the repaired+sealed chain
+
+REVITALIZATION SELF-TEST: PASS (every invariant witnessed)
+--- revitalization selftest: PASS
+INACTIVE: revitalization chain gate deferred until S16 seal (bootstrap run)
+
+=== kotlin comment scan (whole repo) ===
+comment_audit: PASS - 79 .kt files, every block comment closed.
+--- kotlin comment scan (whole repo): PASS
+
+=== packaging idempotence (MUST #18) ===
+pack_delivery: PASS — idempotent across two independent processes, 7 artifact(s) byte-identical, dist/ current
+--- packaging idempotence (MUST #18): PASS
+
+=== law gate (SPI-15/prime) ===
+law_gate: PASS — prime directive present; all 78 law(s) name an existing gate (zero notes, zero unheaded)
+--- law gate (SPI-15/prime): PASS
+
+=== directive engine (portable) ===
+directive_core: 78 law(s), 78 coupled, 0 uncoupled, 0 healed
+directive_core: PASS — every law is bound to a gate that can fail
+--- directive engine (portable): PASS
+
+=== generated gate_must_17 ===
+pack_delivery: PASS — idempotent across two independent processes, 7 artifact(s) byte-identical, dist/ current
+MUST-17: PASS — python3 tools/pack_delivery.py --check exited 0
+--- generated gate_must_17: PASS
+
+=== generated gate_must_18 ===
+pack_delivery: PASS — idempotent across two independent processes, 7 artifact(s) byte-identical, dist/ current
+MUST-18: PASS — python3 tools/pack_delivery.py --check exited 0
+--- generated gate_must_18: PASS
+
+=== generated gate_spi_1 ===
+SPI-1: PASS — build.gradle absent
+--- generated gate_spi_1: PASS
+
+=== generated gate_spi_11 ===
+SPI-11: PASS — //data/data/com\.termux/files/home/\.gradle/ absent from all 62 file(s)
+--- generated gate_spi_11: PASS
+
+=== generated gate_spi_18 ===
+== doc consolidation check ==
+PASS: one canonical doc (DARKITH.md); no overlapping copies.
+SPI-18: PASS — bash tools/consolidate_docs.sh --check exited 0
+--- generated gate_spi_18: PASS
+
+=== generated gate_spi_35 ===
+directive_core: 78 law(s), 78 coupled, 0 uncoupled, 0 healed
+directive_core: PASS — every law is bound to a gate that can fail
+SPI-35: PASS — python3 tools/directive_core.py --check exited 0
+--- generated gate_spi_35: PASS
+
+=== generated gate_spi_36 ===
+directive_core: 78 law(s), 78 coupled, 0 uncoupled, 0 healed
+directive_core: PASS — every law is bound to a gate that can fail
+SPI-36: PASS — python3 tools/directive_core.py --check exited 0
+--- generated gate_spi_36: PASS
+
+=== generated gate_spi_5 ===
+SPI-5: PASS — /^\s*import\s+androidx/ absent from all 69 file(s)
+--- generated gate_spi_5: PASS
+
+=== generated gate_spi_8 ===
+SPI-8: PASS — every /fun fileRoots/ is accompanied by /getExternalStorageDirectory/
+--- generated gate_spi_8: PASS
+
+=== unit ledger (SPI-37) ===
+unit_ledger_gate: PASS — 4 judged argument(s) at declared boundaries, 2 advisory (argument declares no unit)
+--- unit ledger (SPI-37): PASS
+
+=== controller behaviour (SPI-38) ===
+  TRACK low-ram free=8MB vK=146288 expected=146400 err=0.08%
+  TRACK mid-ram free=16MB vK=292817 expected=292800 err=0.01%
+  TRACK ample-ram free=1200MB vK=524288 expected=524288 err=0.00%
+  SCALE idle_sK=1.000
+controller_gate: PASS — invariants, scale, track hold on the real law
+--- controller behaviour (SPI-38): PASS
+
+=== coordinasync portable kit (MUST #40) ===
+chat_gatekeeper: WROTE — 1 order(s) on the board (1 new past watermark -1), phase unknown, occupation unknown, 2 board target(s) pinged
+chat_gatekeeper: PASS — CHAT-GATE block attested at watermark 1, 1 order(s) recorded
+  ok   order recognised
+  ok   forbid recognised
+  ok   rebuke not an order
+  ok   chatter not an order
+  ok   nudge skipped
+  ok   agent echo skipped
+  ok   withdrawal skipped
+  ok   first ingest takes both
+  ok   second ingest takes none
+  ok   duplicate order collapsed
+  ok   day window filters
+  ok   new session replays
+  ok   render is deterministic
+  ok   top-level merge is idempotent
+  ok   merge preserves board title
+  ok   replacement preserves board title
+  ok   merge replaces idempotently
+  ok   merge is a fixed point (empty board)
+  ok   merge is a fixed point (block first)
+  ok   merge is a fixed point (CRLF board)
+  ok   merge is a fixed point (no heading)
+  ok   merge keeps the title
+  ok   rest phase detected
+  ok   engaged detected
+  ok   coupling declared
+  ok   grace window sane
+  ok   coupling deterministic
+chat_gatekeeper selftest: ok
+  [PASS] strip(merge(x)) == x  (round-trip restores authored bytes)
+  [PASS] merge(merge(x)) == merge(x)  (idempotent, no append growth)
+  [PASS] NEGATIVE: clean board reports 'current'
+  [PASS] POSITIVE: bare board differs from propagated board
+  [PASS] SENSITIVITY: no declaration -> declared_laws() empty
+  [PASS] SPECIFICITY: declaration parsed exactly
+  [PASS] missing law detected
+  [PASS] truncated block is stripped to EOF
+  [PASS] normalise 'never 19' -> 'NEVER #19'
+  [PASS] normalise 'SPI-2' -> 'SPI-2'
+praxis selftest: PASS — 10/10 trials
+praxis: note — no law corpus at DARKITH.md; carrying the directive unverified against 4 declared law(s)
+  [+] durable                      updated      815->1821 B
+  directive: DIRECTIVE PRIME TASK — the Operator's orders, ingested from 
+  laws declared: ['MUST #26', 'MUST #27', 'MUST #33', 'SPI-15'] | derived (advisory): none
+praxis: PASS — 1 board(s) agree on the order in force
+synchrony_pulse: boot 2026-11-22 00:16:09 (rest/digest/restore)
+  last activity 2020-01-01T08:00:00+08:00 (wake/active)
+  now 2026-11-22T05:24:06+08:00 (rest/digest/restore)  gap 60405.402h
+  device 2026-11-21 21:24:06 UTC+00:00  agrees-with-Operator=False  (global 2026-11-21T21:24:06Z)
+chat_gatekeeper: WROTE — 1 order(s) on the board (0 new past watermark 1), phase rest/digest/restore, occupation returning-from-rest, 2 board target(s) pinged
+  ok   ingest wrote an order
+  ok   order is on the board
+  ok   coupled laws declared
+  ok   check passes after write
+  ok   guard selftest passes
+  ok   propagator selftest passes
+  ok   propagation runs
+  ok   propagated block present
+  ok   pulse runs
+  ok   pulse written
+  ok   pulse is boot-aware
+  ok   re-ingest is idempotent
+coordinasync selftest: ok — 12/12
+--- coordinasync portable kit (MUST #40): PASS
+
+=== chat gatekeeper selftest (MUST #38) ===
+  ok   order recognised
+  ok   forbid recognised
+  ok   rebuke not an order
+  ok   chatter not an order
+  ok   nudge skipped
+  ok   agent echo skipped
+  ok   withdrawal skipped
+  ok   first ingest takes both
+  ok   second ingest takes none
+  ok   duplicate order collapsed
+  ok   day window filters
+  ok   new session replays
+  ok   render is deterministic
+  ok   top-level merge is idempotent
+  ok   merge preserves board title
+  ok   replacement preserves board title
+  ok   merge replaces idempotently
+  ok   merge is a fixed point (empty board)
+  ok   merge is a fixed point (block first)
+  ok   merge is a fixed point (CRLF board)
+  ok   merge is a fixed point (no heading)
+  ok   merge keeps the title
+  ok   rest phase detected
+  ok   engaged detected
+  ok   coupling declared
+  ok   grace window sane
+  ok   coupling deterministic
+chat_gatekeeper selftest: ok
+--- chat gatekeeper selftest (MUST #38): PASS
+
+=== chat gatekeeper ingest (MUST #38) ===
+chat_gatekeeper: PASS — CHAT-GATE block attested at watermark 27725, 13 order(s) recorded
+--- chat gatekeeper ingest (MUST #38): PASS
+
+=== OFIF falsifier (NT-XIII G6/G7) ===
+  G6 budget=146355 ceiling=146400 residual=1061
+  G7 budget=65536 ceiling=8632 residual=-1365684 scale=0.5
+ofif_gate: PASS — G6 and G7 hold; F1 behaves as a detector on the real controller
+--- OFIF falsifier (NT-XIII G6/G7): PASS
+
+=== circadian_gate ===
+circadian_gate: PASS — one clock (UTC+8), wake-anchored; no bare wall-clock stamps
+--- circadian_gate: PASS
+
+=== download_gate ===
+download_gate: PASS — hub links carry `download`; server forces attachment
+--- download_gate: PASS
+
+=== stall_gate ===
+stall_gate: PASS — 8 deficit(s): 3 closed, 5 descoped, 0 open (none stalled); delivery versionCode=4
+--- stall_gate: PASS
+
+=== synchrony_gate ===
+synchrony_gate: PASS — 11 surface(s) + bot carry the generated clock; save stamps a diachronic key
+--- synchrony_gate: PASS
+
+=== convergence_gate ===
+convergence_gate: PASS — clock (py==js), iso, phase (active+rest), tree (355 files: git index == independent blob hash), source universe (69 files: examiner == walk == git); clock=2026-11-18 06:30:00
+--- convergence_gate: PASS
+
+=== synchrony_pulse ===
+synchrony_pulse: PASS — boot-aware; last activity 1.1h ago; phase rest/digest/restore
+--- synchrony_pulse: PASS
+
+=== nt corpus reconciliation (SAVF) ===
+nt_gate: 119 claims, 14 contradictions, 14 resolutions
+  corpus carried: 11 files in docs/nt/
+  [PASS] NT10-HARDWARE            EXPOSABLE  HARDWARE-DECLARED-EXTERNAL
+  [PASS] NT10-HEALER-ANDROIDX     RESOLVED   HEALER-RAW-IMPORT-HARDWARE-VERIFIED
+  [PASS] NT11-PRAXIS-ACTUALS      EXPOSABLE  PRAXIS-ACTUALS-EXTERNAL
+  [PASS] NT4-RABTSEVICH           EXPOSABLE  RABTSEVICH-CARRIED-EXTERNAL
+  [PASS] NT7-PROCESS-ZERO         EXPOSABLE  PROCESS-ZERO-SELF-FLAGGED
+  [PASS] NT9-AAPT2-API35          EXPOSABLE  API35-FRACTURE-LOCKED-34
+  [PASS] NT9-COMPILER-SAMPLES     EXPOSABLE  COMPILER-SAMPLES-FLAGGED-EXPOSABLE
+  [PASS] NT9-DEMO-ECON            EXPOSABLE  DEMO-ECON-FLAGGED-EXPOSABLE
+  [PASS] XII-API35-C              EXPOSABLE  XII-API35-EXPOSABLE
+  [PASS] XII-ASE-PRAXIS-C         EXPOSABLE  XII-ASE-EXPOSABLE
+  [PASS] XII-DEMO-ECON-C          EXPOSABLE  XII-DEMO-EXPOSABLE
+  [PASS] XII-HEALER-C             EXPOSABLE  XII-HEALER-EXPOSABLE
+  [PASS] XII-MATERIALS-C          EXPOSABLE  XII-MATERIALS-EXPOSABLE
+  [PASS] XII-NOVELTY-C            EXPOSABLE  XII-NOVELTY-EXPOSABLE
+nt_gate: PASS — every contradiction resolved to absolution; savf reports 119 claims, 0 problem(s)
+--- nt corpus reconciliation (SAVF): PASS
+
+=== absolution admission (NT XII) ===
+absolution_admission: 53 claims, 6 contradiction(s), 6 resolution(s)
+  [PASS] XII-API35-C                  EXPOSABLE  XII-API35-EXPOSABLE
+  [PASS] XII-ASE-PRAXIS-C             EXPOSABLE  XII-ASE-EXPOSABLE
+  [PASS] XII-DEMO-ECON-C              EXPOSABLE  XII-DEMO-EXPOSABLE
+  [PASS] XII-HEALER-C                 EXPOSABLE  XII-HEALER-EXPOSABLE
+  [PASS] XII-MATERIALS-C              EXPOSABLE  XII-MATERIALS-EXPOSABLE
+  [PASS] XII-NOVELTY-C                EXPOSABLE  XII-NOVELTY-EXPOSABLE
+absolution_admission: PASS — NT-XII admitted. 53 claims witnessed/derived, 6 contradiction(s) resolved, corpus count true (12 carried; 11 precede this one), no smuggled mechanism.
+--- absolution admission (NT XII): PASS
+
+=== nt sensor (Healer example vs android.jar) ===
+  ok   corpus names the RAW import (android.widget.Button)
+  ok   corpus no longer names the androidx import
+  ok   the repo law still forbids 'import androidx' (SPI-13)
+  ok   reference jar carries the raw symbol, no androidx — android-all-14-robolectric-10818077.jar: android/widget/Button.class present, 0 androidx symbol(s)
+
+PASS: 0 failed
+HEALER-RAW-IMPORT-HARDWARE-VERIFIED
+--- nt sensor (Healer example vs android.jar): PASS
+
+=== nt sensor self-test ===
+  ok   a jar with the raw class and no androidx passes
+  ok   a jar carrying an androidx symbol is rejected
+  ok   a jar without the raw class is rejected
+  ok   find_jar honours $ANDROID_JAR when it carries Button
+
+NT SENSOR: PASS (0 failed)
+--- nt sensor self-test: PASS
+
+=== omega deficit (NT XI retention) ===
+omega_deficit: PASS - W_in=8 E=0 S=8 E/W_in=0.000 absolution=YES
+--- omega deficit (NT XI retention): PASS
+
+=== board pulse (real-time push) ===
+board_pulse: PASS — the board is pushed to origin/main (8aa488f)
+--- board pulse (real-time push): PASS
+
+=== stall clock (off-schedule dwell) ===
+stall_clock: PASS — unpushed 0 commit(s) dwelling 0s/900s; uncommitted 0 path(s) dwelling >=0s/1800s
+--- stall clock (off-schedule dwell): PASS
+
+=== authority gate selftest ===
+authority_gate selftest: ok — clean tree silent, drift measured, missing law caught, generated artifacts excluded
+--- authority gate selftest: PASS
+
+=== authority gate (NEVER #21) ===
+authority_gate: note — 0 commit(s) ahead of origin/main
+authority_gate: PASS — authority inscribed in 5 boards; no drift past 0s; nothing withheld
+--- authority gate (NEVER #21): PASS
+
+=== §19 fork integrity gate (compile proof) ===
+== fork integrity gate ==
+tree: app/src/main/java/com/darkith/transliaison
+[SPI-12] one authoritative tree
+  exactly one source tree: /workspace/project/darkith-forge/app/src/main/java/com/darkith/transliaison
+[SPI-13] no foreign or purged symbols
+  zero 'import androidx'
+  no live references to purged symbols
+[SPI-14] build inputs are versioned
+  manifest: /workspace/project/darkith-forge/app/src/main/AndroidManifest.xml
+  res/: present
+  assets/: present
+[MUST-11] compile is the proof
+  kotlinc clean: 0 errors, 69 files (+R.java)
+== result ==
+PASS: all §19 laws held.
+--- §19 fork integrity gate (compile proof): PASS
+
+=== delivery gate (source laws) ===
+== DELIVERY GATE — loophole registry ==
+root: .   apk: <none>
+
+  #  loophole                      status  note
+  1  L-01-manifest-version        CLOSED  versionName="2.1.0-omega"
+  2  L-02-apk-version             SKIP    deferred: needs a built APK (--source-only)
+  3  L-03-self-report             CLOSED  VERSION = "device-bridge-1"
+  4  L-04-artifact-built          SKIP    deferred: needs a built APK (--source-only)
+  5  L-05-artifact-signed         SKIP    deferred: needs a built APK (--source-only)
+  6  L-06-artifact-aligned        SKIP    deferred: needs a built APK (--source-only)
+  7  L-07-fork-singularity        CLOSED  §19 gate PASS (compile proof ran)
+  8  L-08-bridge-contract         CLOSED  0 missing
+  9  L-09-asset-parity            SKIP    deferred: needs a built APK (--source-only)
+  10 L-10-currency                CLOSED  kotlinc clean: 0 errors, 69 files (+R.java)
+  11 L-17-native-tools            SKIP    deferred: needs a built APK (--source-only)
+  12 L-16-arsc-stored             SKIP    deferred: needs a built APK (--source-only)
+  13 L-15-signer-identity         SKIP    deferred: needs a built APK (--source-only)
+  14 L-14-family-whole            SKIP    deferred: needs a built APK (--source-only)
+  15 L-13-no-doc-dup              OPEN    overlapping docs still present: ./docs/VERSION.md ./docs/DEFICIT_LEDGER.md ./docs/RECONCILIATION.md
+  16 L-12-one-surface             SKIP    deferred: needs a built APK (--source-only)
+  17 L-18-install-gate            N/A     no APK or no aapt2/apksigner (install not proven here)
+  18 L-19-runtime-render          CLOSED  launcher UI renders at 360x800, 0 JS errors
+  19 L-11-registry-nonempty       CLOSED  19 loophole checks
+
+REFUSED — 1 loophole(s) OPEN. Do not call this delivered.
+--- delivery gate (source laws): FAIL (exit 1)
+SKIP: no built APK on disk — dex link gate not run (build.sh produces one)
+
+=== version surface gate (one version of record) ===
+version_surface_gate: PASS — every terminal surface reports 2.1.0-omega
+--- version surface gate (one version of record): PASS
+
+=== savf py/js parity gate ===
+savf_parity_gate: PASS — 12 verdicts + 18 chart signs agree across python and browser; 18 f-string field cases and 7 exp/log inverse cases agree
+--- savf py/js parity gate: PASS
+
+=== pre-runner gate (engine + exit contract) ===
+prerunner_gate: browser assertions SKIPPED — npm i playwright-core (or puppeteer)
+prerunner_gate: PASS — engine surface + CLI exit contract + honest verdicts hold
+--- pre-runner gate (engine + exit contract): PASS
+
+=== clearanceloop gate (ratchet laws + integration) ===
+clearanceloop_gate: PASS — ratchet laws hold + engines wired into every surface
+--- clearanceloop gate (ratchet laws + integration): PASS
+
+=== nodal gate (Co-ordina-Sync + python/js parity) ===
+nodal_gate: PASS — python suite green; .js twin enforces the same laws; identity parity exact (sha256, genesis, receipt_id, fire order)
+--- nodal gate (Co-ordina-Sync + python/js parity): PASS
+
+=== clearanceloop webapp gate (headless browser) ===
+clearanceloop_ui_gate: PASS -- 157 browser checks (function, law, a11y, layout, persistence, hostile state, no storage)
+--- clearanceloop webapp gate (headless browser): PASS
+
+=== savf webapp gate (headless browser) ===
+SKIP: firefox unavailable (BrowserType.launch: Executable doesn't exist at /home/openha)
+SKIP: webkit unavailable (BrowserType.launch: Executable doesn't exist at /home/openha)
+SAVF UI GATE: PASS (353 checks)
+--- savf webapp gate (headless browser): PASS
+
+=== bridge contract audit ===
+== bridge contract audit ==
+   UI methods called : 26
+   bridge methods    : 65
+   dashboard ms[]    : 0
+
+MISSING (UI needs, bridge lacks) -> NONE  ✓ contract complete
+UNUSED  (bridge has, UI never calls) -> ['apkVersion', 'browserClose', 'cameraCapture', 'cameraList', 'cameraPickImage', 'clockSetAlarm', 'clockShowAlarms', 'clockTimer', 'contactsAdd', 'contactsList', 'contactsSearch', 'deviceResult', 'deviceVersion', 'dialCall', 'dialNumber', 'dialTelephony', 'fileRoots', 'forgeNative', 'healSource', 'ingestSubstrate', 'mediaList', 'notifCancelAll', 'notifPost', 'shellEnv', 'shellExec', 'shellHistory', 'shellSetCwd', 'shellSetEnv', 'signerSignature', 'smsCompose', 'smsInbox', 'smsSend', 'storageGranted', 'sysInfo', 'sysPermissions', 'sysRequest', 'translateHtml', 'verifySignerSignature', 'version']
+DASHBOARD phantom dot (ms[] not a real method) -> NONE
+DASHBOARD omitted (real method not shown) -> ['apkVersion', 'browserOpen', 'cameraCapture', 'cameraList', 'cameraPickImage', 'clockSetAlarm', 'clockShowAlarms', 'clockTimer', 'contactsAdd', 'contactsList', 'contactsSearch', 'copyText', 'deviceResult', 'deviceVersion', 'dialCall', 'dialNumber', 'dialTelephony', 'fileCopy', 'fileDelete', 'fileDirs', 'fileList', 'fileMove', 'fileRead', 'fileRoots', 'fileStat', 'fileWrite', 'forgeChimera', 'forgeNative', 'forgeRenderNative', 'getAppIcon', 'getInstalledApps', 'healSource', 'ingestSubstrate', 'installApkNative', 'launchApp', 'mediaList', 'memInfo', 'notifCancelAll', 'notifPost', 'openExternal', 'openFolderIn', 'openOmegaScreen', 'openWith', 'requestStorage', 'shareFiles', 'shell', 'shellEnv', 'shellExec', 'shellHistory', 'shellSetCwd', 'shellSetEnv', 'signerSignature', 'smsCompose', 'smsInbox', 'smsSend', 'sysInfo', 'sysPermissions', 'sysRequest', 'translateHtml', 'unzipTo', 'verifySignerSignature', 'zipPaths']
+--- bridge contract audit: PASS
+
+=== doc consolidation check ===
+== doc consolidation check ==
+PASS: one canonical doc (DARKITH.md); no overlapping copies.
+--- doc consolidation check: PASS
+
+=== doc path gate ===
+doc_path_gate: PASS — every cited repo path resolves (387 tokens).
+--- doc path gate: PASS
+
+=== blueprint gate (no injection) ===
+blueprint_gate: PASS — docs/DARKITH-OMEGA-repo.txt
+blueprint_gate: PASS — 1 blueprint(s) clean (no injection, no duplicate copy, no stale count)
+--- blueprint gate (no injection): PASS
+
+=== autophagy selftest ===
+  ok   exit 0 is clean
+  ok   exit 1 is dirty
+  ok   exit 3 is skipped, not dirty
+  ok   every repair has a prevention gate
+  ok   registry names are unique
+autophagy selftest: PASS (5/5)
+--- autophagy selftest: PASS
+
+=== autophagy (defect-class registry) ===
+  [1] one-shot payload: would repair
+
+==============================================================================
+  AUTOPHAGY: DEFECTIVE — residue remains
+==============================================================================
+  ok   order in force on every board      clean                    prevented by ci: praxis propagation gate
+  ok   chat gate watermark                clean                    prevented by ci: chat gate
+  ok   pulse freshness                    clean                    prevented by ci: synchrony pulse
+  ok   one-shot payload                   would repair             prevented by ci: one-shot installer
+  ok   portable kit artifact              clean                    prevented by ci: coordinasync portable kit
+  ok   unclosed block comment             clean                    prevented by ci: kotlin comment scan
+  ok   closed briefing re-opened          clean                    prevented by ci: closed briefings stay closed
+  ok   standing authority inscribed       clean                    prevented by ci: authority gate (NEVER #21)
+  ok   forge artifact in sync             clean                    prevented by ci: repo gate (sync)
+  ok   central directive on every board   clean                    prevented by ci: cns directive
+  ok   omega deficit indicator            clean                    prevented by ci: omega deficit
+  ok   generated docs index               clean                    prevented by ci: kb_index
+  ok   phantom source tree                clean                    prevented by ci: phantom source tree
+  ok   half a toolchain                   clean                    prevented by ci: toolchain integrity
+  ok   board header intact                clean                    prevented by ci: board header intact
+------------------------------------------------------------------------------
+  passes: 1   classes: 15   residue: 1   skipped: 0
+  remaining:
+    - one-shot payload: dirty — not repaired (--check)
+==============================================================================
+--- autophagy (defect-class registry): FAIL (exit 1)
+
+=== phantom source tree ===
+phantom_tree_gate: PASS — scanned 4 ignored director(ies); no gitignored duplicate source tree
+--- phantom source tree: PASS
+
+=== toolchain integrity ===
+toolchain_gate: PASS — kotlinc runs (info: kotlinc-jvm 1.9.24 (JRE 17.0.12+7))
+--- toolchain integrity: PASS
+
+=== board header intact ===
+board_header_gate: PASS — 3 guarded board(s) intact
+--- board header intact: PASS
+
+=== knowledge-base index + dedup ===
+kb_index: PASS — 77 readable files, all filed, no undeclared duplicates, index current
+--- knowledge-base index + dedup: PASS
+
+=== darktools unit tests ===
+== darktools unit tests ==
+  PASS  task list seeded
+  PASS  task add
+  PASS  task add excludes priority token from title
+  PASS  task next
+  PASS  task do
+  PASS  task persists as text file
+  PASS  coreutils work on task files
+  PASS  grep over task files
+  PASS  sync why shows contributions
+  PASS  sync weights learned something
+  PASS  sync top ranks t2 high
+  PASS  sync explain
+  PASS  learning moves t4 up the ranking  [before t1,t2,t3,t4 after t4,t1,t2,t3]
+  PASS  passive observer counted a real command  [observed 0 -> 1]
+  PASS  observer credited the #parser task  [touched={"t5":1795296432883}]
+  PASS  observer reinforced the parser tag  [parser=0.325]
+  PASS  sync signals reports evidence
+  PASS  unattributable command raised a deficit  [open deficits 11 -> 12]
+  PASS  deficit has an actionable suggestion
+  PASS  sync deficits renders the ledger
+  PASS  coverage deficit for an untagged task
+  PASS  tagging resolves the coverage deficit
+  PASS  coverage deficit message is accurate (no tags)  [open task t5 has no tags at all]
+  PASS  coverage deficit names existing tags  [open task t5 carries +widgets but none are learned yet]
+  PASS  coverage suggestion offers the concrete next step  [task t5 has tags (+widgets) but none are learned; work in that area (e.g. cd ~/widgets) or run: task tag t5 widgets]
+  PASS  deficit has an id and a count
+  PASS  sync deficits resolve <id> clears it
+  PASS  contradiction raised (raise then lower)
+  PASS  sync claim reconciles it
+  PASS  sync omega reports a ladder
+  PASS  unmet rungs are raised as deficits
+  PASS  omega percent is honest (<100 at start)
+  PASS  omega percent rises with real syncing  [before 25% after 50%]
+  PASS  omega ladder reaches the ceiling (8/8)  [omega ladder — 8/8 rungs met (100%)]
+  PASS  ceiling reports 'fully synced'
+  PASS  every rung is met at the ceiling
+  PASS  tk list shows seeds
+  PASS  tk build installs
+  PASS  toolkit runs as shell function
+  PASS  toolkit pipelines
+  PASS  tk new scaffolds
+  PASS  tk cat prints source
+  PASS  handcoded toolkit runs
+  PASS  store captured a snapshot
+  PASS  reload restores a task added before
+  PASS  reload restores a handcoded toolkit
+  PASS  reload restores learned sync weights
+  PASS  observer hook is guarded (never breaks a command)
+  PASS  no TODO/FIXME stubs left in engine
+
+49/49 passed
+--- darktools unit tests: PASS
+
+=== omega reader tests ===
+PASS  script evaluates without throwing
+PASS  SECTIONS is an array of 11
+PASS  four registers present
+PASS  every register has every section
+PASS  home renders the four bookmark links
+PASS  machine register wraps content in <pre><code>
+PASS  BUG-2 fixed: machine YAML text is present
+PASS  BUG-2 fixed: angle brackets in content are escaped, not injected
+PASS  provenance register renders and stays escaped
+PASS  BUG-1 fixed: out-of-range deep link does not throw
+PASS  BUG-1 fixed: out-of-range clamps to the last section
+PASS  negative index clamps to 0 and does not throw
+PASS  paper register shows an inline provenance <details>
+PASS  provenance block is escaped inside <pre><code>
+PASS  provenance register itself has NO nested details block
+PASS  unknown register falls back to home
+PASS  valid route renders the section title
+PASS  register switch preserves the section id
+PASS  theme toggle writes localStorage
+PASS  theme toggle flips back
+PASS  position memory records the last route
+PASS  TOC lists every section and the other registers
+
+22/22 passed
+--- omega reader tests: PASS
+
+=== icon forge tests ===
+icon_forge.html — unit tests
+
+  PASS  T-1 sha256(abc) known vector
+  PASS  T-2 zip round-trips and CRC verifies
+  PASS  T-3 zip is byte-deterministic
+  PASS  T-4 every emitted pathData is absolute M/L/C/Z only (no arcs)
+  PASS  T-5 VectorDrawable is well-formed with <path> children
+  PASS  T-6 every preset is non-empty, finite and inside the 66 dp safe zone
+  PASS  T-7a contrast(white,black)=21
+  PASS  T-7b parseColor(#abc) and rgba()
+  PASS  T-8a a full preflight reports all seven gates
+  PASS  T-8b the four-state rule is used (no gate is a bare boolean)
+  PASS  T-8c coupling is UNAVAILABLE when no bridge is present
+  PASS  T-11a the pack carries the adaptive icon XML the manifest names
+  PASS  T-11b the pack carries a foreground drawable
+  PASS  T-11c legacy PNGs are emitted when requested (10 mipmaps)
+  PASS  T-9a a build produces a deterministic key
+  PASS  T-10 verdictOf: FAIL->BLOCKED, MARGINAL->REVIEW, else PASS
+  PASS  T-8c with no bridge the coupling gate is UNAVAILABLE (not PASS)
+  PASS  T-9b with a bridge the coupling gate is MEASURED and reads real methods
+
+18 passed, 0 failed
+--- icon forge tests: PASS
+
+=== media player tests ===
+  ok   script evaluates without throwing
+  ok   window.DarkithMedia is exported
+  ok   markup declares #media
+  ok   markup declares #stage
+  ok   markup declares #qlist
+  ok   markup declares #mlist
+  ok   markup declares #eq
+  ok   markup declares #queue
+  ok   markup declares #marks
+  ok   markup declares #play
+  ok   markup declares #seek
+  ok   markup declares #vol
+  ok   markup declares #rate
+  ok   markup declares #cc
+  ok   markup declares #ccbox
+  ok   markup declares #viz
+  ok   markup declares #eqbtn
+  ok   markup declares #queuebtn
+  ok   markup declares #marksbtn
+  ok   markup declares #ab
+  ok   markup declares #repeat
+  ok   markup declares #shuffle
+  ok   markup declares #toast
+  ok   markup declares #tcur
+  ok   markup declares #tdur
+  ok   markup declares #m-name
+  ok   markup declares #m-sha
+  ok   markup declares #m-state
+  ok   markup declares #drop
+  ok   markup declares #file
+  ok   markup declares #dir
+  ok   markup declares #urlin
+  ok   markup declares #urladd
+  ok   markup declares #fit
+  ok   markup declares #sortby
+  ok   markup declares #seekflash
+  ok   markup declares #shuffle
+  ok   markup declares #clearlist
+  ok   markup declares #eqpreset
+  ok   fmtTime(0) = 0:00
+  ok   fmtTime(65) = 1:05
+  ok   fmtTime(3661) = 1:01:01
+  ok   fmtTime(NaN) = 0:00
+  ok   parseTime('1:30') = 90
+  ok   parseTime('1.5') = 1.5
+  ok   parseTime('') is NaN
+  ok   fmtBytes(1536) = 1.50 KB
+  ok   fmtBytes(1048576) = 1.00 MB
+  ok   fmtBytes(null) = —
+  ok   parseTimeStamp('00:00:01.000') = 1
+  ok   parseTimeStamp('00:01.000') = 1
+  ok   parseTimeStamp('90.5') = 90.5
+  ok   parseTimeStamp('01:02:03.500') = 3723.5
+  ok   parseVTT finds 2 cues
+  ok   parseVTT first cue start/end
+  ok   parseVTT keeps multi-line body
+  ok   cueAt picks the active cue
+  ok   cueAt returns null between cues
+  ok   parseSRT finds 2 cues
+  ok   parseSRT normalises comma-millis
+  ok   parseM3U ignores #EXT and blanks
+  ok   kindOf .mp4 = video
+  ok   kindOf .mp3 = audio
+  ok   kindOf .png = image
+  ok   kindOf .vtt = subtitle
+  ok   kindOf .m3u = playlist
+  ok   mimeFor .webm = video/webm
+  ok   mimeFor given type wins
+  ok   isPlayable(video|audio|image)
+  ok   !isPlayable(subtitle)
+  ok   isDevicePath(/sdcard/x.mp4)
+  ok   !isDevicePath(https://x/y.mp4)
+  ok   !isDevicePath(blob:...)
+  ok   fileUrlFor keeps slashes
+  ok   fileUrlFor encodes unicode
+  ok   duplicate entries are not queued twice
+  ok   size sort is descending
+  ok   deviceRoots splits on \u0001
+  ok   listDir builds full paths from name
+  ok   listDir marks directories
+  ok   browseDevice queues playable files only
+  ok   browseDevice loads a device subtitle through fileRead
+  ok   stepSpeed(1,+1) = 1.25
+  ok   stepSpeed(1,-1) = 0.75
+  ok   stepSpeed(3,+1) clamps at 3
+  ok   stepSpeed(0.25,-1) clamps at 0.25
+  ok   stepSpeed(1.1,+1) snaps to 1.25
+  ok   shuffleOrder is a permutation of 0..n-1
+  ok   EQ_BANDS has 6 bands
+  ok   EQ flat preset is all zeros
+  ok   every EQ preset matches band count
+  ok   queue holds both media entries
+  ok   subtitle/playlist entries are not queued as media
+  ok   hostile filename is HTML-escaped in the queue (no injection)
+  ok   setVolume clamps + stores
+  ok   setRate applies to prefs
+  ok   seekBy clamps at 0
+
+  97/97 passed, 0 failed
+--- media player tests: PASS
+
+=== file manager tests ===
+  files: 37/37 passed
+--- file manager tests: PASS
+
+=== device app tests ===
+  device apps: 40/40 passed
+--- device app tests: PASS
+
+=== termkit help audit (dual register) ===
+
+  TERMKIT-HELP-AUDIT: PASS (84 passed, 0 failed, 34 fixtures)
+--- termkit help audit (dual register): PASS
+
+=== source inspector trial (charges + ratchet) ===
+  [PASS] CH-01  sensitivity=ok  specificity=ok
+  [PASS] CH-02  sensitivity=ok  specificity=ok
+  [PASS] CH-03  sensitivity=ok  specificity=ok
+  [PASS] CH-04  sensitivity=ok  specificity=ok
+  [PASS] CH-05  sensitivity=ok  specificity=ok
+  [PASS] CH-06  sensitivity=ok  specificity=ok
+  [PASS] CH-07  sensitivity=ok  specificity=ok
+  [PASS] CH-08  sensitivity=ok  specificity=ok
+  [PASS] CH-09  sensitivity=ok  specificity=ok
+  [PASS] CH-10  sensitivity=ok  specificity=ok
+TRIAL: PASS — 10/10 charges calibrated
+
+  [PASS] L1 monotone clearance: HWM 10 -> 4
+  [PASS] L2 regression fails: 7 > HWM 4 -> exit 1
+  [PASS] L3 stasis degrades: stagnant 5 deliveries -> degraded
+  [PASS] L4 apoptotic waiver: raised to HWM 9 with recorded reason
+RATCHET PROOF: PASS — 4/4 laws hold
+--- source inspector trial (charges + ratchet): PASS
+
+=== source inspector (loophole trial) ===
+source_inspector: 69 file(s) examined under app/src/main/java/com/darkith/transliaison
+  bounty score 0  (blockers 0 · escrow 0 · cosmetic 0)
+  PASS — 0 blockers; escrow 0 at/below HWM; clearance flux -23.0 (clearing)
+  ledger: proof/source_inspector.json
+--- source inspector (loophole trial): PASS
+SKIP: jsdom not installed (npm install jsdom) — inscriber studio test NOT run
+
+=== omega engine harness ===
+  ok   exec: runs a real command and captures stdout
+  ok   exec: separates stderr and preserves exit status
+  ok   exec: missing binary reports failure (no fabricated success)
+  ok   exec: output streams incrementally (more than one read)
+  ok   exec: streamed text is complete
+  ok   exec: enforces the concurrent-job cap
+  ok   ring: caps stored bytes
+  ok   ring: records dropped bytes
+  ok   caps: reports native backends
+  ok   caps: proot reported false when absent
+  ok   assistant: picks a model that fits 2 GB free
+  ok   assistant: refuses when nothing fits
+  ok   assistant: picks the largest that fits when memory is plentiful
+  ok   assistant: catalog sizes match published GGUF bytes
+  ok   assistant: streams tokens incrementally
+  ok   assistant: assembles the full text
+(node:101935) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   wasm: a real wasm32-wasi module runs in-process and exits 0
+  ok   wasm: captures the module's stdout
+
+OMEGA: PASS  (18 passed, 0 failed)
+--- omega engine harness: PASS
+
+=== update watcher logic ===
+codeOf
+  PASS numeric code
+  PASS string code
+  PASS name-derived 1.2.0 -> 10200
+  PASS name-derived 5.3.1 -> 50301
+  PASS no version -> null
+  PASS null -> null
+cmp
+  PASS 3 < 4
+  PASS 4 > 3
+  PASS 3 == 3
+  PASS incomparable -> null
+decide
+  PASS newer remote -> update
+  PASS update message names both
+  PASS update message leads with an APK link
+  PASS update decision carries apkUrl
+  PASS equal -> current
+  PASS older remote -> current (never a downgrade alert)
+  PASS offline -> unknown, not 'current'
+  PASS offline message says neither confirmed nor denied
+  PASS no comparable version -> unknown
+fetchManifest (stubbed global.fetch)
+  PASS 200 -> ok+manifest
+  PASS 404 -> not ok
+  PASS network throw -> not ok
+check() — alert fires once per new version
+  PASS one alert for the same new code across two checks
+  PASS a newer code alerts again
+  PASS offline does not raise an update alert
+probeLocal
+  PASS falls back to embedded stamp
+  PASS reads the real APK version via the bridge
+fetchFirst (mirror walk)
+  PASS skips dead mirrors and lands on the first live one
+  PASS it actually tried the dead mirrors
+  PASS all mirrors dead -> unreachable
+  PASS no mirrors -> unreachable
+  PASS check() walks the configured mirrors by default
+  PASS default mirrors lead with the runtime host
+presentation (overlay, host-agnostic)
+  PASS overlay declines when there is no DOM
+  PASS overlay draws with a DOM
+  PASS modal element is present
+  PASS untrusted message is textContent, never markup
+  PASS actionable dialog offers the APK + one-shot
+  PASS present falls back to alert without a DOM
+  PASS present prefers the host UI.dialog
+
+UPDATER: 40/40 — all checks pass
+--- update watcher logic: PASS
+
+=== omega headless ui ===
+screenshot: /workspace/project/darkith-forge/build/omega/omega-ui.png
+  ok   boot: no console/page errors
+  ok   boot: banner present
+  ok   calc: 12*9+3 == 111
+  ok   calc: (2+3)^2 == 25
+  ok   calc: refuses non-numeric input
+  ok   sha256: matches the known digest
+  ok   b64: encodes hello -> aGVsbG8=
+  ok   help: lists builtins
+  ok   caps: reports in-page only without a bridge
+  ok   unknown: reports command not found
+  ok   layout: no horizontal overflow at 360px
+  ok   layout: touch targets >=30px
+  ok   theme: dark background when the OS prefers dark
+  ok   assistant: offline ruleset computes 7*6 = 42
+  ok   assistant: labels itself as offline ruleset (no fake LLM)
+  ok   system: shows capability report
+  ok   system: shows model tiers with real sizes
+  ok   theme: light background when the OS prefers light
+  ok   a11y: tablist roles present
+  ok   browser: bare host is upgraded to https
+  ok   browser: localhost gets http
+  ok   browser: non-URL input becomes a search
+  ok   browser: an explicit scheme is preserved
+  ok   browser: loads the target into the frame
+  ok   browser: shows an honest framing note
+  ok   settings: last tab is restored after reload
+
+OMEGA-UI: PASS (26/26)
+--- omega headless ui: PASS
+
+=== no signing material tracked ===
+--- no signing material tracked: PASS
+
+=== APK store rule (SPI-21 repack law) ===
+--- APK store rule: skipped (no delivery/*.apk)
+
+=== install gate (no "App not installed") ===
+--- install gate: SKIP (no APK, or aapt2/apksigner absent; build an APK and stage tools with: bash tools/fetch_toolchain.sh)
+
+=== install gate selftest (I-03 v2 detector) ===
+  ok   v2 detect -> True (want True): Verified using v2 scheme (APK Signature Scheme v
+  ok   v2 detect -> False (want False): Verified using v2 scheme (APK Signature Scheme v
+  ok   v2 detect -> False (want False): Verifies: true
+  install_gate selftest: PASS (3/3)
+--- install gate selftest (I-03 v2 detector): PASS
+
+=== forge child gate (C2) ===
+== FORGE CHILD GATE — a forged child must be a working, self-forging app ==
+  CLOSED F-01-extract-native-libs     child template sets extractNativeLibs=true
+  CLOSED F-02-chimera-ships-natives   ChimeraBuilder ships lib/<abi>/*.so
+  CLOSED F-03-buildengine-ships-natives BuildEngine ships lib/<abi>/*.so
+  CLOSED F-04-launcher-activity       template declares a MAIN/LAUNCHER activity
+  CLOSED F-05-template-dex-links      template.dex defines every non-platform type it references
+forge_child_gate: PASS - forged children install and can forge their own
+--- forge child gate (C2): PASS
+
+=== runtime render gate (the UI the OS hands to Zygote) ===
+
+=== runtime render gate ===
+  PASS  [no-bridge] no console/page errors
+  PASS  [no-bridge] non-blank render (text > 200 chars)
+  PASS  [no-bridge] DOM populated (> 100 nodes)
+  PASS  [no-bridge] no horizontal overflow (<=361px)
+  PASS  [no-bridge] themed background set
+  PASS  [bridged] no console/page errors
+  PASS  [bridged] non-blank render (text > 200 chars)
+  PASS  [bridged] DOM populated (> 100 nodes)
+  PASS  [bridged] no horizontal overflow (<=361px)
+  PASS  [bridged] themed background set
+  PASS  title present in DOM
+
+RUNTIME: PASS (11/11)
+--- runtime render gate: PASS
+
+=== discrepancy detectors (two tabs must agree) ===
+--- working tree clean: WARN (uncommitted edits are invisible to the other tab)
+       M proof/revitalization/CURRENT
+      ?? proof/revitalization/20261121T211939Z568/
+--- fork singularity (NEVER #11): PASS (no divergent copies)
+--- mirror pair identical: app/src/main/assets/darkith_ui.html == darkith-inscriber.html
+--- version truth: PASS (2.1.0-omega)
+--- one-shot installer: FAIL (payload stale or missing)
+      STALE one-shot payload  4acade9954f57033  (tree 3cdf15f1b682e76d)
+
+=== version truth + update wiring ===
+update_gate: PASS — version 2.1.0-omega (code 4) agrees across VERSION.json, manifest, app surface and updater.js
+--- version truth + update wiring: PASS
+
+=== update watcher injected (app surface) ===
+inject_updater: PASS — 1 surface(s) carry the current watcher
+--- update watcher injected (app surface): PASS
+--- build&install.sh entrypoint: PASS (valid, Gradle-free)
+
+=== cns directive (one order, every board) ===
+  cns directive: PASS (5/5 boards)
+--- cns directive (one order, every board): PASS
+
+=== autophagy (defect classes are impossible, not absent) ===
+  [1] one-shot payload: would repair
+
+==============================================================================
+  AUTOPHAGY: DEFECTIVE — residue remains
+==============================================================================
+  ok   order in force on every board      clean                    prevented by ci: praxis propagation gate
+  ok   chat gate watermark                clean                    prevented by ci: chat gate
+  ok   pulse freshness                    clean                    prevented by ci: synchrony pulse
+  ok   one-shot payload                   would repair             prevented by ci: one-shot installer
+  ok   portable kit artifact              clean                    prevented by ci: coordinasync portable kit
+  ok   unclosed block comment             clean                    prevented by ci: kotlin comment scan
+  ok   closed briefing re-opened          clean                    prevented by ci: closed briefings stay closed
+  ok   standing authority inscribed       clean                    prevented by ci: authority gate (NEVER #21)
+  ok   forge artifact in sync             clean                    prevented by ci: repo gate (sync)
+  ok   central directive on every board   clean                    prevented by ci: cns directive
+  ok   omega deficit indicator            clean                    prevented by ci: omega deficit
+  ok   generated docs index               clean                    prevented by ci: kb_index
+  ok   phantom source tree                clean                    prevented by ci: phantom source tree
+  ok   half a toolchain                   clean                    prevented by ci: toolchain integrity
+  ok   board header intact                clean                    prevented by ci: board header intact
+------------------------------------------------------------------------------
+  passes: 1   classes: 15   residue: 1   skipped: 0
+  remaining:
+    - one-shot payload: dirty — not repaired (--check)
+==============================================================================
+--- autophagy (defect classes are impossible, not absent): FAIL (exit 1)
+INACTIVE: CI receipt emitter deferred until the sealed cycle is available
+
+CI: FAIL (0 skipped)

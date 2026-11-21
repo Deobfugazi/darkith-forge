@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 77,
+  "count": 74,
   "files": [
     {
       "bytes": 78895,
@@ -57,12 +57,6 @@
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
     },
     {
-      "bytes": 5487,
-      "path": "docs/DEFICIT_LEDGER.md",
-      "register": "B-knowledge",
-      "sha256": "6a132f64cc94505f3d507d2510fb5af1c2d49bb988962fe476c432c5a466a013"
-    },
-    {
       "bytes": 9387,
       "path": "docs/FAILURE-MODE-LEDGER.md",
       "register": "B-knowledge",
@@ -81,12 +75,6 @@
       "sha256": "fbf7d5d0f43aba977a6d7187d249e8862d2243a0110f5681cba97010a0a457e5"
     },
     {
-      "bytes": 6440,
-      "path": "docs/RECONCILIATION.md",
-      "register": "B-knowledge",
-      "sha256": "4799c40f7cb3ad7b9687f259993a41382bdb35e14545af279801f8a11b111e4d"
-    },
-    {
       "bytes": 1423,
       "path": "docs/RECOVERY_MANIFEST.md",
       "register": "B-knowledge",
@@ -103,12 +91,6 @@
       "path": "docs/UPDATES.md",
       "register": "B-knowledge",
       "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
-    },
-    {
-      "bytes": 3378,
-      "path": "docs/VERSION.md",
-      "register": "B-knowledge",
-      "sha256": "74c7e43046589dce021808cea3b52830d825e879d5fb159fd94393900a1d3003"
     },
     {
       "bytes": 4950,

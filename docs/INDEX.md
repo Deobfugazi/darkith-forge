@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**77 readable files across 8 registers.**
+**74 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -29,15 +29,12 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
-| `docs/DEFICIT_LEDGER.md` | 5,487 | `6a132f64cc94` | DARKITH — COMPLETE DEFICIT LEDGER |
 | `docs/FAILURE-MODE-LEDGER.md` | 9,387 | `588bb52faf27` | DARKITH — FAILURE MODE LEDGER |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/GITHUB-STUDIO-MANUAL.md` | 18,292 | `fbf7d5d0f43a` | GITHUB STUDIO — the uncut operator manual |
-| `docs/RECONCILIATION.md` | 6,440 | `4799c40f7cb3` | DARKITH — OMEGA SINGULARITY RECONCILIATION |
 | `docs/RECOVERY_MANIFEST.md` | 1,423 | `0cc6e23164c8` | Recovery manifest — reconstructed from the conversation event store |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
-| `docs/VERSION.md` | 3,378 | `74c7e4304658` | DARKITH — VERSION RECORD |
 | `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
 | `docs/evidence/SECTOR-PAIN-LEDGER.md` | 5,077 | `9d6b452e87d8` | Sector pain ledger — primary-source observations |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
