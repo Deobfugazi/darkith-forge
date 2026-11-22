@@ -117,6 +117,16 @@ if have python3; then
     if [ -f tools/tests/board_priority_test.py ]; then
       run "board priority engine"         python3 tools/tests/board_priority_test.py
     fi
+    # The run feed is the audience's witness: every agentic round trip reports start,
+    # stages, and a terminal, hash-chained so a rewritten line is caught. A run that dies
+    # without a terminal is SEVERED — the broken-circuitry case automation must pick up.
+    if [ -f tools/run_feed.py ]; then
+      run "run feed chain"                python3 tools/run_feed.py verify
+      run "run feed severance detector"   python3 tools/run_feed.py severed
+    fi
+    if [ -f tools/tests/run_feed_test.py ]; then
+      run "run feed + derived governance" python3 tools/tests/run_feed_test.py
+    fi
     # Praxis gate: the order in force must be present on EVERY board that can steer work —
     # the durable board, each live session board, each sibling worktree. MUST #26 pushes the
     # board; this makes the directive itself travel with it, so no worker carries out a

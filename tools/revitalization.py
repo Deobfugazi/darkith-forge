@@ -604,8 +604,74 @@ class Pipeline:
 
     @staticmethod
     def tool_of(cmd: str):
-        m = re.search(r"tools/[\w./-]+\.(?:py|sh|mjs|js)", cmd or "")
-        return m.group(0) if m else None
+        # Gates live in more than one root: `tools/` for the apparatus, `build/` for the
+        # build chain's own verifiers, `nodal/` for the ledger. Matching only `tools/`
+        # left every build/ gate UNCONFIRMED even when it cites its law in the source.
+        m = re.search(r"((?:tools|build|nodal)/[\w./-]+\.(?:py|sh|mjs|js))", cmd or "")
+        return m.group(1) if m else None
+
+    _LAW_CACHE = {}
+
+    @classmethod
+    def defined_laws(cls) -> set:
+        """Every law token actually defined in the law files, as `VERB-NUMBER`.
+
+        Deriving a citation from a gate's source is only safe if the citation is real.
+        `board_law_gate.py` mentions "NEVER #10" precisely to say it does not exist, so a
+        naive regex reads that as governance and puts a fabricated law on the board — the
+        exact failure `board_law_gate` was written to catch. Filter against the law itself.
+        """
+        if cls._LAW_CACHE:
+            return cls._LAW_CACHE["laws"]
+        found = set()
+        for name in ("DARKITH.md", "AGENTS.md"):
+            path = ROOT / name
+            if not path.is_file():
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for verb, number in re.findall(r"\b(NEVER|MUST|SPI|RULE)\s*[-#]?\s*(\d+)", text):
+                found.add(f"{verb.upper()}-{number}")
+        cls._LAW_CACHE["laws"] = found
+        return found
+
+    def derive_governance(self, cmd: str) -> dict:
+        """Read the governing clause and repair boundary out of the gate's own bytes.
+
+        Only three probes have a hand-declared route, so every other failing gate used to
+        reach the board as `UNCONFIRMED` and be held at law level with nothing bounding it.
+        The gates themselves cite the law they enforce, so the citation is already on disk;
+        this reads it instead of inventing one.
+
+        A gate that cites no law stays UNCONFIRMED. Guessing a clause here would put a
+        fabricated law on the board, which is the failure `board_law_gate` exists to stop.
+        """
+        tool = self.tool_of(cmd)
+        if not tool:
+            return {}
+        path = ROOT / tool
+        if not path.is_file():
+            return {}
+        text = path.read_text(encoding="utf-8", errors="replace")
+        known = self.defined_laws()
+        seen, clauses = set(), []
+        for verb, number in re.findall(r"\b(NEVER|MUST|SPI|RULE)\s*[-#]?\s*(\d+)", text):
+            token = f"{verb.upper()}-{number}"
+            if token in known and token not in seen:
+                seen.add(token)
+                clauses.append(token)
+        if not clauses:
+            return {}
+        return {
+            "governing_file": tool,
+            "governing_clause": " | ".join(clauses),
+            # The gate that fails is the detector; the repair boundary is the surface it
+            # guards. Naming the gate itself is honest and actionable: the fix belongs
+            # either to the gate or to what it examines, and both are reachable from here.
+            "generator": tool,
+            "repair_boundary": f"the surface guarded by {tool}",
+            "root_cause": f"GATE_FAILURE::{pathlib.Path(tool).stem.upper()}",
+            "parent_task": "ROOT",
+        }
 
     def trace_rules(self) -> dict:
         if self.rules_path.is_file():
@@ -616,16 +682,29 @@ class Pipeline:
         routes = []
         for d in defects:
             rule = self.trace_rules().get(d["probe"], {})
+            # A hand-declared route wins; otherwise the gate's own citation is read from
+            # its bytes. `derive_governance` returns {} when the gate cites no law, so an
+            # honest UNCONFIRMED still reaches the board rather than a fabricated clause.
+            derived = {} if rule else self.derive_governance(d.get("cmd", ""))
             routes.append({
-                "defect": d["id"], "governing_file": rule.get("governing_file", d["governing_file"]),
-                "governing_clause": rule.get("governing_clause", "UNCONFIRMED"),
-                "generator": rule.get("generator", "UNCONFIRMED"),
-                "repair_boundary": rule.get("repair_boundary", "UNCONFIRMED"),
+                "defect": d["id"],
+                "governing_file": rule.get("governing_file",
+                                           derived.get("governing_file", d["governing_file"])),
+                "governing_clause": rule.get("governing_clause",
+                                             derived.get("governing_clause", "UNCONFIRMED")),
+                "generator": rule.get("generator", derived.get("generator", "UNCONFIRMED")),
+                "repair_boundary": rule.get("repair_boundary",
+                                            derived.get("repair_boundary", "UNCONFIRMED")),
                 "parent_task": rule.get("parent_task", "ROOT"),
-                "layer": (self.classify(rule.get("governing_file", d["governing_file"]))
-                          if rule.get("governing_file", d["governing_file"]) not in (None, "UNCONFIRMED")
+                "layer": (self.classify(rule.get("governing_file",
+                                                 derived.get("governing_file", d["governing_file"])))
+                          if rule.get("governing_file",
+                                      derived.get("governing_file", d["governing_file"]))
+                          not in (None, "UNCONFIRMED")
                           else "UNKNOWN"),
-                "root_cause": rule.get("root_cause", d["root_cause"]),
+                "root_cause": rule.get("root_cause",
+                                       derived.get("root_cause", d["root_cause"])),
+                "derived": bool(derived and not rule),
             })
         complete = all(g["root_cause"] != "UNCONFIRMED"
                        and g["governing_clause"] != "UNCONFIRMED"
