@@ -9,18 +9,20 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**75 readable files across 8 registers.**
+**77 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 77,931 | `6b0c58a1f073` | AGENTS.md — Darkith |
-| `DARKITH.md` | 106,629 | `b817cd48a9c7` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 112,766 | `7abd2a08decd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 112,766 | `7abd2a08decd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 112,766 | `7abd2a08decd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 16,133 | `cac2034eb1c1` | TASKS — the durable board |
+| `TASKS.md` | 17,792 | `30108ee1a8b9` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 

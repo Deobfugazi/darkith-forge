@@ -1407,6 +1407,49 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
   ---
 
+  ─── NEVER #23 (NO GATE ON THE FAR SIDE OF THE PUSH — ADMISSION BEFORE LANDING) ───
+  GATE: tools/admission.py
+
+  A GATE THAT ONLY RUNS AFTER THE PUSH CANNOT PREVENT ANYTHING. IT CAN ONLY NARRATE DAMAGE.
+
+  This is measured, not asserted. On 2026-11-22 eight workflow runs on main went red in a
+  single day: 87dec398, 6102611e, 9f2413d2, 1be7ac8c. Every one of them was discovered by
+  a runner on the far side of the push. The gates were not wrong; they were late. A defect
+  that is only visible after landing is a defect that has already landed, and the next
+  agent then spends a full cycle repairing what a sixty-second preflight would have refused.
+
+  The law, in four parts:
+
+  1. NOTHING LEAVES A BRANCH THAT THE SUITE ALREADY REJECTS. `tools/admission.py rehearse`
+     runs the real `tools/ci.sh` on the EXACT bytes about to be pushed, in an isolated git
+     worktree, and refuses on any content failure. The pre-push hook is the caller.
+
+  2. COLLISIONS ARE CHECKED BEFORE THE CODE IS WRITTEN, NOT AFTER IT FAILS. Law ids, gate
+     labels in `ci.sh`, tool names, stale derived artifacts and standing drift are counted
+     by `preflight`. Two gates sharing one summary label is a silent failure, not a
+     cosmetic duplicate: the second can fail behind the first one's PASS.
+
+  3. A RED THAT RESOLVES ON PUSH IS NAMED, NOT HIDDEN. `board pulse`, the stall clock and
+     `authority gate` are functions of remote state, so they are guaranteed red in a
+     worktree. The chain gate is red for a second structural reason: it hashes the tree
+     against the CURRENT cycle's S01 baseline, so any governing-source change is unsealed
+     until a cycle runs. Both are reported in their own columns, neither blocking nor
+     suppressed. Suppressing them would be the SPI-31 loophole; conflating them with content
+     failures would make the gate unfalsifiable. The seal-pending path is not a bypass: the
+     cycle's own S14 re-runs this suite and refuses to seal on a real failure, so a broken
+     tree still cannot land through it.
+
+  4. THE REHEARSAL MUST SEE THE REAL TOOLCHAIN. `.tools/` is gitignored, so a fresh worktree
+     has none and the §19 compile proof reports L-07 OPEN -- a red that does not exist on
+     the branch. The worktree shares `.tools/` by symlink. A gate that manufactures its own
+     red is as useless as one that manufactures a green.
+
+  Self-test: `python3 tools/admission.py --selftest` proves declarations are counted while
+  prose citations are not, duplicate gate labels are caught, content reds block while
+  remote-state reds are separated, and the authority gate is classified correctly.
+
+  ---
+
   §35 — THE LOOPHOLE CLOSURE LAW (2026-11-18)
 
   ─── SPI-31 (A SKIP IS NEVER A PASS) ───
@@ -1667,6 +1710,39 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   idempotence — 12 checks, none touching the tree beside it. CI runs it, so a kit that stops
   being portable fails the build instead of failing on the Operator's next account.
 
+  ─── MUST #41 (REHEARSE ON THE REAL BYTES, IN ISOLATION, BEFORE THE PUSH) ───
+  GATE: tools/admission.py (selftest wired into tools/ci.sh)
+
+  NEVER #23 says nothing leaves a branch that the suite already rejects. MUST #41 is the
+  mechanism that makes that statement executable.
+
+  `python3 tools/admission.py` -- preflight. Counts law-id declarations (prose citations
+  are not declarations), duplicate `run "label"` registrations in ci.sh, stale derived
+  artifacts from their own generators, and standing drift outside generated trees. Cheap
+  enough to run before every edit.
+
+  `python3 tools/admission.py rehearse` -- the real suite. Creates a detached worktree at
+  HEAD, replays the uncommitted diff plus untracked files into it, symlinks the gitignored
+  `.tools/` toolchain, and runs `bash tools/ci.sh` there. The verdict separates content
+  failures (BLOCKING) from remote-state failures (resolves-on-push) and writes the full log
+  to `proof/admission/<stamp>.log`.
+
+  `python3 tools/admission.py --install-hook` -- the caller. Installs `.git/hooks/pre-push`
+  so a known-red change cannot leave the machine. `ADMISSION_BYPASS=1` overrides once, for
+  the rare case where the rehearsal itself is what is being repaired.
+
+  Why isolation and not a second run in place: a suite that rewrites derived tissue (the
+  convergence proof rewrites itself, the index regenerates) cannot measure its own
+  cleanliness in the tree it is dirtying. The worktree is the only place the question has a
+  stable answer.
+
+  Work queue:
+    R1  Wire the pre-push hook by default in `tools/fetch_toolchain.sh`'s final step, so a
+        fresh clone is admission-controlled without a manual install.
+    R2  Add `admission preflight` to the revitalization S04 diagnostic so a cycle opens with
+        its collisions already named.
+    R3  Teach preflight to compare tool names against `tools/` on origin/main, not only the
+        local tree, so two agents cannot create the same tool on two branches at once.
 
 ---
 

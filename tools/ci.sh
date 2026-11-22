@@ -180,6 +180,13 @@ if have python3; then
     if [ -f tools/tree_invariant.py ]; then
       run "tree invariant (NEVER #22: derived tree is landed)" python3 tools/tree_invariant.py --check
     fi
+    # NEVER #23 / MUST #41: every gate above runs on the far side of the push, so it can only
+    # narrate damage. This one proves the mechanism that refuses a known-red change before it
+    # leaves the machine (the real suite, on the exact bytes, in an isolated worktree). CI
+    # checks the checker; the pre-push hook is the caller.
+    if [ -f tools/admission.py ]; then
+      run "admission control (NEVER #23: preflight + rehearsal)" python3 tools/admission.py --selftest
+    fi
     if [ -f tools/comment_audit.py ]; then
       run "kotlin comment scan (whole repo)"  python3 tools/comment_audit.py
     fi
