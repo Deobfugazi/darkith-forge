@@ -41,8 +41,8 @@
     "passed": true,
     "summary": "21/21",
     "typecheck": {
-      "tool": "darkith-omega-homekeeper/node_modules/.bin/tsc",
-      "passed": true,
+      "tool": null,
+      "passed": null,
       "stderr": ""
     }
   },

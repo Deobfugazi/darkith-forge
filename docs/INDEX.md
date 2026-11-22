@@ -15,10 +15,10 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 77,931 | `6b0c58a1f073` | AGENTS.md — Darkith |
-| `DARKITH.md` | 112,766 | `7abd2a08decd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `AGENTS.md` | 78,128 | `fc8992ba526c` | AGENTS.md — Darkith |
+| `DARKITH.md` | 113,217 | `18d4ef2c1c56` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
+| `README.md` | 79,123 | `3b6bd1a44015` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
 | `TASKS.md` | 17,804 | `bd38efd6cdea` | TASKS — the durable board |
 
@@ -64,7 +64,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-clock.html` | 13,690 | `c16768265a04` | DARKITH Ω — clock |
 | `darkith-omega-contacts.html` | 9,864 | `7f954c522108` | DARKITH Ω — contacts |
 | `darkith-omega-files.html` | 28,833 | `ac55dcbb4e8e` | DARKITH Ω — files |
-| `darkith-omega-master.html` | 86,698 | `0e3c055ccfdb` | DARKITH Ω — Master Blueprint &amp; Executable Specification |
+| `darkith-omega-master.html` | 95,927 | `8c2a007de4a2` | DARKITH Ω — Master Blueprint &amp; Executable Specification |
 | `darkith-omega-media-player.html` | 60,965 | `afe4285205cb` | DARKITH Ω — media player |
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
@@ -123,7 +123,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `darkith-omega-homekeeper/README.md` | 2,479 | `beea5851ef25` | Darkith Omega Homekeeper |
+| `darkith-omega-homekeeper/README.md` | 2,634 | `eca087317209` | Darkith Omega Homekeeper |
 | `darkith-omega-homekeeper/src/reader-shell.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 
 ## Declared mirrors (one surface, two names — kept byte-identical)

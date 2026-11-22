@@ -1,0 +1,52 @@
+$ python3 tools/board_gate.py
+exit=0
+board_gate: PASS — 16 board row(s); every done item carries evidence
+
+$ python3 tools/doc_path_gate.py
+exit=0
+doc_path_gate: PASS — every cited repo path resolves (398 tokens).
+
+$ python3 tools/kb_index.py
+exit=0
+kb_index: PASS — 75 readable files, all filed, no undeclared duplicates, index current
+
+$ python3 tools/omega_deficit.py
+exit=0
+omega_deficit: PASS - W_in=8 E=0 S=8 E/W_in=0.000 absolution=YES
+
+$ python3 tools/praxis_propagate.py --check
+exit=0
+  [=] durable                      current      
+  directive: DIRECTIVE PRIME TASK — the Operator's orders, ingested from 
+  laws declared: ['MUST #20', 'MUST #21', 'MUST #22', 'MUST #26', 'MUST #27', 'MUST #28', 'MUST #30', 'MUST #33', 'MUST #35', 'MUST #36', 'MUST #41', 'MUST #17', 'NEVER #19', 'NEVER #21', 'NEVER #22', 'SPI-15', 'SPI-2', 'SPI-25', 'SPI-26', 'SPI-37', 'SPI-38', 'SPI-4', 'SPI-6'] | derived (advisory): ['MUST #31', 'MUST #37', 'MUST #38', 'MUST #42', 'SPI-11', 'SPI-19', 'SPI-29']
+praxis: PASS — 1 board(s) agree on the order in force
+
+$ python3 tools/autophagy.py --check
+exit=3
+
+==============================================================================
+  AUTOPHAGY: INCOMPLETE — 4 class(es) could not be examined
+==============================================================================
+  ok   order in force on every board      clean                    prevented by ci: praxis propagation gate
+  ok   chat gate watermark                clean                    prevented by ci: chat gate
+  ok   pulse freshness                    clean                    prevented by ci: synchrony pulse
+  ok   one-shot payload                   clean                    prevented by ci: one-shot installer
+  ok   portable kit artifact              clean                    prevented by ci: coordinasync portable kit
+  ok   unclosed block comment             clean                    prevented by ci: kotlin comment scan
+  ok   closed briefing re-opened          clean                    prevented by ci: closed briefings stay closed
+  ok   standing authority inscribed       clean                    prevented by ci: authority gate (NEVER #21)
+  ok   forge artifact in sync             clean                    prevented by ci: repo gate (sync)
+  ok   central directive on every board   clean                    prevented by ci: cns directive
+  ok   omega deficit indicator            clean                    prevented by ci: omega deficit
+  ok   generated docs index               clean                    prevented by ci: kb_index
+  ok   board law citations are real       clean                    prevented by ci: board law citations
+  ok   phantom gate command               clean                    prevented by ci: revitalization selftest
+ SKIP  phantom source tree                skipped                  prevented by ci: phantom source tree
+ SKIP  half a toolchain                   skipped                  prevented by ci: toolchain integrity
+  ok   board header intact                clean                    prevented by ci: board header intact
+ SKIP  uncommitted derived drift          skipped                  prevented by ci: tree invariant (NEVER #22)
+ SKIP  uncommitted general drift          skipped                  prevented by ci: drift gate (NEVER #22)
+------------------------------------------------------------------------------
+  passes: 1   classes: 19   residue: 0   skipped: 4
+==============================================================================
+

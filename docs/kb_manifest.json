@@ -3,16 +3,16 @@
   "count": 75,
   "files": [
     {
-      "bytes": 77931,
+      "bytes": 78128,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "6b0c58a1f0739e0c92678afdfb8e25f26ad975e0b7e2f474035c82226d4cb398"
+      "sha256": "fc8992ba526cc403cd6b7cd78cd535a1478378241b4a8fdbc1f01736fe96e8e1"
     },
     {
-      "bytes": 112766,
+      "bytes": 113217,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "7abd2a08decdca85c37078da6a0b8be8b259f8fd68241562ee73b79e2c7a72d8"
+      "sha256": "18d4ef2c1c56ab5db7daccf31536fa27861a543b2b7c1747a0062af63fcc60fb"
     },
     {
       "bytes": 3356,
@@ -21,10 +21,10 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 68196,
+      "bytes": 79123,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "b2394283f3bf137b926dde013079a31849f9a44ae30c866c3d2b1a1d288a0578"
+      "sha256": "3b6bd1a4401507fb8dec21cba10e3e4d33d1309111f880449432ad06591093af"
     },
     {
       "bytes": 8801,
@@ -237,10 +237,10 @@
       "sha256": "ac55dcbb4e8eb0ec9379e5c46f4acc304e17226a6cfb60232b18da245aa5a068"
     },
     {
-      "bytes": 86698,
+      "bytes": 95927,
       "path": "darkith-omega-master.html",
       "register": "C-skillbase",
-      "sha256": "0e3c055ccfdb904771948696f8874ec57ab47a1c03816e61b9923fe35adad079"
+      "sha256": "8c2a007de4a21b56adadeff242040fbc212888aa55809d01013f4384a9769fb9"
     },
     {
       "bytes": 60965,
@@ -441,10 +441,10 @@
       "sha256": "5ccc1e4fbe07096e9b1b3e05f2e7001e66ed51cb5a7ee51bf4871bbd0ead24e9"
     },
     {
-      "bytes": 2479,
+      "bytes": 2634,
       "path": "darkith-omega-homekeeper/README.md",
       "register": "H-homekeeper-app",
-      "sha256": "beea5851ef25e0acab2bd9cb05a5949ae7d34b075a0dd9f2a3777bb31a001cf7"
+      "sha256": "eca08731720990bc7839f6cf96dc4f6ce9c936d317659c467091512642910c0c"
     },
     {
       "bytes": 24606,
