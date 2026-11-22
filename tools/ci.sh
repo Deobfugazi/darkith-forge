@@ -127,6 +127,15 @@ if have python3; then
     if [ -f tools/tests/run_feed_test.py ]; then
       run "run feed + derived governance" python3 tools/tests/run_feed_test.py
     fi
+    # The communal contribution ledger (NT XII). A mint's value is that its witness can be
+    # re-run by anyone and print the same token, so the chain gate proves no entry was
+    # rewritten and the selftest proves a porous barrier still blocks promotion.
+    if [ -f tools/mint_ledger.py ]; then
+      run "mint ledger chain"             python3 tools/mint_ledger.py verify
+    fi
+    if [ -f tools/tests/mint_ledger_test.py ]; then
+      run "mint ledger trial barrier"     python3 tools/tests/mint_ledger_test.py
+    fi
     # Praxis gate: the order in force must be present on EVERY board that can steer work —
     # the durable board, each live session board, each sibling worktree. MUST #26 pushes the
     # board; this makes the directive itself travel with it, so no worker carries out a
