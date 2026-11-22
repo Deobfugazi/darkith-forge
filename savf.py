@@ -968,6 +968,18 @@ def selftest(n=2000, seed=11):
 # ======================================================================
 def gate(root, src, test_cmd, reach_args, max_mutants, seed):
     res, notes = {}, {}
+
+    def harness_error(phi, err):
+        """A broken harness input is unattested, not a lie.
+
+        reach/mutate raise when the caller's --reach-test module cannot be
+        imported or the baseline tests are red.  That says nothing about the
+        source under audit, so calling it a fail convicted correct code and
+        turned the verdict into LIED (same rule as the too-deep-to-parse case
+        below).  It stays marginal: the evidence did not run."""
+        res[phi] = "marginal"
+        notes[phi] = "harness error, nothing attested: " + str(err).replace("\n", " ")[:300]
+
     ok, probs = check_freeze()
     res["phi0"], notes["phi0"] = ("pass" if ok else "fail"), "; ".join(probs) or "contract unchanged since freeze"
     lock = load_lock() or {"thresholds": {}, "exemptions": []}
@@ -985,7 +997,7 @@ def gate(root, src, test_cmd, reach_args, max_mutants, seed):
         notes["phi4"] = f"{r['entered']}/{r['functions']} functions entered; tests exit {r['tests_exit']}" + \
             "".join(f"\n      never entered: {m['file']}:{m['line']} {m['function']}" for m in r["missed"][:8])
     except Exception as e:
-        res["phi4"], notes["phi4"] = "fail", f"trace error: {e}"
+        harness_error("phi4", e)
     try:
         m = mutate(root, src_files, test_cmd, max_mutants, seed)
         sc = m["score"]
@@ -993,7 +1005,7 @@ def gate(root, src, test_cmd, reach_args, max_mutants, seed):
         notes["phi7"] = f"killed {m['killed']}/{m['mutants']} (theta {th['theta_mut']})" + \
             "".join(f"\n      survived: {s['file']}:{s['line']}" for s in m["survivors"][:8])
     except Exception as e:
-        res["phi7"], notes["phi7"] = "fail", f"mutation error: {e}"
+        harness_error("phi7", e)
     try:
         ev = load_evidence()
     except SystemExit as e:

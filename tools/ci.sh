@@ -415,6 +415,14 @@ fi
     run "savf axis cli" node tools/test_savf_axis_cli.js
   fi
 
+  # Verdict honesty: a mistyped --reach-test or red baseline tests made the gate
+  # report LIED, the tool's strongest accusation, against code that was never
+  # examined. These tests pin REVIEW as the answer for an unattested harness
+  # error while keeping real tamper at LIED and weak tests at BLOCKED.
+  if have node && [ -f tools/test_savf_gate_verdict.js ]; then
+    run "savf gate verdict" node tools/test_savf_gate_verdict.js
+  fi
+
   # The reader's interaction surface, driven in a real browser from file://. The
   # shim test above proves the corpus and renderer; only a real click proves the
   # listeners are wired. Skipped when playwright is absent.
