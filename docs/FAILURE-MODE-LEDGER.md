@@ -202,6 +202,67 @@ without a permission round trip.
 
 ---
 
+## FM-09 — Verified on disk, never landed
+
+**What happened.** A revitalization cycle closed 16/16, sealed its sixteen
+receipts, and wrote its own verdict into `TASKS.md`. Then it stopped. Three
+gates went red at once:
+
+```
+board_pulse        FAIL  TASKS.md has uncommitted changes
+convergence_gate   FAIL  tree: 1 file whose bytes differ from the index
+authority_gate     FAIL  1 off-schedule stall (budget 0s)
+```
+
+All three were reporting one fact. None of them was permitted to fix it — they
+are gates: they measure and refuse. The red was then blamed on whichever commit
+happened to be newest.
+
+**Root cause.** The chain gate hashes the **working tree**, not a commit. So the
+cycle passed it against bytes no checkout would ever contain, and CI — which
+checks out `HEAD` — failed the same gate. The repairer already existed:
+`tools/board_pulse.sh` with no arguments commits and pushes, and its own header
+says it commits the board the moment it changes. **Nothing called it.**
+
+That is FM-03 ("a correct table with no caller") repeating, with FM-05 ("a gate
+masquerading as a correctness gate") as its cause. The table was correct; the
+caller was missing. It is also why the run read as a mysterious multi-gate
+failure: four gates measuring drift, none of them able to repair it, and no
+single surface naming the drift as the defect.
+
+**Guard.**
+
+| guard | file | what it does |
+|---|---|---|
+| `tree_invariant` | `tools/tree_invariant.py` | detects unlanded derived drift; `--repair` verifies the sealed bytes on disk, lands, then asserts clean |
+| `Class_("uncommitted derived drift")` | `tools/autophagy.py` | the caller — placed last so it lands whatever the other classes left dirty in one pass |
+| `land_sealed_cycle` | `tools/revitalization.py` | closure lands the cycle at the moment it is sealed and still verified |
+| `tree invariant` gate | `tools/ci.sh` | names the drift as its own defect instead of leaving it to be misattributed |
+
+**Two things the repair deliberately does not do, both measured.**
+
+1. It does not regenerate. `chat_gatekeeper --write` ingests new conversation
+   state and `praxis_propagate` rewrites the board's directive block, so running
+   the generators on a **clean** tree produces seven modified files. A repair
+   that regenerates manufactures drift in order to fix drift.
+2. It does not blanket-commit. `--repair` refuses when the sealed chain rejects
+   the bytes on disk, because a new or edited file needs a **new cycle** to seal
+   it. A `git add -A && git commit` would launder a hand-edit or an unfinished
+   generator run into history with a green light attached.
+
+**Proof.** `tools/tree_invariant.py --selftest` — the detector fires on an edited
+file, still fires when the edit is merely staged, goes silent once committed, and
+a rollback restores the exact prior bytes. Verified against the real repository
+in a throwaway worktree at three states: sealed-but-uncommitted PASS (what the
+cycle saw), pre-cycle FAIL (what CI saw), hand-edited sealed file FAIL (so a
+tamper is refused, not laundered).
+
+**The lesson, stated plainly.** A gate that cannot repair is half a gate. Every
+measured defect needs a caller as well as a checker, or the checker just converts
+one defect into N red lines and a hunt for a culprit.
+
+---
+
 ## The summary table
 
 | id | failure | guard | status |
@@ -214,5 +275,6 @@ without a permission round trip.
 | FM-06 | stale seal baseline | seal cycle + committed artefacts | **closed** |
 | FM-07 | lost output, event-log only | releases + device watchdog | **closed; log held back by design** |
 | FM-08 | the stall | NEVER #21 | **closed** |
+| FM-09 | verified on disk, never landed | NEVER #22 + tree_invariant + autophagy class | **closed** |
 
 A failure not in this file is a defect in this file. Add it.

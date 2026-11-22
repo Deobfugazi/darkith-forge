@@ -20,7 +20,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 14,236 | `816502ea7598` | TASKS — the durable board |
+| `TASKS.md` | 16,133 | `cac2034eb1c1` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -29,7 +29,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
-| `docs/FAILURE-MODE-LEDGER.md` | 9,387 | `588bb52faf27` | DARKITH — FAILURE MODE LEDGER |
+| `docs/FAILURE-MODE-LEDGER.md` | 12,778 | `79f1bcf004e6` | DARKITH — FAILURE MODE LEDGER |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/GITHUB-STUDIO-MANUAL.md` | 18,292 | `fbf7d5d0f43a` | GITHUB STUDIO — the uncut operator manual |
 | `docs/NT-XII-IN-THE-OPEN.md` | 11,254 | `dbf7a79f1821` | NT XII IN THE OPEN — a contribution ledger that mints re-runnable clos |

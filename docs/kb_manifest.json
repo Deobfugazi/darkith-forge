@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 14236,
+      "bytes": 16133,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "816502ea7598abf30f7424fb0b3ade2071521984b24a2050da5f03e2a77fb363"
+      "sha256": "cac2034eb1c1329532b72b6c5b8e5866bf71965d82c41e8affd60a33bd29ab39"
     },
     {
       "bytes": 9608,
@@ -57,10 +57,10 @@
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
     },
     {
-      "bytes": 9387,
+      "bytes": 12778,
       "path": "docs/FAILURE-MODE-LEDGER.md",
       "register": "B-knowledge",
-      "sha256": "588bb52faf271092a053a0005c562287c14b2150615dd856d4ff3fcbe2260e33"
+      "sha256": "79f1bcf004e6709605cb809a3dcdfcffd64f6e606bb23cce8c159340c4311b80"
     },
     {
       "bytes": 70065,
