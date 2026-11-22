@@ -1,3 +1,7 @@
+> **CORRECTION / SUPERSESSION — 2026-11-22:** The issuance interpretation in this baseline is superseded by [NT-XII-ISSUANCE-DOCTRINE-CORRECTION-AND-ARCHITECTURE-2026-11-22.md](NT-XII-ISSUANCE-DOCTRINE-CORRECTION-AND-ARCHITECTURE-2026-11-22.md). In particular, recipient purchase, acceptance, adoption, or market uptake is **not** a prerequisite for recognizing the verified value of an NT XII treatise. The mintable achievement is the original, reproducible, independently examinable solution to a demonstrable unresolved pain point under the declared accessibility floor. Derivation exhaustion is provenance/cost evidence, not a standalone valuation formula. Read the correction addendum as authoritative wherever this baseline conflicts with it.
+
+---
+
 # NT XII — Global Value Ledger Research Baseline
 Research record R&D-NTXII-001
 Date: 2026-11-22 (Asia/Manila, UTC+8)
