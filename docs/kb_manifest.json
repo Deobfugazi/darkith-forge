@@ -1,24 +1,12 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 77,
+  "count": 75,
   "files": [
     {
       "bytes": 77931,
       "path": "AGENTS.md",
       "register": "A-apparatus",
       "sha256": "6b0c58a1f0739e0c92678afdfb8e25f26ad975e0b7e2f474035c82226d4cb398"
-    },
-    {
-      "bytes": 112766,
-      "path": "DARKITH.md",
-      "register": "A-apparatus",
-      "sha256": "7abd2a08decdca85c37078da6a0b8be8b259f8fd68241562ee73b79e2c7a72d8"
-    },
-    {
-      "bytes": 112766,
-      "path": "DARKITH.md",
-      "register": "A-apparatus",
-      "sha256": "7abd2a08decdca85c37078da6a0b8be8b259f8fd68241562ee73b79e2c7a72d8"
     },
     {
       "bytes": 112766,
