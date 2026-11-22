@@ -127,7 +127,7 @@ if have python3; then
     if [ -f tools/tests/run_feed_test.py ]; then
       run "run feed + derived governance" python3 tools/tests/run_feed_test.py
     fi
-    # NEVER #22 / MUST #41: the general drift gate is a CLASS fix. The suite drives REAL
+    # NEVER #22 / MUST #42: the general drift gate is a CLASS fix. The suite drives REAL
     # temporary git repos: detector fires on dirt, stays silent on a newborn tree, and
     # the deterministic repair provably converges.
     if [ -f tools/tests/drift_gate_test.py ]; then

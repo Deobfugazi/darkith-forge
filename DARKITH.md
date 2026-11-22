@@ -1670,7 +1670,7 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
 ---
 
-─── MUST #41 (DRIFT IS AUTO-REPAIRED — DETECTOR, REPAIR, GATE, TEST) ───
+─── MUST #42 (DRIFT IS AUTO-REPAIRED — DETECTOR, REPAIR, GATE, TEST) ───
   GATE: tools/drift_gate.py
   The class fix for NEVER #22 must stay whole. Every agent converging on this defect
   lands ALL FOUR parts, never a fragment:

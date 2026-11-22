@@ -10,7 +10,7 @@ WHY THIS EXISTS
     root cause: edits sitting uncommitted between stages of the same corrective loop.
     Operator directive: drift is a permanent failure mode, and the fix is a CLASS fix —
     a detector, a deterministic repair, a prevention gate in CI, and a test that proves
-    all three (MUST #41). Converges with tree_invariant (NEVER #22, the derived-artifact
+    all three (MUST #42). Converges with tree_invariant (NEVER #22, the derived-artifact
     subclass); the general class was still ungated and unfixable.
 
 Exit contract (a gate must be exact about what it refuses to judge):
@@ -25,17 +25,35 @@ import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
+# The jurisdiction boundary is written down once, in authority_gate.is_generated(). Gates
+# rewrite proof/convergence.json and the other generated trees on every CI run, so counting
+# them here would make this gate red forever -- the "gate that cannot pass" failure this
+# project already burned once. Re-deriving the list would be a second opinion about whose
+# job a dirty file is, and the two would drift.
+sys.path.insert(0, str(ROOT / "tools"))
+try:
+    from authority_gate import is_generated
+except Exception:  # noqa: BLE001 - a missing authority_gate must not silently widen scope
+    def is_generated(path: str) -> bool:  # type: ignore[misc]
+        return path.startswith(("proof/", "delivery/", "dl/")) or "__pycache__/" in path
+
 
 def git(args, root=ROOT):
     return subprocess.run(["git"] + args, cwd=str(root), capture_output=True, text=True)
 
 
 def find_drift(root=ROOT):
-    """Return (state, paths); state is 'clean', 'drift', or 'skip'."""
+    """Return (state, paths); state is 'clean', 'drift', or 'skip'.
+
+    Gate-written trees are excluded: their dirt is the gate's own output, not withheld work.
+    What remains is the real class -- TASKS.md, docs/INDEX.md and the other artifacts a
+    writer edits and forgets to land.
+    """
     st = git(["status", "--porcelain"], root=root)
     if st.returncode != 0:
         return 'skip', [st.stderr.strip() or 'git unavailable']
-    paths = sorted(l for l in st.stdout.splitlines() if l.strip())
+    paths = sorted(l for l in st.stdout.splitlines()
+                   if l.strip() and not is_generated(l[3:]))
     return ("drift" if paths else "clean"), paths
 
 

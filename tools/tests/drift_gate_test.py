@@ -2,15 +2,15 @@
 """drift_gate_test.py — the drift gate is judged like any law: by running it (SPI-38).
 
 Drives real temporary git repositories, never mocks: the detector must fire on a dirty
-tree, stay silent on a newborn one, and the deterministic repair (NEVER #22 / MUST #41)
+tree, stay silent on a newborn one, and the deterministic repair (NEVER #22 / MUST #42)
 must converge and leave a real commit. A porous gate that lets its own phantom through
 is worse than no gate, so the breach cases are the point of this file."""
 import pathlib
 import subprocess
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
+ROOT = pathlib.Path(__file__).resolve().parent.parent  # tools/
+sys.path.insert(0, str(ROOT))
 
 import drift_gate as g  # noqa: E402
 
@@ -66,7 +66,13 @@ def main():
     check("repair converges with a remote", s_state == "clean", str(s_paths))
     heads = subprocess.run(["git", "rev-list", "HEAD"], cwd=remote_dir,
                            capture_output=True, text=True).stdout.splitlines()
-    check("the push really landed", len(heads) == 1, str(len(heads)) + " head on the remote")
+    # the seed commit plus the repair commit; the point is that the repair is ON the remote,
+    # so assert the remote head equals local head rather than counting to a magic number.
+    local_head = g.git(["rev-parse", "HEAD"], root=shared).stdout.strip()
+    remote_head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=remote_dir,
+                                 capture_output=True, text=True).stdout.strip()
+    check("the push really landed", remote_head == local_head and bool(remote_head),
+          f"remote {remote_head[:8]} vs local {local_head[:8]}, {len(heads)} commit(s)")
 
     print("== a repair on a clean tree is a no-op, not a stray commit ==")
     before = len(g.git(['rev-list', 'HEAD'], root=dirty).stdout.splitlines())
@@ -79,6 +85,22 @@ def main():
     with tempfile.TemporaryDirectory() as bare:
         state, _ = g.find_drift(bare)
         check("not a repo -> skip", state == "skip", state)
+
+    print("== gate-written trees are the gate's own output, not drift ==")
+    generated = fresh_repo()
+    (generated / "proof").mkdir()
+    (generated / "proof" / "convergence.json").write_text('{"v":1}\n')
+    subprocess.run(["git", "add", "-A"], cwd=generated, check=True)
+    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t",
+                    "commit", "-q", "-m", "seed proof"], cwd=generated, check=True)
+    # convergence_gate rewrites this file on every CI run; counting it would make the gate
+    # red forever, the "gate that cannot pass" failure this project already burned once.
+    (generated / "proof" / "convergence.json").write_text('{"v":2}\n')
+    state, paths = g.find_drift(generated)
+    check("a rewritten generated file is not drift", state == "clean", f"{state} {paths}")
+    (generated / "TASKS.md").write_text("half a repair\n")
+    state, paths = g.find_drift(generated)
+    check("real drift beside generated output still fires", state == "drift", str(paths))
 
     print()
     if FAILS:
