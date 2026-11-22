@@ -5,62 +5,21 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-21T21:33:25.028656`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-22T03:38:19.894937`. This section is regenerated, never hand-edited._
 >
-> **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-37, SPI-38, SPI-4, SPI-6
+> **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST17, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-4, SPI-6
 >
-> 1. **[forbid]** Make sure to fucking consolidate and accurately deduplicate the 2 documents below to be integrated as part/introduction of my repo's READMe/About The…
->    - prompt index `24241` at `2026-11-21T08:25:28.430885`
->    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-4, SPI-6
->    - sha256 `7c0be01179366b5e`
-> 2. **[order]** Fucking fix the uploaded html god damnit! The ai that fucking generated it lazily concantated disparate uploaded documents without idempotently dedup…
->    - prompt index `24904` at `2026-11-21T16:18:11.098231`
->    - sha256 `96ca958a8027f1c8`
-> 3. **[forbid]** Done. The file is fixed and installed. ## What was actually wrong Not "lazy concatenation." A single **escaping bug** that cascaded into everything e…
->    - prompt index `25423` at `2026-11-21T16:45:18.355266`
->    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #30, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-2, SPI-4, SPI-6
->    - sha256 `166ad7e130f177e1`
-> 4. **[forbid]** What a fucking dumb fuck! So you did run it in chromium?i demanded the idempotent deduplication of my unified omega architecture so the reader is the…
->    - prompt index `25454` at `2026-11-21T17:00:18.931061`
->    - sha256 `3e044bcf81fef2ad`
-> 5. **[forbid]** I told you fucker!!! I told you the omega is the ceiling of the best UIX ergonomic design and costumizability!!!!! Yawa pisti animaaaaaaal!!!🤬🤬🤬🤬🤬 Pi…
->    - prompt index `25997` at `2026-11-21T17:44:25.920666`
->    - sha256 `425c6fdd6962b28a`
-> 6. **[order]** IPv4=192.168.100.3 (wlan0) Manufacturer=TECNO Model=TECNO KM4k Device=TECNO-KM4k Android=15: Vanilla ice cream (35) OS=Linux Processor=arm64-v8a widt…
->    - prompt index `26146` at `2026-11-21T17:49:52.317526`
->    - sha256 `09ab19a3f03dea2b`
-> 7. **[order]** Status line correct: **"native · 0.6 KB · HTTP 200"**. My test is reading the wrong iframe. Let me target the browser frame. Those 2 are `file://`-on…
->    - prompt index `26768` at `2026-11-21T18:41:03.416154`
->    - **Coupled laws:** MUST #20, MUST #26, MUST #27, SPI-2, SPI-4, SPI-6
->    - sha256 `f4cf255b35de7eeb`
-> 8. **[forbid]** Fucking give me the direct operator action uri god damnit! That corruption polluted the prior running prompt i had for an entire ephimeral session th…
->    - prompt index `26969` at `2026-11-21T18:57:44.670557`
->    - sha256 `7092c4280e2792b2`
-> 9. **[forbid]** Look how the fuck does all of this get automated that actually fucking ping my local device, this literal hardware im handholding! I dont care about …
->    - prompt index `27154` at `2026-11-21T19:23:15.061325`
->    - **Coupled laws:** MUST #26, MUST #27, MUST #33, SPI-15, SPI-37, SPI-38
->    - sha256 `7affa408ae2d9d24`
-> 10. **[forbid]** Wtf which part of my formulary logic directed you to stall commiting it as the fucking autofixing i need!?🤬 The directive is the automation! Never a …
->    - prompt index `27531` at `2026-11-21T19:46:44.043520`
->    - **Coupled laws:** MUST #35, MUST #36, NEVER #21, SPI-37, SPI-38
->    - sha256 `f9a74786faa8e9b7`
-> 11. **[forbid]** Listen you fuckers, i still dont get the fucking UI action functions and their fucking modular buttons, wtf are Releases, PULL, PUSH, Commit, PRs, Ma…
->    - prompt index `27586` at `2026-11-21T20:06:59.693698`
->    - **Coupled laws:** MUST #33, SPI-15
->    - sha256 `624a0dd666003ed2`
-> 12. **[order]** Why was your previous pushed commit failing the repo's tests what the fuck is going on with my tests!!🤬🤬🤬
->    - prompt index `27639` at `2026-11-21T20:08:49.501424`
->    - sha256 `fcfd3322fde8f725`
-> 13. **[order]** What? You are not going to fucking fix a broken fucking module in my repo just because what? Still need my fucking approval again? Knowing how fuckin…
->    - prompt index `27725` at `2026-11-21T20:18:25.705365`
->    - sha256 `9fb7dc653599d0cf`
-> 14. **[order]** The board's task check to-do list, is it sequenced by order of critical urgent priority rating as severity autofilling fixes triage is it and always …
->    - prompt index `28408` at `2026-11-21T21:33:25.028656`
+> 1. **[order]** The board's task check to-do list, is it sequenced by order of critical urgent priority rating as severity autofilling fixes triage is it and always …
+>    - prompt index `29212` at `2026-11-22T02:08:51.093156`
 >    - **Coupled laws:** MUST #26, MUST #27
 >    - sha256 `f7443ee46c46ec34`
+> 2. **[forbid]** **DIRECTIVE COMPLETE.** CI: PASS — 95 gates, 0 failures, 0 skipped. Tree clean, `HEAD == origin/main` at `52209b8`. ## The answer to your question: n…
+>    - prompt index `29433` at `2026-11-22T03:38:19.894937`
+>    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST17, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-4, SPI-6
+>    - sha256 `c89284061f51dbf6`
 >
 
-**Coupled laws (declared by the directive):** `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `NEVER #19`, `NEVER #21`, `SPI-15`, `SPI-2`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-6`
+**Coupled laws (declared by the directive):** `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #17`, `NEVER #21`, `SPI-15`, `SPI-2`, `SPI-4`, `SPI-6`
 
 | law | heading |
 |---|---|
@@ -69,20 +28,17 @@
 | `MUST #22` | STATE THE GENERALIZATION |
 | `MUST #26` | REAL-TIME BOARD PUSH |
 | `MUST #27` | PARALLEL CONVERGENCE IS PROVEN, NOT ASSERTED |
-| `MUST #30` | THE FRACTURE SCOUT — NOVELTY FROM REAL WORLD FRACTURES |
 | `MUST #33` | THE CHARGE IS CALIBRATED OR WITHDRAWN |
 | `MUST #35` | STANDING AUTHORITY TO PUBLISH — NEVER ASK TO PUSH |
 | `MUST #36` | NO OFF-SCHEDULE DWELL — STALL IS MEASURED AS TIME |
-| `NEVER #19` | NO UNEXAMINED SOURCE |
+| `MUST #17` | GENERATED COPIES |
 | `NEVER #21` | NO WAITING FOR APPROVAL THAT ALREADY EXISTS — THE ANTI-STALL LAW |
 | `SPI-15` | A LAW WITHOUT A GATE IS A NOTE |
 | `SPI-2` | READ THE BYTES FIRST |
-| `SPI-37` | A QUANTITY CROSSES A BOUNDARY WITH ITS UNIT |
-| `SPI-38` | A LAW MUST BE RUN, NOT READ |
 | `SPI-4` | LOG TO DISK, READ FROM DISK |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #31`, `MUST #37`, `MUST #38`, `MUST #40`, `SPI-11`, `SPI-17`, `SPI-19`, `SPI-21`, `SPI-25`, `SPI-29`, `SPI-31`, `SPI-39`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #40`, `SPI-19`, `SPI-29`
 
 <!-- PRAXIS:END -->
 
@@ -262,58 +218,17 @@ Named skips this cycle (SKIP is never PASS): install gate, manual-skip:firefox u
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-21T21:33:25.028656`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-22T03:38:19.894937`. This section is regenerated, never hand-edited._
 
-**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-37, SPI-38, SPI-4, SPI-6
+**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST17, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-4, SPI-6
 
-1. **[forbid]** Make sure to fucking consolidate and accurately deduplicate the 2 documents below to be integrated as part/introduction of my repo's READMe/About The…
-   - prompt index `24241` at `2026-11-21T08:25:28.430885`
-   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-4, SPI-6
-   - sha256 `7c0be01179366b5e`
-2. **[order]** Fucking fix the uploaded html god damnit! The ai that fucking generated it lazily concantated disparate uploaded documents without idempotently dedup…
-   - prompt index `24904` at `2026-11-21T16:18:11.098231`
-   - sha256 `96ca958a8027f1c8`
-3. **[forbid]** Done. The file is fixed and installed. ## What was actually wrong Not "lazy concatenation." A single **escaping bug** that cascaded into everything e…
-   - prompt index `25423` at `2026-11-21T16:45:18.355266`
-   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #30, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-2, SPI-4, SPI-6
-   - sha256 `166ad7e130f177e1`
-4. **[forbid]** What a fucking dumb fuck! So you did run it in chromium?i demanded the idempotent deduplication of my unified omega architecture so the reader is the…
-   - prompt index `25454` at `2026-11-21T17:00:18.931061`
-   - sha256 `3e044bcf81fef2ad`
-5. **[forbid]** I told you fucker!!! I told you the omega is the ceiling of the best UIX ergonomic design and costumizability!!!!! Yawa pisti animaaaaaaal!!!🤬🤬🤬🤬🤬 Pi…
-   - prompt index `25997` at `2026-11-21T17:44:25.920666`
-   - sha256 `425c6fdd6962b28a`
-6. **[order]** IPv4=192.168.100.3 (wlan0) Manufacturer=TECNO Model=TECNO KM4k Device=TECNO-KM4k Android=15: Vanilla ice cream (35) OS=Linux Processor=arm64-v8a widt…
-   - prompt index `26146` at `2026-11-21T17:49:52.317526`
-   - sha256 `09ab19a3f03dea2b`
-7. **[order]** Status line correct: **"native · 0.6 KB · HTTP 200"**. My test is reading the wrong iframe. Let me target the browser frame. Those 2 are `file://`-on…
-   - prompt index `26768` at `2026-11-21T18:41:03.416154`
-   - **Coupled laws:** MUST #20, MUST #26, MUST #27, SPI-2, SPI-4, SPI-6
-   - sha256 `f4cf255b35de7eeb`
-8. **[forbid]** Fucking give me the direct operator action uri god damnit! That corruption polluted the prior running prompt i had for an entire ephimeral session th…
-   - prompt index `26969` at `2026-11-21T18:57:44.670557`
-   - sha256 `7092c4280e2792b2`
-9. **[forbid]** Look how the fuck does all of this get automated that actually fucking ping my local device, this literal hardware im handholding! I dont care about …
-   - prompt index `27154` at `2026-11-21T19:23:15.061325`
-   - **Coupled laws:** MUST #26, MUST #27, MUST #33, SPI-15, SPI-37, SPI-38
-   - sha256 `7affa408ae2d9d24`
-10. **[forbid]** Wtf which part of my formulary logic directed you to stall commiting it as the fucking autofixing i need!?🤬 The directive is the automation! Never a …
-   - prompt index `27531` at `2026-11-21T19:46:44.043520`
-   - **Coupled laws:** MUST #35, MUST #36, NEVER #21, SPI-37, SPI-38
-   - sha256 `f9a74786faa8e9b7`
-11. **[forbid]** Listen you fuckers, i still dont get the fucking UI action functions and their fucking modular buttons, wtf are Releases, PULL, PUSH, Commit, PRs, Ma…
-   - prompt index `27586` at `2026-11-21T20:06:59.693698`
-   - **Coupled laws:** MUST #33, SPI-15
-   - sha256 `624a0dd666003ed2`
-12. **[order]** Why was your previous pushed commit failing the repo's tests what the fuck is going on with my tests!!🤬🤬🤬
-   - prompt index `27639` at `2026-11-21T20:08:49.501424`
-   - sha256 `fcfd3322fde8f725`
-13. **[order]** What? You are not going to fucking fix a broken fucking module in my repo just because what? Still need my fucking approval again? Knowing how fuckin…
-   - prompt index `27725` at `2026-11-21T20:18:25.705365`
-   - sha256 `9fb7dc653599d0cf`
-14. **[order]** The board's task check to-do list, is it sequenced by order of critical urgent priority rating as severity autofilling fixes triage is it and always …
-   - prompt index `28408` at `2026-11-21T21:33:25.028656`
+1. **[order]** The board's task check to-do list, is it sequenced by order of critical urgent priority rating as severity autofilling fixes triage is it and always …
+   - prompt index `29212` at `2026-11-22T02:08:51.093156`
    - **Coupled laws:** MUST #26, MUST #27
    - sha256 `f7443ee46c46ec34`
+2. **[forbid]** **DIRECTIVE COMPLETE.** CI: PASS — 95 gates, 0 failures, 0 skipped. Tree clean, `HEAD == origin/main` at `52209b8`. ## The answer to your question: n…
+   - prompt index `29433` at `2026-11-22T03:38:19.894937`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST17, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-4, SPI-6
+   - sha256 `c89284061f51dbf6`
 
 <!-- CHAT-GATE:END -->
