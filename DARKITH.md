@@ -1667,6 +1667,32 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   idempotence — 12 checks, none touching the tree beside it. CI runs it, so a kit that stops
   being portable fails the build instead of failing on the Operator's next account.
 
+
+---
+
+─── MUST #41 (DRIFT IS AUTO-REPAIRED — DETECTOR, REPAIR, GATE, TEST) ───
+  GATE: tools/drift_gate.py
+  The class fix for NEVER #22 must stay whole. Every agent converging on this defect
+  lands ALL FOUR parts, never a fragment:
+
+    1. DETECT — `python3 tools/drift_gate.py --check` fails on any uncommitted
+       work in the tree, names every path, and exits 3 (a named skip) only where git
+       cannot run. Never a warn. The derived-artifact subclass remains gated by
+       `tools/tree_invariant.py` (NEVER #22, the missing-caller law).
+    2. REPAIR — `python3 tools/drift_gate.py --fix` stages, commits and pushes
+       in one deterministic sweep. It never force-pushes, never rewrites history, and
+       never discards another agent's edits.
+    3. PREVENT — the class is registered in the CLASSES list of
+       `tools/autophagy.py` with prevent "ci: drift gate (NEVER #22)", and
+       `tools/ci.sh` runs the gate hard. The WARN variant is abolished forever.
+    4. PROVE — `tools/tests/drift_gate_test.py` drives real temporary git
+       repositories and shows the detector fires on a dirty tree, stays silent on a
+       clean one, and the repair converges to a real commit.
+
+  Convergence bar: `python3 tools/autophagy.py --check` reports the class clean,
+  the drift suite PASSes, and `bash tools/ci.sh` exits 0 with the drift gate
+  listed. A detector with no repair, a WARN, or an untested splice is not a fix.
+
 ## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
 
 The Operator's standing demand, codified so it is a property of the apparatus and not of any
