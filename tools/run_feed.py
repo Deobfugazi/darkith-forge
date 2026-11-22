@@ -53,6 +53,9 @@ import sys
 import time
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import omega_time  # noqa: E402  the Operator's clock (MUST #15)
+
 FEED = ROOT / "proof" / "run_feed.jsonl"
 
 # A run whose last entry is older than this, with no terminal, is severed. Fifteen
@@ -64,7 +67,9 @@ TERMINAL_KINDS = ("terminal",)
 
 
 def now() -> str:
-    return _dt.datetime.now(_dt.timezone.utc).isoformat()
+    # The Operator's clock (MUST #15): one implementation, Asia/Manila. A bare wall-clock
+    # here would be a second, forked time source.
+    return omega_time.iso()
 
 
 def identity() -> dict:
@@ -182,7 +187,7 @@ def _age_seconds(entry: dict) -> float:
         stamp = _dt.datetime.fromisoformat(entry["ts"])
     except (KeyError, ValueError):
         return float("inf")
-    return (_dt.datetime.now(_dt.timezone.utc) - stamp).total_seconds()
+    return (omega_time.now() - stamp).total_seconds()
 
 
 def severed(timeout: int = SEVERED_AFTER_SECONDS) -> list:
@@ -216,8 +221,8 @@ def render(limit: int = 40) -> list:
         return ["_The feed is empty. No agentic round trip has reported yet._"]
     cut = entries[-limit:]
     lines = [
-        "| # | when (UTC) | run | stage | verdict | contributor | detail |",
-        "|---|---|---|---|---|---|---|",
+        f"| # | when ({omega_time.TZ_NAME}) | run | stage | verdict | contributor | tab | detail |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for entry in cut:
         who = f"{entry.get('agent', '?')}/{entry.get('model', '?')}"
@@ -225,6 +230,7 @@ def render(limit: int = 40) -> list:
             f"| {entry.get('seq')} | {entry.get('ts', '')[11:19]} | "
             f"`{entry.get('run_id', '?')}` | {entry.get('stage') or '—'} | "
             f"{entry.get('verdict') or entry.get('kind')} | {who} | "
+            f"{entry.get('tab') or 'UNKNOWN'} | "
             f"{(entry.get('detail') or '').replace('|', '/')[:90]} |")
     return lines
 
