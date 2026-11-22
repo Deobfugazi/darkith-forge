@@ -111,16 +111,18 @@ def main():
     g.git(["add", "-A"], root=generated)
     g.git(["commit", "-q", "-m", "seed"], root=generated)
     (generated / "UNLANDED.md").write_text("a cycle's own receipt, rewritten\n")
-    check("outside a cycle the same edit is drift", g.check(generated) == 1)
-    saved = os.environ.get("REVITALIZATION_BOOTSTRAP")
-    os.environ["REVITALIZATION_BOOTSTRAP"] = "1"
+    # The test must CONTROL this signal, never inherit it: CI runs the suite inside a cycle,
+    # where the flag is already set, and an inherited flag made the "outside a cycle" case
+    # silently skip instead of firing.
+    saved = os.environ.pop("REVITALIZATION_BOOTSTRAP", None)
     try:
+        check("outside a cycle the same edit is drift", g.check(generated) == 1)
+        os.environ["REVITALIZATION_BOOTSTRAP"] = "1"
         rc = g.check(generated)
         check("in flight the gate is a named SKIP, not a pass", rc == 3, f"exit {rc}")
     finally:
-        if saved is None:
-            os.environ.pop("REVITALIZATION_BOOTSTRAP", None)
-        else:
+        os.environ.pop("REVITALIZATION_BOOTSTRAP", None)
+        if saved is not None:
             os.environ["REVITALIZATION_BOOTSTRAP"] = saved
     print()
     if FAILS:
