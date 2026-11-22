@@ -167,6 +167,13 @@ if have python3; then
         run "revitalization chain gate" python3 tools/revitalization.py gate
       fi
     fi
+    # NEVER #22: the chain gate above reads the WORKING TREE, so a cycle can pass it against
+    # bytes no checkout will ever contain. On 2026-11-22 a closed cycle left TASKS.md
+    # uncommitted and three gates went red on that one fact; none of them may repair it.
+    # This gate names the drift as its own defect instead of leaving it to be misattributed.
+    if [ -f tools/tree_invariant.py ]; then
+      run "tree invariant (NEVER #22: derived tree is landed)" python3 tools/tree_invariant.py --check
+    fi
     if [ -f tools/comment_audit.py ]; then
       run "kotlin comment scan (whole repo)"  python3 tools/comment_audit.py
     fi

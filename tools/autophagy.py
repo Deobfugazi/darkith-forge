@@ -174,6 +174,20 @@ CLASSES = [
            "ci: board header intact",
            "a generator that deletes governance prose is a silent loss no diff reviewer sees"),
 
+    # Found 2026-11-22: a cycle closed 16/16, sealed its receipts, wrote its verdict into
+    # TASKS.md — and stopped. Three gates went red on that one fact (board_pulse,
+    # convergence_gate, authority_gate) and not one of them was allowed to repair it. The
+    # repairer existed all along: board_pulse.sh with no arguments commits and pushes.
+    # Nothing called it. That is FM-03 exactly ("a correct table with no caller"), so this
+    # class is the caller, and it is placed LAST so it lands whatever the classes above it
+    # left dirty in a single pass.
+    Class_("uncommitted derived drift",
+           "python3 tools/tree_invariant.py --check",
+           "python3 tools/tree_invariant.py --repair",
+           "ci: tree invariant (NEVER #22)",
+           "a derived artifact that is verified on disk and never committed is drift every "
+           "gate can see and none may fix; CI checks out a HEAD that never held it"),
+
 ]
 
 

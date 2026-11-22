@@ -1496,13 +1496,41 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
                 print("  " + failure)
             return 1
         print("=== CYCLE CLOSED (16/16 staged, evidence-sealed) ===")
-        return 0
+        # NEVER #22: closure is not a state on disk, it is a state on the remote. The chain
+        # gate reads the working tree, so this cycle just proved itself against bytes no
+        # checkout will ever see. Land them here, at the moment they are sealed and still
+        # verified, instead of leaving them for a human to notice and a gate to blame.
+        land_rc = land_sealed_cycle(root)
+        return land_rc if land_rc != 0 else 0
     open_tasks = [t["id"] for t in rec16["details"]["task_queue"]
                   if t.get("status") != "closed"]
     print(f"=== CYCLE OPEN - {len(open_tasks)} corrective task(s): {open_tasks} ===")
     return 1 if (tasks or p.receipts["S05"]["status"] == "FAIL"
                   or rec16["details"].get("post_seal_status") == "FAIL") else 2
 
+
+def land_sealed_cycle(root: pathlib.Path) -> int:
+    """Land a just-closed cycle, then prove the landed HEAD still satisfies the seal.
+
+    NEVER #22. The chain gate hashes the WORKING TREE. A cycle that writes its board and
+    stops has verified a disk that no checkout will ever contain: CI checks out HEAD, sees
+    the pre-cycle bytes, and fails three gates on one fact. Landing is part of closure, not
+    a courtesy after it.
+
+    Deliberately delegated to `tools/tree_invariant.py`, which is the single place that
+    knows the rule (verify the sealed bytes on disk, then land, then assert clean). A second
+    implementation here would be a second opinion about what the seal means.
+    """
+    tool = root / "tools" / "tree_invariant.py"
+    if not tool.is_file():
+        print("land: WARN — tools/tree_invariant.py is absent; the sealed cycle stays unlanded")
+        return 0
+    cp = subprocess.run([sys.executable, str(tool), "--repair"],
+                        cwd=str(root), capture_output=True, text=True)
+    tail = (cp.stdout + cp.stderr).strip().splitlines()
+    for line in tail[-6:]:
+        print(f"land: {line}")
+    return cp.returncode
 
 
 def verify_chain(root: pathlib.Path) -> tuple:
