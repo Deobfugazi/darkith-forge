@@ -24,6 +24,10 @@ import pathlib
 import sys
 import zipfile
 
+# Fixed member timestamp so a rebuild of unchanged inputs is byte-identical.
+# 1980-01-01 is the earliest value the zip format can express.
+ZIP_EPOCH = (1980, 1, 1, 0, 0, 0)
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DELIVERY = ROOT / "delivery"
 REPO_ZIP = DELIVERY / "darkith-forge-repo.zip"
@@ -94,7 +98,10 @@ def build() -> int:
     tmp = REPO_ZIP.with_suffix(".zip.new")
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for rel in sorted(entries):
-            z.writestr(PREFIX + rel, entries[rel])
+            info = zipfile.ZipInfo(PREFIX + rel, date_time=ZIP_EPOCH)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            z.writestr(info, entries[rel])
     tmp.replace(REPO_ZIP)
 
     print(f"repo zip {REPO_ZIP.stat().st_size:,} B  entries {len(entries)}")

@@ -11,6 +11,7 @@ back to a system chromium). Skips loudly if no browser is available.
 
 Usage: python3 tools/savf_parity_gate.py
 """
+import hashlib
 import json
 import pathlib
 import shutil
@@ -82,6 +83,44 @@ GLOG_CASES = [
     [1.0, 2, -3, 20], [1.0, 2, -4, 20], [0.5, 2, -3, 20], [1.0, 10, -2, 50],
     [1.0, 1.0000001, -40, 10], [0.0, 2, -3, 20], [1.0, 2, 3, 20],
 ]
+
+# Freeze/seal cases. The first two cover the float-formatting edge: theta_mut=1
+# is an int in JavaScript and 1.0 in Python, and a lock that renders differently
+# in the two tools fails to verify across them.
+SEAL_CASES = [
+    {"files": {"a.py": "a" * 64, "b.py": "b" * 64},
+     "thresholds": {"theta_mut": 1, "theta_cov": 0.8}, "exemptions": [], "chart": "math"},
+    {"files": {"m.py": "c" * 64},
+     "thresholds": {"theta_mut": 0.6, "theta_cov": 1}, "exemptions": ["phi5"], "chart": "raster"},
+    {"files": {"pkg/x.py": "d" * 64, "pkg/y.py": "e" * 64, "z.py": "f" * 64},
+     "thresholds": {"theta_mut": 0.75, "theta_cov": 0.9}, "exemptions": ["a.py", "b.py"],
+     "chart": "unspecified"},
+]
+
+# A lock is verified from its text, because that is what savf.py re-reads.  An
+# integer threshold ("1") and a float one ("1.0") are the same JS Number but
+# different Python values, so the page must seal whichever literal the file
+# carries.  Each case is (lock body as Python types, the exact text to verify).
+def _lock_text(body: dict, mut_literal: str | None = None) -> str:
+    text = json.dumps({**body, "seal": hashlib.sha256(
+        json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()},
+        indent=2, sort_keys=True)
+    if mut_literal is not None:
+        text = text.replace(f'"theta_mut": {body["thresholds"]["theta_mut"]!r}',
+                            f'"theta_mut": {mut_literal}')
+    return text
+
+
+LOCK_CASES = []
+for _thr, _lit in (({"theta_mut": 1, "theta_cov": 0.8}, None),
+                   ({"theta_mut": 1.0, "theta_cov": 0.8}, None),
+                   ({"theta_mut": 1.0, "theta_cov": 0.8}, "1e0")):
+    _body = {"version": 1, "files": {"a.py": "a" * 64}, "thresholds": _thr,
+             "exemptions": [], "chart": "math"}
+    _text = _lock_text(_body, _lit)
+    # The page parses the textarea with JSON.parse, so the object it verifies
+    # carries the seal; the text travels alongside and is authoritative.
+    LOCK_CASES.append((json.loads(_text), _text))
 
 
 def py_findings(src: str) -> list:
@@ -159,6 +198,17 @@ def main() -> int:
         js_g = p.evaluate(
             """(cs)=>cs.map(c=>{try{return ['ok',window.SAVF.core.gLog.apply(null,c)];}
                                catch(e){return ['err','refused'];}})""", GLOG_CASES)
+        js_lock = p.evaluate(
+            """(cs)=>cs.map(([body,text])=>{
+                 try { return window.SAVF.audit.checkFreeze(body, body.files, text); }
+                 catch(e) { return {ok:false, problems:[String(e)]}; }
+               })""", [[b, t] for b, t in LOCK_CASES])
+        js_seal = p.evaluate(
+            """(cs)=>cs.map(c=>{
+                 const l = window.SAVF.audit.freeze(c.files, {thresholds:c.thresholds,
+                   exemptions:c.exemptions, chart:c.chart});
+                 return [l.seal, window.SAVF.audit.lockToJson(l)];
+               })""", SEAL_CASES)
         b.close()
 
     py_f = {k: py_findings(v) for k, v in FSTRING_CASES.items()}
@@ -181,6 +231,45 @@ def main() -> int:
             print(f"   g_log{c}: py={a} js={b}")
         return 1
 
+    # A lock frozen in the browser must verify in the CLI and the reverse, so the
+    # seal bytes and the emitted JSON both have to match Python exactly.  Python
+    # writes 1.0 where JavaScript writes 1, which is why this is checked on the
+    # rendered text and not only on the hash.
+    lockdiff = []
+    for c, (js_seal_hex, js_lock_text) in zip(SEAL_CASES, js_seal):
+        # The CLI declares --theta-mut/--theta-cov as type=float, so a threshold
+        # is always a Python float no matter what was typed on the command line.
+        # The page's number input yields a JS number, which has no int/float
+        # distinction, so both sides must be compared after that coercion.
+        thr = {"theta_mut": 0.6, "theta_cov": 0.8}
+        thr.update({k: float(v) for k, v in c["thresholds"].items()})
+        body = {"version": 1, "files": c["files"], "thresholds": thr,
+                "exemptions": sorted(c["exemptions"]), "chart": c["chart"]}
+        py_seal_hex = hashlib.sha256(
+            json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        py_text = json.dumps({**body, "seal": py_seal_hex}, indent=2, sort_keys=True)
+        if js_seal_hex != py_seal_hex:
+            lockdiff.append((c["chart"], c["thresholds"], "seal", py_seal_hex, js_seal_hex))
+        elif js_lock_text != py_text:
+            lockdiff.append((c["chart"], c["thresholds"], "lock text", py_text, js_lock_text))
+    if lockdiff:
+        print("savf_parity_gate: FAIL — freeze lock disagrees (a lock frozen on one side "
+              "would not verify on the other)")
+        for chart, thr, what, a, b in lockdiff[:6]:
+            print(f"   chart={chart} thresholds={thr} {what}:")
+            print(f"     py={a!r}")
+            print(f"     js={b!r}")
+        return 1
+
+    # A lock sealed by Python must verify in the page, and the page must agree
+    # with Python about the ones it rejects.
+    badlocks = [(b, t, r) for (b, t), r in zip(LOCK_CASES, js_lock) if not r["ok"]]
+    if badlocks:
+        print("savf_parity_gate: FAIL — a Python-sealed lock does not verify in the page")
+        for body, text, r in badlocks[:4]:
+            print(f"   thresholds={body['thresholds']}: {r['problems']}")
+        return 1
+
     vdiff = {k: (py_v[k], js_v[k]) for k in py_v if py_v[k] != js_v[k]}
     sdiff = {k: (py_s[k], js_s[k]) for k in py_s if py_s[k] != js_s[k]}
     if vdiff or sdiff:
@@ -191,8 +280,9 @@ def main() -> int:
             print(f"   sign {k}: py={a} js={b}")
         return 1
     print(f"savf_parity_gate: PASS — {len(py_v)} verdicts + {len(py_s)} chart signs agree across "
-          f"python and browser; {len(FSTRING_CASES)} f-string field cases and "
-          f"{len(GLOG_CASES)} exp/log inverse cases agree")
+          f"python and browser; {len(FSTRING_CASES)} f-string field cases, "
+          f"{len(GLOG_CASES)} exp/log inverse cases, {len(SEAL_CASES)} freeze locks and "
+          f"{len(LOCK_CASES)} cross-tool lock verifications agree")
     return 0
 
 

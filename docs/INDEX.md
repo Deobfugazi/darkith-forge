@@ -51,8 +51,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
-| `darkith code studio.html` | 603,010 | `e43c9fc37192` | darkith · audit-studio v1.1 |
-| `darkith home forge.html` | 1,474,776 | `d8679bedd69b` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `darkith code studio.html` | 612,010 | `d1de15dbf35c` | darkith · audit-studio v1.1 |
+| `darkith home forge.html` | 1,492,776 | `5537471f6b6d` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
 | `darkith-omega-apps.html` | 7,073 | `428a803bf151` | DARKITH Ω — apps |
 | `darkith-omega-camera.html` | 10,016 | `425678dcb574` | DARKITH Ω — camera |
@@ -63,9 +63,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
-| `omega-reader.html` | 2,778,952 | `993e86fcb783` | Library — DARKITH knowledge base |
+| `omega-reader.html` | 2,792,788 | `ab05e572124f` | Library — DARKITH knowledge base |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
-| `savf.html` | 468,017 | `e366e0f7a4ea` | SAVF-1 Universal Audit Engine |
+| `savf.html` | 477,026 | `eebe89a63b53` | SAVF-1 Universal Audit Engine |
 
 ## D-asset — Shipped runtime assets
 

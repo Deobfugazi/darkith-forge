@@ -3003,10 +3003,43 @@ function dict(seed) {
     }
     return out + '"';
   }
+  /* Python's float repr: the shortest digit string that round-trips, formatted
+     with a fixed/exponent rule that differs from JavaScript's.  A seal frozen in
+     the CLI must verify in the browser, so the bytes have to match exactly:
+     Python writes 1.0, 1e-05 and 1e+16 where JS writes 1, 0.00001 and
+     10000000000000000. */
+  function pyFloatRepr(v) {
+    if (v !== v) return "nan";
+    if (v === Infinity) return "inf";
+    if (v === -Infinity) return "-inf";
+    if (v === 0) return (1 / v < 0) ? "-0.0" : "0.0";
+    var sign = v < 0 ? "-" : "";
+    var a = Math.abs(v);
+    /* toExponential() with no argument is the shortest round-tripping form. */
+    var m = a.toExponential().split("e");
+    var digits = m[0].replace(".", "");
+    var decpt = parseInt(m[1], 10) + 1;   /* digits[0] sits at 10^(decpt-1) */
+    var body;
+    if (decpt <= -4 || decpt > 16) {
+      var mant = digits.charAt(0);
+      if (digits.length > 1) mant += "." + digits.slice(1);
+      var e = decpt - 1;
+      var es = String(Math.abs(e));
+      while (es.length < 2) es = "0" + es;   /* Python pads to two digits, never truncates */
+      body = mant + "e" + (e < 0 ? "-" : "+") + es;
+    } else if (decpt <= 0) {
+      body = "0." + new Array(-decpt + 1).join("0") + digits;
+    } else if (decpt >= digits.length) {
+      body = digits + new Array(decpt - digits.length + 1).join("0") + ".0";
+    } else {
+      body = digits.slice(0, decpt) + "." + digits.slice(decpt);
+    }
+    return sign + body;
+  }
   function pyReprNumber(v) {
     if (!isFinite(v)) throw new Error("cannot canonicalise non-finite number");
-    if (Number.isInteger(v) && Math.abs(v) < 1e21) return String(v);
-    return String(v);
+    if (Number.isInteger(v) && Math.abs(v) < 1e16) return String(v);
+    return pyFloatRepr(v);
   }
   function pyRepr(v) {
     if (v === null || v === undefined) return "null";
@@ -3025,7 +3058,7 @@ function dict(seed) {
     CHARTS: CHARTS, MOVES: MOVES, Axis: Axis, tau: tau,
     fExp: fExp, gLog: gLog, chartSign: chartSign, handedness: handedness,
     HARD: HARD, SOFT: SOFT, ALL_PHI: ALL_PHI, STATES: STATES, EXIT: EXIT, verdict: verdict,
-    pyRepr: pyRepr
+    pyRepr: pyRepr, pyReprString: pyReprString, pyFloatRepr: pyFloatRepr
   };
 })(typeof window !== "undefined" ? window : globalThis);
 
@@ -3042,8 +3075,177 @@ function dict(seed) {
   var KINDS = ["D", "N", "R", "W", "C", "A", "U"];
 
   function sha256Text(t) { return H.sha256Text(t); }
+
+  /* Python's json.dumps types are recoverable from the schema even though
+     JavaScript collapses 1 and 1.0 into one Number.  freeze() in savf.py always
+     writes version as an int and the two thresholds as floats, so the seal is
+     rebuilt with those types fixed.  Without this, a lock frozen by the CLI with
+     --theta-mut 1 seals "1.0" while the page seals "1", and neither tool can
+     verify the other's lock. */
+  function canonLock(d) {
+    var out = [], keys = Object.keys(d).sort();
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i], v = d[k], enc;
+      if (k === "version") {
+        enc = String(Math.trunc(v));
+      } else if (k === "thresholds" && v && typeof v === "object") {
+        var tk = Object.keys(v).sort(), parts = [];
+        for (var j = 0; j < tk.length; j++)
+          parts.push(C.pyReprString(tk[j]) + ":" + C.pyFloatRepr(v[tk[j]]));
+        enc = "{" + parts.join(",") + "}";
+      } else {
+        enc = C.pyRepr(v);
+      }
+      out.push(C.pyReprString(k) + ":" + enc);
+    }
+    return "{" + out.join(",") + "}";
+  }
   function canonJson(d) { return C.pyRepr(d); }
-  function sealOf(d) { return sha256Text(canonJson(d)); }
+  function sealOf(d) { return sha256Text(canonLock(d)); }
+
+  /* ---------- text-faithful canonicalisation ---------- */
+  /* JSON.parse collapses 1 and 1.0 into one Number, but Python's json.load keeps
+     them apart: an int seals as "1", a float as "1.0".  A lock written by hand
+     or by another tool therefore seals differently in the two engines.  This
+     parser records the literal text of every number so the seal can be rebuilt
+     from exactly what the file says, which is what savf.py hashes when it
+     re-reads the lock. */
+  function parseJsonTyped(text) {
+    var i = 0, n = text.length, raws = Object.create(null);
+    function fail(msg) { throw new SyntaxError(msg + " at offset " + i); }
+    function ws() {
+      while (i < n && (text[i] === " " || text[i] === "\t" || text[i] === "\n" || text[i] === "\r")) i++;
+    }
+    function expect(ch) { if (text[i] !== ch) fail("expected " + JSON.stringify(ch)); i++; }
+    function str() {
+      expect("\"");
+      var out = "";
+      while (i < n) {
+        var c = text[i++];
+        if (c === "\"") return out;
+        if (c === "\\") {
+          var e = text[i++];
+          if (e === "u") { out += String.fromCharCode(parseInt(text.substr(i, 4), 16)); i += 4; }
+          else if (e === "n") out += "\n";
+          else if (e === "t") out += "\t";
+          else if (e === "r") out += "\r";
+          else if (e === "b") out += "\b";
+          else if (e === "f") out += "\f";
+          else if (e === "\"" || e === "\\" || e === "/") out += e;
+          else fail("bad escape \\" + e);
+        } else out += c;
+      }
+      return fail("unterminated string");
+    }
+    function num(p) {
+      var start = i;
+      if (text[i] === "-") i++;
+      while (i < n && text[i] >= "0" && text[i] <= "9") i++;
+      if (text[i] === ".") { i++; while (i < n && text[i] >= "0" && text[i] <= "9") i++; }
+      if (text[i] === "e" || text[i] === "E") {
+        i++; if (text[i] === "+" || text[i] === "-") i++;
+        while (i < n && text[i] >= "0" && text[i] <= "9") i++;
+      }
+      var raw = text.slice(start, i);
+      if (!/^-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?$/.test(raw)) fail("bad number " + raw);
+      raws[p] = raw;
+      return Number(raw);
+    }
+    function value(p) {
+      ws();
+      var c = text[i];
+      if (c === "{") {
+        i++; var o = {}; ws();
+        if (text[i] === "}") { i++; return o; }
+        for (;;) {
+          ws(); var k = str(); ws(); expect(":");
+          o[k] = value(p + "\u0000" + k); ws();
+          if (text[i] === ",") { i++; continue; }
+          expect("}"); return o;
+        }
+      }
+      if (c === "[") {
+        i++; var a = []; ws();
+        if (text[i] === "]") { i++; return a; }
+        for (;;) {
+          a.push(value(p + "\u0000" + a.length)); ws();
+          if (text[i] === ",") { i++; continue; }
+          expect("]"); return a;
+        }
+      }
+      if (c === "\"") return str();
+      if (text.substr(i, 4) === "true") { i += 4; return true; }
+      if (text.substr(i, 5) === "false") { i += 5; return false; }
+      if (text.substr(i, 4) === "null") { i += 4; return null; }
+      return num(p);
+    }
+    var v = value("");
+    ws();
+    if (i !== n) fail("trailing content");
+    return { value: v, raws: raws };
+  }
+
+  /* Canonical bytes for a parsed lock, using each number's original literal:
+     Python reads "1" as int and "1.0"/"1e3" as float, and json.dumps writes them
+     back as "1" and "1.0" respectively. */
+  function canonFromTyped(typed) {
+    var raws = typed.raws;
+    function enc(v, p) {
+      if (v === null || v === undefined) return "null";
+      if (typeof v === "boolean") return v ? "true" : "false";
+      if (typeof v === "number") {
+        var raw = raws[p];
+        if (raw !== undefined && !/[.eE]/.test(raw)) return String(parseInt(raw, 10));
+        return C.pyFloatRepr(v);
+      }
+      if (typeof v === "string") return C.pyReprString(v);
+      if (Array.isArray(v))
+        return "[" + v.map(function (x, k) { return enc(x, p + "\u0000" + k); }).join(",") + "]";
+      var keys = Object.keys(v).sort();
+      return "{" + keys.map(function (k) {
+        return C.pyReprString(k) + ":" + enc(v[k], p + "\u0000" + k);
+      }).join(",") + "}";
+    }
+    return enc(typed.value, "");
+  }
+  /* The seal covers every field except itself, matching savf.py, which strips
+     "seal" before hashing. */
+  function sealOfText(text) {
+    var typed = parseJsonTyped(text);
+    if (typed.value && typeof typed.value === "object" && !Array.isArray(typed.value))
+      delete typed.value.seal;
+    return sha256Text(canonFromTyped(typed));
+  }
+
+  /* Emit the lock the way json.dump(..., indent=2, sort_keys=True) does, with
+     thresholds written as floats.  JSON.stringify would print 1.0 as 1, so a
+     lock frozen here with theta_mut=1 would be re-read by savf.py as an int and
+     fail its own seal. */
+  function lockToJson(lock) {
+    function emit(v, path, depth) {
+      var pad = new Array(depth + 1).join("  ");
+      var padIn = new Array(depth + 2).join("  ");
+      if (v === null || v === undefined) return "null";
+      if (typeof v === "boolean") return v ? "true" : "false";
+      if (typeof v === "number") {
+        if (path.length === 2 && path[0] === "thresholds") return C.pyFloatRepr(v);
+        return Number.isInteger(v) ? String(v) : C.pyFloatRepr(v);
+      }
+      if (typeof v === "string") return C.pyReprString(v);
+      if (Array.isArray(v)) {
+        if (!v.length) return "[]";
+        return "[\n" + v.map(function (x) {
+          return padIn + emit(x, path.concat([null]), depth + 1);
+        }).join(",\n") + "\n" + pad + "]";
+      }
+      var keys = Object.keys(v).sort();
+      if (!keys.length) return "{}";
+      return "{\n" + keys.map(function (k) {
+        return padIn + C.pyReprString(k) + ": " + emit(v[k], path.concat([k]), depth + 1);
+      }).join(",\n") + "\n" + pad + "}";
+    }
+    return emit(lock, [], 0);
+  }
 
   /* ---------- freeze / tamper detection ---------- */
   function freeze(files, opts) {
@@ -3060,13 +3262,22 @@ function dict(seed) {
     d.seal = sealOf(d);
     return d;
   }
-  function checkFreeze(lock, files) {
+  function checkFreeze(lock, files, text) {
     if (!lock) return { ok: false, problems: ["no contract lock: contract not frozen"] };
     if (typeof lock !== "object" || !lock.files || typeof lock.files !== "object")
       return { ok: false, problems: ["lock is not a SAVF contract lock (missing 'files')"] };
     var body = {}, probs = [];
     Object.keys(lock).forEach(function (k) { if (k !== "seal") body[k] = lock[k]; });
-    if (sealOf(body) !== lock.seal)
+    /* Prefer the lock's own text: Python re-reads the file, so the seal must be
+       rebuilt from the literals in it rather than from JSON.parse's numbers. */
+    var got;
+    if (typeof text === "string" && text) {
+      try { got = sealOfText(text); }
+      catch (e) { return { ok: false, problems: ["lock is not valid JSON: " + e.message] }; }
+    } else {
+      got = sealOf(body);
+    }
+    if (got !== lock.seal)
       probs.push("lock seal mismatch: thresholds/exemptions edited after freeze");
     Object.keys(lock.files).forEach(function (p) {
       if (!(p in files)) probs.push("missing frozen file " + p);
@@ -3311,7 +3522,8 @@ function dict(seed) {
 
   global.SavfAudit = {
     LOCK_NAME: LOCK_NAME, MANIFEST_NAME: MANIFEST_NAME, KINDS: KINDS,
-    freeze: freeze, checkFreeze: checkFreeze, sealOf: sealOf, canonJson: canonJson,
+    freeze: freeze, checkFreeze: checkFreeze, sealOf: sealOf, sealOfText: sealOfText,
+    canonJson: canonJson, lockToJson: lockToJson, parseJsonTyped: parseJsonTyped,
     manifestCreate: manifestCreate, manifestVerify: manifestVerify,
     ledger: ledger, evidenceState: evidenceState, selftest: selftest
   };

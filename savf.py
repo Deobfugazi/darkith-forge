@@ -166,17 +166,23 @@ def is_test_file(p):
     return b.startswith("test_") or b.endswith("_test.py") or f"{os.sep}tests{os.sep}" in p
 
 
-def _source_files(src, cmd):
+def _source_files(src, cmd, root="."):
     """Source files under --src for reach/mutate.
 
     A path that is not there is an error, never a silent empty set: an empty
     set makes reach report "0 functions, nothing missed" and mutate report
     "score null" -- both a confident green that hides a missing path, the exact
     false-green scan already refuses to produce.
+
+    A relative --src is resolved against --root, because the test command also
+    runs with cwd=root. Resolving against the caller's directory instead makes
+    `savf reach --root /somewhere --src pkg/x.py` fail whenever the caller is
+    not standing in /somewhere, which is the common case for a wrapper script.
     """
-    if not os.path.exists(src):
+    path = src if os.path.isabs(src) else os.path.join(root, src)
+    if not os.path.exists(path):
         raise SystemExit(f"{cmd}: no such file or directory: {src}")
-    files = [p for p in py_files(src) if not is_test_file(p)]
+    files = [p for p in py_files(path) if not is_test_file(p)]
     if not files:
         raise SystemExit(f"{cmd}: no Python source files under: {src}")
     return files
@@ -1151,14 +1157,14 @@ def main(argv=None):
     elif A.cmd == "reach":
         if not os.path.isdir(A.root):
             raise SystemExit(f"reach: no such root directory: {A.root}")
-        srcs = _source_files(A.src, "reach")
+        srcs = _source_files(A.src, "reach", A.root)
         out = reach(A.root, srcs, A.test)
         print(json.dumps(out, indent=2))
         return 0 if not out["missed"] and out["tests_exit"] == 0 else 1
     elif A.cmd == "mutate":
         if not os.path.isdir(A.root):
             raise SystemExit(f"mutate: no such root directory: {A.root}")
-        srcs = _source_files(A.src, "mutate")
+        srcs = _source_files(A.src, "mutate", A.root)
         out = mutate(A.root, srcs, A.test_cmd, A.max, A.seed)
         print(json.dumps(out, indent=2))
     elif A.cmd == "freeze":

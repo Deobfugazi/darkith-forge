@@ -33,6 +33,10 @@ MARKER = b"\n__DARKITH_PAYLOAD_BELOW__\n"
 SOURCE_ZIP = DELIVERY / "darkith_source_fixed.zip"
 BUNDLE_ZIP = DELIVERY / "darkith-forge-bundle.zip"
 
+# Fixed member timestamp so a rebuild of unchanged inputs is byte-identical.
+# 1980-01-01 is the earliest value the zip format can express.
+ZIP_EPOCH = (1980, 1, 1, 0, 0, 0)
+
 # `make-oneshot.py` roots its payload at this prefix (the tree extracts to
 # `darkith-forge/` on the phone).  Source-zip members are matched on the path
 # relative to that root, so strip it before comparing.
@@ -68,10 +72,19 @@ def sha256(b: bytes) -> str:
 
 
 def write_zip(path: pathlib.Path, members: list[tuple[str, bytes]]) -> None:
+    """Write a zip whose bytes depend only on the members.
+
+    writestr() stamps each entry with the wall clock, so two builds of identical
+    input produced different sha256s and index.html could never settle: refreshing
+    the index rewrote the hash of a zip that the next build changed again.  A
+    fixed timestamp makes the build reproducible (MUST #18)."""
     tmp = path.with_suffix(path.suffix + ".new")
     with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for name, data in members:
-            z.writestr(name, data)
+            info = zipfile.ZipInfo(name, date_time=ZIP_EPOCH)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            z.writestr(info, data)
     tmp.replace(path)
 
 
