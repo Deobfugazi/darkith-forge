@@ -56,6 +56,7 @@ Exit: 0 clean/repaired, 1 dirty/refused, 3 no verdict (detached HEAD).
 """
 from __future__ import annotations
 
+import json
 import pathlib
 import subprocess
 import sys
@@ -87,7 +88,26 @@ def untracked_receipts() -> list[str]:
     return [line[3:] for line in out.splitlines() if line.startswith("??")]
 
 
+def cycle_open() -> bool:
+    """A cycle in flight is SUPPOSED to have a dirty tree: S01..S16 write receipts and
+    regenerate derived tissue before S16 lands it. Reporting that as drift would make
+    closure impossible — a gate that forbids the very work it guards. Same rule the chain
+    gate uses when it defers to REVITALIZATION_BOOTSTRAP.
+    """
+    marker = ROOT / "proof" / "revitalization" / "CURRENT"
+    if not marker.is_file():
+        return False
+    try:
+        return json.loads(marker.read_text(encoding="utf-8")).get("closed") is not True
+    except ValueError:
+        return False
+
+
 def check() -> int:
+    if cycle_open():
+        print("tree_invariant: SKIP — a revitalization cycle is open; the tree is meant to be "
+              "dirty until S16 lands it")
+        return 3
     files = drifted()
     if not files:
         print("tree_invariant: PASS — no uncommitted drift in tracked files")
@@ -101,6 +121,10 @@ def check() -> int:
 
 
 def repair() -> int:
+    if cycle_open():
+        print("tree_invariant: SKIP — a revitalization cycle is open; S16 lands the cycle, so "
+              "landing here would commit half-written receipts")
+        return 3
     if not drifted() and not untracked_receipts():
         print("tree_invariant: PASS — nothing to repair; the tree is already landed")
         return 0

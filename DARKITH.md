@@ -1338,6 +1338,75 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
   ---
 
+  §34a — THE LANDED-CLOSURE LAW (2026-11-22)
+
+  ─── NEVER #22 (NO VERIFIED-BUT-UNLANDED CLOSURE — THE MISSING-CALLER LAW) ───
+  GATE: tools/tree_invariant.py
+
+  A RESULT THAT IS VERIFIED ON DISK AND NEVER COMMITTED IS NOT A RESULT. IT IS DRIFT WITH A
+  GREEN BADGE ON IT, AND CI WILL READ IT AS A FAILURE ON THE NEXT CHECKOUT.
+
+  This is measured, not asserted. On 2026-11-22 a revitalization cycle closed 16/16, sealed its
+  sixteen receipts, and wrote its own verdict into `TASKS.md`. Then it stopped. Three gates
+  went red at once:
+
+      board_pulse        FAIL  TASKS.md has uncommitted changes
+      convergence_gate   FAIL  tree: 1 file whose bytes differ from the index
+      authority_gate     FAIL  1 off-schedule stall (budget 0s)
+
+  All three were reporting ONE fact, and not one of them was permitted to fix it — they are
+  gates: they measure and refuse. The repairer existed too. `tools/board_pulse.sh` with no
+  arguments commits and pushes; its own header says it commits the board the moment it
+  changes. NOTHING CALLED IT. That is FM-03 in `docs/FAILURE-MODE-LEDGER.md` repeating exactly:
+  "the policy existed; the timer did not." The table was correct. The caller was missing.
+
+  WHY THE GATE COULD NOT SEE IT. `tools/revitalization.py gate` hashes the WORKING TREE. So a
+  cycle that writes its board passes the gate locally — the sealed bytes are on disk — while CI
+  checks out `HEAD`, which never held them, and fails. Measured in a throwaway worktree:
+
+      disk = sealed bytes, uncommitted   gate PASS   (what the cycle saw, and why it stopped)
+      disk = pre-cycle bytes             gate FAIL   (what CI saw)
+      hand-edited sealed file            gate FAIL   (so a tamper is refused, not laundered)
+
+  THE LAW, EXACTLY:
+
+  1. CLOSURE INCLUDES LANDING. A cycle is not closed when its receipts are sealed on disk. It
+     is closed when the bytes those receipts describe are on the remote. `command_run` calls
+     `land_sealed_cycle` at the moment of closure for this reason. A seal that is never landed
+     is a claim nobody can check.
+
+  2. THE GATE IS VERIFIED ON THE BYTES THAT ARE ABOUT TO BE COMMITTED. `gate(disk)` is what CI
+     computes on `gate(HEAD)` if and only if `disk == HEAD`. So the repair verifies the sealed
+     bytes while they are still on disk, then lands, then asserts the tree is clean. It never
+     commits first and checks afterwards — that order cannot distinguish a stale artifact from
+     a tamper.
+
+  3. A REPAIR THAT CANNOT PASS ITS OWN INVARIANT DOES NOT LAND. `tree_invariant.py --repair`
+     refuses when the sealed chain rejects the bytes on disk, and says so: a new or edited file
+     needs a NEW cycle to seal it. A blanket `git add -A && git commit` would launder a
+     hand-edit or an unfinished generator run into history with a green light attached. That is
+     the "pretentious partial solution" this project refuses.
+
+  4. THE REPAIR NEVER REGENERATES. Measured: `chat_gatekeeper --write` ingests new conversation
+     state and `praxis_propagate` rewrites the board's directive block, so running the
+     generators on a CLEAN tree produces seven modified files. A repair that regenerates would
+     manufacture drift in order to fix drift, and would rewrite the board's directive as a side
+     effect of a drift repair — a worse defect than the one it was asked to fix.
+
+  5. THE CLASS IS IN THE AUTOPHAGY REGISTRY. `uncommitted derived drift` is a `Class_` in
+     `tools/autophagy.py`, placed LAST so it lands whatever the classes above it left dirty in
+     one pass. A gate with no caller is the defect; the registry IS the caller.
+
+  6. A GATE THAT CANNOT FAIL IS NOT A GATE (SPI-31, SPI-15). On a clean CI checkout this gate
+     has nothing to inspect, so it SKIPs (exit 3) on a detached HEAD rather than claiming a
+     PASS it did not earn. It bites on a writer's branch, which is where drift is born.
+
+  Self-test: `python3 tools/tree_invariant.py --selftest` proves the detector fires on an edited
+  file, still fires when the edit is merely staged, goes silent once committed, and that a
+  rollback restores the exact prior bytes.
+
+  ---
+
   §35 — THE LOOPHOLE CLOSURE LAW (2026-11-18)
 
   ─── SPI-31 (A SKIP IS NEVER A PASS) ───
