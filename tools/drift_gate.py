@@ -86,8 +86,27 @@ def repair(root=ROOT):
     return "clean", []
 
 
-def check():
-    state, paths = find_drift()
+def cycle_open() -> bool:
+    """A cycle in flight is SUPPOSED to have a dirty tree until S16 lands it.
+
+    Delegated to tree_invariant so the two drift classes cannot disagree about when the
+    tree is meant to be dirty. Without this the post-seal autophagy pass reads the cycle's
+    own unlanded receipts as drift and fails the very cycle about to land them.
+    """
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    try:
+        import tree_invariant
+    finally:
+        sys.path.pop(0)
+    return tree_invariant.cycle_open()
+
+
+def check(root=None):
+    if cycle_open():
+        print("drift gate: SKIP (a revitalization cycle is open; the tree is meant to be "
+              "dirty until S16 lands it)")
+        return 3
+    state, paths = find_drift(root)
     if state == "skip":
         print("drift gate: SKIP (no git repository — nothing was judged)")
         return 3

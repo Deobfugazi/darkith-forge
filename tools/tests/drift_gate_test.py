@@ -5,6 +5,7 @@ Drives real temporary git repositories, never mocks: the detector must fire on a
 tree, stay silent on a newborn one, and the deterministic repair (NEVER #22 / MUST #42)
 must converge and leave a real commit. A porous gate that lets its own phantom through
 is worse than no gate, so the breach cases are the point of this file."""
+import os
 import pathlib
 import subprocess
 import sys
@@ -102,6 +103,25 @@ def main():
     state, paths = g.find_drift(generated)
     check("real drift beside generated output still fires", state == "drift", str(paths))
 
+    print("== a cycle in flight is allowed a dirty tree ==")
+    # S01..S16 write receipts and regenerate tissue before S16 lands them; a gate that
+    # failed that would forbid the very work it guards and closure could never happen.
+    (generated / "TASKS.md").unlink(missing_ok=True)
+    (generated / "UNLANDED.md").write_text("a cycle's own receipt\n")
+    g.git(["add", "-A"], root=generated)
+    g.git(["commit", "-q", "-m", "seed"], root=generated)
+    (generated / "UNLANDED.md").write_text("a cycle's own receipt, rewritten\n")
+    check("outside a cycle the same edit is drift", g.check(generated) == 1)
+    saved = os.environ.get("REVITALIZATION_BOOTSTRAP")
+    os.environ["REVITALIZATION_BOOTSTRAP"] = "1"
+    try:
+        rc = g.check(generated)
+        check("in flight the gate is a named SKIP, not a pass", rc == 3, f"exit {rc}")
+    finally:
+        if saved is None:
+            os.environ.pop("REVITALIZATION_BOOTSTRAP", None)
+        else:
+            os.environ["REVITALIZATION_BOOTSTRAP"] = saved
     print()
     if FAILS:
         print(f"DRIFT GATE TEST: FAIL ({len(FAILS)}): {FAILS}")
