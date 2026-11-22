@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**74 readable files across 8 registers.**
+**75 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -32,6 +32,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/FAILURE-MODE-LEDGER.md` | 9,387 | `588bb52faf27` | DARKITH — FAILURE MODE LEDGER |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/GITHUB-STUDIO-MANUAL.md` | 18,292 | `fbf7d5d0f43a` | GITHUB STUDIO — the uncut operator manual |
+| `docs/NT-XII-IN-THE-OPEN.md` | 11,254 | `dbf7a79f1821` | NT XII IN THE OPEN — a contribution ledger that mints re-runnable clos |
 | `docs/RECOVERY_MANIFEST.md` | 1,423 | `0cc6e23164c8` | Recovery manifest — reconstructed from the conversation event store |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |

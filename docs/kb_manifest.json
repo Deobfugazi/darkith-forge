@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 74,
+  "count": 75,
   "files": [
     {
       "bytes": 77931,
@@ -73,6 +73,12 @@
       "path": "docs/GITHUB-STUDIO-MANUAL.md",
       "register": "B-knowledge",
       "sha256": "fbf7d5d0f43aba977a6d7187d249e8862d2243a0110f5681cba97010a0a457e5"
+    },
+    {
+      "bytes": 11254,
+      "path": "docs/NT-XII-IN-THE-OPEN.md",
+      "register": "B-knowledge",
+      "sha256": "dbf7a79f1821b98096945b0f79ad7c2fd7070b0e2455f040d54d721035d01733"
     },
     {
       "bytes": 1423,
