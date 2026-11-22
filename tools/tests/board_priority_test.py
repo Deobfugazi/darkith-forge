@@ -83,7 +83,31 @@ def main():
 
     unknown = task(probes=["a probe nobody registered"])
     check("an unbound probe still gets the two universal laws",
-          len(bp.failure_modes(unknown)) >= 2)
+           len(bp.failure_modes(unknown)) >= 2)
+
+    print("== every MUST is destructive-visible: no empty or deficiency-only list ==")
+    # The Operator's demand: each short-listed task must show what makes skipping it
+    # destructive. A bound task whose probes only map to deficiencies would otherwise
+    # print a warning list with nothing corrupting in it.
+    for probe in list(bp.BINDINGS) + ["a probe nobody registered"]:
+        kinds = [k for k, _, _ in bp.failure_modes(task(probes=[probe]))]
+        check(f"destructive entry present for {probe!r}",
+              "DESTRUCTIVE" in kinds, str(kinds))
+
+    print("== the staging trial is always the closing row, even on an empty backlog ==")
+    empty_rendered = bp.render(bp.sequence([]), True)
+    check("an empty cycle still prints the staging trial",
+          any("staging trial" in line for line in empty_rendered), str(empty_rendered))
+    check("and it is still the last checkbox",
+          [l for l in empty_rendered if l.startswith("- [")][-1].find("staging trial") >= 0,
+          str([l for l in empty_rendered if l.startswith("- [")]))
+    check("and it still carries its destructive NEVERs",
+          any("DESTRUCTIVE" in line for line in empty_rendered))
+
+    print("== the board states the MUST contract on every row ==")
+    contract = bp.render(bp.sequence(tasks), False)
+    rows = [l for l in contract if l.startswith("- [")]
+    check("every checkbox row names MUST", all("MUST" in l for l in rows), str(rows))
 
     print("== destructive failure modes are listed before deficiencies ==")
     payload = task(probes=["one-shot installer"])
@@ -124,7 +148,7 @@ def main():
 
     print("== an empty backlog is stated, not silently blank ==")
     empty = bp.render(bp.sequence([]), True)
-    check("empty board says so", any("no open step" in line for line in empty), str(empty))
+    check("empty board says so", any("no open MUST" in line for line in empty), str(empty))
 
     print("== the board must not mint tokens that parse as law ==")
     # `directive_core` reads `- **MUST 17**` as a law declaration, so a numbered board

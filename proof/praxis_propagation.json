@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "0c54f74154ad7fe31b22bd3c950ac4b0f35c607cb556e6f555c09ee7b9896ea8",
-  "board_sha256": "eb72e4ff34348bc992a77f27a4b0c09603708b633f6051c0b8eaeca4ea499383",
+  "board_sha256": "b444187bcae412d1bd7b9e1eb47291f79b92f4fed23c1ecfa1cff7bb3dff2ccf",
   "laws": {
     "declared": [
       "MUST #20",
@@ -41,26 +41,26 @@
     {
       "target": "durable",
       "path": "/workspace/project/darkith-forge/TASKS.md",
-      "status": "updated",
-      "detail": "31923->32251 B"
+      "status": "current",
+      "detail": ""
     },
     {
       "target": "session:18393131094c4acfb45d943764549f23",
       "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
-      "status": "updated",
-      "detail": "mirror beside board"
+      "status": "current",
+      "detail": "mirror"
     },
     {
       "target": "worktree:base_wt",
       "path": "/tmp/base_wt/TASKS.md",
       "status": "updated",
-      "detail": "5838->6166 B"
+      "detail": "6165->6166 B"
     },
     {
       "target": "worktree:readme_wt",
       "path": "/tmp/readme_wt/TASKS.md",
       "status": "updated",
-      "detail": "5838->6166 B"
+      "detail": "6165->6166 B"
     }
   ],
   "mode": "apply",

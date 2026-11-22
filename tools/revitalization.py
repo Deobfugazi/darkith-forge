@@ -1194,18 +1194,21 @@ class Pipeline:
                 continue
             rel = str(self.receipt_path(sid).relative_to(self.root))
             lines.append(f"| {sid} | {name} | {status_map[rec['status']]} | {rel} |")
-        if task_queue:
-            # Sequenced by severity, then blast radius, then discovery order. The board
-            # used to print discovery order, which is an accident of which probe ran
-            # first and says nothing about what must precede what.
-            sequenced = board_priority.sequence(task_queue)
-            lines += ["", "### MUST — sequenced by severity, then blast radius", "",
-                      "An unchecked box is a MUST: open work, and unapproved to close "
-                      "until its own probe returns PASS. Each MUST lists the failure "
-                      "modes that make skipping it destructive (corrupting) or "
-                      "substandard (deficiency)."]
-            lines += [""]
-            lines += board_priority.render(sequenced, closed)
+        # Always rendered, even with an empty backlog: the checklist closes with the
+        # staging trial, and a board that omits the trial on a quiet cycle teaches the
+        # Operator that the trial is optional. It never is.
+        #
+        # Sequenced by severity, then blast radius, then discovery order. The board
+        # used to print discovery order, which is an accident of which probe ran
+        # first and says nothing about what must precede what.
+        sequenced = board_priority.sequence(task_queue)
+        lines += ["", "### MUST — sequenced by severity, then blast radius", "",
+                  "An unchecked box is a MUST: open work, and unapproved to close "
+                  "until its own probe returns PASS. Each MUST lists the failure "
+                  "modes that make skipping it destructive (corrupting) or "
+                  "substandard (deficiency)."]
+        lines += [""]
+        lines += board_priority.render(sequenced, closed)
         if skips:
             lines += ["", "Named skips this cycle (SKIP is never PASS): "
                       + ", ".join(skips) + "."]

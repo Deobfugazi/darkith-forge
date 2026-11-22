@@ -164,8 +164,11 @@ BINDINGS = {
     "bridge contract audit": ["second-copy", "green-without-proof"],
 }
 
-# Applied when a probe has no explicit binding: the two laws any repair can break.
-DEFAULT_BINDING = ["green-without-proof", "silent-skip"]
+# Applied to EVERY task, bound or not. These are the laws any repair can break, so a
+# MUST is never published with an empty or deficiency-only warning list: the Operator
+# asked that each short-listed task state what makes it destructive, and "none" is not
+# an acceptable answer for work that lands in a shared tree.
+UNIVERSAL_BINDING = ["green-without-proof", "silent-skip"]
 
 # ---------------------------------------------------------------------------
 # The closing row. Every board ends with the staging trial, because a fix that has not
@@ -251,12 +254,15 @@ def blast_radius(task) -> int:
 
 
 def failure_modes(task) -> list:
-    """The NEVERs this specific task can violate, deduplicated, destructive first."""
-    codes = []
+    """The NEVERs this specific task can violate, deduplicated, destructive first.
+
+    The universal floor is always applied, then the task's own probe bindings. A task
+    therefore always carries at least one DESTRUCTIVE entry, so the board can never
+    print a MUST whose warning list is empty or deficiency-only.
+    """
+    codes = list(UNIVERSAL_BINDING)
     for probe in task.get("probes") or []:
         codes.extend(BINDINGS.get(probe, []))
-    if not codes:
-        codes = list(DEFAULT_BINDING)
     # A repair that touches signing or delivery is destructive-capable whatever its
     # probe was called; the taxonomy must reflect that, not the label.
     if severity_of(task)[1] <= 1 and "unpushed" not in codes:
@@ -288,15 +294,20 @@ def sequence(tasks) -> list:
 
 
 def render(sequenced, closed: bool, skip_note: str = "") -> list:
-    """Render the ordered checklist. Unchecked box = MUST = open work."""
+    """Render the ordered checklist. Unchecked box = MUST = open work.
+
+    The checklist always ends with the staging trial, even on an empty backlog: the
+    trial is the closing condition of every cycle, not a row that appears only when
+    there happens to be other work.
+    """
     box = "[x]" if closed else "[ ]"
     lines = []
     if not sequenced:
-        lines.append(f"- {box} **no open step** — every probe this cycle returned PASS")
+        lines.append(f"- {box} **no open MUST** — every probe this cycle returned PASS")
     for position, row in enumerate(sequenced, 1):
         task = row["task"]
         lines.append(
-            f"- {box} **STEP {position}** — {row['severity']} — "
+            f"- {box} **STEP {position}** — MUST — {row['severity']} — "
             f"`{task['id']}` {', '.join(task.get('probes') or [])}")
         lines.append(f"  - why this rank: {row['why']}")
         lines.append(f"  - root cause: `{task.get('root_cause', 'UNCONFIRMED')}`; "
@@ -307,7 +318,8 @@ def render(sequenced, closed: bool, skip_note: str = "") -> list:
             lines.append("  - sacred NEVERs — what skipping this can do:")
             for kind, title, consequence in row["never"]:
                 lines.append(f"    - **{kind}** — {title}: {consequence}")
-    lines.append(f"- {box} **STEP {len(sequenced) + 1}** — "
+    trial_position = len(sequenced) + 1
+    lines.append(f"- {box} **STEP {trial_position}** — MUST — "
                  f"{STAGING_TRIAL['severity']} — {STAGING_TRIAL['title']}")
     lines.append("  - why this rank: nothing ships before it is stressed; "
                  "detection is not verification (I4)")
