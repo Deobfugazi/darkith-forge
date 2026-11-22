@@ -63,6 +63,18 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
+# The jurisdiction boundary is already written down, once: authority_gate.is_generated()
+# names the trees that gates legitimately rewrite during CI (proof/convergence.json is
+# convergence_gate's own output). Re-deriving that list here would be a second opinion about
+# whose job a dirty file is, and the two would drift. A dirty GENERATED file is not withheld
+# work; a dirty TASKS.md or docs/INDEX.md is exactly the defect this tool exists to catch.
+sys.path.insert(0, str(ROOT / "tools"))
+try:
+    from authority_gate import is_generated
+except Exception:  # noqa: BLE001 - a missing authority_gate must not silently widen scope
+    def is_generated(path: str) -> bool:  # type: ignore[misc]
+        return path.startswith(("proof/", "delivery/", "dl/")) or "__pycache__/" in path
+
 # The gate that decides whether landing is allowed. If it refuses AFTER the commit, the
 # commit is rolled back: a drift repair that seals a lie is worse than the drift.
 DERIVED_GATE = ("python3", "tools/revitalization.py", "gate")
@@ -77,9 +89,16 @@ def detached() -> bool:
 
 
 def drifted() -> list[str]:
-    """Tracked files whose bytes differ from the index, plus staged-but-uncommitted."""
+    """Tracked files whose bytes differ from the index, minus gate-written trees.
+
+    `proof/convergence.json` is convergence_gate's own output: CI rewrites it every run, so
+    counting it would make this gate red on every CI run forever — the "gate that cannot
+    pass" failure this project already burned once. What remains is the real defect class:
+    TASKS.md, docs/INDEX.md, and the other sealed artifacts a cycle writes and forgets.
+    """
     out = sh(("git", "status", "--porcelain", "--untracked-files=no")).stdout
-    return [line[3:] for line in out.splitlines() if line.strip()]
+    return [line[3:] for line in out.splitlines()
+            if line.strip() and not is_generated(line[3:])]
 
 
 def untracked_receipts() -> list[str]:
