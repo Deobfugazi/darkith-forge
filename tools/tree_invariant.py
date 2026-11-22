@@ -56,7 +56,7 @@ Exit: 0 clean/repaired, 1 dirty/refused, 3 no verdict (detached HEAD).
 """
 from __future__ import annotations
 
-import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -91,16 +91,14 @@ def untracked_receipts() -> list[str]:
 def cycle_open() -> bool:
     """A cycle in flight is SUPPOSED to have a dirty tree: S01..S16 write receipts and
     regenerate derived tissue before S16 lands it. Reporting that as drift would make
-    closure impossible — a gate that forbids the very work it guards. Same rule the chain
-    gate uses when it defers to REVITALIZATION_BOOTSTRAP.
+    closure impossible — a gate that forbids the very work it guards.
+
+    The signal is REVITALIZATION_BOOTSTRAP, which `revitalization.py` exports for every
+    in-cycle `ci.sh` run, including the post-seal pass. The CURRENT marker is the wrong
+    signal: it is written `closed=True` BEFORE the post-seal checks run, so keying on it
+    would make this class fail the very cycle that is about to land the tree.
     """
-    marker = ROOT / "proof" / "revitalization" / "CURRENT"
-    if not marker.is_file():
-        return False
-    try:
-        return json.loads(marker.read_text(encoding="utf-8")).get("closed") is not True
-    except ValueError:
-        return False
+    return os.environ.get("REVITALIZATION_BOOTSTRAP") == "1"
 
 
 def check() -> int:
