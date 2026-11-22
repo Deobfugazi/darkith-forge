@@ -226,9 +226,9 @@ Named skips this cycle (SKIP is never PASS): install gate, manual-skip:firefox u
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-22T04:13:09.035238`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-22T04:48:50.172239`. This section is regenerated, never hand-edited._
 
-**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, MUST17, NEVER #19, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-37, SPI-38, SPI-4, SPI-6
+**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST17, NEVER #19, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
 
 1. **[order]** The board's task check to-do list, is it sequenced by order of critical urgent priority rating as severity autofilling fixes triage is it and always …
    - prompt index `29212` at `2026-11-22T02:08:51.093156`
@@ -242,5 +242,21 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
    - prompt index `29737` at `2026-11-22T04:13:09.035238`
    - **Coupled laws:** MUST #20, MUST #30, MUST #33, NEVER #19, SPI-15, SPI-2, SPI-37, SPI-38, SPI-4, SPI-6
    - sha256 `c28c0aedddf0a25f`
+4. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+   - prompt index `29980` at `2026-11-22T04:37:32.805523`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+   - sha256 `c83ecdc8c3fea20a`
+5. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+   - prompt index `29985` at `2026-11-22T04:37:44.144916`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+   - sha256 `22d85796fc56c4b7`
+6. **[forbid]** Both accusations are false, and the real cause is uncommitted drift. Let me confirm the fix works. Is there no fucking gatekeeping automation that ca…
+   - prompt index `30049` at `2026-11-22T04:42:18.591087`
+   - **Coupled laws:** MUST #26, MUST #27, MUST #33, SPI-15
+   - sha256 `b82b0f08d2400818`
+7. **[forbid]** Both accusations are false, and the real cause is uncommitted drift. Let me confirm the fix works. Is there no fucking gatekeeping automation that ca…
+   - prompt index `30187` at `2026-11-22T04:48:50.172239`
+   - **Coupled laws:** MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, NEVER #19, SPI-15, SPI-25, SPI-26
+   - sha256 `44187e3c6217f6b7`
 
 <!-- CHAT-GATE:END -->

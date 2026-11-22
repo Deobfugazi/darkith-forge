@@ -1,19 +1,19 @@
 {
-  "issued": "2026-11-22T04:13:09.035238",
+  "issued": "2026-11-22T04:48:50.172239",
   "occupation": {
     "gapHours": 0.0,
     "phase": "rest/digest/restore",
     "state": "engaged"
   },
-  "orders": 3,
+  "orders": 7,
   "targets": [
     {
-      "orders": 3,
+      "orders": 7,
       "status": "pinged",
       "target": "/workspace/project/darkith-forge/TASKS.md"
     },
     {
-      "orders": 3,
+      "orders": 7,
       "status": "pinged",
       "target": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json"
     }
