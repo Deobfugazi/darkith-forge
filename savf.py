@@ -262,6 +262,65 @@ def _phantom_root(root, local, installed):
         return False
 
 
+def _logical_lines(toks):
+    """Group tokens into logical lines: (indent_column, line_no, [tokens])."""
+    lines, cur = [], []
+    for t in toks:
+        if t.type in (tokenize.NEWLINE, tokenize.ENDMARKER):
+            if cur:
+                lines.append((cur[0].start[1], cur[0].start[0], cur))
+                cur = []
+        elif t.type in (tokenize.INDENT, tokenize.DEDENT):
+            continue
+        else:
+            cur.append(t)
+    if cur:
+        lines.append((cur[0].start[1], cur[0].start[0], cur))
+    return lines
+
+
+def _guarded_import_lines(src):
+    """Line numbers of imports inside `try:` blocks that catch ImportError.
+
+    Token-level twin of _guarded_import_nodes, for sources too deep to build an
+    AST.  Without it a deeply nested file would be convicted of a phantom import
+    for a correctly guarded optional dependency."""
+    try:
+        toks = [t for t in tokenize.generate_tokens(io.StringIO(src).readline)
+                if t.type not in (tokenize.COMMENT, tokenize.NL)]
+    except tokenize.TokenError:
+        return set()
+    lines = _logical_lines(toks)
+    guarded = set()
+
+    def is_import(body):
+        return bool(body) and body[0].type == tokenize.NAME and body[0].string in ("import", "from")
+
+    for i, (ind, _ln, body) in enumerate(lines):
+        if not (body and body[0].type == tokenize.NAME and body[0].string == "try"):
+            continue
+        # `try` must be the whole statement, not e.g. `try_x = 1`
+        if not (len(body) > 1 and body[1].type == tokenize.OP and body[1].string == ":"):
+            continue
+        j, catches = i + 1, False
+        while j < len(lines):
+            hind, _hl, hbody = lines[j]
+            if hind <= ind:
+                if hbody and hbody[0].type == tokenize.NAME and hbody[0].string == "except":
+                    if any(t.type == tokenize.NAME and t.string in ("ImportError", "ModuleNotFoundError")
+                           for t in hbody):
+                        catches = True
+                break
+            j += 1
+        if not catches:
+            continue
+        for k in range(i + 1, j):
+            kind, kln, kbody = lines[k]
+            if kind > ind and is_import(kbody):
+                guarded.add(kln)
+    return guarded
+
+
 def _import_findings_from_tokens(src, path, local, installed):
     """PHANTOM_IMPORT from tokens alone, for a file whose tree could not be built.
     `import a, b` and `from m import x` are read; a relative `from . import x` is
@@ -272,6 +331,7 @@ def _import_findings_from_tokens(src, path, local, installed):
                 if t.type not in (tokenize.COMMENT, tokenize.NL)]
     except tokenize.TokenError:
         return F
+    guarded = _guarded_import_lines(src)
     i, n = 0, len(toks)
     while i < n:
         t = toks[i]
@@ -289,7 +349,7 @@ def _import_findings_from_tokens(src, path, local, installed):
                     expect_root = False
                 elif cur.type == tokenize.NAME and expect_root:
                     root = cur.string
-                    if _phantom_root(root, local, installed):
+                    if cur.start[0] not in guarded and _phantom_root(root, local, installed):
                         F.append(_finding("PHANTOM_IMPORT", 2, path, cur.start[0],
                                           f"'{root}' is not stdlib, installed, or local", "high"))
                     expect_root = False
@@ -300,7 +360,7 @@ def _import_findings_from_tokens(src, path, local, installed):
             j = i + 1
             if j < n and toks[j].type == tokenize.NAME:
                 root = toks[j].string
-                if _phantom_root(root, local, installed):
+                if toks[j].start[0] not in guarded and _phantom_root(root, local, installed):
                     F.append(_finding("PHANTOM_IMPORT", 2, path, toks[j].start[0],
                                       f"'{root}' is not stdlib, installed, or local", "high"))
             while i < n and toks[i].type != tokenize.NEWLINE:
@@ -308,6 +368,32 @@ def _import_findings_from_tokens(src, path, local, installed):
         else:
             i += 1
     return F
+
+
+def _guarded_import_nodes(tree):
+    """Ids of import nodes inside `try: ... except ImportError:`.
+
+    `try: import numpy / except ImportError: numpy = None` is the canonical way to
+    declare an optional dependency: the code states it may be absent and handles
+    that.  Convicting it as a phantom import (phi2 fail -> LIED) is a false
+    accusation against correct code, so guarded imports are not phantoms."""
+    guarded = set()
+    for n in ast.walk(tree):
+        if not isinstance(n, ast.Try):
+            continue
+        if not any(
+            isinstance(h.type, ast.Name) and h.type.id in ("ImportError", "ModuleNotFoundError")
+            or isinstance(h.type, ast.Tuple) and any(
+                isinstance(e, ast.Name) and e.id in ("ImportError", "ModuleNotFoundError")
+                for e in h.type.elts)
+            for h in n.handlers if h.type is not None
+        ):
+            continue
+        for stmt in n.body:
+            for inner in ast.walk(stmt):
+                if isinstance(inner, (ast.Import, ast.ImportFrom)):
+                    guarded.add(id(inner))
+    return guarded
 
 
 def scan_file(path, local, installed=None):
@@ -357,8 +443,10 @@ def scan_file(path, local, installed=None):
     F = _token_findings(src, path, test_file)
     # imports (phi2)
     mod_alias = {}
+    guarded = _guarded_import_nodes(tree)
     for n in ast.walk(tree):
         names = []
+        is_guarded = id(n) in guarded
         if isinstance(n, ast.Import):
             for a in n.names:
                 names.append((a.name, a.asname or a.name.split(".")[0], n.lineno))
@@ -369,6 +457,8 @@ def scan_file(path, local, installed=None):
             if root in STDLIB or root in local or root == "__future__":
                 if root in STDLIB and bound and "." not in full:
                     mod_alias[bound] = root
+                continue
+            if is_guarded:
                 continue
             if installed is not None:
                 # An explicit set keeps the verdict identical on every host and
@@ -500,9 +590,17 @@ root = os.path.realpath(sys.argv[1]); out = sys.argv[2]; mod = sys.argv[3]; args
 entered = set()
 def tr(frame, event, arg):
     if event == "call":
-        fn = os.path.realpath(frame.f_code.co_filename)
+        co = frame.f_code
+        # A module (or class) body frame shares the line of the first statement it
+        # contains, so crediting it by line alone marks a function defined on line 1
+        # as entered merely because the module was imported.  The code name is what
+        # separates them: "<module>" is never a function that defined_functions
+        # reports, so a real call is the only way to match on both.
+        if co.co_name in ("<module>", "<listcomp>", "<dictcomp>", "<setcomp>", "<genexpr>"):
+            return None
+        fn = os.path.realpath(co.co_filename)
         if fn.startswith(root + os.sep) or fn == root:
-            entered.add((fn, frame.f_code.co_firstlineno))
+            entered.add((fn, co.co_firstlineno, co.co_name))
     return None
 sys.argv = [mod] + args
 sys.path.insert(0, root)
@@ -530,6 +628,25 @@ def defined_functions(path):
     return out
 
 
+def _module_for_path(token, root):
+    """Turn a `tests/test_x.py` style token into the dotted module run_module needs.
+
+    `--reach-test tests/test_x.py` is what a caller naturally types, but
+    runpy.run_module resolves dotted names, so a path fails with a traceback
+    about `__path__`.  Rewriting here keeps both spellings working: a token
+    that names an existing .py file becomes its module name relative to root.
+    """
+    if not token.endswith(".py"):
+        return token
+    candidate = token if os.path.isabs(token) else os.path.join(root, token)
+    if not os.path.isfile(candidate):
+        return token
+    rel = os.path.relpath(os.path.realpath(candidate), root)
+    if rel.startswith(".."):
+        return token
+    return rel[:-3].replace(os.sep, ".")
+
+
 def reach(root, src_paths, test_module_args):
     """Run tests under a call tracer; list src functions never entered."""
     root = os.path.realpath(root)
@@ -537,17 +654,19 @@ def reach(root, src_paths, test_module_args):
         r, o = os.path.join(td, "runner.py"), os.path.join(td, "out.json")
         open(r, "w").write(RUNNER)
         parts = shlex.split(test_module_args)
+        if parts:
+            parts[0] = _module_for_path(parts[0], root)
         p = subprocess.run([sys.executable, r, root, o] + parts, cwd=root, capture_output=True, text=True, timeout=600)
         if not os.path.exists(o):
             raise RuntimeError("tracer produced no output:\n" + p.stderr[-800:])
         data = json.load(open(o))
-    entered = {(f, l) for f, l in data["entered"]}
+    entered = {(f, l, nm) for f, l, nm in data["entered"]}
     total, missed = 0, []
     for sp in src_paths:
         rp = os.path.realpath(sp)
         for name, line in defined_functions(sp):
             total += 1
-            if (rp, line) not in entered:
+            if (rp, line, name) not in entered:
                 missed.append({"file": sp, "line": line, "function": name})
     return {"tests_exit": data["code"], "functions": total, "entered": total - len(missed), "missed": missed}
 
@@ -995,6 +1114,9 @@ def gate(root, src, test_cmd, reach_args, max_mutants, seed):
         frac = r["entered"] / r["functions"] if r["functions"] else 1.0
         res["phi4"] = "pass" if not r["missed"] and r["tests_exit"] == 0 else ("marginal" if frac >= th["theta_cov"] and r["tests_exit"] == 0 else "fail")
         notes["phi4"] = f"{r['entered']}/{r['functions']} functions entered; tests exit {r['tests_exit']}" + \
+            ("\n      no function was entered: --reach-test ran as __main__, which only defines"
+             " tests without calling them. Point it at the runner, e.g. \"pytest -q tests\""
+             if r["entered"] == 0 and r["functions"] else "") + \
             "".join(f"\n      never entered: {m['file']}:{m['line']} {m['function']}" for m in r["missed"][:8])
     except Exception as e:
         harness_error("phi4", e)
@@ -1126,7 +1248,9 @@ def main(argv=None):
     v = sp.add_parser("verdict", help="verdict from a JSON of phi0..phi10 states"); v.add_argument("file")
     g = sp.add_parser("gate", help="run every automatable gate and print the verdict")
     g.add_argument("--root", default="."); g.add_argument("--src", required=True)
-    g.add_argument("--test-cmd", required=True); g.add_argument("--reach-test", required=True)
+    g.add_argument("--test-cmd", required=True)
+    g.add_argument("--reach-test", required=True,
+                   help='test module or .py path plus args, e.g. "tests/test_all.py" or "unittest discover -s tests"')
     g.add_argument("--max", type=int, default=30); g.add_argument("--seed", type=int, default=1); g.add_argument("--out")
 
     A = ap.parse_args(_normalize_argv(list(argv)))

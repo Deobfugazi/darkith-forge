@@ -169,7 +169,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:8px}
 .stat{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 10px}
 .stat b{display:block;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
-.stat span{font-size:10.5px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.stat span{font-size:11px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 
 /* ---------- verdict ---------- */
 .verdict{
@@ -207,7 +207,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .gate .id{font-size:12.5px;font-weight:700;font-family:var(--mono);letter-spacing:-.2px}
 .gate .name{font-size:11px;color:var(--fg-3);margin-top:1px;line-height:1.35}
 .chip{
-  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.55px;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.55px;
   padding:3px 7px;border-radius:999px;flex:none;
 }
 .c-pass{background:var(--ok-soft);color:var(--ok)}
@@ -219,7 +219,7 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
   border-top:1px solid var(--line);display:none;white-space:pre-wrap;word-break:break-word;
 }
 .gate.open .why{display:block}
-.gate .why .loc{font-family:var(--mono);font-size:10.5px;color:var(--fg-3)}
+.gate .why .loc{font-family:var(--mono);font-size:11px;color:var(--fg-3)}
 
 /* ---------- findings ---------- */
 .filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px;margin-bottom:10px;scrollbar-width:none}
@@ -239,9 +239,9 @@ select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,va
 .finding.s-low{border-left-color:var(--fg-3)}
 .finding .hd{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:3px}
 .finding .rule{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:-.2px}
-.finding .phi{font-size:10px;font-weight:700;color:var(--fg-3);font-family:var(--mono)}
+.finding .phi{font-size:11px;font-weight:700;color:var(--fg-3);font-family:var(--mono)}
 .finding .msg{font-size:12.5px;color:var(--fg-2);line-height:1.45;word-break:break-word}
-.finding .loc{font-family:var(--mono);font-size:10.5px;color:var(--fg-3);margin-top:3px;word-break:break-all}
+.finding .loc{font-family:var(--mono);font-size:11px;color:var(--fg-3);margin-top:3px;word-break:break-all}
 
 .empty{text-align:center;padding:26px 14px;color:var(--fg-3)}
 .empty svg{width:30px;height:30px;stroke:var(--fg-3);fill:none;stroke-width:1.5;opacity:.65;margin-bottom:8px}
@@ -279,7 +279,7 @@ pre.out{
 .kv dd{margin:0;font-family:var(--mono);font-size:11.5px;word-break:break-all}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
-th{color:var(--fg-3);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+th{color:var(--fg-3);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
 td.mono{font-family:var(--mono);font-size:11px}
 .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
 @media (max-width:420px){
@@ -288,7 +288,7 @@ td.mono{font-family:var(--mono);font-size:11px}
      ("session-only storage" when storage is blocked) visible. */
   header{padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top))}
   .titles h1{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .titles p{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .titles p{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tg-long{display:none}
   .tg-short{display:inline}
   nav{margin-top:6px}
@@ -364,7 +364,7 @@ td.mono{font-family:var(--mono);font-size:11px}
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v5h5M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/></svg>
           Files
         </button>
-        <button class="btn" id="loadDemo">Demo tree</button>
+        <button class="btn" id="loadDemo" title="Load a small tree with known defects, to see every finding type">Demo (faults)</button>
       </div>
 
       <div class="mt">
@@ -3147,8 +3147,46 @@ function dict(seed) {
     function phantom(root) {
       return !(stdlib[root] || installed[root] || local[root] || root === "__future__");
     }
+    /* Lines of imports inside a `try:` whose handler catches ImportError.  The
+       token-level twin of guardedImportNodes, for a source too deep to parse.
+       Without it a deep file would be convicted for a correctly guarded optional
+       dependency that the same file one character shorter reports clean. */
+    var guardedLines = Object.create(null);
+    (function () {
+      var lines = [], cur = [];
+      tokens.forEach(function (t) {
+        if (t.type === "NEWLINE" || t.type === "ENDMARKER") {
+          if (cur.length) { lines.push(cur); cur = []; }
+        } else if (t.type !== "INDENT" && t.type !== "DEDENT" && t.type !== "COMMENT" && t.type !== "NL") {
+          cur.push(t);
+        }
+      });
+      if (cur.length) lines.push(cur);
+      for (var a = 0; a < lines.length; a++) {
+        var b0 = lines[a][0];
+        if (!(b0.type === "NAME" && b0.str === "try")) continue;
+        if (!(lines[a].length > 1 && lines[a][1].type === "OP" && lines[a][1].str === ":")) continue;
+        var ind = b0.col, e = a + 1, catches = false;
+        for (; e < lines.length; e++) {
+          if (lines[e][0].col <= ind) {
+            var h = lines[e][0];
+            if (h.type === "NAME" && h.str === "except") {
+              catches = lines[e].some(function (t) {
+                return t.type === "NAME" && (t.str === "ImportError" || t.str === "ModuleNotFoundError");
+              });
+            }
+            break;
+          }
+        }
+        if (!catches) continue;
+        for (var k = a + 1; k < e; k++) {
+          var f0 = lines[k][0];
+          if (f0.col > ind && f0.type === "NAME" && (f0.str === "import" || f0.str === "from")) guardedLines[f0.line] = 1;
+        }
+      }
+    })();
     function report(root, line) {
-      if (phantom(root))
+      if (!guardedLines[line] && phantom(root))
         F.push(finding("PHANTOM_IMPORT", 2, file, line,
                        "'" + root + "' is not stdlib, installed, or local", "high"));
     }
@@ -3179,6 +3217,34 @@ function dict(seed) {
       }
     }
     return F;
+  }
+
+  /* Ids of import nodes inside `try: ... except ImportError:`.  That block is the
+     canonical way to declare an optional dependency: the code states the module
+     may be absent and handles it.  Convicting it as a phantom import (phi2 fail ->
+     LIED) is a false accusation against correct code, so guarded imports are not
+     phantoms.  Mirrors savf.py's _guarded_import_nodes. */
+  function guardedImportNodes(tree) {
+    var guarded = Object.create(null);
+    function catchesImportError(h) {
+      if (!h || !h.type) return false;
+      if (h.type.t === "Name") return h.type.id === "ImportError" || h.type.id === "ModuleNotFoundError";
+      if (h.type.t === "Tuple") return h.type.elts.some(function (e) {
+        return e && e.t === "Name" && (e.id === "ImportError" || e.id === "ModuleNotFoundError");
+      });
+      return false;
+    }
+    global.PyAst.walk(tree).forEach(function (n) {
+      if (n.t !== "Try") return;
+      var catches = (n.handlers || []).some(catchesImportError);
+      if (!catches) return;
+      (n.body || []).forEach(function (stmt) {
+        global.PyAst.walk(stmt).forEach(function (inner) {
+          if (inner.t === "Import" || inner.t === "ImportFrom") guarded[inner.lineno + ":" + inner.col_offset] = 1;
+        });
+      });
+    });
+    return guarded;
   }
 
   /* opts: { stdlib: {name:1}, stdattrs: {mod:[attrs]}, local: {name:1} } */
@@ -3260,10 +3326,12 @@ function dict(seed) {
 
     /* imports: phi2 */
     var modAlias = dict();
+    var guarded = guardedImportNodes(tree);
     global.PyAst.walk(tree).forEach(function (n) {
       var names = [];
       if (n.t === "Import") n.names.forEach(function (a) { names.push([a.name, a.asname || a.name.split(".")[0], n.lineno]); });
       else if (n.t === "ImportFrom" && !n.level && n.module) names.push([n.module, null, n.lineno]);
+      var isGuarded = guarded[n.lineno + ":" + n.col_offset];
       names.forEach(function (row) {
         var full = row[0], bound = row[1], line = row[2];
         var root = full.split(".")[0];
@@ -3271,6 +3339,7 @@ function dict(seed) {
           if (opts.stdlib[root] && bound && full.indexOf(".") < 0) modAlias[bound] = root;
           return;
         }
+        if (isGuarded) return;
         F.push(finding("PHANTOM_IMPORT", 2, file, line, "'" + root + "' is not stdlib, installed, or local", "high"));
       });
     });

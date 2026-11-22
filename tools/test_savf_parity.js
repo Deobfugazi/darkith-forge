@@ -105,6 +105,16 @@ const CASES = {
   "lambda": "f = lambda x: x\n",
   "while true break": "def f(x):\n    while True:\n        break\n    return x\n",
   "multiline todo": "# TODO: a\n# TODO: b\ndef f():\n    pass\n",
+  /* A guarded optional dependency is declared, not lied about: `try: import x /
+     except ImportError` states the module may be absent and handles it.  These
+     must stay clean in both engines, and an unguarded one must still be caught. */
+  "guarded optional import": "try:\n    import numpy\nexcept ImportError:\n    numpy = None\n",
+  "guarded import tuple handler": "try:\n    import numpy\nexcept (ImportError, OSError):\n    numpy = None\n",
+  "guarded import modnotfound": "try:\n    import numpy\nexcept ModuleNotFoundError:\n    numpy = None\n",
+  "guarded from-import": "try:\n    from numpy import array\nexcept ImportError:\n    array = None\n",
+  "guarded by wrong handler": "try:\n    import totally_fake_zzz\nexcept ValueError:\n    pass\n",
+  "unguarded phantom import": "import totally_fake_zzz\n",
+  "nested try guarded": "try:\n    try:\n        import numpy\n    except ImportError:\n        numpy = None\nexcept Exception:\n    pass\n",
 };
 
 /* --------------------------------------------------------------- compare */
@@ -156,6 +166,26 @@ ok("a clean file is not reported as LIED", clean.verdict !== "LIED", clean.verdi
 
 const dirty = audit("c.py", "def f():\n    # TODO: fix\n    return None\n");
 ok("a stub with a TODO is reported as LIED", dirty.verdict === "LIED", dirty.verdict);
+
+/* Agreement is not correctness: both engines could share a wrong answer.  These
+   pin the semantics, so a guarded optional dependency stays clean and an
+   unguarded phantom is still convicted. */
+const guardedOk = audit("c.py", CASES["guarded optional import"]);
+ok("a guarded optional import is not a phantom",
+   !(guardedOk.findings || []).some((f) => f.rule === "PHANTOM_IMPORT"),
+   JSON.stringify((guardedOk.findings || []).map((f) => f.rule)));
+ok("a guarded optional import is not LIED", guardedOk.verdict !== "LIED", guardedOk.verdict);
+
+const phantomBad = audit("c.py", CASES["unguarded phantom import"]);
+ok("an unguarded phantom import is still convicted",
+   (phantomBad.findings || []).some((f) => f.rule === "PHANTOM_IMPORT" && f.sev === "high"),
+   JSON.stringify(phantomBad.findings));
+ok("an unguarded phantom import is LIED", phantomBad.verdict === "LIED", phantomBad.verdict);
+
+const wrongHandler = audit("c.py", CASES["guarded by wrong handler"]);
+ok("a try that does not catch ImportError is still a phantom",
+   (wrongHandler.findings || []).some((f) => f.rule === "PHANTOM_IMPORT"),
+   JSON.stringify((wrongHandler.findings || []).map((f) => f.rule)));
 ok("a finding carries a line number", (dirty.findings || []).every((f) => typeof f.line === "number"));
 ok("a finding names its file", (dirty.findings || []).every((f) => f.file === "c.py"));
 

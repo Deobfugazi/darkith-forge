@@ -2584,8 +2584,46 @@ function dict(seed) {
     function phantom(root) {
       return !(stdlib[root] || installed[root] || local[root] || root === "__future__");
     }
+    /* Lines of imports inside a `try:` whose handler catches ImportError.  The
+       token-level twin of guardedImportNodes, for a source too deep to parse.
+       Without it a deep file would be convicted for a correctly guarded optional
+       dependency that the same file one character shorter reports clean. */
+    var guardedLines = Object.create(null);
+    (function () {
+      var lines = [], cur = [];
+      tokens.forEach(function (t) {
+        if (t.type === "NEWLINE" || t.type === "ENDMARKER") {
+          if (cur.length) { lines.push(cur); cur = []; }
+        } else if (t.type !== "INDENT" && t.type !== "DEDENT" && t.type !== "COMMENT" && t.type !== "NL") {
+          cur.push(t);
+        }
+      });
+      if (cur.length) lines.push(cur);
+      for (var a = 0; a < lines.length; a++) {
+        var b0 = lines[a][0];
+        if (!(b0.type === "NAME" && b0.str === "try")) continue;
+        if (!(lines[a].length > 1 && lines[a][1].type === "OP" && lines[a][1].str === ":")) continue;
+        var ind = b0.col, e = a + 1, catches = false;
+        for (; e < lines.length; e++) {
+          if (lines[e][0].col <= ind) {
+            var h = lines[e][0];
+            if (h.type === "NAME" && h.str === "except") {
+              catches = lines[e].some(function (t) {
+                return t.type === "NAME" && (t.str === "ImportError" || t.str === "ModuleNotFoundError");
+              });
+            }
+            break;
+          }
+        }
+        if (!catches) continue;
+        for (var k = a + 1; k < e; k++) {
+          var f0 = lines[k][0];
+          if (f0.col > ind && f0.type === "NAME" && (f0.str === "import" || f0.str === "from")) guardedLines[f0.line] = 1;
+        }
+      }
+    })();
     function report(root, line) {
-      if (phantom(root))
+      if (!guardedLines[line] && phantom(root))
         F.push(finding("PHANTOM_IMPORT", 2, file, line,
                        "'" + root + "' is not stdlib, installed, or local", "high"));
     }
@@ -2616,6 +2654,34 @@ function dict(seed) {
       }
     }
     return F;
+  }
+
+  /* Ids of import nodes inside `try: ... except ImportError:`.  That block is the
+     canonical way to declare an optional dependency: the code states the module
+     may be absent and handles it.  Convicting it as a phantom import (phi2 fail ->
+     LIED) is a false accusation against correct code, so guarded imports are not
+     phantoms.  Mirrors savf.py's _guarded_import_nodes. */
+  function guardedImportNodes(tree) {
+    var guarded = Object.create(null);
+    function catchesImportError(h) {
+      if (!h || !h.type) return false;
+      if (h.type.t === "Name") return h.type.id === "ImportError" || h.type.id === "ModuleNotFoundError";
+      if (h.type.t === "Tuple") return h.type.elts.some(function (e) {
+        return e && e.t === "Name" && (e.id === "ImportError" || e.id === "ModuleNotFoundError");
+      });
+      return false;
+    }
+    global.PyAst.walk(tree).forEach(function (n) {
+      if (n.t !== "Try") return;
+      var catches = (n.handlers || []).some(catchesImportError);
+      if (!catches) return;
+      (n.body || []).forEach(function (stmt) {
+        global.PyAst.walk(stmt).forEach(function (inner) {
+          if (inner.t === "Import" || inner.t === "ImportFrom") guarded[inner.lineno + ":" + inner.col_offset] = 1;
+        });
+      });
+    });
+    return guarded;
   }
 
   /* opts: { stdlib: {name:1}, stdattrs: {mod:[attrs]}, local: {name:1} } */
@@ -2697,10 +2763,12 @@ function dict(seed) {
 
     /* imports: phi2 */
     var modAlias = dict();
+    var guarded = guardedImportNodes(tree);
     global.PyAst.walk(tree).forEach(function (n) {
       var names = [];
       if (n.t === "Import") n.names.forEach(function (a) { names.push([a.name, a.asname || a.name.split(".")[0], n.lineno]); });
       else if (n.t === "ImportFrom" && !n.level && n.module) names.push([n.module, null, n.lineno]);
+      var isGuarded = guarded[n.lineno + ":" + n.col_offset];
       names.forEach(function (row) {
         var full = row[0], bound = row[1], line = row[2];
         var root = full.split(".")[0];
@@ -2708,6 +2776,7 @@ function dict(seed) {
           if (opts.stdlib[root] && bound && full.indexOf(".") < 0) modAlias[bound] = root;
           return;
         }
+        if (isGuarded) return;
         F.push(finding("PHANTOM_IMPORT", 2, file, line, "'" + root + "' is not stdlib, installed, or local", "high"));
       });
     });
