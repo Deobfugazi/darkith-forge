@@ -54,9 +54,14 @@ def repair(root=ROOT):
              "Co-authored-by: openhands <openhands@all-hands.dev>"], root=root)
     if c.returncode != 0:
         return 'drift', [c.stderr.strip() or 'commit refused']
-    push = git(["push", "origin", "HEAD"], root=root)
-    if push.returncode != 0:
-        return 'drift', [push.stderr.strip() or 'push refused (never force-pushed)']
+    # Push only where a remote exists. A local-only worktree (or a throwaway test repo)
+    # converges on the commit itself; unpushed age is a separate measurement owned by
+    # authority_gate (NEVER #21), so this gate must not fail what git cannot reach.
+    remote = git(["remote", "get-url", "origin"], root=root)
+    if remote.returncode == 0:
+        push = git(["push", "origin", "HEAD"], root=root)
+        if push.returncode != 0:
+            return 'drift', [push.stderr.strip() or 'push refused (never force-pushed)']
     state, paths = find_drift(root=root)
     if state != "clean":
         return "drift", paths or ["repair did not converge"]
@@ -108,12 +113,25 @@ def selftest():
     check("detector fires on a dirty tree", state == "drift", state)
     check("the drifted path is named", any("HISTORY.md" in p for p in paths), str(paths))
 
-    print("== the repair converges, and it is a real commit on disk (SPI-2) ==")
+    print("== the repair converges without a remote, and it is a real commit (SPI-2) ==")
     r_state, r_paths = repair(dirty)
-    check("repair reports convergence", r_state == "clean", str(r_paths))
+    check("repair reports convergence (no remote)", r_state == "clean", str(r_paths))
     check("detector agrees the tree is newborn", find_drift(dirty)[0] == "clean")
     log = git(["log", "--format=%s"], root=dirty)
     check("the repair is a committed fact", "eliminate uncommitted drift" in log.stdout)
+
+    print("== with a remote, the repair also lands the push ==")
+    import tempfile
+    remote_dir = tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "--bare"], cwd=remote_dir, check=True)
+    shared = fresh_repo()
+    subprocess.run(["git", "remote", "add", "origin", remote_dir], cwd=shared, check=True)
+    (shared / "HISTORY.md").write_text("half a repair\n")
+    s_state, s_paths = repair(shared)
+    check("repair converges with a remote", s_state == "clean", str(s_paths))
+    heads = subprocess.run(["git", "rev-list", "HEAD"], cwd=remote_dir,
+                           capture_output=True, text=True).stdout.splitlines()
+    check("the push really landed", len(heads) == 1, str(len(heads)) + " head on the remote")
 
     print("== no git repo is a named SKIP, never a pass ==")
     with tempfile.TemporaryDirectory() as bare:

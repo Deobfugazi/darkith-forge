@@ -48,12 +48,25 @@ def main():
           all(any(n in p for p in paths) for n in ("HISTORY.md", "HISTORY2.md")),
           str(paths))
 
-    print("== the repair converges and is a real commit (SPI-2: read the bytes) ==")
+    print("== the repair converges without a remote and is a real commit (SPI-2) ==")
     r_state, r_paths = g.repair(dirty)
-    check("repair converges", r_state == "clean", str(r_paths))
+    check("repair converges (no remote)", r_state == "clean", str(r_paths))
     check("detector agrees: newborn", g.find_drift(dirty)[0] == "clean")
     log = g.git(["log", "--format=%s"], root=dirty)
     check("repair left a real commit", "eliminate uncommitted drift" in log.stdout)
+
+    print("== with a real bare remote, the repair lands the push ==")
+    import tempfile
+    remote_dir = tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "--bare"], cwd=remote_dir, check=True)
+    shared = fresh_repo()
+    subprocess.run(["git", "remote", "add", "origin", remote_dir], cwd=shared, check=True)
+    (shared / "HISTORY.md").write_text("half a repair\n")
+    s_state, s_paths = g.repair(shared)
+    check("repair converges with a remote", s_state == "clean", str(s_paths))
+    heads = subprocess.run(["git", "rev-list", "HEAD"], cwd=remote_dir,
+                           capture_output=True, text=True).stdout.splitlines()
+    check("the push really landed", len(heads) == 1, str(len(heads)) + " head on the remote")
 
     print("== a repair on a clean tree is a no-op, not a stray commit ==")
     before = len(g.git(['rev-list', 'HEAD'], root=dirty).stdout.splitlines())
