@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "0cab7eeea7fd6dc90c2a3a56dc77d3da3c0fe8ac06c4f96823b432f463e72bf8",
-  "board_sha256": "eb7586654dc37083a8b8c1fd5b580c4c913391c9508aebaee7aecf2985196557",
+  "board_sha256": "7d74183f7078b3c0de5dd35783aba6e9cbd6c38453467e0f76e05930d2d9e6f1",
   "laws": {
     "declared": [
       "MUST #20",
@@ -32,6 +32,7 @@
       "MUST #31",
       "MUST #37",
       "MUST #38",
+      "MUST #42",
       "SPI-11",
       "SPI-19",
       "SPI-29"
@@ -42,7 +43,7 @@
       "target": "durable",
       "path": "/workspace/project/darkith-forge/TASKS.md",
       "status": "updated",
-      "detail": "20521->21430 B"
+      "detail": "21430->21442 B"
     },
     {
       "target": "session:18393131094c4acfb45d943764549f23",
@@ -54,13 +55,13 @@
       "target": "worktree:pristine",
       "path": "/tmp/pristine/TASKS.md",
       "status": "updated",
-      "detail": "19777->20686 B"
+      "detail": "20686->20698 B"
     },
     {
       "target": "worktree:wi_heal",
       "path": "/tmp/wi_heal/TASKS.md",
       "status": "updated",
-      "detail": "18008->18917 B"
+      "detail": "18917->18929 B"
     }
   ],
   "mode": "apply",

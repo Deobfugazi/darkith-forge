@@ -74,7 +74,7 @@
 | `SPI-4` | LOG TO DISK, READ FROM DISK |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #31`, `MUST #37`, `MUST #38`, `SPI-11`, `SPI-19`, `SPI-29`
+**Also matched by term (derived, advisory — not an order):** `MUST #31`, `MUST #37`, `MUST #38`, `MUST #42`, `SPI-11`, `SPI-19`, `SPI-29`
 
 <!-- PRAXIS:END -->
 

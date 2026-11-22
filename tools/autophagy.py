@@ -188,6 +188,17 @@ CLASSES = [
            "a derived artifact that is verified on disk and never committed is drift every "
            "gate can see and none may fix; CI checks out a HEAD that never held it"),
 
+    # Found 2026-11-22 (converged): the derived-artifact subclass above was gated, but the
+    # GENERAL class — any uncommitted edit in the working tree — was still only a WARN in
+    # ci.sh D-1, so half a repair sat invisible until an off-schedule run shipped it.
+    # Detector + deterministic repair + prevention gate + test: MUST #42.
+    Class_("uncommitted general drift",
+           "python3 tools/drift_gate.py --check",
+           "python3 tools/drift_gate.py --fix",
+           "ci: drift gate (NEVER #22)",
+           "uncommitted or unpushed edits are invisible to the other tab and ship half a "
+           "repair; the detector fails the tree and the repair commits and pushes it"),
+
 ]
 
 

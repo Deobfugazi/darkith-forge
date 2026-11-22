@@ -127,6 +127,12 @@ if have python3; then
     if [ -f tools/tests/run_feed_test.py ]; then
       run "run feed + derived governance" python3 tools/tests/run_feed_test.py
     fi
+    # NEVER #22 / MUST #42: the general drift gate is a CLASS fix. The suite drives REAL
+    # temporary git repos: detector fires on dirt, stays silent on a newborn tree, and
+    # the deterministic repair provably converges.
+    if [ -f tools/tests/drift_gate_test.py ]; then
+      run "drift gate test (NEVER #22)"   python3 tools/tests/drift_gate_test.py
+    fi
     # The communal contribution ledger (NT XII). A mint's value is that its witness can be
     # re-run by anyone and print the same token, so the chain gate proves no entry was
     # rewritten and the selftest proves a porous barrier still blocks promotion.
@@ -610,13 +616,17 @@ fi
 printf '\n=== discrepancy detectors (two tabs must agree) ===\n'
 if have git && git rev-parse --git-dir >/dev/null 2>&1; then
 
-  # D-1 uncommitted work: with two tabs, an uncommitted edit is invisible to the
-  # other tab and can be lost. Warn loudly (do not fail: CI is runnable pre-commit).
-  if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
-    printf -- '--- working tree clean: WARN (uncommitted edits are invisible to the other tab)\n'
-    git status --short | sed 's/^/      /'
+  # D-1 / NEVER #22 uncommitted drift: with two tabs, an uncommitted edit is invisible
+  # to the other tab and can be lost. This STOPS being a warning: a drifting tree is a
+  # defect CLASS (inscribed in DARKITH.md, registered in tools/autophagy.py both as the
+  # derived-artifact subclass via tools/tree_invariant.py and the general class via
+  # tools/drift_gate.py). The gate fails closed on drift; `python3 tools/drift_gate.py
+  # --fix` is the deterministic repair (stage, commit, push — never force).
+  if [ -f tools/drift_gate.py ]; then
+    run "drift gate (NEVER #22)" python3 tools/drift_gate.py --check
   else
-    printf -- '--- working tree clean: PASS\n'
+    printf -- '--- drift gate (NEVER #22): FAIL (tools/drift_gate.py missing)\n'
+    FAILED=1
   fi
 
   # D-2 fork singularity (AGENTS.md NEVER #11 / SPI-12, the missing W-040 gate).
