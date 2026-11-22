@@ -15,7 +15,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 77,971 | `aee8387257ac` | AGENTS.md — Darkith |
+| `AGENTS.md` | 78,208 | `436380ac879c` | AGENTS.md — Darkith |
 | `DARKITH.md` | 101,932 | `c1f13c22d728` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
@@ -63,7 +63,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
 | `icon_forge.html` | 64,437 | `9cf24b11b3ee` | Ω Icon Forge |
-| `omega-reader.html` | 2,777,616 | `bef321c81548` | Library — DARKITH knowledge base |
+| `omega-reader.html` | 2,778,952 | `993e86fcb783` | Library — DARKITH knowledge base |
 | `omega.html` | 89,894 | `0bebef245cf4` | DARKITH Ω — terminal + local assistant |
 | `savf.html` | 468,017 | `e366e0f7a4ea` | SAVF-1 Universal Audit Engine |
 

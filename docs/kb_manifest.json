@@ -3,10 +3,10 @@
   "count": 66,
   "files": [
     {
-      "bytes": 77971,
+      "bytes": 78208,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "aee8387257acf47833bd31ae67ce91d7d5cd8bc866f6a067608d6616fd7bc9c5"
+      "sha256": "436380ac879c00c842290c2882c79e9d019a920a498470c28fdb61ec7f1115bf"
     },
     {
       "bytes": 101932,
@@ -231,10 +231,10 @@
       "sha256": "9cf24b11b3ee803c53ea96db7b480e291a519c800bf1a04e37f7fc7c85595e42"
     },
     {
-      "bytes": 2777616,
+      "bytes": 2778952,
       "path": "omega-reader.html",
       "register": "C-skillbase",
-      "sha256": "bef321c81548c81df9d952c507e3c5f82e4afd4ffe8f798b23d15c4dc6de7983"
+      "sha256": "993e86fcb78324cb493d30662b4d8750d0c708b3c3241f2225de8eb6fd6b6df1"
     },
     {
       "bytes": 89894,

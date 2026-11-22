@@ -1058,22 +1058,25 @@ tokens exit non-zero, alongside 1D/2D/3D poles, negative coordinates, and the re
 
 ### Editing a bundled surface invalidates every artifact built from it
 
-`savf.html` is embedded in `omega-reader.html` as a document and hashed into
-`delivery/index.html`, `delivery/darkith-one-shot.sh`, the repo ZIP, and `docs/INDEX.md`.
-Changing one byte of it fails the reader's byte-identity test, the KB index check, the
-delivery check, and the one-shot payload check. Rebuild in dependency order:
+`savf.html` is embedded in `omega-reader.html` as a document and hashed into the delivery
+bundle's index page, the one-shot payload, the repo ZIP, and `docs/INDEX.md`. Changing one
+byte of it fails the reader's byte-identity test, the KB index check, the delivery check, and
+the one-shot payload check. Rebuild in dependency order:
 
     python3 tools/kb_index.py --write
     python3 tools/reader_build.py
+    python3 tools/kb_index.py --write   # again: the reader is itself indexed
     python3 build/sync-delivery.py
     python3 build/make-repo-zip.py
-    python3 build/sync-delivery.py      # again: the zip changed index.html's hashes
+    python3 build/sync-delivery.py      # again: the zip changed the printed hashes
     python3 build/make-oneshot.py
     python3 build/verify.py --fast
 
-`sync-delivery.py` and `make-repo-zip.py` are mutually recursive (the zip contains
-`delivery/index.html`, whose printed hashes the zip then invalidates). Running sync a second
-time after the zip is what settles it, not a single pass.
+Two cycles have to be iterated to a fixed point, not run once. `kb_index.py` hashes
+`omega-reader.html`, while `reader_build.py` embeds every indexed doc; the reader excludes
+its own bytes so the pair converges after the second pass. Likewise `sync-delivery.py` and
+`make-repo-zip.py` feed each other, because the zip contains the delivery index whose printed
+hashes the zip then invalidates.
 
 ### The remaining CI failures are git-state, not defects
 
