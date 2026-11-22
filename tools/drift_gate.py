@@ -101,7 +101,7 @@ def cycle_open() -> bool:
     return tree_invariant.cycle_open()
 
 
-def check(root=None):
+def check(root=ROOT):
     if cycle_open():
         print("drift gate: SKIP (a revitalization cycle is open; the tree is meant to be "
               "dirty until S16 lands it)")

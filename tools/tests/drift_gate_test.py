@@ -124,6 +124,16 @@ def main():
         os.environ.pop("REVITALIZATION_BOOTSTRAP", None)
         if saved is not None:
             os.environ["REVITALIZATION_BOOTSTRAP"] = saved
+    print("== the CLI path with no argument judges this repo, and does not crash ==")
+    # The suite passes an explicit root everywhere, so the default-argument path -- the one
+    # ci.sh actually runs -- was never exercised and shipped a cwd="None" traceback.
+    saved = os.environ.pop("REVITALIZATION_BOOTSTRAP", None)
+    try:
+        rc = g.check()
+        check("no-argument check returns a verdict", rc in (0, 1, 3), f"exit {rc}")
+    finally:
+        if saved is not None:
+            os.environ["REVITALIZATION_BOOTSTRAP"] = saved
     print()
     if FAILS:
         print(f"DRIFT GATE TEST: FAIL ({len(FAILS)}): {FAILS}")
