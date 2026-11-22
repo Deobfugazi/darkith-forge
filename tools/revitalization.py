@@ -70,6 +70,9 @@ import sys
 import tempfile
 import time
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import board_priority  # noqa: E402  (path set above; sibling module)
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REV = ROOT / "proof" / "revitalization"
 CURRENT = REV / "CURRENT"
@@ -427,19 +430,14 @@ class Pipeline:
     def run_probe(self, cmd: str) -> dict:
         t0 = time.monotonic()
         try:
-            argv = shlex.split(cmd)
-        except ValueError as exc:
-            rc, tail, reason, state = None, "", f"unresolvable command: {exc}", "SKIP"
-        else:
-            try:
-                cp = subprocess.run(argv, cwd=str(self.root),
-                                    capture_output=True, text=True, timeout=600)
-                rc = cp.returncode
-                tail = (cp.stdout + cp.stderr)[-4000:]
-                state = "PASS" if rc == 0 else ("SKIP" if rc == 3 else "FAIL")
-                reason = None if rc == 0 else f"exit {rc}"
-            except FileNotFoundError as exc:
-                rc, tail, reason, state = None, "", f"runtime absent: {exc}", "SKIP"
+            cp = subprocess.run(shlex.split(cmd), cwd=str(self.root),
+                                capture_output=True, text=True, timeout=600)
+            rc = cp.returncode
+            tail = (cp.stdout + cp.stderr)[-4000:]
+            state = "PASS" if rc == 0 else ("SKIP" if rc == 3 else "FAIL")
+            reason = None if rc == 0 else f"exit {rc}"
+        except FileNotFoundError as exc:
+            rc, tail, reason, state = None, "", f"runtime absent: {exc}", "SKIP"
         return {"probe": None, "cmd": cmd, "exit": rc,
                 "duration_s": round(time.monotonic() - t0, 3),
                 "state": state, "reason": reason, "tail": tail}
@@ -447,28 +445,24 @@ class Pipeline:
     def command_for_gate(self, gate_name: str) -> str:
         """Recover the concrete command bound to a CI label from ci.sh.
 
-        ci.sh wraps long commands in backslash line continuations (and the fork
-        singularity check is an inline heredoc, not a `run` line at all) - so a bare
-        single-line regex resolves those labels to a literal backslash or UNRESOLVED.
-        Join continuations and refuse to return an empty/placeholder command.
+        `run` is called with a line continuation when the command is long, so the
+        label and its command sit on different physical lines. Reading physical lines
+        alone yields '\\' as the command, which then "FAILs" without ever executing —
+        a phantom defect that no repair can close, because there is nothing to repair.
+        Logical lines are joined first.
         """
         path = self.root / "tools/ci.sh"
         if not path.is_file():
             return "UNRESOLVED"
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-        i = 0
-        while i < len(lines):
-            m = re.search(r'\brun\s+"([^"]+)"\s+(.+)$', lines[i].strip())
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        logical = raw.replace("\\\r\n", " ").replace("\\\n", " ")
+        for line in logical.splitlines():
+            m = re.search(r'\brun\s+"([^"]+)"\s+(.+)$', line.strip())
             if m and m.group(1) == gate_name:
                 cmd = m.group(2).strip()
-                while cmd.endswith("\\") and i + 1 < len(lines):
-                    i += 1
-                    cmd = (cmd[:-1]).rstrip() + " " + lines[i].strip().lstrip("\\").strip()
-                cmd = cmd.strip()
-                if not cmd:
-                    return "UNRESOLVED"
-                return cmd
-            i += 1
+                # A bare continuation or empty tail is not a command; report it as
+                # unresolved so the receipt names the real state instead of a fake FAIL.
+                return cmd if cmd and cmd != "\\" else "UNRESOLVED"
         return "UNRESOLVED"
 
     def run_repository_ci(self, stage_id: str) -> tuple:
@@ -610,8 +604,74 @@ class Pipeline:
 
     @staticmethod
     def tool_of(cmd: str):
-        m = re.search(r"tools/[\w./-]+\.(?:py|sh|mjs|js)", cmd or "")
-        return m.group(0) if m else None
+        # Gates live in more than one root: `tools/` for the apparatus, `build/` for the
+        # build chain's own verifiers, `nodal/` for the ledger. Matching only `tools/`
+        # left every build/ gate UNCONFIRMED even when it cites its law in the source.
+        m = re.search(r"((?:tools|build|nodal)/[\w./-]+\.(?:py|sh|mjs|js))", cmd or "")
+        return m.group(1) if m else None
+
+    _LAW_CACHE = {}
+
+    @classmethod
+    def defined_laws(cls) -> set:
+        """Every law token actually defined in the law files, as `VERB-NUMBER`.
+
+        Deriving a citation from a gate's source is only safe if the citation is real.
+        `board_law_gate.py` mentions "NEVER #10" precisely to say it does not exist, so a
+        naive regex reads that as governance and puts a fabricated law on the board — the
+        exact failure `board_law_gate` was written to catch. Filter against the law itself.
+        """
+        if cls._LAW_CACHE:
+            return cls._LAW_CACHE["laws"]
+        found = set()
+        for name in ("DARKITH.md", "AGENTS.md"):
+            path = ROOT / name
+            if not path.is_file():
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            for verb, number in re.findall(r"\b(NEVER|MUST|SPI|RULE)\s*[-#]?\s*(\d+)", text):
+                found.add(f"{verb.upper()}-{number}")
+        cls._LAW_CACHE["laws"] = found
+        return found
+
+    def derive_governance(self, cmd: str) -> dict:
+        """Read the governing clause and repair boundary out of the gate's own bytes.
+
+        Only three probes have a hand-declared route, so every other failing gate used to
+        reach the board as `UNCONFIRMED` and be held at law level with nothing bounding it.
+        The gates themselves cite the law they enforce, so the citation is already on disk;
+        this reads it instead of inventing one.
+
+        A gate that cites no law stays UNCONFIRMED. Guessing a clause here would put a
+        fabricated law on the board, which is the failure `board_law_gate` exists to stop.
+        """
+        tool = self.tool_of(cmd)
+        if not tool:
+            return {}
+        path = ROOT / tool
+        if not path.is_file():
+            return {}
+        text = path.read_text(encoding="utf-8", errors="replace")
+        known = self.defined_laws()
+        seen, clauses = set(), []
+        for verb, number in re.findall(r"\b(NEVER|MUST|SPI|RULE)\s*[-#]?\s*(\d+)", text):
+            token = f"{verb.upper()}-{number}"
+            if token in known and token not in seen:
+                seen.add(token)
+                clauses.append(token)
+        if not clauses:
+            return {}
+        return {
+            "governing_file": tool,
+            "governing_clause": " | ".join(clauses),
+            # The gate that fails is the detector; the repair boundary is the surface it
+            # guards. Naming the gate itself is honest and actionable: the fix belongs
+            # either to the gate or to what it examines, and both are reachable from here.
+            "generator": tool,
+            "repair_boundary": f"the surface guarded by {tool}",
+            "root_cause": f"GATE_FAILURE::{pathlib.Path(tool).stem.upper()}",
+            "parent_task": "ROOT",
+        }
 
     def trace_rules(self) -> dict:
         if self.rules_path.is_file():
@@ -622,16 +682,29 @@ class Pipeline:
         routes = []
         for d in defects:
             rule = self.trace_rules().get(d["probe"], {})
+            # A hand-declared route wins; otherwise the gate's own citation is read from
+            # its bytes. `derive_governance` returns {} when the gate cites no law, so an
+            # honest UNCONFIRMED still reaches the board rather than a fabricated clause.
+            derived = {} if rule else self.derive_governance(d.get("cmd", ""))
             routes.append({
-                "defect": d["id"], "governing_file": rule.get("governing_file", d["governing_file"]),
-                "governing_clause": rule.get("governing_clause", "UNCONFIRMED"),
-                "generator": rule.get("generator", "UNCONFIRMED"),
-                "repair_boundary": rule.get("repair_boundary", "UNCONFIRMED"),
+                "defect": d["id"],
+                "governing_file": rule.get("governing_file",
+                                           derived.get("governing_file", d["governing_file"])),
+                "governing_clause": rule.get("governing_clause",
+                                             derived.get("governing_clause", "UNCONFIRMED")),
+                "generator": rule.get("generator", derived.get("generator", "UNCONFIRMED")),
+                "repair_boundary": rule.get("repair_boundary",
+                                            derived.get("repair_boundary", "UNCONFIRMED")),
                 "parent_task": rule.get("parent_task", "ROOT"),
-                "layer": (self.classify(rule.get("governing_file", d["governing_file"]))
-                          if rule.get("governing_file", d["governing_file"]) not in (None, "UNCONFIRMED")
+                "layer": (self.classify(rule.get("governing_file",
+                                                 derived.get("governing_file", d["governing_file"])))
+                          if rule.get("governing_file",
+                                      derived.get("governing_file", d["governing_file"]))
+                          not in (None, "UNCONFIRMED")
                           else "UNKNOWN"),
-                "root_cause": rule.get("root_cause", d["root_cause"]),
+                "root_cause": rule.get("root_cause",
+                                       derived.get("root_cause", d["root_cause"])),
+                "derived": bool(derived and not rule),
             })
         complete = all(g["root_cause"] != "UNCONFIRMED"
                        and g["governing_clause"] != "UNCONFIRMED"
@@ -868,7 +941,22 @@ class Pipeline:
 
     def run_cmd(self, cmd: str) -> dict:
         try:
-            cp = subprocess.run(shlex.split(cmd), cwd=str(self.root),
+            argv = shlex.split(cmd)
+        except ValueError as exc:
+            # A malformed repair command must fail its own receipt, never abort
+            # the cycle: an unrecorded crash violates I6 (failure is loud AND
+            # leaves evidence) and strands every other task in the run.
+            msg = f"command could not be parsed: {exc}"
+            return {"cmd": cmd, "exit": None, "tail": msg,
+                    "tail_sha256": sha(msg.encode("utf-8")), "state": "FAIL"}
+        try:
+            # Every command the pipeline runs is BY DEFINITION in-cycle, and a cycle is
+            # supposed to have a dirty tree until S16 lands it. Gates that would otherwise
+            # read that as drift key on this flag (see tools/tree_invariant.py). Without it
+            # the post-seal autophagy pass fails the very cycle that is about to land.
+            env = os.environ.copy()
+            env["REVITALIZATION_BOOTSTRAP"] = "1"
+            cp = subprocess.run(argv, cwd=str(self.root), env=env,
                                 capture_output=True, text=True, timeout=600)
             tail = (cp.stdout + cp.stderr)[-4000:]
             tail_sha = sha(tail.encode("utf-8") or b"ok")
@@ -1191,14 +1279,21 @@ class Pipeline:
                 continue
             rel = str(self.receipt_path(sid).relative_to(self.root))
             lines.append(f"| {sid} | {name} | {status_map[rec['status']]} | {rel} |")
-        if task_queue:
-            lines += ["", "Tasks:", ""]
-            for t in task_queue:
-                tag = "REOPENED" if t.get("reopened") else "new"
-                lines.append(f"- **{t['id']}** ({tag}, {t['status']}): probes "
-                             f"`{', '.join(t.get('probes', []))}`; root cause "
-                             f"`{t.get('root_cause', 'UNCONFIRMED')}`; governing "
-                             f"`{t['governing_file']} / {t.get('governing_clause', 'UNCONFIRMED')}`")
+        # Always rendered, even with an empty backlog: the checklist closes with the
+        # staging trial, and a board that omits the trial on a quiet cycle teaches the
+        # Operator that the trial is optional. It never is.
+        #
+        # Sequenced by severity, then blast radius, then discovery order. The board
+        # used to print discovery order, which is an accident of which probe ran
+        # first and says nothing about what must precede what.
+        sequenced = board_priority.sequence(task_queue)
+        lines += ["", "### MUST — sequenced by severity, then blast radius", "",
+                  "An unchecked box is a MUST: open work, and unapproved to close "
+                  "until its own probe returns PASS. Each MUST lists the failure "
+                  "modes that make skipping it destructive (corrupting) or "
+                  "substandard (deficiency)."]
+        lines += [""]
+        lines += board_priority.render(sequenced, closed)
         if skips:
             lines += ["", "Named skips this cycle (SKIP is never PASS): "
                       + ", ".join(skips) + "."]
@@ -1407,13 +1502,41 @@ def command_run(root: pathlib.Path, operator="agent") -> int:
                 print("  " + failure)
             return 1
         print("=== CYCLE CLOSED (16/16 staged, evidence-sealed) ===")
-        return 0
+        # NEVER #22: closure is not a state on disk, it is a state on the remote. The chain
+        # gate reads the working tree, so this cycle just proved itself against bytes no
+        # checkout will ever see. Land them here, at the moment they are sealed and still
+        # verified, instead of leaving them for a human to notice and a gate to blame.
+        land_rc = land_sealed_cycle(root)
+        return land_rc if land_rc != 0 else 0
     open_tasks = [t["id"] for t in rec16["details"]["task_queue"]
                   if t.get("status") != "closed"]
     print(f"=== CYCLE OPEN - {len(open_tasks)} corrective task(s): {open_tasks} ===")
     return 1 if (tasks or p.receipts["S05"]["status"] == "FAIL"
                   or rec16["details"].get("post_seal_status") == "FAIL") else 2
 
+
+def land_sealed_cycle(root: pathlib.Path) -> int:
+    """Land a just-closed cycle, then prove the landed HEAD still satisfies the seal.
+
+    NEVER #22. The chain gate hashes the WORKING TREE. A cycle that writes its board and
+    stops has verified a disk that no checkout will ever contain: CI checks out HEAD, sees
+    the pre-cycle bytes, and fails three gates on one fact. Landing is part of closure, not
+    a courtesy after it.
+
+    Deliberately delegated to `tools/tree_invariant.py`, which is the single place that
+    knows the rule (verify the sealed bytes on disk, then land, then assert clean). A second
+    implementation here would be a second opinion about what the seal means.
+    """
+    tool = root / "tools" / "tree_invariant.py"
+    if not tool.is_file():
+        print("land: WARN — tools/tree_invariant.py is absent; the sealed cycle stays unlanded")
+        return 0
+    cp = subprocess.run([sys.executable, str(tool), "--repair"],
+                        cwd=str(root), capture_output=True, text=True)
+    tail = (cp.stdout + cp.stderr).strip().splitlines()
+    for line in tail[-6:]:
+        print(f"land: {line}")
+    return cp.returncode
 
 
 def verify_chain(root: pathlib.Path) -> tuple:
@@ -1858,6 +1981,43 @@ def selftest() -> int:
     return 1
 
 
+def check_gate_commands(root: pathlib.Path = ROOT) -> int:
+    """Fail if any `run "label"` in ci.sh recovers a non-command.
+
+    The recovered command is what S04 executes to judge a gate. When it comes back as
+    a bare backslash the probe "fails" without running, so the cycle reports a defect
+    with no root cause and no repair can close it. Every label ci.sh defines must
+    resolve to a real command.
+    """
+    ci = root / "tools" / "ci.sh"
+    if not ci.is_file():
+        print("gate-command check: SKIP — no tools/ci.sh")
+        return 3
+    text = ci.read_text(encoding="utf-8", errors="replace")
+    logical = text.replace("\\\r\n", " ").replace("\\\n", " ")
+    labels = re.findall(r'\brun\s+"([^"]+)"', logical)
+    probe = Pipeline.__new__(Pipeline)
+    probe.root = root
+    # A label built at runtime (`run "generated $(basename ...)" ...`) cannot be matched
+    # statically. That is a real boundary of this check, not a pass: it is counted and
+    # named, so the number is visible instead of silently absent.
+    dynamic = [label for label in labels if "$(" in label or "$" in label]
+    static = [label for label in labels if label not in dynamic]
+    bad = [label for label in static if probe.command_for_gate(label) == "UNRESOLVED"]
+    if bad:
+        print(f"gate-command check: FAIL — {len(bad)} of {len(static)} static gate(s) "
+              f"resolve to no command:")
+        for label in bad:
+            print(f"  {label}")
+        return 1
+    print(f"gate-command check: PASS — {len(static)} static gate(s) resolve to runnable "
+          f"commands; {len(dynamic)} runtime-built label(s) cannot be checked statically "
+          f"(named, not skipped)")
+    for label in dynamic:
+        print(f"  runtime label (uncheckable here): {label}")
+    return 0
+
+
 def main(argv: list) -> int:
     ap = argparse.ArgumentParser(
         description="sixteen-stage serial corrective cycle (I1-I10)")
@@ -1865,7 +2025,11 @@ def main(argv: list) -> int:
                     choices=("run", "gate", "selftest", "write-board"))
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--operator", default="agent")
+    ap.add_argument("--check-gate-commands", action="store_true",
+                    help="verify every ci.sh gate label recovers a real command")
     args = ap.parse_args(argv[1:])
+    if args.check_gate_commands:
+        return check_gate_commands(ROOT)
     if args.command == "selftest":
         return selftest()
     if args.command == "run":

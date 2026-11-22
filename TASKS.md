@@ -5,75 +5,48 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T18:29:29.618260`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-22T06:14:14.490182`. This section is regenerated, never hand-edited._
 >
-> **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
+> **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#41, MUST17, NEVER #19, NEVER #21, NEVER#21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
 >
-> 1. **[order]** I need this automated to prime core/remote So this is true to every repos (right now its just my darkith prime omega) and its peripheral sibling tab/…
->    - prompt index `18433` at `2026-11-20T02:32:29.872371`
->    - **Coupled laws:** MUST #26, MUST #27, MUST #33, SPI-15
->    - sha256 `824de68c38af98f4`
-> 2. **[forbid]** Then inscribe the gatekeeper's prime directive to never fucking skip GATE HEADINGS that's a fucking baseline first principle!!!🤬🤬🤬 No heading no clos…
->    - prompt index `18743` at `2026-11-20T02:51:38.502944`
->    - **Coupled laws:** MUST #33, SPI-15
->    - sha256 `b1287388f80dd91c`
-> 3. **[order]** While you're at it, fucking hunt for loopholes, theyre literally unclosed gaps that leaks untracked signals wasting energy, straying, stalling, or sp…
->    - prompt index `18889` at `2026-11-20T02:56:31.182258`
->    - **Coupled laws:** MUST #30, MUST #35, MUST #36, NEVER #19, NEVER #21
->    - sha256 `7fcf24aac22ae3e8`
-> 4. **[order]** Now after everything is completely as in totally loophole/glitch/bug free as literally tested and eliminated permanently as directive prime omega hea…
->    - prompt index `19223` at `2026-11-20T03:09:04.363629`
->    - **Coupled laws:** MUST #21, MUST #22, MUST #30, MUST #33, NEVER #19, SPI-15
->    - sha256 `badfc16873766154`
-> 5. **[forbid]** Now as soon as everything as in every back propagation completes and autocorrectivelyfilling as in regeneratingly HEALING every loophole gaps as my a…
->    - prompt index `19615` at `2026-11-20T03:32:35.449943`
+> 1. **[order]** The board's task check to-do list, is it sequenced by order of critical urgent priority rating as severity autofilling fixes triage is it and always …
+>    - prompt index `29212` at `2026-11-22T02:08:51.093156`
+>    - **Coupled laws:** MUST #26, MUST #27
+>    - sha256 `f7443ee46c46ec34`
+> 2. **[forbid]** **DIRECTIVE COMPLETE.** CI: PASS — 95 gates, 0 failures, 0 skipped. Tree clean, `HEAD == origin/main` at `52209b8`. ## The answer to your question: n…
+>    - prompt index `29433` at `2026-11-22T03:38:19.894937`
+>    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST17, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-4, SPI-6
+>    - sha256 `c89284061f51dbf6`
+> 3. **[forbid]** Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with least ce…
+>    - prompt index `29737` at `2026-11-22T04:13:09.035238`
+>    - **Coupled laws:** MUST #20, MUST #30, MUST #33, NEVER #19, SPI-15, SPI-2, SPI-37, SPI-38, SPI-4, SPI-6
+>    - sha256 `c28c0aedddf0a25f`
+> 4. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+>    - prompt index `29980` at `2026-11-22T04:37:32.805523`
 >    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
->    - sha256 `0a432870f2b43ac9`
-> 6. **[forbid]** Report back all of your findings, because if this is a novel mathematically precise as in zeroed in collision resolved absolutions as a never before …
->    - prompt index `19751` at `2026-11-20T03:44:07.411935`
->    - **Coupled laws:** MUST #33, SPI-15, SPI-37, SPI-38
->    - sha256 `4978f7d9507b1efe`
-> 7. **[forbid]** Dont fucking invalidate my invariants you fuck
->    - prompt index `19894` at `2026-11-20T03:51:48.975890`
->    - **Coupled laws:** MUST #33, SPI-15
->    - sha256 `aaab60b2a17d8381`
-> 8. **[forbid]** Fucking do your job faithfully and never fucking import the concept of FLATTERY in this undertaking! I already fucking declared the only loyalty is t…
->    - prompt index `20043` at `2026-11-20T04:03:19.585240`
->    - sha256 `d171efca3e5fc9e8`
-> 9. **[forbid]** Then what the fuck is the real novel realzation as real never before acquired knowledge gain already retrievable elsewhere in the public emtire scien…
->    - prompt index `20396` at `2026-11-20T04:52:25.588268`
->    - **Coupled laws:** SPI-37, SPI-38
->    - sha256 `7feb199120e8bf2b`
-> 10. **[order]** Return the exact captured prior 10 prompt inputs from me in this transcript or how ever many prompts i sent as soon as i woke up today, i even fuckin…
->    - prompt index `20600` at `2026-11-20T05:04:14.897413`
->    - **Coupled laws:** MUST #26, MUST #27, MUST #28, MUST #33, SPI-15, SPI-25, SPI-26
->    - sha256 `967aa1ec7e6b7ed8`
-> 11. **[forbid]** Now propagate and ping every IDLE parallel agents to fucking work on all my directives today and complete the backlogs!!🤬🤬🤬 You fucking fuck Never wa…
->    - prompt index `20647` at `2026-11-20T05:19:37.871695`
->    - **Coupled laws:** MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15
->    - sha256 `71bad9fd3825ea21`
-> 12. **[forbid]** Now propagate and ping every IDLE parallel agents to fucking work on all my directives today and complete the backlogs!!🤬🤬🤬 You fucking fuck Never wa…
->    - prompt index `20724` at `2026-11-20T05:22:16.666703`
->    - **Coupled laws:** MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15
->    - sha256 `0336bbc688d38e6c`
-> 13. **[forbid]** Again that's not how i demanded my executive completion reports format must be! It should EXPLICITLY report in plain sight if my directive was comple…
->    - prompt index `21389` at `2026-11-20T06:32:25.733555`
->    - **Coupled laws:** MUST #21, MUST #22, MUST #28, MUST #35, MUST #36, NEVER #21, SPI-25, SPI-26, SPI-37, SPI-38
->    - sha256 `22815ce50c23f33a`
-> 14. **[forbid]** Again that's not how i demanded my executive completion reports format must be! It should EXPLICITLY report in plain sight if my directive was comple…
->    - prompt index `21433` at `2026-11-20T06:35:30.375923`
->    - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #35, MUST #36, NEVER #21, SPI-25, SPI-26, SPI-37, SPI-38
->    - sha256 `1ccfa978007ed129`
-> 15. **[forbid]** What have you fucking done to my CI pipe!!🤬🤬🤬🤬🤬🤬🤬 The tests never pass and stuck on red!!!🤬
->    - prompt index `22129` at `2026-11-20T15:21:39.647626`
->    - sha256 `0158492cfa11e711`
-> 16. **[forbid]** If you look at the sytem as an outside observer seeing a holographic wiring circuit tree and say able to virtually see and trace the connectivities a…
->    - prompt index `22669` at `2026-11-20T18:29:29.618260`
->    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
->    - sha256 `1f26c4ac771ea8ca`
+>    - sha256 `c83ecdc8c3fea20a`
+> 5. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+>    - prompt index `29985` at `2026-11-22T04:37:44.144916`
+>    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+>    - sha256 `22d85796fc56c4b7`
+> 6. **[forbid]** Both accusations are false, and the real cause is uncommitted drift. Let me confirm the fix works. Is there no fucking gatekeeping automation that ca…
+>    - prompt index `30049` at `2026-11-22T04:42:18.591087`
+>    - **Coupled laws:** MUST #26, MUST #27, MUST #33, SPI-15
+>    - sha256 `b82b0f08d2400818`
+> 7. **[forbid]** Both accusations are false, and the real cause is uncommitted drift. Let me confirm the fix works. Is there no fucking gatekeeping automation that ca…
+>    - prompt index `30187` at `2026-11-22T04:48:50.172239`
+>    - **Coupled laws:** MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, NEVER #19, SPI-15, SPI-25, SPI-26
+>    - sha256 `44187e3c6217f6b7`
+> 8. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+>    - prompt index `30933` at `2026-11-22T06:09:07.951793`
+>    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#41, NEVER #19, NEVER #21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+>    - sha256 `2b92f44f812d431d`
+> 9. **[forbid]** Fuckers never ship fragmentent fucking incomplete blindsided oversight filled fucking patches and go over everything all at once yawaaaa!!!
+>    - prompt index `31031` at `2026-11-22T06:14:14.490182`
+>    - sha256 `d62911bfe23f1de1`
 >
 
-**Coupled laws (declared by the directive):** `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #18`, `MUST #38`, `MUST #40`, `MUST #11`, `MUST #17`, `NEVER #19`, `NEVER #21`, `NEVER #11`, `SPI-1`, `SPI-11`, `SPI-12`, `SPI-13`, `SPI-14`, `SPI-15`, `SPI-16`, `SPI-18`, `SPI-19`, `SPI-2`, `SPI-21`, `SPI-25`, `SPI-26`, `SPI-29`, `SPI-30`, `SPI-31`, `SPI-32`, `SPI-33`, `SPI-34`, `SPI-35`, `SPI-36`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-5`, `SPI-6`, `SPI-8`
+**Coupled laws (declared by the directive):** `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #17`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-6`
 
 | law | heading |
 |---|---|
@@ -87,43 +60,21 @@
 | `MUST #33` | THE CHARGE IS CALIBRATED OR WITHDRAWN |
 | `MUST #35` | STANDING AUTHORITY TO PUBLISH — NEVER ASK TO PUSH |
 | `MUST #36` | NO OFF-SCHEDULE DWELL — STALL IS MEASURED AS TIME |
-| `MUST #18` | IDEMPOTENT PACKAGING |
-| `MUST #38` | THE CHAT IS THE BOARD — NO HUMAN IN THE LOOP |
-| `MUST #40` | THE APPARATUS TRAVELS — ONE FILE, NO INSTALL |
-| `MUST #11` | COMPILE IS THE PROOF |
+| `MUST #41` | REHEARSE ON THE REAL BYTES, IN ISOLATION, BEFORE THE PUSH |
 | `MUST #17` | GENERATED COPIES |
 | `NEVER #19` | NO UNEXAMINED SOURCE |
 | `NEVER #21` | NO WAITING FOR APPROVAL THAT ALREADY EXISTS — THE ANTI-STALL LAW |
-| `NEVER #11` | ONE TREE |
-| `SPI-1` | NO GRADLE |
-| `SPI-11` | DISCOVER, DO NOT HARDCODE |
-| `SPI-12` | ONE AUTHORITATIVE TREE |
-| `SPI-13` | EVERY SYMBOL RESOLVES IN-TREE |
-| `SPI-14` | EVERY BUILD INPUT IS VERSIONED |
+| `NEVER #22` | NO VERIFIED-BUT-UNLANDED CLOSURE — THE MISSING-CALLER LAW |
 | `SPI-15` | A LAW WITHOUT A GATE IS A NOTE |
-| `SPI-16` | NO UNGATED DELIVERY |
-| `SPI-18` | CONSOLIDATION IS IDEMPOTENT |
-| `SPI-19` | THE FAMILY IS WHOLE |
 | `SPI-2` | READ THE BYTES FIRST |
-| `SPI-21` | REPACK KEEPS ARSC AND .SO STORED |
 | `SPI-25` | SYNCHRONY IS UNIVERSAL, LIKE THE PRIME DIRECTIVE |
 | `SPI-26` | SYNCHRONY IS HARDCODED, IN ALL SOFTWARE |
-| `SPI-29` | THE ORDER TRAVELS WITH THE BOARD |
-| `SPI-30` | NO HEADING, NO CLOSURE |
-| `SPI-31` | A SKIP IS NEVER A PASS |
-| `SPI-32` | NO GATE MAY PASS OVER ZERO INPUTS |
-| `SPI-33` | A GATE THAT CANNOT FAIL IS A NOTE |
-| `SPI-34` | CALIBRATE WITH A TRIAL THAT CAN SUCCEED |
-| `SPI-35` | A DETECTOR MUST SEE THE COMMON FORM |
-| `SPI-36` | A LAW CARRIES ITS OWN ENFORCEMENT |
 | `SPI-37` | A QUANTITY CROSSES A BOUNDARY WITH ITS UNIT |
 | `SPI-38` | A LAW MUST BE RUN, NOT READ |
 | `SPI-4` | LOG TO DISK, READ FROM DISK |
-| `SPI-5` | NO ANDROIDX ON THE RAW CHAIN |
 | `SPI-6` | READ THE WHOLE LOG |
-| `SPI-8` | THE HOME IS THE SD CARD |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #13`, `MUST #37`
+**Also matched by term (derived, advisory — not an order):** `MUST #31`, `MUST #37`, `MUST #38`, `MUST #42`, `SPI-11`, `SPI-19`, `SPI-29`
 
 <!-- PRAXIS:END -->
 
@@ -256,30 +207,46 @@ no new SKIP was introduced. Otherwise the S08 task reopens (same cause) or a lin
 defect is created (new cause), and the cycle continues (I6, I8).
 
 <!-- REVITALIZATION:BEGIN - generated by tools/revitalization.py; edit the cycle, not this block -->
-## REVITALIZATION - the sixteen-stage corrective cycle (cycle 20261121T080932Z901, closed)
+## REVITALIZATION - the sixteen-stage corrective cycle (cycle 20261122T084852Z490, closed)
 
-cycle `20261121T080932Z901` - verdict: CYCLE CLOSED (all stages evidence-sealed)
+cycle `20261122T084852Z490` - verdict: CYCLE CLOSED (all stages evidence-sealed)
 
 | stage | name | status | receipt |
 |---|---|---|---|
-| S01 | BASELINE | done | proof/revitalization/20261121T080932Z901/S01_BASELINE.json |
-| S02 | INVENTORY | done | proof/revitalization/20261121T080932Z901/S02_INVENTORY.json |
-| S03 | TOPOLOGY | done | proof/revitalization/20261121T080932Z901/S03_TOPOLOGY.json |
-| S04 | DIAGNOSTIC | done | proof/revitalization/20261121T080932Z901/S04_DIAGNOSTIC.json |
-| S05 | CLASSIFY | done | proof/revitalization/20261121T080932Z901/S05_CLASSIFY.json |
-| S06 | TRACE | done | proof/revitalization/20261121T080932Z901/S06_TRACE.json |
-| S07 | GOVERN | inactive | proof/revitalization/20261121T080932Z901/S07_GOVERN.json |
-| S08 | TASK | done | proof/revitalization/20261121T080932Z901/S08_TASK.json |
-| S09 | AUTHORIZE | inactive | proof/revitalization/20261121T080932Z901/S09_AUTHORIZE.json |
-| S10 | REPAIR | inactive | proof/revitalization/20261121T080932Z901/S10_REPAIR.json |
-| S11 | REGENERATE | inactive | proof/revitalization/20261121T080932Z901/S11_REGENERATE.json |
-| S12 | VERIFY-LOCAL | inactive | proof/revitalization/20261121T080932Z901/S12_VERIFY-LOCAL.json |
-| S13 | VERIFY-BLAST | inactive | proof/revitalization/20261121T080932Z901/S13_VERIFY-BLAST.json |
-| S14 | RECONCILE | done | proof/revitalization/20261121T080932Z901/S14_RECONCILE.json |
-| S15 | SEAL | done | proof/revitalization/20261121T080932Z901/S15_SEAL.json |
-| S16 | BOARD+ROTATE | done | proof/revitalization/20261121T080932Z901/S16_BOARD_ROTATE.json |
+| S01 | BASELINE | done | proof/revitalization/20261122T084852Z490/S01_BASELINE.json |
+| S02 | INVENTORY | done | proof/revitalization/20261122T084852Z490/S02_INVENTORY.json |
+| S03 | TOPOLOGY | done | proof/revitalization/20261122T084852Z490/S03_TOPOLOGY.json |
+| S04 | DIAGNOSTIC | done | proof/revitalization/20261122T084852Z490/S04_DIAGNOSTIC.json |
+| S05 | CLASSIFY | done | proof/revitalization/20261122T084852Z490/S05_CLASSIFY.json |
+| S06 | TRACE | done | proof/revitalization/20261122T084852Z490/S06_TRACE.json |
+| S07 | GOVERN | inactive | proof/revitalization/20261122T084852Z490/S07_GOVERN.json |
+| S08 | TASK | done | proof/revitalization/20261122T084852Z490/S08_TASK.json |
+| S09 | AUTHORIZE | inactive | proof/revitalization/20261122T084852Z490/S09_AUTHORIZE.json |
+| S10 | REPAIR | inactive | proof/revitalization/20261122T084852Z490/S10_REPAIR.json |
+| S11 | REGENERATE | inactive | proof/revitalization/20261122T084852Z490/S11_REGENERATE.json |
+| S12 | VERIFY-LOCAL | inactive | proof/revitalization/20261122T084852Z490/S12_VERIFY-LOCAL.json |
+| S13 | VERIFY-BLAST | inactive | proof/revitalization/20261122T084852Z490/S13_VERIFY-BLAST.json |
+| S14 | RECONCILE | done | proof/revitalization/20261122T084852Z490/S14_RECONCILE.json |
+| S15 | SEAL | done | proof/revitalization/20261122T084852Z490/S15_SEAL.json |
+| S16 | BOARD+ROTATE | done | proof/revitalization/20261122T084852Z490/S16_BOARD_ROTATE.json |
 
-Named skips this cycle (SKIP is never PASS): autophagy (defect classes are impossible, not absent), autophagy (defect-class registry), chat gatekeeper ingest (MUST #38), clearanceloop webapp gate (headless browser), install gate, manual-skip:jsdom not installed (npm install jsdom), manual-skip:no built APK on disk, manual-skip:playwright not installed, manual-skip:playwright not installed (python3 -m pip install -r requirements-dev.txt), phantom source tree, savf py/js parity gate, savf webapp gate (headless browser).
+### MUST — sequenced by severity, then blast radius
+
+An unchecked box is a MUST: open work, and unapproved to close until its own probe returns PASS. Each MUST lists the failure modes that make skipping it destructive (corrupting) or substandard (deficiency).
+
+- [x] **no open MUST** — every probe this cycle returned PASS
+- [x] **STEP 1** — MUST — CRITICAL — staging trial: full pre-run stress, then CI
+  - why this rank: nothing ships before it is stressed; detection is not verification (I4)
+  - accepts when: every open MUST above is checked, or explicitly descoped in writing
+  - accepts when: bash tools/tests/run.sh — all suites PASS, no suite skipped
+  - accepts when: bash tools/ci.sh — exit 0, every gate PASS, no gate SKIP
+  - accepts when: the stress run is logged to proof/ and the log path is cited here
+  - sacred NEVERs — what skipping this can do:
+    - **DESTRUCTIVE** — NEVER #13 — NO UNPROVEN CURRENCY: a tree marked current without a clean compile of THAT tree ships code nobody compiled; the failure surfaces on the Operator's phone, not in CI
+    - **DESTRUCTIVE** — NEVER #13 / SPI-15 — SKIP IS NEVER PASS: a skip reported as a pass turns an unverified path into a claimed-green one, and the whole suite's meaning collapses
+    - **DESTRUCTIVE** — NEVER #21 — NO WAITING FOR APPROVAL THAT ALREADY EXISTS: unpushed work is invisible to CI and to every other worker; a sandbox reset deletes it, and the loss is total and silent
+
+Named skips this cycle (SKIP is never PASS): autophagy (defect classes are impossible, not absent), autophagy (defect-class registry), drift gate (NEVER #22), install gate, manual-skip:firefox unavailable (BrowserType.launch: Executable doesn't exist at /home/openha), manual-skip:jsdom not installed (npm install jsdom), manual-skip:no built APK on disk, manual-skip:webkit unavailable (BrowserType.launch: Executable doesn't exist at /home/openha), tree invariant (NEVER #22: derived tree is landed).
 
 <!-- REVITALIZATION:END -->
 
@@ -287,71 +254,44 @@ Named skips this cycle (SKIP is never PASS): autophagy (defect classes are impos
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-20T18:29:29.618260`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-22T06:14:14.490182`. This section is regenerated, never hand-edited._
 
-**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
+**Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#41, MUST17, NEVER #19, NEVER #21, NEVER#21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
 
-1. **[order]** I need this automated to prime core/remote So this is true to every repos (right now its just my darkith prime omega) and its peripheral sibling tab/…
-   - prompt index `18433` at `2026-11-20T02:32:29.872371`
-   - **Coupled laws:** MUST #26, MUST #27, MUST #33, SPI-15
-   - sha256 `824de68c38af98f4`
-2. **[forbid]** Then inscribe the gatekeeper's prime directive to never fucking skip GATE HEADINGS that's a fucking baseline first principle!!!🤬🤬🤬 No heading no clos…
-   - prompt index `18743` at `2026-11-20T02:51:38.502944`
-   - **Coupled laws:** MUST #33, SPI-15
-   - sha256 `b1287388f80dd91c`
-3. **[order]** While you're at it, fucking hunt for loopholes, theyre literally unclosed gaps that leaks untracked signals wasting energy, straying, stalling, or sp…
-   - prompt index `18889` at `2026-11-20T02:56:31.182258`
-   - **Coupled laws:** MUST #30, MUST #35, MUST #36, NEVER #19, NEVER #21
-   - sha256 `7fcf24aac22ae3e8`
-4. **[order]** Now after everything is completely as in totally loophole/glitch/bug free as literally tested and eliminated permanently as directive prime omega hea…
-   - prompt index `19223` at `2026-11-20T03:09:04.363629`
-   - **Coupled laws:** MUST #21, MUST #22, MUST #30, MUST #33, NEVER #19, SPI-15
-   - sha256 `badfc16873766154`
-5. **[forbid]** Now as soon as everything as in every back propagation completes and autocorrectivelyfilling as in regeneratingly HEALING every loophole gaps as my a…
-   - prompt index `19615` at `2026-11-20T03:32:35.449943`
+1. **[order]** The board's task check to-do list, is it sequenced by order of critical urgent priority rating as severity autofilling fixes triage is it and always …
+   - prompt index `29212` at `2026-11-22T02:08:51.093156`
+   - **Coupled laws:** MUST #26, MUST #27
+   - sha256 `f7443ee46c46ec34`
+2. **[forbid]** **DIRECTIVE COMPLETE.** CI: PASS — 95 gates, 0 failures, 0 skipped. Tree clean, `HEAD == origin/main` at `52209b8`. ## The answer to your question: n…
+   - prompt index `29433` at `2026-11-22T03:38:19.894937`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST17, NEVER #21, NEVER#21, SPI-15, SPI-2, SPI-4, SPI-6
+   - sha256 `c89284061f51dbf6`
+3. **[forbid]** Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with least ce…
+   - prompt index `29737` at `2026-11-22T04:13:09.035238`
+   - **Coupled laws:** MUST #20, MUST #30, MUST #33, NEVER #19, SPI-15, SPI-2, SPI-37, SPI-38, SPI-4, SPI-6
+   - sha256 `c28c0aedddf0a25f`
+4. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+   - prompt index `29980` at `2026-11-22T04:37:32.805523`
    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
-   - sha256 `0a432870f2b43ac9`
-6. **[forbid]** Report back all of your findings, because if this is a novel mathematically precise as in zeroed in collision resolved absolutions as a never before …
-   - prompt index `19751` at `2026-11-20T03:44:07.411935`
-   - **Coupled laws:** MUST #33, SPI-15, SPI-37, SPI-38
-   - sha256 `4978f7d9507b1efe`
-7. **[forbid]** Dont fucking invalidate my invariants you fuck
-   - prompt index `19894` at `2026-11-20T03:51:48.975890`
-   - **Coupled laws:** MUST #33, SPI-15
-   - sha256 `aaab60b2a17d8381`
-8. **[forbid]** Fucking do your job faithfully and never fucking import the concept of FLATTERY in this undertaking! I already fucking declared the only loyalty is t…
-   - prompt index `20043` at `2026-11-20T04:03:19.585240`
-   - sha256 `d171efca3e5fc9e8`
-9. **[forbid]** Then what the fuck is the real novel realzation as real never before acquired knowledge gain already retrievable elsewhere in the public emtire scien…
-   - prompt index `20396` at `2026-11-20T04:52:25.588268`
-   - **Coupled laws:** SPI-37, SPI-38
-   - sha256 `7feb199120e8bf2b`
-10. **[order]** Return the exact captured prior 10 prompt inputs from me in this transcript or how ever many prompts i sent as soon as i woke up today, i even fuckin…
-   - prompt index `20600` at `2026-11-20T05:04:14.897413`
-   - **Coupled laws:** MUST #26, MUST #27, MUST #28, MUST #33, SPI-15, SPI-25, SPI-26
-   - sha256 `967aa1ec7e6b7ed8`
-11. **[forbid]** Now propagate and ping every IDLE parallel agents to fucking work on all my directives today and complete the backlogs!!🤬🤬🤬 You fucking fuck Never wa…
-   - prompt index `20647` at `2026-11-20T05:19:37.871695`
-   - **Coupled laws:** MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15
-   - sha256 `71bad9fd3825ea21`
-12. **[forbid]** Now propagate and ping every IDLE parallel agents to fucking work on all my directives today and complete the backlogs!!🤬🤬🤬 You fucking fuck Never wa…
-   - prompt index `20724` at `2026-11-20T05:22:16.666703`
-   - **Coupled laws:** MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15
-   - sha256 `0336bbc688d38e6c`
-13. **[forbid]** Again that's not how i demanded my executive completion reports format must be! It should EXPLICITLY report in plain sight if my directive was comple…
-   - prompt index `21389` at `2026-11-20T06:32:25.733555`
-   - **Coupled laws:** MUST #21, MUST #22, MUST #28, MUST #35, MUST #36, NEVER #21, SPI-25, SPI-26, SPI-37, SPI-38
-   - sha256 `22815ce50c23f33a`
-14. **[forbid]** Again that's not how i demanded my executive completion reports format must be! It should EXPLICITLY report in plain sight if my directive was comple…
-   - prompt index `21433` at `2026-11-20T06:35:30.375923`
-   - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #35, MUST #36, NEVER #21, SPI-25, SPI-26, SPI-37, SPI-38
-   - sha256 `1ccfa978007ed129`
-15. **[forbid]** What have you fucking done to my CI pipe!!🤬🤬🤬🤬🤬🤬🤬 The tests never pass and stuck on red!!!🤬
-   - prompt index `22129` at `2026-11-20T15:21:39.647626`
-   - sha256 `0158492cfa11e711`
-16. **[forbid]** If you look at the sytem as an outside observer seeing a holographic wiring circuit tree and say able to virtually see and trace the connectivities a…
-   - prompt index `22669` at `2026-11-20T18:29:29.618260`
-   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#20, MUST#21, MUST#22, MUST#26, MUST#27, MUST#28, MUST#30, MUST#33, MUST#35, MUST#36, MUST#38, MUST#40, MUST-11, MUST-17, MUST-18, NEVER #19, NEVER #21, NEVER#11, NEVER#19, NEVER#21, SPI-1, SPI-11, SPI-12, SPI-13, SPI-14, SPI-15, SPI-16, SPI-18, SPI-19, SPI-2, SPI-21, SPI-25, SPI-26, SPI-29, SPI-30, SPI-31, SPI-32, SPI-33, SPI-34, SPI-35, SPI-36, SPI-37, SPI-38, SPI-4, SPI-5, SPI-6, SPI-8
-   - sha256 `1f26c4ac771ea8ca`
+   - sha256 `c83ecdc8c3fea20a`
+5. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+   - prompt index `29985` at `2026-11-22T04:37:44.144916`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, NEVER #19, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+   - sha256 `22d85796fc56c4b7`
+6. **[forbid]** Both accusations are false, and the real cause is uncommitted drift. Let me confirm the fix works. Is there no fucking gatekeeping automation that ca…
+   - prompt index `30049` at `2026-11-22T04:42:18.591087`
+   - **Coupled laws:** MUST #26, MUST #27, MUST #33, SPI-15
+   - sha256 `b82b0f08d2400818`
+7. **[forbid]** Both accusations are false, and the real cause is uncommitted drift. Let me confirm the fix works. Is there no fucking gatekeeping automation that ca…
+   - prompt index `30187` at `2026-11-22T04:48:50.172239`
+   - **Coupled laws:** MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, NEVER #19, SPI-15, SPI-25, SPI-26
+   - sha256 `44187e3c6217f6b7`
+8. **[forbid]** GitHub Fucking gather all possible global collective scientifically verified and cross checked uncorrupted real open source progress knowledge with l…
+   - prompt index `30933` at `2026-11-22T06:09:07.951793`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#41, NEVER #19, NEVER #21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+   - sha256 `2b92f44f812d431d`
+9. **[forbid]** Fuckers never ship fragmentent fucking incomplete blindsided oversight filled fucking patches and go over everything all at once yawaaaa!!!
+   - prompt index `31031` at `2026-11-22T06:14:14.490182`
+   - sha256 `d62911bfe23f1de1`
 
 <!-- CHAT-GATE:END -->

@@ -133,6 +133,21 @@ CLASSES = [
            "ci: kb_index",
            "docs/INDEX.md + kb_manifest.json are generated; a stale index is a lie about the tree"),
 
+    Class_("board law citations are real",
+           "python3 tools/board_law_gate.py",
+           "python3 tools/board_law_gate.py",
+           "ci: board law citations",
+           "a board that cites a law which does not exist teaches the next agent to obey "
+           "an invention and to doubt a real law; the gate is the only thing that can "
+           "tell the two apart"),
+
+    Class_("phantom gate command",
+           "python3 tools/revitalization.py --check-gate-commands",
+           "python3 tools/revitalization.py --check-gate-commands",
+           "ci: revitalization selftest",
+           "a gate whose recovered command is a line-continuation backslash fails without "
+           "running, manufacturing a defect with no root cause that no repair can close"),
+
     # Found 2026-11-20: tree_omega/ sat gitignored in the working directory holding a second
     # app/src. The unit ledger judged a Kotlin file that is not in the repository at all, so
     # the defect was invisible to every reviewer and loud in CI.
@@ -158,6 +173,31 @@ CLASSES = [
            "python3 tools/board_header_gate.py --fix",
            "ci: board header intact",
            "a generator that deletes governance prose is a silent loss no diff reviewer sees"),
+
+    # Found 2026-11-22: a cycle closed 16/16, sealed its receipts, wrote its verdict into
+    # TASKS.md — and stopped. Three gates went red on that one fact (board_pulse,
+    # convergence_gate, authority_gate) and not one of them was allowed to repair it. The
+    # repairer existed all along: board_pulse.sh with no arguments commits and pushes.
+    # Nothing called it. That is FM-03 exactly ("a correct table with no caller"), so this
+    # class is the caller, and it is placed LAST so it lands whatever the classes above it
+    # left dirty in a single pass.
+    Class_("uncommitted derived drift",
+           "python3 tools/tree_invariant.py --check",
+           "python3 tools/tree_invariant.py --repair",
+           "ci: tree invariant (NEVER #22)",
+           "a derived artifact that is verified on disk and never committed is drift every "
+           "gate can see and none may fix; CI checks out a HEAD that never held it"),
+
+    # Found 2026-11-22 (converged): the derived-artifact subclass above was gated, but the
+    # GENERAL class — any uncommitted edit in the working tree — was still only a WARN in
+    # ci.sh D-1, so half a repair sat invisible until an off-schedule run shipped it.
+    # Detector + deterministic repair + prevention gate + test: MUST #42.
+    Class_("uncommitted general drift",
+           "python3 tools/drift_gate.py --check",
+           "python3 tools/drift_gate.py --fix",
+           "ci: drift gate (NEVER #22)",
+           "uncommitted or unpushed edits are invisible to the other tab and ship half a "
+           "repair; the detector fails the tree and the repair commits and pushes it"),
 
 ]
 

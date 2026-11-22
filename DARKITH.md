@@ -1344,6 +1344,118 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
 
   ---
 
+  §34a — THE LANDED-CLOSURE LAW (2026-11-22)
+
+  ─── NEVER #22 (NO VERIFIED-BUT-UNLANDED CLOSURE — THE MISSING-CALLER LAW) ───
+  GATE: tools/tree_invariant.py
+
+  A RESULT THAT IS VERIFIED ON DISK AND NEVER COMMITTED IS NOT A RESULT. IT IS DRIFT WITH A
+  GREEN BADGE ON IT, AND CI WILL READ IT AS A FAILURE ON THE NEXT CHECKOUT.
+
+  This is measured, not asserted. On 2026-11-22 a revitalization cycle closed 16/16, sealed its
+  sixteen receipts, and wrote its own verdict into `TASKS.md`. Then it stopped. Three gates
+  went red at once:
+
+      board_pulse        FAIL  TASKS.md has uncommitted changes
+      convergence_gate   FAIL  tree: 1 file whose bytes differ from the index
+      authority_gate     FAIL  1 off-schedule stall (budget 0s)
+
+  All three were reporting ONE fact, and not one of them was permitted to fix it — they are
+  gates: they measure and refuse. The repairer existed too. `tools/board_pulse.sh` with no
+  arguments commits and pushes; its own header says it commits the board the moment it
+  changes. NOTHING CALLED IT. That is FM-03 in `docs/FAILURE-MODE-LEDGER.md` repeating exactly:
+  "the policy existed; the timer did not." The table was correct. The caller was missing.
+
+  WHY THE GATE COULD NOT SEE IT. `tools/revitalization.py gate` hashes the WORKING TREE. So a
+  cycle that writes its board passes the gate locally — the sealed bytes are on disk — while CI
+  checks out `HEAD`, which never held them, and fails. Measured in a throwaway worktree:
+
+      disk = sealed bytes, uncommitted   gate PASS   (what the cycle saw, and why it stopped)
+      disk = pre-cycle bytes             gate FAIL   (what CI saw)
+      hand-edited sealed file            gate FAIL   (so a tamper is refused, not laundered)
+
+  THE LAW, EXACTLY:
+
+  1. CLOSURE INCLUDES LANDING. A cycle is not closed when its receipts are sealed on disk. It
+     is closed when the bytes those receipts describe are on the remote. `command_run` calls
+     `land_sealed_cycle` at the moment of closure for this reason. A seal that is never landed
+     is a claim nobody can check.
+
+  2. THE GATE IS VERIFIED ON THE BYTES THAT ARE ABOUT TO BE COMMITTED. `gate(disk)` is what CI
+     computes on `gate(HEAD)` if and only if `disk == HEAD`. So the repair verifies the sealed
+     bytes while they are still on disk, then lands, then asserts the tree is clean. It never
+     commits first and checks afterwards — that order cannot distinguish a stale artifact from
+     a tamper.
+
+  3. A REPAIR THAT CANNOT PASS ITS OWN INVARIANT DOES NOT LAND. `tree_invariant.py --repair`
+     refuses when the sealed chain rejects the bytes on disk, and says so: a new or edited file
+     needs a NEW cycle to seal it. A blanket `git add -A && git commit` would launder a
+     hand-edit or an unfinished generator run into history with a green light attached. That is
+     the "pretentious partial solution" this project refuses.
+
+  4. THE REPAIR NEVER REGENERATES. Measured: `chat_gatekeeper --write` ingests new conversation
+     state and `praxis_propagate` rewrites the board's directive block, so running the
+     generators on a CLEAN tree produces seven modified files. A repair that regenerates would
+     manufacture drift in order to fix drift, and would rewrite the board's directive as a side
+     effect of a drift repair — a worse defect than the one it was asked to fix.
+
+  5. THE CLASS IS IN THE AUTOPHAGY REGISTRY. `uncommitted derived drift` is a `Class_` in
+     `tools/autophagy.py`, placed LAST so it lands whatever the classes above it left dirty in
+     one pass. A gate with no caller is the defect; the registry IS the caller.
+
+  6. A GATE THAT CANNOT FAIL IS NOT A GATE (SPI-31, SPI-15). On a clean CI checkout this gate
+     has nothing to inspect, so it SKIPs (exit 3) on a detached HEAD rather than claiming a
+     PASS it did not earn. It bites on a writer's branch, which is where drift is born.
+
+  Self-test: `python3 tools/tree_invariant.py --selftest` proves the detector fires on an edited
+  file, still fires when the edit is merely staged, goes silent once committed, and that a
+  rollback restores the exact prior bytes.
+
+  ---
+
+  ─── NEVER #23 (NO GATE ON THE FAR SIDE OF THE PUSH — ADMISSION BEFORE LANDING) ───
+  GATE: tools/admission.py
+
+  A GATE THAT ONLY RUNS AFTER THE PUSH CANNOT PREVENT ANYTHING. IT CAN ONLY NARRATE DAMAGE.
+
+  This is measured, not asserted. On 2026-11-22 eight workflow runs on main went red in a
+  single day: 87dec398, 6102611e, 9f2413d2, 1be7ac8c. Every one of them was discovered by
+  a runner on the far side of the push. The gates were not wrong; they were late. A defect
+  that is only visible after landing is a defect that has already landed, and the next
+  agent then spends a full cycle repairing what a sixty-second preflight would have refused.
+
+  The law, in four parts:
+
+  1. NOTHING LEAVES A BRANCH THAT THE SUITE ALREADY REJECTS. `tools/admission.py rehearse`
+     runs the real `tools/ci.sh` on the EXACT bytes about to be pushed, in an isolated git
+     worktree, and refuses on any content failure. The pre-push hook is the caller.
+
+  2. COLLISIONS ARE CHECKED BEFORE THE CODE IS WRITTEN, NOT AFTER IT FAILS. Law ids, gate
+     labels in `ci.sh`, tool names, stale derived artifacts and standing drift are counted
+     by `preflight`. Two gates sharing one summary label is a silent failure, not a
+     cosmetic duplicate: the second can fail behind the first one's PASS.
+
+  3. A RED THAT RESOLVES ON PUSH IS NAMED, NOT HIDDEN. `board pulse`, the stall clock and
+     `authority gate` are functions of remote state, so they are guaranteed red in a
+     worktree. The chain gate is red for a second structural reason: it hashes the tree
+     against the CURRENT cycle's S01 baseline, so any governing-source change is unsealed
+     until a cycle runs. Both are reported in their own columns, neither blocking nor
+     suppressed. Suppressing them would be the SPI-31 loophole; conflating them with content
+     failures would make the gate unfalsifiable. The seal-pending path is not a bypass: the
+     cycle's own S14 re-runs this suite and refuses to seal on a real failure, so a broken
+     tree still cannot land through it.
+
+  4. THE REHEARSAL MUST SEE THE REAL TOOLCHAIN. `.tools/` is gitignored, so a fresh worktree
+     has none and the §19 compile proof reports L-07 OPEN -- a red that does not exist on
+     the branch. The worktree shares `.tools/` by symlink. A gate that manufactures its own
+     red is as useless as one that manufactures a green.
+
+  Self-test: `python3 tools/admission.py --selftest` proves declarations are counted while
+  prose citations are not, duplicate gate labels are caught, content reds block while
+  remote-state reds are separated, and the authority gate is classified correctly.
+
+  ---
+
   §35 — THE LOOPHOLE CLOSURE LAW (2026-11-18)
 
   ─── SPI-31 (A SKIP IS NEVER A PASS) ───
@@ -1603,6 +1715,65 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   proves the whole chain — ingest, coupling, board write, check, propagation, pulse,
   idempotence — 12 checks, none touching the tree beside it. CI runs it, so a kit that stops
   being portable fails the build instead of failing on the Operator's next account.
+
+  ─── MUST #41 (REHEARSE ON THE REAL BYTES, IN ISOLATION, BEFORE THE PUSH) ───
+  GATE: tools/admission.py (selftest wired into tools/ci.sh)
+
+  NEVER #23 says nothing leaves a branch that the suite already rejects. MUST #41 is the
+  mechanism that makes that statement executable.
+
+  `python3 tools/admission.py` -- preflight. Counts law-id declarations (prose citations
+  are not declarations), duplicate `run "label"` registrations in ci.sh, stale derived
+  artifacts from their own generators, and standing drift outside generated trees. Cheap
+  enough to run before every edit.
+
+  `python3 tools/admission.py rehearse` -- the real suite. Creates a detached worktree at
+  HEAD, replays the uncommitted diff plus untracked files into it, symlinks the gitignored
+  `.tools/` toolchain, and runs `bash tools/ci.sh` there. The verdict separates content
+  failures (BLOCKING) from remote-state failures (resolves-on-push) and writes the full log
+  to `proof/admission/<stamp>.log`.
+
+  `python3 tools/admission.py --install-hook` -- the caller. Installs `.git/hooks/pre-push`
+  so a known-red change cannot leave the machine. `ADMISSION_BYPASS=1` overrides once, for
+  the rare case where the rehearsal itself is what is being repaired.
+
+  Why isolation and not a second run in place: a suite that rewrites derived tissue (the
+  convergence proof rewrites itself, the index regenerates) cannot measure its own
+  cleanliness in the tree it is dirtying. The worktree is the only place the question has a
+  stable answer.
+
+  Work queue:
+    R1  Wire the pre-push hook by default in `tools/fetch_toolchain.sh`'s final step, so a
+        fresh clone is admission-controlled without a manual install.
+    R2  Add `admission preflight` to the revitalization S04 diagnostic so a cycle opens with
+        its collisions already named.
+    R3  Teach preflight to compare tool names against `tools/` on origin/main, not only the
+        local tree, so two agents cannot create the same tool on two branches at once.
+
+---
+
+─── MUST #42 (DRIFT IS AUTO-REPAIRED — DETECTOR, REPAIR, GATE, TEST) ───
+  GATE: tools/drift_gate.py
+  The class fix for NEVER #22 must stay whole. Every agent converging on this defect
+  lands ALL FOUR parts, never a fragment:
+
+    1. DETECT — `python3 tools/drift_gate.py --check` fails on any uncommitted
+       work in the tree, names every path, and exits 3 (a named skip) only where git
+       cannot run. Never a warn. The derived-artifact subclass remains gated by
+       `tools/tree_invariant.py` (NEVER #22, the missing-caller law).
+    2. REPAIR — `python3 tools/drift_gate.py --fix` stages, commits and pushes
+       in one deterministic sweep. It never force-pushes, never rewrites history, and
+       never discards another agent's edits.
+    3. PREVENT — the class is registered in the CLASSES list of
+       `tools/autophagy.py` with prevent "ci: drift gate (NEVER #22)", and
+       `tools/ci.sh` runs the gate hard. The WARN variant is abolished forever.
+    4. PROVE — `tools/tests/drift_gate_test.py` drives real temporary git
+       repositories and shows the detector fires on a dirty tree, stays silent on a
+       clean one, and the repair converges to a real commit.
+
+  Convergence bar: `python3 tools/autophagy.py --check` reports the class clean,
+  the drift suite PASSes, and `bash tools/ci.sh` exits 0 with the drift gate
+  listed. A detector with no repair, a WARN, or an untested splice is not a fix.
 
 ## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
 

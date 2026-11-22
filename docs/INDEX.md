@@ -9,28 +9,31 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**69 readable files across 7 registers.**
+**75 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 79,092 | `a864918fa442` | AGENTS.md — Darkith |
-| `DARKITH.md` | 102,912 | `ba48d58d36f1` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `AGENTS.md` | 77,931 | `6b0c58a1f073` | AGENTS.md — Darkith |
+| `DARKITH.md` | 112,766 | `7abd2a08decd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 79,123 | `3b6bd1a44015` | DARKITH — README |
+| `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 23,958 | `4671daa37f7b` | TASKS — the durable board |
+| `TASKS.md` | 17,804 | `bd38efd6cdea` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `darkith-omega-homekeeper/README.md` | 2,634 | `eca087317209` | Darkith Omega Homekeeper |
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
+| `docs/FAILURE-MODE-LEDGER.md` | 12,778 | `79f1bcf004e6` | DARKITH — FAILURE MODE LEDGER |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
+| `docs/GITHUB-STUDIO-MANUAL.md` | 18,292 | `fbf7d5d0f43a` | GITHUB STUDIO — the uncut operator manual |
+| `docs/NT-XII-IN-THE-OPEN.md` | 11,254 | `dbf7a79f1821` | NT XII IN THE OPEN — a contribution ledger that mints re-runnable clos |
+| `docs/RECOVERY_MANIFEST.md` | 1,423 | `0cc6e23164c8` | Recovery manifest — reconstructed from the conversation event store |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
 | `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
@@ -52,6 +55,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
+| `d-arkith-omega.html` | 1,422,589 | `f68d8b3d8482` | DARKITH Ω — terminal + local assistant |
 | `darkith code studio.html` | 601,576 | `5cd553c1653f` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,471,908 | `877e35c5d3d1` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
@@ -60,7 +64,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `darkith-omega-clock.html` | 13,690 | `c16768265a04` | DARKITH Ω — clock |
 | `darkith-omega-contacts.html` | 9,864 | `7f954c522108` | DARKITH Ω — contacts |
 | `darkith-omega-files.html` | 28,833 | `ac55dcbb4e8e` | DARKITH Ω — files |
-| `darkith-omega-master.html` | 95,927 | `8c2a007de4a2` | DARKITH Ω — Master Blueprint &amp; Executable Specification |
+| `darkith-omega-master.html` | 86,698 | `0e3c055ccfdb` | DARKITH Ω — Master Blueprint &amp; Executable Specification |
 | `darkith-omega-media-player.html` | 60,965 | `afe4285205cb` | DARKITH Ω — media player |
 | `darkith-omega-messages.html` | 9,399 | `c160d93c8630` | DARKITH Ω — messages |
 | `darkith-omega-phone.html` | 8,086 | `53db3fb7719c` | DARKITH Ω — phone |
@@ -84,8 +88,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `app/src/main/assets/darkith_ui.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
 | `app/src/main/assets/homekeeper.html` | 490,080 | `f3c83ac2f31c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,790 | `a37cd725501b` | SAVF-1 Universal Audit Engine |
-| `darkith-omega-homekeeper/src/reader-shell.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
-| `omega-app/src/main/assets/omega_studio.html` | 1,320,193 | `891c68154cc5` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `omega-app/src/main/assets/github_console.html` | 20,516 | `2d2333b818b4` | GitHub Console |
+| `omega-app/src/main/assets/omega_studio.html` | 1,320,579 | `ad4206e03c6f` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 
 ## E-evidence — Machine-generated proof
 
@@ -114,6 +118,13 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `kit/COORDINASYNC.md` | 3,235 | `5ccc1e4fbe07` | co-ordinasync — the portable invariant toolkit (MUST #40) |
+
+## H-homekeeper-app — Homekeeper Node app — the invariant blueprint, executable
+
+| file | bytes | sha256 | what it is |
+|---|---|---|---|
+| `darkith-omega-homekeeper/README.md` | 2,479 | `beea5851ef25` | Darkith Omega Homekeeper |
+| `darkith-omega-homekeeper/src/reader-shell.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
 
 ## Declared mirrors (one surface, two names — kept byte-identical)
 

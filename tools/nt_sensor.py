@@ -63,7 +63,15 @@ def find_jar() -> pathlib.Path | None:
 
 def check_jar(path: pathlib.Path) -> tuple[bool, str]:
     names = zipfile.ZipFile(path).namelist()
-    foreign = [n for n in names if "androidx" in n]
+    # AOSP's own android.jar ships two androidx annotation stubs (RecentlyNullable,
+    # RecentlyNonNull) because framework classes reference them, plus the bare
+    # `androidx/` directory entry that holds them. None carry UI and none can satisfy
+    # a compose import, so they are platform, not foreign. Any other androidx entry
+    # means a UI toolkit leaked in, which is what this gate forbids.
+    foreign = [n for n in names
+               if "androidx" in n
+               and n != "androidx/"
+               and not n.startswith("androidx/annotation/")]
     ok = BUTTON in names and not foreign
     note = (f"{path.name}: {BUTTON} present, {len(foreign)} androidx symbol(s)"
             if ok else f"{path.name}: Button={BUTTON in names} androidx={len(foreign)}")
@@ -117,6 +125,26 @@ def selftest() -> int:
             z.writestr(BUTTON, b"\xca\xfe\xba\xbe")
         ok, _ = check_jar(good)
         expect(ok, "a jar with the raw class and no androidx passes")
+
+        # The exact shape of a real AOSP jar: platform annotation stubs + the bare
+        # androidx/ dir. If this fails, the exemption has been widened too far.
+        aosp = pathlib.Path(d) / "aosp.jar"
+        with zipfile.ZipFile(aosp, "w") as z:
+            z.writestr(BUTTON, b"\xca\xfe\xba\xbe")
+            z.writestr("androidx/", b"")
+            z.writestr("androidx/annotation/RecentlyNonNull.class", b"\xca\xfe\xba\xbe")
+            z.writestr("androidx/annotation/RecentlyNullable.class", b"\xca\xfe\xba\xbe")
+        ok, note = check_jar(aosp)
+        expect(ok, f"platform annotation stubs are not foreign androidx — {note}")
+
+        # ...but an annotation stub must not buy passage for a compose class.
+        sneaky = pathlib.Path(d) / "sneaky.jar"
+        with zipfile.ZipFile(sneaky, "w") as z:
+            z.writestr(BUTTON, b"\xca\xfe\xba\xbe")
+            z.writestr("androidx/annotation/RecentlyNonNull.class", b"\xca\xfe\xba\xbe")
+            z.writestr("androidx/compose/ui/Modifier.class", b"\xca\xfe\xba\xbe")
+        ok, _ = check_jar(sneaky)
+        expect(not ok, "a compose class is still foreign beside an annotation stub")
 
         bad = pathlib.Path(d) / "bad.jar"
         with zipfile.ZipFile(bad, "w") as z:

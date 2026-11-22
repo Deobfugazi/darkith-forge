@@ -1,18 +1,18 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 69,
+  "count": 75,
   "files": [
     {
-      "bytes": 79092,
+      "bytes": 77931,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "a864918fa442acfc25d07cf441676cc138e4379fb6e7e8df55ce1dfb58028b6b"
+      "sha256": "6b0c58a1f0739e0c92678afdfb8e25f26ad975e0b7e2f474035c82226d4cb398"
     },
     {
-      "bytes": 102912,
+      "bytes": 112766,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "ba48d58d36f1762644283d67e11d57e2485ea9dd5d7a44ea2945cb6e986c9bc5"
+      "sha256": "7abd2a08decdca85c37078da6a0b8be8b259f8fd68241562ee73b79e2c7a72d8"
     },
     {
       "bytes": 3356,
@@ -21,10 +21,10 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 79123,
+      "bytes": 68196,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "3b6bd1a4401507fb8dec21cba10e3e4d33d1309111f880449432ad06591093af"
+      "sha256": "b2394283f3bf137b926dde013079a31849f9a44ae30c866c3d2b1a1d288a0578"
     },
     {
       "bytes": 8801,
@@ -33,16 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 23958,
+      "bytes": 17804,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "4671daa37f7bca8ae6996c2114fd1976c8e62ad2d49743d28be1a7fc79c4f0f1"
-    },
-    {
-      "bytes": 2634,
-      "path": "darkith-omega-homekeeper/README.md",
-      "register": "B-knowledge",
-      "sha256": "eca08731720990bc7839f6cf96dc4f6ce9c936d317659c467091512642910c0c"
+      "sha256": "bd38efd6cdea814e8a952456c66d2d02b6318a6f39ac61d2a1e436986bb3aa9e"
     },
     {
       "bytes": 9608,
@@ -63,10 +57,34 @@
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
     },
     {
+      "bytes": 12778,
+      "path": "docs/FAILURE-MODE-LEDGER.md",
+      "register": "B-knowledge",
+      "sha256": "79f1bcf004e6709605cb809a3dcdfcffd64f6e606bb23cce8c159340c4311b80"
+    },
+    {
       "bytes": 70065,
       "path": "docs/GITHUB-CICD-AGENTS-KB.md",
       "register": "B-knowledge",
       "sha256": "759522f608b42d9d4c12c136c3e3b3bc6df5150259870331be6d1b887398a54c"
+    },
+    {
+      "bytes": 18292,
+      "path": "docs/GITHUB-STUDIO-MANUAL.md",
+      "register": "B-knowledge",
+      "sha256": "fbf7d5d0f43aba977a6d7187d249e8862d2243a0110f5681cba97010a0a457e5"
+    },
+    {
+      "bytes": 11254,
+      "path": "docs/NT-XII-IN-THE-OPEN.md",
+      "register": "B-knowledge",
+      "sha256": "dbf7a79f1821b98096945b0f79ad7c2fd7070b0e2455f040d54d721035d01733"
+    },
+    {
+      "bytes": 1423,
+      "path": "docs/RECOVERY_MANIFEST.md",
+      "register": "B-knowledge",
+      "sha256": "0cc6e23164c833e7d06caa9b28f691a4402275d410ba7ee4821a0231c6803523"
     },
     {
       "bytes": 3960,
@@ -165,6 +183,12 @@
       "sha256": "ae16a99a055e902d0f0dec144134b660fbd9e76baee743a0a7d9cd868e5d32ab"
     },
     {
+      "bytes": 1422589,
+      "path": "d-arkith-omega.html",
+      "register": "C-skillbase",
+      "sha256": "f68d8b3d848235b5cc76afadc0555e96e0eedb9e914c2136eff8b4442cf35b59"
+    },
+    {
       "bytes": 601576,
       "path": "darkith code studio.html",
       "register": "C-skillbase",
@@ -213,10 +237,10 @@
       "sha256": "ac55dcbb4e8eb0ec9379e5c46f4acc304e17226a6cfb60232b18da245aa5a068"
     },
     {
-      "bytes": 95927,
+      "bytes": 86698,
       "path": "darkith-omega-master.html",
       "register": "C-skillbase",
-      "sha256": "8c2a007de4a21b56adadeff242040fbc212888aa55809d01013f4384a9769fb9"
+      "sha256": "0e3c055ccfdb904771948696f8874ec57ab47a1c03816e61b9923fe35adad079"
     },
     {
       "bytes": 60965,
@@ -327,16 +351,16 @@
       "sha256": "a37cd725501b496cc1112aa706b314d665e134c047a515246a6c0ec0d22e175a"
     },
     {
-      "bytes": 24606,
-      "path": "darkith-omega-homekeeper/src/reader-shell.html",
+      "bytes": 20516,
+      "path": "omega-app/src/main/assets/github_console.html",
       "register": "D-asset",
-      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
+      "sha256": "2d2333b818b4cc0194bca7153eb1b838b663615b6495f8d9d47d930161db9da0"
     },
     {
-      "bytes": 1320193,
+      "bytes": 1320579,
       "path": "omega-app/src/main/assets/omega_studio.html",
       "register": "D-asset",
-      "sha256": "891c68154cc50531170f26dee3e030295f76aad233bc5d82e1304bd1623f4982"
+      "sha256": "ad4206e03c6fd77bdec212da08ebfcc30687472ad8bc67abdf7c8053aa2cbaa8"
     },
     {
       "bytes": 11203,
@@ -415,6 +439,18 @@
       "path": "kit/COORDINASYNC.md",
       "register": "G-apparatus-portable",
       "sha256": "5ccc1e4fbe07096e9b1b3e05f2e7001e66ed51cb5a7ee51bf4871bbd0ead24e9"
+    },
+    {
+      "bytes": 2479,
+      "path": "darkith-omega-homekeeper/README.md",
+      "register": "H-homekeeper-app",
+      "sha256": "beea5851ef25e0acab2bd9cb05a5949ae7d34b075a0dd9f2a3777bb31a001cf7"
+    },
+    {
+      "bytes": 24606,
+      "path": "darkith-omega-homekeeper/src/reader-shell.html",
+      "register": "H-homekeeper-app",
+      "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
     }
   ],
   "mirrors": [
@@ -434,6 +470,7 @@
     "D-asset": "Shipped runtime assets",
     "E-evidence": "Machine-generated proof",
     "F-config": "Build configuration \u2014 dependency manifests",
-    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels"
+    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels",
+    "H-homekeeper-app": "Homekeeper Node app \u2014 the invariant blueprint, executable"
   }
 }

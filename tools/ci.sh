@@ -109,6 +109,39 @@ if have python3; then
     if [ -f tools/board_gate.py ]; then
       run "board gate"                    python3 tools/board_gate.py
     fi
+    # The board's priority taxonomy is a claim about the law. A fabricated NEVER is
+    # worse than no NEVER: it reads as binding and is not.
+    if [ -f tools/board_law_gate.py ]; then
+      run "board law citations"           python3 tools/board_law_gate.py
+    fi
+    if [ -f tools/tests/board_priority_test.py ]; then
+      run "board priority engine"         python3 tools/tests/board_priority_test.py
+    fi
+    # The run feed is the audience's witness: every agentic round trip reports start,
+    # stages, and a terminal, hash-chained so a rewritten line is caught. A run that dies
+    # without a terminal is SEVERED — the broken-circuitry case automation must pick up.
+    if [ -f tools/run_feed.py ]; then
+      run "run feed chain"                python3 tools/run_feed.py verify
+      run "run feed severance detector"   python3 tools/run_feed.py severed
+    fi
+    if [ -f tools/tests/run_feed_test.py ]; then
+      run "run feed + derived governance" python3 tools/tests/run_feed_test.py
+    fi
+    # NEVER #22 / MUST #42: the general drift gate is a CLASS fix. The suite drives REAL
+    # temporary git repos: detector fires on dirt, stays silent on a newborn tree, and
+    # the deterministic repair provably converges.
+    if [ -f tools/tests/drift_gate_test.py ]; then
+      run "drift gate test (NEVER #22)"   python3 tools/tests/drift_gate_test.py
+    fi
+    # The communal contribution ledger (NT XII). A mint's value is that its witness can be
+    # re-run by anyone and print the same token, so the chain gate proves no entry was
+    # rewritten and the selftest proves a porous barrier still blocks promotion.
+    if [ -f tools/mint_ledger.py ]; then
+      run "mint ledger chain"             python3 tools/mint_ledger.py verify
+    fi
+    if [ -f tools/tests/mint_ledger_test.py ]; then
+      run "mint ledger trial barrier"     python3 tools/tests/mint_ledger_test.py
+    fi
     # Praxis gate: the order in force must be present on EVERY board that can steer work —
     # the durable board, each live session board, each sibling worktree. MUST #26 pushes the
     # board; this makes the directive itself travel with it, so no worker carries out a
@@ -139,6 +172,20 @@ if have python3; then
       else
         run "revitalization chain gate" python3 tools/revitalization.py gate
       fi
+    fi
+    # NEVER #22: the chain gate above reads the WORKING TREE, so a cycle can pass it against
+    # bytes no checkout will ever contain. On 2026-11-22 a closed cycle left TASKS.md
+    # uncommitted and three gates went red on that one fact; none of them may repair it.
+    # This gate names the drift as its own defect instead of leaving it to be misattributed.
+    if [ -f tools/tree_invariant.py ]; then
+      run "tree invariant (NEVER #22: derived tree is landed)" python3 tools/tree_invariant.py --check
+    fi
+    # NEVER #23 / MUST #41: every gate above runs on the far side of the push, so it can only
+    # narrate damage. This one proves the mechanism that refuses a known-red change before it
+    # leaves the machine (the real suite, on the exact bytes, in an isolated worktree). CI
+    # checks the checker; the pre-push hook is the caller.
+    if [ -f tools/admission.py ]; then
+      run "admission control (NEVER #23: preflight + rehearsal)" python3 tools/admission.py --selftest
     fi
     if [ -f tools/comment_audit.py ]; then
       run "kotlin comment scan (whole repo)"  python3 tools/comment_audit.py
@@ -569,13 +616,17 @@ fi
 printf '\n=== discrepancy detectors (two tabs must agree) ===\n'
 if have git && git rev-parse --git-dir >/dev/null 2>&1; then
 
-  # D-1 uncommitted work: with two tabs, an uncommitted edit is invisible to the
-  # other tab and can be lost. Warn loudly (do not fail: CI is runnable pre-commit).
-  if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
-    printf -- '--- working tree clean: WARN (uncommitted edits are invisible to the other tab)\n'
-    git status --short | sed 's/^/      /'
+  # D-1 / NEVER #22 uncommitted drift: with two tabs, an uncommitted edit is invisible
+  # to the other tab and can be lost. This STOPS being a warning: a drifting tree is a
+  # defect CLASS (inscribed in DARKITH.md, registered in tools/autophagy.py both as the
+  # derived-artifact subclass via tools/tree_invariant.py and the general class via
+  # tools/drift_gate.py). The gate fails closed on drift; `python3 tools/drift_gate.py
+  # --fix` is the deterministic repair (stage, commit, push — never force).
+  if [ -f tools/drift_gate.py ]; then
+    run "drift gate (NEVER #22)" python3 tools/drift_gate.py --check
   else
-    printf -- '--- working tree clean: PASS\n'
+    printf -- '--- drift gate (NEVER #22): FAIL (tools/drift_gate.py missing)\n'
+    FAILED=1
   fi
 
   # D-2 fork singularity (AGENTS.md NEVER #11 / SPI-12, the missing W-040 gate).
@@ -592,18 +643,20 @@ files = subprocess.run(["git","ls-files","-z"], capture_output=True, text=True).
 # basename across them is not a fork — only divergence WITHIN a tree is. Scope
 # the comparison per tree; shared/root files use the "" tree.
 def tree_of(f):
-    # EVERY top-level directory is its own tree: each package is independent evidence
-    # and content (app/, omega-app/, proof/revitalization/<cycle>/, a spec package like
-    # darkith-omega-homekeeper/ with its own README). A shared basename across packages
-    # is not a fork — only divergence WITHIN one tree is. Root-level files use "".
-    head = f.split("/",1)[0]
-    if head in ("app","omega-app"):
-        return head
+    # A sealed cycle's receipt directory is its own tree for the same reason app/
+    # and omega-app/ are: each cycle is independent evidence, so S01_BASELINE.json
+    # in cycle A and in cycle B are two records, not two copies of one file.
+    # Comparing them would report every successive cycle as a fork of the last.
     if f.startswith("proof/revitalization/"):
         rest = f.split("/", 3)
         if len(rest) == 4 and rest[2] != "":
             return "proof/revitalization/" + rest[2]
-    return head if "/" in f else ""
+    head = f.split("/",1)[0]
+    # A nested project directory is its own tree, exactly like app/ and omega-app/.
+    # The homekeeper Node app has its own README, package.json and src/, none of which
+    # are copies of the root equivalents; treating them as one tree reports a fork
+    # between two unrelated documents.
+    return head if head in ("app","omega-app","darkith-omega-homekeeper") else ""
 by = collections.defaultdict(list)
 for f in files:
     # EXEMPT Android resource-qualifier dirs: the SAME basename in different
@@ -641,8 +694,7 @@ PYGATE
   # byte-identical — drift is a fork (NEVER #11) even though the basenames differ, which the
   # basename-based D-2 above cannot see. The app ships assets/darkith_ui.html; the repo-root
   # studio is the same page for browser use, and tools/test_inscriber.js drives the studio.
-  for pair in "app/src/main/assets/darkith_ui.html:darkith-inscriber.html" \
-              "omega-reader.html:darkith-omega-homekeeper/src/reader-shell.html"; do
+  for pair in "app/src/main/assets/darkith_ui.html:darkith-inscriber.html"; do
     a="${pair%%:*}"; b="${pair##*:}"
     if [ -f "$a" ] && [ -f "$b" ]; then
       if cmp -s "$a" "$b"; then
