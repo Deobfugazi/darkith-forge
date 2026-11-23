@@ -306,11 +306,23 @@ Status: APPENDED. Permanent. Deduplicated.
 W-020 (Gradle Deadlock): The AI forced Gradle on a 4GB device. The JVM allocated its heap, exceeded physical RAM, and forced the kernel to swap to ZRAM. The CPU spent 100% of its cycles compressing memory. The build hung at 0 KB for 10+ minutes. 
 Insight: Gradle is physically impossible on this hardware. NT IX §9.1 is absolute.
 
-W-021 (Blind Sed Corruption): The AI used `sed` to strip AndroidX imports without reading the file content. The `sed` commands stripped the opening `/*` from the comment blocks at the top of 19 files, not just the imports. 
+W-021 (Blind Sed Corruption): The AI used `sed` to strip AndroidX imports without reading the file content. The measured damage was a mangled block-comment CLOSER (`//` where `*/` belonged) in two files, `core/CssLite.kt` and `core/SubstrateIngestor.kt`, both since repaired to byte-identical and verified by `kotlinc` 1.9.24. 
 Insight: A blind `sed` is a physical weapon. It does not know what it is deleting.
 
-W-022 (Isolation Failure): The AI isolated only 3 files before executing the destructive `sed`. The original bytes for the other 16 corrupted files are gone. 
+W-022 (Isolation Failure): The AI isolated only 3 files before executing the destructive `sed`. 
 Insight: N13 (Isolation) must be applied to the *entire* source tree, or the damage is irreversible.
+
+W-022b (The Briefing Was Not The Tree): A briefing claimed the `sed` had stripped the opening
+`/*` from 19 named files at exact line numbers, and asked for a script to inject the markers
+back. The bytes never said that. Eighteen of the nineteen cited lines already opened a valid
+`/**`; the nineteenth (`HomekeeperBridge.kt:282`) is a `catch` block, not a comment. All `.kt`
+files scanned balanced with two independent parsers. The proposed injector would have inserted
+a second `/*` into eighteen healthy files and CREATED the very defect it set out to fix.
+Insight: A bug report is a hypothesis about the tree, not a description of it, and line numbers
+go stale as the tree moves under them. Read the target bytes first (SPI-2). A briefing that is
+measured false is CLOSED; re-reporting it is a defect, not diligence. The ledger of closed
+briefings is `tools/closed_briefings.py`, and it scans every board a waking agent reads,
+including this file.
 
 W-023 (Diagnostic Contradictions): The AI wrote a diagnostic that used `grep` to check for unclosed comments. `grep` cannot parse character state. It reported "PASS" while the Kotlin compiler reported "Unclosed comment" at line 357. 
 Insight: Only a character-level parser (or the compiler itself) can detect stateful syntax errors like unclosed comments.

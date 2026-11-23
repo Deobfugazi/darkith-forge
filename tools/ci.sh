@@ -145,6 +145,12 @@ if have python3; then
     if [ -f tools/tests/mint_ledger_test.py ]; then
       run "mint ledger trial barrier"     python3 tools/tests/mint_ledger_test.py
     fi
+    # The generated index is only as trustworthy as the gate that regenerates it. A gate
+    # shipped without a test let a hand-edit and a deleted row both pass unnoticed, so the
+    # tamper and removal controls run beside the gate they judge (SPI-38).
+    if [ -f tools/tests/kb_index_test.py ]; then
+      run "kb index tamper/removal"       python3 tools/tests/kb_index_test.py
+    fi
     # Praxis gate: the order in force must be present on EVERY board that can steer work —
     # the durable board, each live session board, each sibling worktree. MUST #26 pushes the
     # board; this makes the directive itself travel with it, so no worker carries out a
