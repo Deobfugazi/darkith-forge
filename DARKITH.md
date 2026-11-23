@@ -1769,6 +1769,50 @@ HWM), and COSMETIC (reversible formatting — autofixed, and fatal only with
   the drift suite PASSes, and `bash tools/ci.sh` exits 0 with the drift gate
   listed. A detector with no repair, a WARN, or an untested splice is not a fix.
 
+---
+
+─── SPI-40 (NO UNREHEARSED PROMOTION — THE PRIME DIRECTIVE) ───
+  GATE: tools/admission.py
+  Source: Operator directive 2026-11-23, standing: "make it the prime fucking directive
+  across the board." Instantiated as a property of the apparatus, never of any one
+  agent's memory.
+
+  The invariant, stated once, at every trust boundary:
+
+    NOTHING CROSSES A PROMOTION BOUNDARY WITHOUT FIRST EXECUTING ITS OWN
+    EVIDENCE IN ISOLATION AND PROVING IT.
+
+  The boundary is the same object everywhere the tree has one:
+
+    - CODE: a change crosses to origin/main only through admission rehearsal
+      (MUST #41): a detached worktree, the real `tools/ci.sh`, full verdict,
+      pre-push hook installed by default. A known-red push is a violation, not a risk.
+    - VALUE: a mint crosses trial-net to mainnet only through the phantom
+      barrier (mint ledger trial barrier): every reductive reproduction re-run in the
+      sandbox, every reductive phantom eradicated, every honest control surviving,
+      `assert_barrier_closed` green. A surviving phantom is a promotion refused.
+    - IDENTITY: a fact of record crosses to a receipt or board only through its
+      gate and its hash chain. A receipt no one re-verifies is a claim, not a record.
+
+  Rehearsal-before-push and testnet-before-mainnet are one law at two boundaries:
+  both refuse unverified promotion; neither grades itself. An artefact asked to grade
+  itself always passes, and that loophole is the one thing this law exists to close.
+
+  Standing priority order the directive carries (the gaps that already cost a day):
+    P1  the branch-divergence gate (main ahead and behind origin; park, rebase, never
+        force; the state that froze a session with 8 commits and 109 behind origin),
+    P2  R1: admission pre-push hook installed by default in fetch_toolchain.sh,
+    P3  R3: cross-branch collision of tool names and law numbers against origin/main,
+    P4  R2: admission preflight opens the revitalization S04 diagnostic,
+    P5  bytecode-disabled runs with vacuous-test detection,
+    P6  research-quarantine exemption plus the barrier-evidence promotion gate,
+    P7  run-feed attribution of newly-red gates versus pre-existing red,
+    P8  convergence-order repair command with second-pass byte identity,
+    P9  session-death persistence receipts, P10 performance floors as ratchets,
+    P11 scheduled rehearsal of parked research branches.
+  Each lands as a four-part class fix: detector, deterministic repair, prevention
+  gate, test — through the admission rehearsal path itself.
+
 ## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
 
 The Operator's standing demand, codified so it is a property of the apparatus and not of any
