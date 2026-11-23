@@ -133,6 +133,9 @@ if have python3; then
     if [ -f tools/tests/drift_gate_test.py ]; then
       run "drift gate test (NEVER #22)"   python3 tools/tests/drift_gate_test.py
     fi
+    if [ -f tools/tests/divergence_gate_test.py ]; then
+      run "divergence gate test (SPI-40 P1)" python3 tools/tests/divergence_gate_test.py
+    fi
     # The communal contribution ledger (NT XII). A mint's value is that its witness can be
     # re-run by anyone and print the same token, so the chain gate proves no entry was
     # rewritten and the selftest proves a porous barrier still blocks promotion.
@@ -626,6 +629,16 @@ if have git && git rev-parse --git-dir >/dev/null 2>&1; then
     run "drift gate (NEVER #22)" python3 tools/drift_gate.py --check
   else
     printf -- '--- drift gate (NEVER #22): FAIL (tools/drift_gate.py missing)\n'
+    FAILED=1
+  fi
+
+  # D-1b / SPI-40 P1 divergence: local main ahead AND behind origin is the state that
+  # froze a session (8 ahead, 109 behind, unwritable without force). The detector fails
+  # closed; the repair parks on a pushed branch, fast-forwards, rebases, never forces.
+  if [ -f tools/divergence_gate.py ]; then
+    run "divergence gate (SPI-40 P1)" python3 tools/divergence_gate.py --check
+  else
+    printf -- '--- divergence gate (SPI-40 P1): FAIL (tools/divergence_gate.py missing)\n'
     FAILED=1
   fi
 

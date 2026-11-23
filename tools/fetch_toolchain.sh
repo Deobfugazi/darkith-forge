@@ -114,4 +114,17 @@ fi
 [ -r "$DEST/$ANDROID_JAR_NAME" ]   || { say "DEFICIT: android.jar missing"; exit 1; }
 [ -r "$DEST/apksig.jar" ]          || { say "DEFICIT: apksig.jar missing"; exit 1; }
 [ -x "$DEST/aapt2d/aapt2" ]        || { say "DEFICIT: aapt2 missing"; exit 1; }
+
+# 7. admission (SPI-40 P2, MUST #41 R1): a fresh machine is admission-controlled by
+#    default. The pre-push hook rehearses the REAL suite on the EXACT bytes in an isolated
+#    worktree and refuses a known-red push, so the rehearsal law no longer depends on any
+#    agent remembering to install it. Bypass once with ADMISSION_BYPASS=1, by design.
+if [ -f tools/admission.py ]; then
+  if python3 tools/admission.py --install-hook; then
+    say "admission: pre-push rehearsal hook installed (SPI-40 P2)"
+  else
+    say "admission: DEFICIT: hook could not be installed — rehearsal still enforced manually"
+  fi
+fi
+
 say "toolchain ready in $DEST"
