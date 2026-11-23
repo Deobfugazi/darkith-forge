@@ -1563,6 +1563,58 @@ def land_sealed_cycle(root: pathlib.Path) -> int:
     return cp.returncode
 
 
+def seal_scope(root: pathlib.Path, cycle_id: str) -> tuple:
+    """(sealing commit, paths changed by commits after it, note).
+
+    A seal is an attestation about ONE commit's bytes. Commits that land after it are new
+    work the seal makes no claim about. Counting them as drift made any later commit — a
+    one-line doc edit, a board pulse, a derived-tree landing — redden CI and keep it red
+    until another full 16-stage cycle re-sealed: the seal graded a tree that could not
+    stand still.
+
+    The scope is derived from history, so it needs history: in a shallow clone the grafted
+    boundary commit appears to have ADDED every file, which would name the wrong sealer and
+    then call the tree drifted. A shallow clone is refused by name rather than answered
+    wrongly. `note` is None when the scope is trustworthy.
+    """
+    if git(root, "rev-parse", "--is-shallow-repository").stdout.strip() == "true":
+        return None, None, ("shallow clone — the sealing commit cannot be identified; "
+                            "fetch full history (actions/checkout fetch-depth: 0) to verify the seal")
+    rel = f"proof/revitalization/{cycle_id}/{stage_file('S16')}"
+    cp = git(root, "log", "--diff-filter=A", "-1", "--format=%H", "--", rel)
+    found = (cp.stdout or "").strip().splitlines()
+    if cp.returncode != 0 or not found:
+        return None, None, None  # uncommitted cycle: verify the working tree strictly
+    sealed = found[0]
+    head = git(root, "rev-parse", "HEAD").stdout.strip()
+    if not head:
+        return None, None, None
+    if git(root, "merge-base", "--is-ancestor", sealed, head).returncode != 0:
+        return sealed, None, (f"sealing commit {sealed[:12]} is not on this history; "
+                              f"the seal cannot be verified against rewritten history")
+    cp = git(root, "diff", "--name-only", f"{sealed}..{head}")
+    return sealed, set((cp.stdout or "").split()), None
+
+
+def uncommitted_paths(root: pathlib.Path) -> set:
+    """Paths whose working-tree bytes are not what HEAD records.
+
+    Scope only excuses a path the seal predates when the commit that changed it is on the
+    history. An uncommitted edit is never excused: that is the drift NEVER #22 forbids, and
+    it must stay red even for a file a later commit also touched.
+    """
+    cp = git(root, "status", "--porcelain", "--untracked-files=all")
+    out = set()
+    for line in (cp.stdout or "").splitlines():
+        if len(line) < 4:
+            continue
+        path = line[3:].strip()
+        if " -> " in path:  # rename: the destination is the live path
+            path = path.split(" -> ", 1)[1]
+        out.add(path.strip('"'))
+    return out
+
+
 def verify_chain(root: pathlib.Path) -> tuple:
     """Structural verification of the sealed receipt chain (I1, I3, I8). Read-only."""
     rev = root / "proof" / "revitalization"
@@ -1649,12 +1701,21 @@ def verify_chain(root: pathlib.Path) -> tuple:
         if receipts["S08"]["details"].get("tasks") and receipts["S07"].get("status") != "PASS":
             if current.get("closed"):
                 fails.append("I2: closed cycle contains tasks without a complete S07 governing route")
+        # A sealed cycle attests the commit it sealed. Paths a later commit legitimately
+        # changed are outside its claim; uncommitted edits never are.
+        _sealed, changed_after_seal, scope_note = seal_scope(root, str(current.get("cycle_id")))
+        if scope_note:
+            fails.append(f"I9: {scope_note}")
+        dirty = uncommitted_paths(root)
+        excused = (changed_after_seal or set()) - dirty
         for sid, rec in receipts.items():
             for ref in rec.get("evidence", []):
                 evidence_path = root / ref
                 if not evidence_path.is_file():
                     fails.append(f"I8: {sid} evidence does not resolve: {ref}")
                     continue
+                if ref in excused:
+                    continue  # a later commit owns these bytes; the seal never saw them
                 if ref in ignored_now:
                     # Evidence git discards cannot be evidence: the citation resolves here but not
                     # in a fresh clone, so a sealed cycle would fail its own gate on checkout.
@@ -1682,6 +1743,8 @@ def verify_chain(root: pathlib.Path) -> tuple:
             if not current_path.is_file():
                 fails.append(f"I9: governing source disappeared after baseline: {path}")
                 continue
+            if path in excused:
+                continue  # a later commit owns these bytes; the seal never saw them
             expected = authorized_changes.get(path, baseline_hash)
             if path == "TASKS.md":
                 expected = receipts["S16"].get("details", {}).get("board_sha256", expected)
@@ -1707,6 +1770,8 @@ def verify_chain(root: pathlib.Path) -> tuple:
             allowed_after["TASKS.md"] = s16_board_hash
         for path in sorted(set(baseline_tree) | set(current_tree or {})):
             if current_tree is None:
+                continue
+            if path in excused:
                 continue
             expected = allowed_after.get(path, baseline_tree.get(path))
             actual = current_tree.get(path)
