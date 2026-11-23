@@ -58,7 +58,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
-| `d-arkith-omega.html` | 1,422,589 | `f68d8b3d8482` | DARKITH Ω — terminal + local assistant |
+| `d-arkith-omega.html` | 1,576,441 | `a2f41fb071d6` | DARKITH Ω — terminal + local assistant |
 | `darkith code studio.html` | 601,576 | `5cd553c1653f` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,471,908 | `877e35c5d3d1` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
