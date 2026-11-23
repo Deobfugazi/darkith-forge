@@ -16,7 +16,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 79,754 | `f2d29527e78a` | AGENTS.md — Darkith |
-| `DARKITH.md` | 115,350 | `2764ea33a1c7` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 116,344 | `91462a878557` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
@@ -58,7 +58,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
-| `d-arkith-omega.html` | 1,422,589 | `f68d8b3d8482` | DARKITH Ω — terminal + local assistant |
+| `d-arkith-omega.html` | 1,576,441 | `a2f41fb071d6` | DARKITH Ω — terminal + local assistant |
 | `darkith code studio.html` | 601,576 | `5cd553c1653f` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,471,908 | `877e35c5d3d1` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |

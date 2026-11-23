@@ -34,12 +34,16 @@ CLOSED = [
             r"(inject|restore|add)\s+(the\s+)?[`'\"]?/\*|"
             r"send\s+(me\s+)?the\s+script|"
             r"fix\s+the\s+19\b|"
-            r"19\s+(kotlin\s+)?files?\s+(lost|stripped|missing|need)",
+            r"19\s+(kotlin\s+)?files?\s+(lost|stripped|missing|need)|"
+            # Canon asserting the premise as fact. Narrating it as a false claim is allowed:
+            # the excluded words are what mark a sentence as a report, not a restatement.
+            r"(?=.*stripped\s+the\s+opening)(?=.*\b19\b)"
+            r"(?!.*\b(?:claimed|hypothesis|would\s+have|false|never|closed)\b)",
             re.I),
     },
 ]
 
-BOARDS = ["TASKS.md", "RESUME.md"]
+BOARDS = ["TASKS.md", "RESUME.md", "AGENTS.md", "DARKITH.md", "README.md"]
 ALLOW = re.compile(r"\bCLOSED\b|\bclosed\b|\bresolved\b|\bdone\b|\bnever\b", re.I)
 
 
