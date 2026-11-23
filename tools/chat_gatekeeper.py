@@ -633,6 +633,19 @@ def selftest() -> int:
     chk("grace window sane", GRACE_MINUTES > 0)
     chk("coupling deterministic", oc[0]["laws"] == build("c1", [(1, "t1", "auto-propagate this to every board")], {"conversation": "c1", "last_index": -1})[0][0]["laws"])
 
+    # The declaration is durable. A window that names no law must NOT erase the laws the board
+    # already declares: rebuilding from the day slice alone expired the standing order at
+    # midnight, and CI read 9-of-10 red while every local run was green.
+    chk("law spelling is canonical", normalise_law("MUST#41") == "MUST #41"
+        and normalise_law("MUST17") == "MUST #17" and normalise_law("SPI-2") == "SPI-2")
+    prior = prior_declaration(merge("", render_orders("c1", oc, {}, )))
+    chk("board declares the window's laws", "MUST #26" in prior)
+    empty_day = render_orders("c1", [], {}, standing=[{"laws": prior}])
+    chk("a lawless day keeps the standing laws", "MUST #26" in empty_day
+        and "none named" not in empty_day)
+    chk("prior_declaration ignores 'none named'",
+        prior_declaration(render_orders("c1", [], {}, standing=[])) == [])
+
     print(f"chat_gatekeeper selftest: {'ok' if ok else 'BROKEN'}")
     return 0 if ok else 1
 
