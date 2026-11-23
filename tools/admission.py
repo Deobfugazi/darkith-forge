@@ -88,6 +88,54 @@ def gate_labels(ci_text: str) -> dict[str, int]:
     return labels
 
 
+def added_paths(diff_names: str) -> list[str]:
+    """Paths ADDED relative to a base, from 'git diff --name-only --diff-filter=A' output."""
+    return [l.strip() for l in diff_names.splitlines() if l.strip()]
+
+
+def cross_branch_collisions() -> list[str]:
+    """R3 / SPI-40 P3: preflight must compare against origin/main, not only the local tree.
+
+    The real collision that built this check: two agents created tools/drift_gate.py on
+    two branches at once, and each preflight read only its own tree, so neither saw the
+    other until CI differed. Two checks, both honest about what they can and cannot see:
+
+      1. TOOL COLLISION — a tools/ file ADDED on this branch (or untracked) that
+         origin/main already tracks is a collision: the other agent landed it, and this
+         branch must converge on their bytes, not fork the name.
+      2. LAW COLLISION — a law id DECLARED on origin/main but absent from the local
+         DARKITH.md means a naive merge would silently drop a landed law.
+    """
+    if git("rev-parse", "--verify", "--quiet", "origin/main").strip() == "":
+        return []  # no origin/main visible from here: nothing to compare against, said so
+
+    problems: list[str] = []
+
+    added = set(added_paths(git("diff", "--name-only", "--diff-filter=A", "origin/main...HEAD")))
+    added.update(p for p in added_paths(git("ls-files", "--others", "--exclude-standard", "tools")))
+    for path in sorted(added):
+        if path.startswith("tools/") and path.endswith(".py"):
+            if sh(["git", "cat-file", "-e", f"origin/main:{path}"]).returncode == 0:
+                problems.append(
+                    f"cross-branch tool collision: {path} already exists on origin/main "
+                    f"(another agent landed it) — converge on THEIR bytes, do not fork the name")
+
+    origin_law = git("show", "origin/main:DARKITH.md") if sh(
+        ["git", "cat-file", "-e", "origin/main:DARKITH.md"]).returncode == 0 else ""
+    if origin_law:
+        darkith = ROOT / "DARKITH.md"
+        if darkith.is_file():
+            origin_ids = set(law_ids(origin_law, "NEVER")) | set(law_ids(origin_law, "MUST"))
+            local_ids = set(law_ids(darkith.read_text(encoding="utf-8"), "NEVER")) | \
+                        set(law_ids(darkith.read_text(encoding="utf-8"), "MUST"))
+            for kind_num in sorted(origin_ids - local_ids):
+                problems.append(
+                    f"cross-branch law collision: {kind_num} is declared on origin/main but "
+                    f"nowhere in this tree — merging here would silently drop a landed law")
+
+    return problems
+
+
 def preflight() -> list[str]:
     problems: list[str] = []
 
@@ -127,6 +175,8 @@ def preflight() -> list[str]:
         pass
     if drift:
         problems.append(f"uncommitted drift in {len(drift)} file(s): " + ", ".join(drift[:5]))
+
+    problems.extend(cross_branch_collisions())
 
     return problems
 
@@ -281,6 +331,13 @@ def selftest() -> int:
           "seal-pending red is named, neither blocking nor hidden")
     check(classify(["--- authority gate (NEVER #21): FAIL (exit 1)"])[1] != [],
           "authority gate classified as remote-state")
+
+    # R3 / SPI-40 P3: cross-branch collision detection.
+    check(added_paths("tools/drift_gate.py\ntools/ci.sh\n\n") ==
+          ["tools/drift_gate.py", "tools/ci.sh"], "added paths parsed line by line")
+    check(added_paths("") == [], "empty diff adds nothing")
+    check(law_ids("─── NEVER #22 (T) ───\n", "NEVER") == {"22": 1},
+          "origin-side extraction reads the canonical header")
 
     print(f"admission selftest: {'PASS' if ok else 'FAIL'}")
     return 0 if ok else 1
