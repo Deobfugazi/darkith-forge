@@ -1539,6 +1539,58 @@ def land_sealed_cycle(root: pathlib.Path) -> int:
     return cp.returncode
 
 
+def seal_scope(root: pathlib.Path, cycle_id: str) -> tuple:
+    """(sealing commit, paths changed by commits after it, note).
+
+    A seal is an attestation about ONE commit's bytes. Commits that land after it are new
+    work the seal makes no claim about. Counting them as drift made any later commit — a
+    one-line doc edit, a board pulse, a derived-tree landing — redden CI and keep it red
+    until another full 16-stage cycle re-sealed: the seal graded a tree that could not
+    stand still.
+
+    The scope is derived from history, so it needs history: in a shallow clone the grafted
+    boundary commit appears to have ADDED every file, which would name the wrong sealer and
+    then call the tree drifted. A shallow clone is refused by name rather than answered
+    wrongly. `note` is None when the scope is trustworthy.
+    """
+    if git(root, "rev-parse", "--is-shallow-repository").stdout.strip() == "true":
+        return None, None, ("shallow clone — the sealing commit cannot be identified; "
+                            "fetch full history (actions/checkout fetch-depth: 0) to verify the seal")
+    rel = f"proof/revitalization/{cycle_id}/{stage_file('S16')}"
+    cp = git(root, "log", "--diff-filter=A", "-1", "--format=%H", "--", rel)
+    found = (cp.stdout or "").strip().splitlines()
+    if cp.returncode != 0 or not found:
+        return None, None, None  # uncommitted cycle: verify the working tree strictly
+    sealed = found[0]
+    head = git(root, "rev-parse", "HEAD").stdout.strip()
+    if not head:
+        return None, None, None
+    if git(root, "merge-base", "--is-ancestor", sealed, head).returncode != 0:
+        return sealed, None, (f"sealing commit {sealed[:12]} is not on this history; "
+                              f"the seal cannot be verified against rewritten history")
+    cp = git(root, "diff", "--name-only", f"{sealed}..{head}")
+    return sealed, set((cp.stdout or "").split()), None
+
+
+def uncommitted_paths(root: pathlib.Path) -> set:
+    """Paths whose working-tree bytes are not what HEAD records.
+
+    Scope only excuses a path the seal predates when the commit that changed it is on the
+    history. An uncommitted edit is never excused: that is the drift NEVER #22 forbids, and
+    it must stay red even for a file a later commit also touched.
+    """
+    cp = git(root, "status", "--porcelain", "--untracked-files=all")
+    out = set()
+    for line in (cp.stdout or "").splitlines():
+        if len(line) < 4:
+            continue
+        path = line[3:].strip()
+        if " -> " in path:  # rename: the destination is the live path
+            path = path.split(" -> ", 1)[1]
+        out.add(path.strip('"'))
+    return out
+
+
 def verify_chain(root: pathlib.Path) -> tuple:
     """Structural verification of the sealed receipt chain (I1, I3, I8). Read-only."""
     rev = root / "proof" / "revitalization"
@@ -1619,6 +1671,13 @@ def verify_chain(root: pathlib.Path) -> tuple:
         if receipts["S08"]["details"].get("tasks") and receipts["S07"].get("status") != "PASS":
             if current.get("closed"):
                 fails.append("I2: closed cycle contains tasks without a complete S07 governing route")
+        # A sealed cycle attests the commit it sealed. Paths a later commit legitimately
+        # changed are outside its claim; uncommitted edits never are.
+        _sealed, changed_after_seal, scope_note = seal_scope(root, str(current.get("cycle_id")))
+        if scope_note:
+            fails.append(f"I9: {scope_note}")
+        dirty = uncommitted_paths(root)
+        excused = (changed_after_seal or set()) - dirty
         for sid, rec in receipts.items():
             for ref in rec.get("evidence", []):
                 evidence_path = root / ref
@@ -1630,6 +1689,8 @@ def verify_chain(root: pathlib.Path) -> tuple:
                     # in a fresh clone, so a sealed cycle would fail its own gate on checkout.
                     fails.append(f"I8: {sid} cites evidence git ignores, so it will not travel: {ref}")
                     continue
+                if ref in excused:
+                    continue  # a later commit owns these bytes; the seal never saw them
                 expected = rec.get("evidence_sha256", {}).get(ref)
                 # S16 is the authorized terminal writer for TASKS.md. Preserve S01's
                 # historical baseline hash in its receipt, but validate the current
@@ -1652,6 +1713,8 @@ def verify_chain(root: pathlib.Path) -> tuple:
             if not current_path.is_file():
                 fails.append(f"I9: governing source disappeared after baseline: {path}")
                 continue
+            if path in excused:
+                continue  # a later commit owns these bytes; the seal never saw them
             expected = authorized_changes.get(path, baseline_hash)
             if path == "TASKS.md":
                 expected = receipts["S16"].get("details", {}).get("board_sha256", expected)
@@ -1671,6 +1734,8 @@ def verify_chain(root: pathlib.Path) -> tuple:
         if s16_board_hash:
             allowed_after["TASKS.md"] = s16_board_hash
         for path in sorted(set(baseline_tree) | set(current_tree)):
+            if path in excused:
+                continue
             expected = allowed_after.get(path, baseline_tree.get(path))
             actual = current_tree.get(path)
             if expected != actual:
@@ -1712,7 +1777,11 @@ def verify_chain(root: pathlib.Path) -> tuple:
                 fails.append("self-test sandbox must mark post-seal repository checks INACTIVE")
             board_path = root / "TASKS.md"
             expected_board = s16.get("details", {}).get("board_sha256")
-            if not expected_board or not board_path.is_file() or sha(board_path.read_bytes()) != expected_board:
+            # The board is rewritten by design — a pulse, a rotation, a later cycle. The seal
+            # attests the bytes it wrote; only an uncommitted board is drift it forbids.
+            board_is_newer = "TASKS.md" in excused
+            if not board_is_newer and (not expected_board or not board_path.is_file()
+                                       or sha(board_path.read_bytes()) != expected_board):
                 fails.append("I8/I9: TASKS.md does not match the board bytes sealed by S16")
             open_tasks = [t["id"] for t in s16.get("details", {}).get("task_queue", [])
                           if t.get("status") != "closed"]
@@ -1750,6 +1819,14 @@ def command_gate(root: pathlib.Path, as_json=False) -> int:
         print(f"revitalization gate: PASS - chain {data.get('cycle_id')} is "
               f"hash-sound, serially linked, four-state legal, "
               f"{'closed+sealed' if data.get('closed') else 'open (tasks pending)'}")
+        # Staleness is a DEFICIENCY, never a silent skip: a seal that predates N commits is
+        # evidence of the past. Name it so a reader knows the seal is historical, and so the
+        # next cycle is a known want rather than an invisible gap.
+        _, changed, note = seal_scope(root, str(data.get("cycle_id")))
+        if note is None and changed:
+            print(f"revitalization gate: NOTE - the seal predates {len(changed)} path(s) "
+                  f"changed by later commits (stale-seal, NEVER #17: run a new cycle to "
+                  f"re-seal the current tree)")
         return 0
     for f in fails:
         print(f"revitalization gate: FAIL - {f}")
@@ -1972,6 +2049,35 @@ def selftest() -> int:
           str([t["id"] for t in s08b["details"]["tasks"]]))
     g8, f8 = verify_chain(r7)
     check("gate PASSes the repaired+sealed chain", g8 == 0, "; ".join(f8))
+
+    print("== sandbox 8: the seal is scoped to its own commit, not a moving tree ==")
+    # The recurring red: a cycle seals commit N, then ANY later commit — a doc line, a
+    # board pulse — was graded against the seal and called drift, so CI went red and
+    # stayed red until another full cycle re-sealed. A seal attests one commit's bytes.
+    commit_all(r7, "a later, ordinary commit")
+    (r7 / "README.md").write_text("sandbox edited after the seal\n")
+    commit_all(r7, "an ordinary doc edit after the seal")
+    g9, f9 = verify_chain(r7)
+    check("a COMMITTED edit after the seal does not fail it (stale-seal, not drift)",
+          g9 == 0, "; ".join(f9))
+
+    # The same path, left uncommitted, is still the drift NEVER #22 forbids.
+    (r7 / "README.md").write_text("uncommitted tampering\n")
+    g10, f10 = verify_chain(r7)
+    check("an UNCOMMITTED edit after the seal is still drift (NEVER #22)",
+          g10 == 1 and any("README.md" in f for f in f10), "; ".join(f10))
+    sh(r7, "git checkout -- README.md")
+
+    # The seal's own bytes are never excused: a later commit does not launder a receipt.
+    cyc8 = current_cycle(r7)
+    s15_path = r7 / "proof/revitalization" / cyc8 / stage_file("S15")
+    forged = read_receipt(s15_path)
+    forged["status"] = "FAIL"
+    s15_path.write_text(canonical(forged) + "\n", encoding="utf-8")
+    commit_all(r7, "commit a tampered receipt")
+    g11, f11 = verify_chain(r7)
+    check("a committed tampered receipt is still rejected (the seal is not laundered)",
+          g11 == 1 and any("S15" in f for f in f11), "; ".join(f11))
 
     print()
     if ok:
