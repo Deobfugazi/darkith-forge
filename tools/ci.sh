@@ -136,6 +136,12 @@ if have python3; then
     if [ -f tools/tests/divergence_gate_test.py ]; then
       run "divergence gate test (SPI-40 P1)" python3 tools/tests/divergence_gate_test.py
     fi
+    # The recovery #45167088671 class: a snapshot that cached another moment's ignore
+    # state misread CI's own runtime files as unsealed drift. The suite drives REAL
+    # temporary git repos: fresh inventory per snapshot, root-scoped, fail-closed.
+    if [ -f tools/tests/snapshot_ignore_test.py ]; then
+      run "snapshot ignore freshness test" python3 tools/tests/snapshot_ignore_test.py
+    fi
     # The communal contribution ledger (NT XII). A mint's value is that its witness can be
     # re-run by anyone and print the same token, so the chain gate proves no entry was
     # rewritten and the selftest proves a porous barrier still blocks promotion.
@@ -819,5 +825,6 @@ fi
 
 printf '\nCI: %s (%d skipped)\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)" "$SKIPPED"
 exit "$FAILED"
+
 
 

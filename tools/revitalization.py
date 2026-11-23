@@ -102,29 +102,51 @@ def is_generated_target(path: str) -> bool:
                    for prefix in GENERATED_PREFIXES))
 
 
-_IGNORED_CACHE: dict = {}
+class GitInventoryError(RuntimeError):
+    """git refused to report the ignored-untracked inventory for a root.
 
-
-def ignored(rel: str) -> bool:
-    """True when git ignores this repo-relative path. One `git ls-files` call, cached.
-
-    git is the only authority on its own ignore rules; re-deriving them here would fork
-    the definition and the two would disagree about which bytes are source.
+    Fail-closed by design (snapshot invariant): ignore state is the boundary between
+    "runtime evidence the run itself rewrites" and "unsealed drift". Guessing — empty
+    set on error, or a stale copy from an earlier snapshot — turns the former into a
+    false I9 defect (recovery run #45167088671) and could equally turn the latter
+    into a false pass. Neither error is survivable, so neither is swallowed.
     """
-    key = str(ROOT)
-    if key not in _IGNORED_CACHE:
-        try:
-            cp = subprocess.run(["git", "ls-files", "--others", "--ignored",
-                                 "--exclude-standard", "-z"],
-                                cwd=str(ROOT), capture_output=True, text=True)
-            _IGNORED_CACHE[key] = set(cp.stdout.split("\0")) if cp.returncode == 0 else set()
-        except OSError:
-            _IGNORED_CACHE[key] = set()
-    return rel in _IGNORED_CACHE[key]
+
+
+def ignored_inventory(root: pathlib.Path) -> frozenset:
+    """One fresh `git ls-files` over THIS root: the untracked files git(there) ignores.
+
+    Fresh per call and scoped to the root argument, never module-global ROOT, never a
+    cached copy: ignore rules are a property of the queried repository at the moment
+    of the query, and CI creates ignored files (.forge_work/, build/omega/*.png)
+    between one snapshot and the next. Untracked-only by `--others`: a tracked file
+    that merely matches an ignore pattern is real tracked bytes and must stay hashed.
+    One git process per snapshot call keeps tree hashing cheap.
+    """
+    try:
+        cp = subprocess.run(["git", "ls-files", "--others", "--ignored",
+                             "--exclude-standard", "-z"],
+                            cwd=str(root), capture_output=True, text=True, check=False)
+    except OSError as exc:
+        raise GitInventoryError(f"git ls-files over {root}: {exc}") from exc
+    if cp.returncode != 0:
+        raise GitInventoryError(
+            f"git ls-files over {root} exited {cp.returncode}: {cp.stderr.strip()}")
+    return frozenset(p for p in cp.stdout.split("\0") if p)
 
 
 def tree_snapshot(root: pathlib.Path) -> dict:
-    """Hash every repository file except VCS/cache and the current cycle's own receipts."""
+    """Hash every repository file except VCS/cache and the current cycle's own receipts.
+
+    One fresh ignored-untracked inventory per call, taken from THIS root: the same
+    rule for S01, regeneration comparisons, post-seal verification, and evidence
+    validation. Deterministic for unchanged bytes and rules; never stale; fail-closed
+    if git cannot answer.
+    """
+    try:
+        ignored_untracked = ignored_inventory(root)
+    except GitInventoryError as exc:
+        raise GitInventoryError(f"tree_snapshot({root}): {exc}") from exc
     out = {}
     excluded = {".git", ".tools", ".gradle", "node_modules", "__pycache__", ".venv"}
     for path in sorted(root.rglob("*")):
@@ -133,10 +155,12 @@ def tree_snapshot(root: pathlib.Path) -> dict:
         rel = path.relative_to(root).as_posix()
         if rel.startswith("proof/revitalization/") or rel == "proof/praxis_propagation.json":
             continue  # the propagation receipt records per-run target states, not generated tissue
-        if ignored(rel):
+        if rel in ignored_untracked:
             continue  # Runtime evidence (logs, toolchain) is rewritten by the very run that
             # hashes it: proof/ci_last.log is ci.sh's own output, so counting it would make
-            # every full CI drift from its own seal and I9 could never pass.
+            # every full CI drift from its own seal and I9 could never pass. Classification
+            # is fresh per snapshot, so runtime-created ignored paths are excluded by the
+            # CURRENT rules, not by whatever existed before the run started.
         try:
             out[rel] = sha(path.read_bytes())
         except OSError:
@@ -1581,6 +1605,12 @@ def verify_chain(root: pathlib.Path) -> tuple:
         parent = rec["receipt_sha256"]
 
     if not fails and len(receipts) == len(STAGE_IDS):
+        # Evidence-path classification is fresh for THIS verification: the ignore rules
+        # as they exist now, not the inventory S01 saw and not any cached copy.
+        try:
+            ignored_now = ignored_inventory(root)
+        except GitInventoryError as exc:
+            return 1, [f"I8: ignore inventory unobtainable, refusing to judge: {exc}"]
         s16_closed = receipts["S16"].get("details", {}).get("closed") is True
         if s16_closed != bool(current.get("closed")):
             fails.append("I8: CURRENT closed marker disagrees with the S16 receipt")
@@ -1625,7 +1655,7 @@ def verify_chain(root: pathlib.Path) -> tuple:
                 if not evidence_path.is_file():
                     fails.append(f"I8: {sid} evidence does not resolve: {ref}")
                     continue
-                if ignored(ref):
+                if ref in ignored_now:
                     # Evidence git discards cannot be evidence: the citation resolves here but not
                     # in a fresh clone, so a sealed cycle would fail its own gate on checkout.
                     fails.append(f"I8: {sid} cites evidence git ignores, so it will not travel: {ref}")
@@ -1661,16 +1691,23 @@ def verify_chain(root: pathlib.Path) -> tuple:
         # Whole-tree temporal integrity: every byte change after S01 must be attributable
         # to the authorized S10 edit, an S11 generator output, or the terminal S16 board.
         baseline_tree = receipts["S01"]["details"].get("tree_hashes", {})
-        current_tree = tree_snapshot(root)
+        current_tree = None
+        try:
+            current_tree = tree_snapshot(root)
+        except GitInventoryError as exc:
+            fails.append(f"I9: current tree snapshot unobtainable, refusing to judge: {exc}")
         allowed_after = dict(authorized_changes)
-        for run in receipts["S11"]["details"].get("runs", []):
-            for path, hashes in run.get("changed_outputs", {}).items():
-                if path in baseline_tree or path in current_tree:
-                    allowed_after[path] = hashes.get("after")
+        if current_tree is not None:
+            for run in receipts["S11"]["details"].get("runs", []):
+                for path, hashes in run.get("changed_outputs", {}).items():
+                    if path in baseline_tree or path in current_tree:
+                        allowed_after[path] = hashes.get("after")
         s16_board_hash = receipts["S16"].get("details", {}).get("board_sha256")
         if s16_board_hash:
             allowed_after["TASKS.md"] = s16_board_hash
-        for path in sorted(set(baseline_tree) | set(current_tree)):
+        for path in sorted(set(baseline_tree) | set(current_tree or {})):
+            if current_tree is None:
+                continue
             expected = allowed_after.get(path, baseline_tree.get(path))
             actual = current_tree.get(path)
             if expected != actual:
@@ -2043,3 +2080,4 @@ def main(argv: list) -> int:
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
+
