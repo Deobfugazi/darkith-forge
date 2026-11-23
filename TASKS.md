@@ -5,20 +5,25 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-23T08:13:34.210433`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-23T11:49:40.287897`. This section is regenerated, never hand-edited._
 >
-> **Coupled laws:** MUST #17, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+> **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 >
 > 1. **[forbid]** You lying fuckers!!!! I need this directive as an urgent emergency top priority! Why the fuck does my github app notifications 9 out of 10 all failin…
 >    - prompt index `32271` at `2026-11-23T08:13:34.210433`
 >    - sha256 `3ee3dccfda7b794d`
+> 2. **[forbid]** The collision risk is live right now: the parallel agent's two newest main commits edit the exact drift section of ci.sh my PR also edits. Doing what…
+>    - prompt index `33063` at `2026-11-23T11:49:40.287897`
+>    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#41, MUST#42, NEVER #19, NEVER #21, NEVER#21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
+>    - sha256 `c2ac5cd12017685b`
 >
 
-**Coupled laws (declared by the directive):** `MUST #17`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-6`
+**Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-6`
 
 | law | heading |
 |---|---|
 | `MUST #17` | GENERATED COPIES |
+| `MUST #18` | IDEMPOTENT PACKAGING |
 | `MUST #20` | PROVE IT IN THE ARTIFACT |
 | `MUST #21` | PROMOTE THE CLASS |
 | `MUST #22` | STATE THE GENERALIZATION |
@@ -30,6 +35,7 @@
 | `MUST #35` | STANDING AUTHORITY TO PUBLISH — NEVER ASK TO PUSH |
 | `MUST #36` | NO OFF-SCHEDULE DWELL — STALL IS MEASURED AS TIME |
 | `MUST #41` | REHEARSE ON THE REAL BYTES, IN ISOLATION, BEFORE THE PUSH |
+| `MUST #42` | DRIFT IS AUTO-REPAIRED — DETECTOR, REPAIR, GATE, TEST |
 | `NEVER #19` | NO UNEXAMINED SOURCE |
 | `NEVER #21` | NO WAITING FOR APPROVAL THAT ALREADY EXISTS — THE ANTI-STALL LAW |
 | `NEVER #22` | NO VERIFIED-BUT-UNLANDED CLOSURE — THE MISSING-CALLER LAW |
@@ -40,9 +46,10 @@
 | `SPI-37` | A QUANTITY CROSSES A BOUNDARY WITH ITS UNIT |
 | `SPI-38` | A LAW MUST BE RUN, NOT READ |
 | `SPI-4` | LOG TO DISK, READ FROM DISK |
+| `SPI-40` | NO UNREHEARSED PROMOTION — THE PRIME DIRECTIVE |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #38`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`
 
 <!-- PRAXIS:END -->
 
@@ -222,12 +229,16 @@ Named skips this cycle (SKIP is never PASS): autophagy (defect classes are impos
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-23T08:13:34.210433`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-23T11:49:40.287897`. This section is regenerated, never hand-edited._
 
-**Coupled laws:** MUST #17, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-6
+**Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 
 1. **[forbid]** You lying fuckers!!!! I need this directive as an urgent emergency top priority! Why the fuck does my github app notifications 9 out of 10 all failin…
    - prompt index `32271` at `2026-11-23T08:13:34.210433`
    - sha256 `3ee3dccfda7b794d`
+2. **[forbid]** The collision risk is live right now: the parallel agent's two newest main commits edit the exact drift section of ci.sh my PR also edits. Doing what…
+   - prompt index `33063` at `2026-11-23T11:49:40.287897`
+   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#41, MUST#42, NEVER #19, NEVER #21, NEVER#21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
+   - sha256 `c2ac5cd12017685b`
 
 <!-- CHAT-GATE:END -->
