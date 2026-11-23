@@ -258,6 +258,26 @@ def rehearse(keep: bool = False) -> int:
             print(f"  needs-seal  {line}")
         for line in remote:
             print(f"  resolves-on-push  {line}")
+        # A refusal without the failing gate's evidence wastes the next repair cycle.
+        # Emit the complete local evidence for each blocking gate into the workflow log.
+        if content:
+            current = None
+            capture = []
+            wanted = {line.split(": FAIL", 1)[0].replace("--- ", "").strip() for line in content}
+            for line in output.splitlines():
+                if line.startswith("=== ") and line.endswith(" ==="):
+                    if current in wanted and capture:
+                        print("  --- evidence: " + current + " ---")
+                        for detail in capture:
+                            print("    " + detail)
+                    current = line[4:-4]
+                    capture = []
+                elif current in wanted:
+                    capture.append(line)
+            if current in wanted and capture:
+                print("  --- evidence: " + current + " ---")
+                for detail in capture:
+                    print("    " + detail)
         if seal:
             print("admission: a governing-source change is unsealed -- run "
                   "`python3 tools/revitalization.py run`; its S14 re-runs this suite "
