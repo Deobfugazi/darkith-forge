@@ -408,6 +408,14 @@ fi
     run "savf ledger" node tools/test_savf_ledger.js
   fi
 
+  # The exp/log pair at the extremes: (b^(ks)-1)/(b^(kL)-1) overflows once
+  # k*L*log(b) passes ~709, so the naive form returned NaN in the browser and
+  # raised OverflowError in the CLI on inputs both can evaluate (f(L) is exactly
+  # 1). Pins the fixed form and the cross-engine agreement on it.
+  if have node && [ -f tools/test_savf_numeric.js ]; then
+    run "savf numeric core" node tools/test_savf_numeric.js
+  fi
+
   # The axis CLI: the one function the formulary rests on, reached from a shell.
   # Covers 1D/2D/3D poles, negative coordinates, the reflection law, and the
   # error paths that must exit non-zero rather than return a wrong answer.

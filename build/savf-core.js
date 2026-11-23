@@ -3008,7 +3008,14 @@ function dict(seed) {
     chkExp(b, k, L);
     if (!(s >= 0 && s <= L)) throw new Error("s must lie in [0,L]");
     var lb = Math.log(b);
-    return Math.expm1(k * s * lb) / Math.expm1(k * L * lb);
+    var x = k * s * lb, X = k * L * lb;
+    var num = Math.expm1(x), den = Math.expm1(X);
+    // den is Infinity once b^(kL) overflows, and Infinity/Infinity is NaN -- at
+    // s=L the answer is exactly 1.  expm1(t) = exp(t)*(1-exp(-t)) puts the ratio
+    // on exp(x-X), which is <= 1 here, so nothing overflows.  The Python twin
+    // takes the identical branch.
+    if (!isFinite(den)) return Math.exp(x - X) * (-Math.expm1(-x)) / (-Math.expm1(-X));
+    return num / den;
   }
   function gLog(u, b, k, L) {
     chkExp(b, k, L);
@@ -3017,9 +3024,16 @@ function dict(seed) {
     // f has collapsed once expm1(x) rounds to exactly -1 (x below ~ -36.7): every s in
     // (0,L] then maps to u=1 and g cannot recover s. Say that instead of returning
     // Infinity; the Python twin raises on the identical condition.
-    var e = Math.expm1(k * L * lb);
-    if (e === -1) throw new Error("g is undefined here: expm1(" + (k * L * lb).toFixed(1) +
+    var X = k * L * lb;
+    var e = Math.expm1(X);
+    if (e === -1) throw new Error("g is undefined here: expm1(" + X.toFixed(1) +
       ") rounds to -1, so f has collapsed to u=1 and the inverse cannot recover s");
+    // e overflowed: log1p(u*e) = log(u) + log(e), and log(e) = X + log1p(-exp(-X))
+    // stays finite.  Same branch as the Python twin.
+    if (!isFinite(e)) {
+      if (u === 0) return 0;
+      return (Math.log(u) + X + Math.log1p(-Math.exp(-X))) / (k * lb);
+    }
     return Math.log1p(u * e) / (k * lb);
   }
   function chartSign(chart, axis, move) {

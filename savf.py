@@ -64,7 +64,15 @@ def f_exp(s, b, k, L):
     if not (0 <= s <= L):
         raise ValueError("s must lie in [0,L]")
     lb = math.log(b)
-    return math.expm1(k * s * lb) / math.expm1(k * L * lb)
+    x, X = k * s * lb, k * L * lb
+    try:
+        return math.expm1(x) / math.expm1(X)
+    except OverflowError:
+        # b^(kL) overflowed.  expm1(t) = exp(t)*(1-exp(-t)), so the ratio is
+        # exp(x-X) times a correction bounded by 1.  Here x-X <= 0, so nothing
+        # overflows; direct division instead yields inf/inf = nan at s=L, where
+        # the answer is exactly 1.
+        return math.exp(x - X) * (-math.expm1(-x)) / (-math.expm1(-X))
 
 
 def g_log(u, b, k, L):
@@ -76,11 +84,22 @@ def g_log(u, b, k, L):
     # f has collapsed once expm1(x) rounds to exactly -1 (x below ~ -36.7): every s in
     # (0,L] then maps to u=1 and g cannot recover s. Say that instead of surfacing a
     # bare "math domain error"; the JS twin raises on the identical condition.
-    e = math.expm1(k * L * lb)
+    X = k * L * lb
+    try:
+        e = math.expm1(X)
+    except OverflowError:
+        e = math.inf
     if e == -1.0:
         raise ValueError(
-            f"g is undefined here: expm1({k * L * lb:.1f}) rounds to -1, so f has "
+            f"g is undefined here: expm1({X:.1f}) rounds to -1, so f has "
             "collapsed to u=1 and the inverse cannot recover s")
+    if math.isinf(e):
+        # b^(kL) overflowed.  log1p(u*e) = log(u) + log(e) to within
+        # log1p(1/(u*e)), and log(e) = X + log1p(-exp(-X)) stays finite because
+        # X is large and positive on this branch.
+        if u == 0:
+            return 0.0
+        return (math.log(u) + X + math.log1p(-math.exp(-X))) / (k * lb)
     return math.log1p(u * e) / (k * lb)
 
 
