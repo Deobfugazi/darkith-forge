@@ -1076,3 +1076,32 @@ Two scanner bugs worth remembering, both of which produced false "unclosed comme
 findings that looked like real defects: ignoring backslash escapes in `"..."` (so `"\""`
 desynchronises string state), and ignoring `"""` raw strings. A parser that disagrees with
 the project gate should be suspected before the project is.
+
+## The recurring-red defect class: a derived fact rebuilt from too narrow a window
+
+`tools/chat_gatekeeper.py` renders the board's `**Coupled laws:**` line, and
+`praxis_propagate.py` refuses a directive that declares no laws. The line was rebuilt from
+the DAY-WINDOWED order set (`since_day` defaults to the session's latest day). On a day
+whose first prompt named no law it regenerated as "none named in these prompts" and praxis
+failed. Measured on the live log: the day window held 1 order with 0 laws, the whole log
+held 114 orders with 83 distinct laws.
+
+That is why the Operator saw 9-of-10 GitHub runs red while every local run was green: the
+verdict tracked the calendar day of the run, not the bytes in the commit. A gate whose
+answer depends on when it runs is not measuring the tree.
+
+The fix is to make a durable fact a fixed point: the declaration is the union of what the
+window names and what the board ALREADY declares, read off the board's own bytes
+(`prior_declaration`). Two things to keep in mind when applying this pattern elsewhere:
+
+- The durable record is the board, not the raw session log. The log also carries agent
+  echoes and pasted documents; unioning those invented laws (a pasted DARKITH.md yielded
+  `NEVER #1`) that no order ever named.
+- Normalise on write, not on read. `MUST#41` and `MUST17` had survived on the board as
+  tokens that only matched by luck; `normalise_law` canonicalises them so the board states
+  a law the same way the corpus does.
+
+A second-order hazard: the bad write was committed and pushed by `drift_gate.repair()`
+running inside autophagy. An automatic repair that stages `-A` and pushes will happily
+land a corrupt derived artifact. That is the argument for rehearsing the gate against a
+throwaway clone before letting the repairer near the real tree.
