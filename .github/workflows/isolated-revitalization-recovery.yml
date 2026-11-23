@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - fix/ci-recurring-red-root-causes-2026-11-23
+    paths-ignore:
+      - 'proof/convergence.json'
+      - 'proof/revitalization/**'
+      - 'proof/board_pulse.json'
+      - 'TASKS.md'
 
 permissions:
   contents: write
@@ -43,7 +48,7 @@ jobs:
       - name: Stage the raw-chain toolchain
         run: bash tools/fetch_toolchain.sh
 
-      - name: Refresh and commit generated convergence proof before S01
+      - name: Refresh, commit, and publish convergence baseline before S01
         run: |
           python3 tools/convergence_gate.py
           git config user.name "github-actions[bot]"
@@ -52,6 +57,10 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "chore(proof): refresh convergence receipt before seal"
           fi
+          # The CI probes enforce NEVER #21 and MUST #26: a local-only commit
+          # makes both the authority gate and board-pulse gate fail. Publish this
+          # generated baseline on the isolated branch before starting S01.
+          git push origin "HEAD:refs/heads/fix/ci-recurring-red-root-causes-2026-11-23"
 
       - name: Execute the complete serial revitalization cycle
         run: python3 tools/revitalization.py run
