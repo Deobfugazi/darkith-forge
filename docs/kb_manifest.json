@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 75,
+  "count": 78,
   "files": [
     {
       "bytes": 77931,
@@ -9,10 +9,10 @@
       "sha256": "6b0c58a1f0739e0c92678afdfb8e25f26ad975e0b7e2f474035c82226d4cb398"
     },
     {
-      "bytes": 112766,
+      "bytes": 115350,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "7abd2a08decdca85c37078da6a0b8be8b259f8fd68241562ee73b79e2c7a72d8"
+      "sha256": "2764ea33a1c7b6d8e9115573092900db6d939331af79f817ff58f4d904bb47fa"
     },
     {
       "bytes": 3356,
@@ -33,16 +33,22 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 17804,
+      "bytes": 17802,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "bd38efd6cdea814e8a952456c66d2d02b6318a6f39ac61d2a1e436986bb3aa9e"
+      "sha256": "dd4dacbda8b2cb318f13f003cb4a3fc877640efc9622b1c9ee26ff9a0aac930f"
     },
     {
       "bytes": 9608,
       "path": "docs/ARCHITECTURE-OMEGA.md",
       "register": "B-knowledge",
       "sha256": "43c74ae223ecf5ca8eff63d04219ebb6cdfffae60dbe81433cc40fdd5a715619"
+    },
+    {
+      "bytes": 7519,
+      "path": "docs/BLACK-AND-WHITEPAPER-2026-11-23.md",
+      "register": "B-knowledge",
+      "sha256": "9cbfbeb13fbbc52e8d13e56776fc0df3b9fc1f27cab503cc234d0fc46b0433e0"
     },
     {
       "bytes": 68526,
@@ -61,6 +67,18 @@
       "path": "docs/FAILURE-MODE-LEDGER.md",
       "register": "B-knowledge",
       "sha256": "79f1bcf004e6709605cb809a3dcdfcffd64f6e606bb23cce8c159340c4311b80"
+    },
+    {
+      "bytes": 5542,
+      "path": "docs/FOREMAN-DELEGATION-SPI40-2026-11-23.md",
+      "register": "B-knowledge",
+      "sha256": "6244c12d14d89ac06df235ba31d6399b1332c3d26535539490325553fe7cf151"
+    },
+    {
+      "bytes": 2999,
+      "path": "docs/FOREMAN-DISPATCH-2026-11-23.md",
+      "register": "B-knowledge",
+      "sha256": "fe95975a5dcd962658b53dd65c366a84facc3e4a5940d0a30123a0e4a331bfda"
     },
     {
       "bytes": 70065,

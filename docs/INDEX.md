@@ -9,27 +9,30 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**75 readable files across 8 registers.**
+**78 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 77,931 | `6b0c58a1f073` | AGENTS.md — Darkith |
-| `DARKITH.md` | 112,766 | `7abd2a08decd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 115,350 | `2764ea33a1c7` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 17,804 | `bd38efd6cdea` | TASKS — the durable board |
+| `TASKS.md` | 17,802 | `dd4dacbda8b2` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
+| `docs/BLACK-AND-WHITEPAPER-2026-11-23.md` | 7,519 | `9cbfbeb13fbb` | THE BLACK & WHITEPAPER — Three Tongues, Zero Hedges |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
 | `docs/FAILURE-MODE-LEDGER.md` | 12,778 | `79f1bcf004e6` | DARKITH — FAILURE MODE LEDGER |
+| `docs/FOREMAN-DELEGATION-SPI40-2026-11-23.md` | 5,542 | `6244c12d14d8` | FOREMAN DELEGATION — SPI-40 WORK QUEUE (2026-11-23) |
+| `docs/FOREMAN-DISPATCH-2026-11-23.md` | 2,999 | `fe95975a5dcd` | FOREMAN DISPATCH — 2026-11-23 |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/GITHUB-STUDIO-MANUAL.md` | 18,292 | `fbf7d5d0f43a` | GITHUB STUDIO — the uncut operator manual |
 | `docs/NT-XII-IN-THE-OPEN.md` | 11,254 | `dbf7a79f1821` | NT XII IN THE OPEN — a contribution ledger that mints re-runnable clos |

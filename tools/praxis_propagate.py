@@ -48,6 +48,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import tempfile
 
 # ROOT is the project this tool serves. COORDINASYNC_ROOT overrides it so the same source can
 # be bundled into the single-file kit (where __file__ is the bundle, not tools/) and run against
@@ -308,6 +309,16 @@ def merge(board_text: str, block: str) -> str:
     return "\n".join(out).rstrip("\n") + "\n"
 
 
+def _is_ephemeral(wt: pathlib.Path) -> bool:
+    """True for a throwaway worktree: one living under the system temp dir."""
+    try:
+        r = wt.resolve()
+    except OSError:
+        return True
+    tmp = pathlib.Path(tempfile.gettempdir()).resolve()
+    return r == tmp or tmp in r.parents
+
+
 def discover_targets() -> list[tuple[str, pathlib.Path]]:
     """Every board that can steer work. Read off disk, never assumed to exist."""
     targets: list[tuple[str, pathlib.Path]] = [("durable", BOARD)]
@@ -328,8 +339,15 @@ def discover_targets() -> list[tuple[str, pathlib.Path]]:
     for ln in out.splitlines():
         if ln.startswith("worktree "):
             wt = pathlib.Path(ln.split(" ", 1)[1])
-            if wt.resolve() != ROOT:
-                targets.append((f"worktree:{wt.name}", wt / "TASKS.md"))
+            if wt.resolve() == ROOT:
+                continue
+            # A worktree under the temp dir is a rehearsal sandbox (admission.py creates one
+            # per run to execute the real ci.sh). Counting it as a board made every rehearsal
+            # self-poison: the suite saw a new board, demanded it carry the order, and went
+            # red for a directory that is deleted moments later.
+            if _is_ephemeral(wt):
+                continue
+            targets.append((f"worktree:{wt.name}", wt / "TASKS.md"))
     return targets
 
 

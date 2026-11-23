@@ -9,8 +9,8 @@ import pathlib
 import subprocess
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "tools"))
+ROOT = pathlib.Path(__file__).resolve().parent.parent  # tools/
+sys.path.insert(0, str(ROOT))
 
 import divergence_gate as g  # noqa: E402
 
@@ -33,7 +33,9 @@ def clone_pair():
     import tempfile
     d = pathlib.Path(tempfile.mkdtemp())
     (d / "origin").mkdir()
-    subprocess.run(["git", "init", "-q", "--bare", str(d / "origin")], check=True)
+    # -b main: a bare repo defaults its HEAD to master, so every clone would start on an
+    # unborn branch and "HEAD:main" would be rejected as a non-fast-forward.
+    subprocess.run(["git", "init", "-q", "--bare", "-b", "main", str(d / "origin")], check=True)
     w = d / "work"
     subprocess.run(["git", "clone", "-q", str(d / "origin"), str(w)], check=True)
     subprocess.run(["git", "config", "user.name", "t"], cwd=str(w), check=True)

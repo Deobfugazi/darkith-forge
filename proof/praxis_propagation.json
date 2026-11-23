@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "0cab7eeea7fd6dc90c2a3a56dc77d3da3c0fe8ac06c4f96823b432f463e72bf8",
-  "board_sha256": "2faa76037985b25fec06eef9cf890c8e34cf6ee54c643ad79dfcaefea88a8b20",
+  "board_sha256": "09d1d7c7b0f69bc04e60af711814c184a59bf8feb9f8fba0ce42d45705a8297a",
   "laws": {
     "declared": [
       "MUST #20",
@@ -32,10 +32,10 @@
       "MUST #31",
       "MUST #37",
       "MUST #38",
-      "MUST #42",
       "SPI-11",
       "SPI-19",
-      "SPI-29"
+      "SPI-29",
+      "SPI-40"
     ]
   },
   "targets": [
@@ -50,18 +50,6 @@
       "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
       "status": "current",
       "detail": "mirror"
-    },
-    {
-      "target": "worktree:pristine",
-      "path": "/tmp/pristine/TASKS.md",
-      "status": "current",
-      "detail": ""
-    },
-    {
-      "target": "worktree:wi_heal",
-      "path": "/tmp/wi_heal/TASKS.md",
-      "status": "current",
-      "detail": ""
     }
   ],
   "mode": "apply",
