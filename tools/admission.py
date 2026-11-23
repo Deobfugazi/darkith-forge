@@ -238,7 +238,14 @@ def rehearse(keep: bool = False) -> int:
         print(f"admission: rehearsing tools/ci.sh on {len(diff.splitlines())} diff line(s) "
               f"+ uncommitted files, in {tree}")
         env = os.environ.copy()
-        env.pop("REVITALIZATION_BOOTSTRAP", None)  # a rehearsal is not a cycle
+        # During the isolated recovery's baseline publication only, CI defers the
+        # chain gate until S16. All other content gates still run and can block the push.
+        # The workflow sets this narrow flag on that one step; ordinary pushes remain
+        # fully subject to the sealed-chain gate.
+        if os.environ.get("ADMISSION_BOOTSTRAP_SEAL_PENDING") == "1":
+            env["REVITALIZATION_BOOTSTRAP"] = "1"
+        else:
+            env.pop("REVITALIZATION_BOOTSTRAP", None)
         env["CI_LOG"] = str(log_path)
         cp = subprocess.run(["bash", "tools/ci.sh"], cwd=str(tree), env=env,
                             capture_output=True, text=True, timeout=1800)

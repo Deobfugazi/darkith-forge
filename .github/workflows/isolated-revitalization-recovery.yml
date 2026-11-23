@@ -49,6 +49,8 @@ jobs:
         run: bash tools/fetch_toolchain.sh
 
       - name: Refresh, commit, and publish convergence baseline before S01
+        env:
+          ADMISSION_BOOTSTRAP_SEAL_PENDING: "1"
         run: |
           python3 tools/convergence_gate.py
           git config user.name "github-actions[bot]"
