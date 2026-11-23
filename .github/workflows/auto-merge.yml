@@ -43,7 +43,13 @@ jobs:
     name: tests
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 is REQUIRED, not an optimisation. tools/revitalization.py proves the
+      # seal by locating the commit that added the S16 receipt and diffing it to HEAD. A
+      # shallow (default, depth 1) clone cannot see that commit, so the gate refuses by name
+      # rather than answering wrongly — and CI goes red on a tree that is actually sealed.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -110,7 +116,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      # Same reason as the tests job: this job also runs tools/ci.sh, whose revitalization
+      # gate needs the full history to identify the sealing commit.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
