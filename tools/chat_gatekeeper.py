@@ -250,12 +250,46 @@ def occupation(pulse: dict) -> dict:
     return {"phase": phase, "gapHours": gap, "state": state}
 
 
+def normalise_law(tok: str) -> str:
+    """'NEVER#19', 'must 19', 'SPI-2', 'MUST #35' -> the canonical heading spelling.
+
+    The prompts are typed fast and often lose the separator ("MUST#41", "MUST17"), and the
+    rendered declaration is what praxis reads back. Spelling it canonically here means the
+    board states the law the same way the corpus does, instead of carrying a token that only
+    matches by luck.
+    """
+    t = tok.upper().replace("  ", " ").strip()
+    m = re.match(r"(NEVER|MUST|SPI)\s*-?\s*#?\s*(\d+)$", t)
+    if not m:
+        return t
+    kind, num = m.group(1), m.group(2)
+    return f"SPI-{num}" if kind == "SPI" else f"{kind} #{num}"
+
+
+def prior_declaration(board_text: str) -> list[str]:
+    """The laws the board's CHAT-GATE directive already declares, in canonical spelling.
+
+    Read off the bytes the board currently carries, so a declaration made on any earlier day
+    survives today's re-render. Returns [] when the board has no directive yet.
+    """
+    block = block_of(board_text) if BEGIN in board_text else board_text
+    for line in block.splitlines():
+        m = re.match(r"\s*>?\s*\*\*Coupled laws:\*\*\s*(.+)", line)
+        if not m:
+            continue
+        if "none named" in m.group(1).lower():
+            return []
+        return [normalise_law(t.group(1)) for t in LAW_TOKEN.finditer(m.group(1))]
+    return []
+
+
 def one_line(t: str, n: int = 150) -> str:
     s = " ".join(t.split())
     return s if len(s) <= n else s[: n - 1] + "…"
 
 
-def render_orders(conv: str, orders: list[dict], occ: dict) -> str:
+def render_orders(conv: str, orders: list[dict], occ: dict,
+                  standing: list[dict] | None = None) -> str:
     L = [BEGIN, ""]
     L.append("## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat")
     L.append("")
@@ -274,7 +308,15 @@ def render_orders(conv: str, orders: list[dict], occ: dict) -> str:
     L.append("")
     # praxis_propagate requires the order in force to DECLARE its coupled laws; a derived guess
     # is not an order. These are the laws the Operator named in the prompts themselves.
-    coupled = sorted({l for o in orders for l in o["laws"]})
+    #
+    # The declaration is DURABLE, so it is read from every order the board has ever carried —
+    # not from the window being rendered. Rendering it from the day window made the standing
+    # order expire at midnight: on a day whose first prompt named no law, this line became
+    # "none named in these prompts" and praxis failed with "the directive declares no coupled
+    # laws". The same code passed or failed depending on the calendar day of the run, which is
+    # the whole reason CI read 9-of-10 red while every local run was green.
+    declaration = standing if standing is not None else orders
+    coupled = sorted({normalise_law(l) for o in declaration for l in o["laws"]})
     L.append(f"**Coupled laws:** {', '.join(coupled) if coupled else 'none named in these prompts'}")
     L.append("")
     if not orders:
@@ -426,7 +468,19 @@ def run(write: bool, since_day: str | None = None) -> int:
         foreign = True
     else:
         foreign = False
-    block = render_orders(conv, orders, meta["occupation"])
+    # The laws the board stands on are DURABLE, so the declaration is a fixed point: it is the
+    # union of what the window names and what the board ALREADY declares. Rebuilding it from
+    # the day window alone made the standing order expire at midnight — on a day whose first
+    # prompt named no law the line became "none named in these prompts" and praxis failed with
+    # "the directive declares no coupled laws". That is why CI read 9-of-10 red while every
+    # local run was green: the verdict tracked the calendar day, not the bytes.
+    #
+    # The board is the durable record, not the raw log: the log also carries agent echoes and
+    # pasted documents, and unioning those invented laws (a pasted DARKITH.md yielded
+    # "NEVER #1") that no order ever named.
+    standing = prior_declaration(BOARD.read_text(encoding="utf-8")) if BOARD.is_file() else []
+    block = render_orders(conv, orders, meta["occupation"],
+                          standing=orders + [{"laws": standing}])
     if not BOARD.is_file():
         # A project with no board is not a fault in the ingester; it is a project that has not
         # been wired yet. Say so in one line instead of a traceback that reads like a bug.
