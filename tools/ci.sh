@@ -246,11 +246,17 @@ if have python3; then
     if [ -f tools/ofif_gate.py ]; then
       run "OFIF falsifier (NT-XIII G6/G7)" python3 tools/ofif_gate.py
     fi
-    for g in circadian_gate download_gate stall_gate synchrony_gate convergence_gate; do
+    for g in circadian_gate download_gate stall_gate synchrony_gate; do
       if [ -f "tools/$g.py" ]; then
         run "$g"                          python3 "tools/$g.py"
       fi
     done
+    # Convergence is a CI assertion, not a writer. Its proof is refreshed before the
+    # sealed baseline; CI must not rewrite proof/convergence.json after S01 or S14
+    # will correctly detect post-baseline drift and refuse closure.
+    if [ -f tools/convergence_gate.py ]; then
+      run "convergence_gate"              python3 tools/convergence_gate.py --check
+    fi
     # synchrony_pulse is run with --check, never bare: bare updates proof/synchrony_pulse.json,
     # and convergence_gate then fails on the file CI just wrote. A green run must not dirty
     # the tree, or every green run manufactures the next red one.
