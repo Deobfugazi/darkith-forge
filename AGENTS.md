@@ -1095,11 +1095,11 @@ window names and what the board ALREADY declares, read off the board's own bytes
 (`prior_declaration`). Two things to keep in mind when applying this pattern elsewhere:
 
 - The durable record is the board, not the raw session log. The log also carries agent
-  echoes and pasted documents; unioning those invented laws (a pasted DARKITH.md yielded
-  `NEVER #1`) that no order ever named.
-- Normalise on write, not on read. `MUST#41` and `MUST17` had survived on the board as
-  tokens that only matched by luck; `normalise_law` canonicalises them so the board states
-  a law the same way the corpus does.
+  echoes and pasted documents; unioning those invented law numbers that no order ever
+  named (a pasted DARKITH.md contributed one).
+- Normalise on write, not on read. Tokens typed without their separator had survived on the
+  board and only matched by luck; `normalise_law` canonicalises them so the board states a
+  law the same way the corpus does.
 
 A second-order hazard: the bad write was committed and pushed by `drift_gate.repair()`
 running inside autophagy. An automatic repair that stages `-A` and pushes will happily
