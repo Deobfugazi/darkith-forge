@@ -1105,3 +1105,31 @@ A second-order hazard: the bad write was committed and pushed by `drift_gate.rep
 running inside autophagy. An automatic repair that stages `-A` and pushes will happily
 land a corrupt derived artifact. That is the argument for rehearsing the gate against a
 throwaway clone before letting the repairer near the real tree.
+
+## The same class, second instance: the seal graded a tree that could not stand still
+
+`verify_chain` (I9) compared the sealed digests against the LIVE working tree. A seal is an
+attestation about ONE commit's bytes — `CURRENT.idempotency_key.commit` names it, and the
+sealing commit is the one that added `S16`. Every commit after that one was therefore read
+as tampering: a one-line doc edit, a board pulse, a derived-tree landing. CI went red, and
+it stayed red until another full 16-stage cycle re-sealed — which then invalidated itself
+the same way. That is the 9-of-10 red pattern, and it reproduces from a clean clone of the
+sealed commit plus one ordinary commit.
+
+The fix scopes the seal to its own commit (`seal_scope`): paths a later commit changed are
+outside its claim, and uncommitted edits are never outside it. The distinction is the
+taxonomy the board already carries — `stale-seal` is a DEFICIENCY (NEVER #17, cleared by a
+new cycle and *named in the gate output*), while uncommitted drift is DESTRUCTIVE (NEVER
+#22, hard fail). A later commit does not launder a tampered receipt: the seal's own bytes
+are still verified.
+
+Two traps found while fixing it, both worth checking when scoping anything by history:
+
+- A shallow clone cannot answer the question at all. Its grafted boundary commit appears to
+  have ADDED every file, so `git log --diff-filter=A` names the wrong commit as the sealer
+  and the tree then reads as drifted. The gate refuses a shallow clone by name, and the CI
+  checkout sets `fetch-depth: 0`. A verdict derived from history must say so when history
+  is absent — otherwise it answers wrongly and looks like a real failure.
+- Excusing a path is not the same as excusing a defect. Scoping must be applied to the
+  *drift* checks only; receipts, hash-soundness and the serial chain stay absolute. A test
+  that commits a tampered receipt proves the seal is not laundered by a later commit.
