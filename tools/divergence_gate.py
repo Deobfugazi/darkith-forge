@@ -36,11 +36,16 @@ def measure(root=ROOT):
     """Return (state, ahead, behind, branch). state: clean | diverged | skip."""
     if git(["rev-parse", "--is-inside-work-tree"], root=root).returncode != 0:
         return 'skip', 0, 0, ''
+    branch = git(["rev-parse", "--abbrev-ref", "HEAD"], root=root).stdout.strip()
+    # A detached CI/worktree checkout has no writer branch. Treating it as main
+    # fabricates an ahead/behind comparison against origin/main for feature branches.
+    # The attached writer checkout is still checked against its own origin/<branch>.
+    if not branch or branch == "HEAD":
+        return 'skip', 0, 0, ''
     fetch = git(["fetch", "origin"], root=root)
     if fetch.returncode != 0:
         return 'clean', 0, 0, ''   # offline: not judged here; unpushed age is NEVER #21's
-    branch = git(["rev-parse", "--abbrev-ref", "HEAD"], root=root).stdout.strip()
-    upstream = "origin/main" if branch == "HEAD" else f"origin/{branch}"
+    upstream = f"origin/{branch}"
     if git(["rev-parse", "--verify", "--quiet", upstream], root=root).returncode != 0:
         return 'clean', 0, 0, branch
     ahead = len(git(["rev-list", f"{upstream}..HEAD"], root=root).stdout.splitlines())
