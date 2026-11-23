@@ -7,7 +7,7 @@ __pycache__/
 # verified locally (tools/ci_receipts.py --verify) and regenerates from a fresh run.
 proof/ci_receipts.db
 .forge_work/
-.tools/
+.tools
 *.log
 # Sealed cycle evidence is the exception: the seal cites these logs and I8 checks that
 # each citation resolves. A cited .log that git drops turns a sealed cycle into one
