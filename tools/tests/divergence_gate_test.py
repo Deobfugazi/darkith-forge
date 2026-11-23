@@ -56,6 +56,12 @@ def main():
     _, w, peer = clone_pair()
     check("synced reads clean", g.measure(root=w)[0] == "clean")
 
+    print("== detached CI checkout has no writer branch to compare ==")
+    subprocess.run(["git", "checkout", "--detach"], cwd=str(w), check=True,
+                   capture_output=True, text=True)
+    check("detached checkout is a named skip", g.measure(root=w)[0] == "skip")
+    subprocess.run(["git", "checkout", "-q", "main"], cwd=str(w), check=True)
+
     print("== ahead-only is NOT divergence (NEVER #21 owns dwell) ==")
     (w / "B.md").write_text("b\n")
     subprocess.run(["git", "add", "-A"], cwd=str(w), check=True)
