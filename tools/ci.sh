@@ -284,23 +284,18 @@ if have python3; then
       if [ -f tools/omega_deficit.py ]; then
         run "omega deficit (NT XI retention)" python3 tools/omega_deficit.py
       fi
-    # the board must be pushed in REAL TIME so a parallel worker sees it (MUST #26)
+    # Board consistency is local; CI never publishes.
     if [ -f tools/board_pulse.sh ]; then
-      run "board pulse (real-time push)"    bash tools/board_pulse.sh --check
+      run "board state (local consistency)" bash tools/board_pulse.sh --check
     fi
-    # MUST #36 — the same fact measured as TIME, not a yes/no. board_pulse only asks "is it
-    # pushed?"; this asks "for how long was it NOT?" and fails when the dwell exceeds the
-    # Operator's budget in STALL_BUDGET.json. Without it, work sits unpushed for an hour with
-    # every gate green, because no gate ever measured latency.
+    # MUST #36 measures only uncommitted local work.
     if [ -f tools/stall_clock.py ]; then
-      run "stall clock (off-schedule dwell)" python3 tools/stall_clock.py
+      run "local work dwell" python3 tools/stall_clock.py
     fi
-    # NEVER #21: an automated decision is already approved. Prove the authority is inscribed
-    # in every board, and that nothing is sitting uncommitted or unpushed. --budget 0 is the
-    # CI setting: a pushed tree, or a red gate — there is no "pending approval" third state.
+    # NEVER #21: one canonical authority source, no copied law blocks.
     if [ -f tools/authority_gate.py ]; then
-      run "authority gate selftest"         python3 tools/authority_gate.py --selftest
-      run "authority gate (NEVER #21)"      python3 tools/authority_gate.py --check --budget 0
+      run "authority gate selftest" python3 tools/authority_gate.py --selftest
+      run "authority gate (canonical source)" python3 tools/authority_gate.py --check
     fi
   fi
 else
