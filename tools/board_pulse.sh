@@ -6,7 +6,8 @@
 # when its bytes are on the remote, so this tool commits and pushes the board the moment it
 # changes, and records a ping (SHA + timestamp) the parallel worker can read.
 #
-#   tools/board_pulse.sh            push the board now (commit + push); write the ping
+#   tools/board_pulse.sh            commit the board locally and write the ping (NO push)
+#   tools/board_pulse.sh --push     commit AND push the board (explicit remote publication)
 #   tools/board_pulse.sh --check    gate: fail if the board has uncommitted changes (not
 #                                   pushed in real time)
 #   tools/board_pulse.sh --ping     print the last ping (SHA + when) so a worker can react
@@ -31,7 +32,7 @@ STAMP="$(python3 -c 'import sys;sys.path.insert(0,"build/gen");import omega_time
 # other's commit window and the loser's work is silently folded into the winner's commit. The
 # lock is taken only on the push path (--check/--ping are read-only), and it blocks rather than
 # skipping, because a skipped pulse is exactly the stall this tool exists to prevent.
-if [ "${1:-}" = "" ] && command -v flock >/dev/null 2>&1; then
+if { [ "${1:-}" = "" ] || [ "${1:-}" = "--push" ]; } && command -v flock >/dev/null 2>&1; then
   exec 9>"$(git rev-parse --git-dir)/darkith-board-pulse.lock"
   flock -w 120 9 || { echo "board_pulse: FAIL — another pulse held the lock >120s; not pushing blind"; exit 1; }
 fi
@@ -54,7 +55,7 @@ case "${1:-}" in
     # local board against the remote branch's copy.
     if ! git diff --quiet -- "$BOARD" 2>/dev/null || ! git diff --cached --quiet -- "$BOARD" 2>/dev/null; then
       echo "board_pulse: FAIL — $BOARD has uncommitted changes: the board was NOT pushed in"
-      echo "             real time, so a parallel worker cannot see it. Run tools/board_pulse.sh."
+      echo "             real time, so a parallel worker cannot see it. Run tools/board_pulse.sh --push."
       exit 1
     fi
     git fetch -q "$REMOTE" "$BRANCH" 2>/dev/null || { echo "board_pulse: WARN — remote unreachable; local board clean but push unverified"; exit 0; }
@@ -95,9 +96,16 @@ git add "$PING"
 # a second, tiny commit for the ping — never an amend, which could rewrite an unrelated commit
 git commit -q -m "board: ping $NEW at $STAMP" >/dev/null 2>&1 || true
 
-if git push -q "$REMOTE" "$BRANCH" 2>/dev/null; then
-  echo "board_pulse: pushed $(git rev-parse --short HEAD) ($BOARD) to $REMOTE/$BRANCH at $STAMP"
-  echo "board_pulse: ping -> $PING (parallel worker: fetch, then tools/converge.sh)"
+if [ "${1:-}" = "--push" ]; then
+  if git push -q "$REMOTE" "$BRANCH" 2>/dev/null; then
+    echo "board_pulse: pushed $(git rev-parse --short HEAD) ($BOARD) to $REMOTE/$BRANCH at $STAMP"
+    echo "board_pulse: ping -> $PING (parallel worker: fetch, then tools/converge.sh)"
+  else
+    echo "board_pulse: WARN — push failed (offline or no remote); committed locally as $(git rev-parse --short HEAD)"
+  fi
 else
-  echo "board_pulse: WARN — push failed (offline or no remote); committed locally as $(git rev-parse --short HEAD)"
+  # Local by default. A commit is not a publication: publishing needs an explicit --push,
+  # so no timer, wrapper, or inherited invocation can turn a board update into a push.
+  echo "board_pulse: committed locally as $(git rev-parse --short HEAD) ($BOARD); NOT pushed"
+  echo "board_pulse: to publish, re-run with --push (an explicit remote action)"
 fi

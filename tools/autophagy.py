@@ -372,8 +372,15 @@ def main():
             sh('git -c user.name=openhands -c user.email=openhands@all-hands.dev '
                'commit -q -m "autophagy: return the tree to newborn\n\n'
                'Co-authored-by: openhands <openhands@all-hands.dev>"')
-            sh("git push -q origin main")
-            print("  committed and pushed the healed tree")
+            # Never push to main from a self-healing loop. Main is a separately authorized
+            # boundary (Prime Directive §3.3): a repair that published itself would be the
+            # automation granting its own permission. The healed commit stays local and is
+            # reported; a human or an explicitly authorized step publishes it.
+            branch = sh("git rev-parse --abbrev-ref HEAD").stdout.strip()
+            if branch in ("main", "master"):
+                print("  committed the healed tree locally; NOT pushed (main needs separate authorization)")
+            else:
+                print(f"  committed the healed tree locally on '{branch}'; NOT pushed")
 
     return verdict(rows or [(c, probe(c)) for c in CLASSES], passes, residue)
 

@@ -1,0 +1,9 @@
+{
+  "recorded_at_utc": "2026-11-24T13:51:20Z",
+  "branch": "fix/burden-rehearsal-e2e-v2",
+  "head_sha": "df953aee30d8bbcd8ae8a3d71e1133a30a56c81e",
+  "origin_main_sha": "2498b2dc64b777e34516292de3e4a2913172b5a9",
+  "origin_main_remote": "2498b2dc64b777e34516292de3e4a2913172b5a9",
+  "tree_status": "1 modified paths",
+  "worktrees": "4"
+}

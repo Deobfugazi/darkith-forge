@@ -3,16 +3,16 @@
   "count": 88,
   "files": [
     {
-      "bytes": 85307,
+      "bytes": 84474,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "d696957817ec8dfa0a5ae2f53134c0088511217e031e3656e8c7881bb32c96da"
+      "sha256": "6be8be3afa53747160192139201a359493bd590fac2f192fb62e684832472e90"
     },
     {
-      "bytes": 142168,
+      "bytes": 169112,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "09952091378f4ee75e4e06e4a2a0e5d43bb411d5696573cc501b3d21897e5998"
+      "sha256": "a3cdb073cae33ab075bdf47d188067d77751db36ff900dfa2833ef90ce14fb54"
     },
     {
       "bytes": 3356,
