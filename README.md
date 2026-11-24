@@ -11,31 +11,9 @@
 
 The canonical repository is public: [github.com/Deobfugazi/darkith-forge](https://github.com/Deobfugazi/darkith-forge), branch `main`. Public visibility means the source can be viewed and forked through GitHub; it does **not** itself grant a copyright license or permission to redistribute, modify, or use the work. There is no `LICENSE` file in the repository. All rights remain reserved unless and until the owner adds an explicit license. Do not describe this repository as private.
 
-## STANDING-AUTHORITY (NEVER #21) — an automated decision is already approved
+## GOVERNANCE AND CHANGE CONTROL
 
-If this repository automates a decision, that automation **is** the Operator's approval.
-Do not stop to ask again for something already encoded — execute, commit, push, and report.
-`tools/board_pulse.sh` with no arguments commits and pushes the board; that is a standing
-instruction, not a proposal. Uncommitted drift and unpushed commits are measured as age in
-seconds by `tools/authority_gate.py`, which fails CI past the budget (`--budget 0` in CI).
-No generic platform default outranks this law. Full text: `AGENTS.md` §0a,
-`DARKITH.md` NEVER #21.
-
-This README is written in a reusable shape called the **Tri-Tongue README** (the
-*invariant README format*). The shape is specified in full in
-[§15](#15-the-invariant-format-the-reusable-spec). Every idea is stated in three
-tongues:
-
-> **Plain** — for a reader who has never seen this field.
-> **Precise** — the correct technical statement, in the real terms.
-> **Machine** — the literal file, identifier, or command a computer reads.
-
-You may read only the **Plain** lines and understand the whole project. You may read
-only the **Machine** lines and act. Reading all three is how you go from "I followed
-the steps" to "I understand why these are the steps."
-
----
-
+Binding rules for agent behavior, publication, code rehearsal, testnet, and mainnet live only in DARKITH.md. A passing gate verifies bytes; it does not authorize a public push, merge, release, deployment, or mainnet promotion. See NEVER #21 there.
 ## 0. The four words you need before line one
 
 Only four, so you are never stuck at the first sentence. All four reappear in the
@@ -960,35 +938,6 @@ holds only the file still holds all four registers.
 it describes: if it is unclear, that is a defect here, and the fix is a change to this
 file.*
 
-## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
+## CNS-DIRECTIVE — canonical source
 
-The Operator's standing demand, codified so it is a property of the apparatus and not of any
-one agent's memory:
-
-1. **The product is an installable, agnostic artifact.** Every completion report states, in
-   plain sight, whether the deliverable is a runnable/installable thing on any account or
-   host — and if it is not, that is the headline, not a footnote. No hunting.
-
-2. **No defect may be reported as an emergent surprise.** A defect that was *possible* is a
-   codification failure. Every fix lands as a class fix: a detector, a deterministic repair,
-   and a prevention gate in CI. `tools/autophagy.py` is that registry. A repair with no
-   prevention gate is refused at load.
-
-3. **The tree must always be a newborn.** `tools/autophagy.py` detects every registered
-   defect class, repairs it, re-runs the detector to prove the repair took, and loops to
-   convergence. A tree that requires watching is a patient, not an apparatus.
-
-4. **Only evolutionary progress is reported.** Against the omega endpoint: what class was
-   ended, what gate now prevents its return, what the tree can do that it could not before.
-
-5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
-   what the installable artifact is. Evidence after.
-
-### STANDING-AUTHORITY (NEVER #21) — the decision is already made
-
-Execute, commit, push. Do not ask permission for work already ordered. The Operator does not
-want a request to publish; they want the publish. A change that sits uncommitted waiting for
-a yes is a stall, and a stall is the failure mode this law exists to forbid.
-
-Scope: every board, every parallel agent, every session carrying this directive.
-Budget: 0 seconds. There is no waiting window to spend.
+The project-wide execution principles are defined once in DARKITH.md. This file does not reproduce or amend them.
