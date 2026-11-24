@@ -1,0 +1,3 @@
+expected_root=e14350baf18719f1e1f7ddb79cccd0a6ce416eb4143b037fa40436a37ac6047e
+witness=python3 tools/burden/witness_e2e.py
+generated_by=tools/burden/rehearse_burden.py

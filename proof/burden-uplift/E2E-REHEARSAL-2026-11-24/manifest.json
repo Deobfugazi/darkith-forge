@@ -1,9 +1,11 @@
 {
- "generated": "2026-11-24T00:00:00Z",
  "files": {
-  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/00_burden_record.json": "4490316aeb45b6f40bc06012e57f44a612ca98b958bd9718b4a8201afa21563d",
-  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/04_receipts.jsonl": "8133d13db37e0e953d8b26ce41f49883b42145d8a49b4c4c09676fb16956a535",
-  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/05_viability_curve.csv": "3d827d847347bae9bffbe89bd4757a07f18abae8042d8b6c8832dba38c327e76",
-  "tools/burden/witness_e2e.py": "9934007414d49bff7d76bd6af9e6d0cb18264c61b11f4c95715c66244b48ddcd"
- }
+  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/00_burden_record.json": "69607149b5e5cddc810ceebe5e810f636432503d7a56ad3343e990578ff1779d",
+  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/04_receipts.jsonl": "51b087ab988a70d0c97e8961d6a9da3f1389f22c51370923e49056e3154bab1c",
+  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/05_viability_curve.csv": "e6199126d3ff1258eeb08782827c3a96539ba83f9e9319a644799b9e8d917b11",
+  "tools/burden/burden_gates.py": "5f06e04c2eef82bb2323b560e565439cfc445aeb65bb79e28367ba574aa97977",
+  "tools/burden/receipt_chain.py": "c7266cbd06fd2603e551cc28fbd1f42cd2931606bb3ea2cccfdfaa9f829fd444",
+  "tools/burden/witness_e2e.py": "6410c919bd9400ba68cbce6556ca62584bd1320e68b7332b6fe3994e907b8ed3"
+ },
+ "generated": "2026-11-24T06:59:36Z"
 }

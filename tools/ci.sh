@@ -89,6 +89,18 @@ if have python3; then
   run "secret gate self-test"             python3 tools/secret_gate.py selftest
   # Fracture Scout: offline proof its boolean parser, adapters, and ranker are correct.
   run "fracture scout self-test"          python3 tools/fracture_scout.py selftest
+  # Burden gates: BURDEN-GATE-1 (double-count registry) and BURDEN-GATE-2 (witness
+  # strength) were disclosed as ABSENT by the first rehearsal and refused their phantoms
+  # only by admission review. Written down is not closed; these are the mechanical gates,
+  # and the self-test proves each one FIRES on a phantom and stays silent on a good record.
+  if [ -f tools/burden/burden_gates.py ]; then
+    run "burden gates self-test"          python3 tools/burden/burden_gates.py --selftest
+  fi
+  # The rehearsal witness must pass on the committed evidence. If the evidence drifts
+  # without a re-run, this refuses rather than narrating the damage after landing.
+  if [ -f tools/burden/witness_e2e.py ]; then
+    run "burden rehearsal witness"        python3 tools/burden/witness_e2e.py
+  fi
   # Kotlin syntax gate: fail if any source tree has an unclosed block comment.
   # A scanner, not kotlinc (W-023), but exact about the defect that silently
   # swallows the rest of a file. Runs only when the app tree is present.
