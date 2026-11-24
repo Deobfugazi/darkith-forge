@@ -8,7 +8,7 @@ receives the directive is not idle, it is working on a superseded order. The Ope
 be the bus that carries his own directive between his own tabs.
 
 So propagation is derived, not remembered. This tool reads the current directive out of the
-durable board, derives the laws coupled to it, and writes that same block into every board it
+durable board, writes the task text with a pointer to DARKITH.md, and writes that block into every board it
 can find. It is idempotent: a second run with no change writes nothing, which is what makes it
 safe to run after every inscription.
 
@@ -68,18 +68,6 @@ END = "<!-- PRAXIS:END -->"
 # A directive section is the topmost `## ★` heading: the board's own convention for "this is
 # the order in force". Falling back to any `##` heading would propagate an appendix as an order.
 DIRECTIVE_HEADING = re.compile(r"^##\s*★\s*(.+?)\s*$", re.MULTILINE)
-COUPLED_DECL = re.compile(r"\*\*Coupled (?:never|law)s?:\*\*\s*(.+)", re.IGNORECASE)
-LAW_TOKEN = re.compile(r"\b((?:NEVER|MUST|SPI)[-\s]?#?\d+)\b")
-
-# Words too common to couple anything to. Without this, every directive would "derive" every
-# law that says "the".
-STOP = {
-    "the", "and", "for", "that", "this", "with", "from", "must", "never", "spi", "not",
-    "are", "was", "has", "have", "its", "all", "any", "one", "two", "own", "our", "his",
-    "her", "you", "your", "they", "them", "then", "than", "into", "onto", "over", "under",
-    "each", "every", "which", "when", "what", "where", "who", "how", "why", "can", "may",
-    "will", "shall", "should", "would", "could", "been", "being", "does", "did", "but",
-}
 
 
 def read_bytes(p: pathlib.Path) -> bytes:
@@ -88,16 +76,6 @@ def read_bytes(p: pathlib.Path) -> bytes:
 
 def sha(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
-
-
-def normalise_law(tok: str) -> str:
-    """'NEVER#19', 'never 19', 'SPI-2', 'NEVER #21' -> the canonical heading spelling."""
-    t = tok.upper().replace("  ", " ").strip()
-    m = re.match(r"(NEVER|MUST|SPI)\s*-?\s*#?\s*(\d+)$", t)
-    if not m:
-        return t
-    kind, num = m.group(1), m.group(2)
-    return f"SPI-{num}" if kind == "SPI" else f"{kind} #{num}"
 
 
 def _discover_event_roots() -> list[pathlib.Path]:
@@ -133,28 +111,6 @@ def _discover_event_roots() -> list[pathlib.Path]:
 EVENT_ROOTS = _discover_event_roots()
 
 
-def law_corpus() -> dict[str, str]:
-    """Law id -> its full body, parsed with law_gate's own regex so there is ONE definition of
-    what a law heading looks like. A second parser here would drift from the gate that enforces
-    the law, and the two would disagree about the corpus they both claim to describe."""
-    sys.path.insert(0, str(ROOT / "tools"))
-    import law_gate  # noqa: E402  — deliberate: reuse the gate's regex, do not fork it
-
-    # A host project may have no law corpus yet (a fresh account, a different repo). That is an
-    # empty corpus, not a crash: propagation can still carry a directive that declares its laws
-    # by id; only the heading table would be blank.
-    if not LAWS.is_file():
-        return {}
-    text = LAWS.read_text(encoding="utf-8")
-    lines = text.splitlines()
-    hits = [(i, m) for i, line in enumerate(lines) for m in [law_gate.LAW.search(line)] if m]
-    corpus: dict[str, str] = {}
-    for idx, (i, m) in enumerate(hits):
-        end = hits[idx + 1][0] if idx + 1 < len(hits) else len(lines)
-        corpus[normalise_law(m.group(1))] = "\n".join(lines[i:end])
-    return corpus
-
-
 def directive_section(text: str) -> tuple[str, str] | None:
     """Return (title, body) of the topmost ★ directive section, or None.
 
@@ -175,58 +131,7 @@ def directive_section(text: str) -> tuple[str, str] | None:
     return m.group(1), body
 
 
-def declared_laws(body: str) -> list[str]:
-    out: list[str] = []
-    for line in body.splitlines():
-        m = COUPLED_DECL.search(line)
-        if not m:
-            continue
-        for tok in LAW_TOKEN.finditer(m.group(1)):
-            n = normalise_law(tok.group(1))
-            if n not in out:
-                out.append(n)
-    return out
-
-
-def derived_laws(body: str, corpus: dict[str, str], declared: list[str]) -> list[str]:
-    """Laws whose body shares DISTINCTIVE terms with the directive. Proposals only.
-
-    A plain word-overlap test is worthless here: measured against this corpus it nominated 38
-    of 41 laws, because every law discusses the same project vocabulary. The discriminator has
-    to be rarity. A term is kept only when it appears in at most RARE_MAX laws, and a law is
-    nominated only when it shares at least RARE_HITS such terms. Those two thresholds are what
-    turn "mentions the project" into "is about this specific thing".
-    """
-    terms = {
-        w.lower() for w in re.findall(r"[A-Za-z][A-Za-z0-9_-]{3,}", body)
-        if w.lower() not in STOP
-    }
-    if not terms:
-        return []
-
-    RARE_MAX = 3   # a term appearing in more laws than this says nothing about which law
-    RARE_HITS = 3  # two shared terms is a coincidence; three is a subject
-
-    law_terms = {
-        law_id: {w.lower() for w in re.findall(r"[A-Za-z][A-Za-z0-9_-]{3,}", law_body)}
-        for law_id, law_body in corpus.items()
-    }
-    df = {}
-    for t in terms:
-        df[t] = sum(1 for s in law_terms.values() if t in s)
-    rare = {t for t in terms if df[t] <= RARE_MAX}
-
-    out: list[str] = []
-    for law_id, s in law_terms.items():
-        if law_id in declared:
-            continue
-        if len(rare & s) >= RARE_HITS:
-            out.append(law_id)
-    return sorted(out)
-
-
-def render_block(title: str, body: str, declared: list[str], derived: list[str],
-                 corpus: dict[str, str]) -> str:
+def render_block(title: str, body: str) -> str:
     """The propagated block. Byte-stable for a given input so idempotence is provable."""
     lines = [BEGIN, f"## ⟐ PRAXIS — order in force (mirrored from TASKS.md)", ""]
     lines.append(f"**Directive:** {title}")
@@ -237,7 +142,7 @@ def render_block(title: str, body: str, declared: list[str], derived: list[str],
     # content — they do not survive being quoted.
     quoted = [ln for ln in body.strip("\n").splitlines()
               if not ln.strip().startswith(("<!-- CHAT-GATE:", "<!-- PRAXIS:"))
-              and not re.match(r"\s*>?\s*\*\*Coupled laws:\*\*", ln, re.I)]
+              and not re.match(r"\s*>?\s*(?:-\s*)?\*\*Coupled laws:\*\*", ln, re.I)]
     lines += [("> " + ln).rstrip() for ln in quoted]
     lines += ["", "**Binding law source:** `DARKITH.md` (sole canonical source; this mirror carries no law definitions or publication authority).", ""]
     lines += [END, ""]
@@ -404,11 +309,9 @@ def selftest() -> int:
         if not ok:
             fails.append(name)
 
-    board = "# BOARD\n\nintro prose\n\n## ★ DIRECTIVE X\n\nbody text here\n\n**Coupled laws:** SPI-29\n"
+    board = "# BOARD\n\nintro prose\n\n## ★ DIRECTIVE X\n\nbody text here\n"
     title, body = directive_section(board)
-    corpus = {"SPI-29": "─── SPI-29 (ORDER TRAVELS) ───\nGATE: tools/praxis_propagate.py\n"}
-    declared = declared_laws(body)
-    block = render_block(title, body, declared, [], corpus)
+    block = render_block(title, body)
 
     # --- invariants: strip and merge are exact inverses, and merge is idempotent
     check("strip(merge(x)) == x  (round-trip restores authored bytes)", strip_block(merge(board, block)) == board)
@@ -421,25 +324,12 @@ def selftest() -> int:
     # --- positive trial: a board missing the block MUST be reported stale
     check("POSITIVE: bare board differs from propagated board", merge(board, block) != board)
 
-    # --- sensitivity: a directive with no declared laws must be refused, not guessed
-    check("SENSITIVITY: no declaration -> declared_laws() empty", declared_laws("just prose\n") == [])
-
-    # --- specificity: a declaration is parsed, not invented
-    check("SPECIFICITY: declaration parsed exactly", declared == ["SPI-29"])
-
-    # --- a declared law with no heading is unresolvable (the order is broken, fail closed)
-    check("missing law detected", [l for l in declared if l not in corpus] == [])
-
     # --- truncated block must not leave an unterminated marker
     trunc = "# B\n\n" + BEGIN + "\n## PRAXIS\nno end marker\n"
     check("truncated block is stripped to EOF", BEGIN not in strip_block(trunc))
 
-    # --- law normalisation accepts the spellings humans actually type
-    check("normalise 'never 19' -> 'NEVER #19'", normalise_law("never 19") == "NEVER #19")
-    check("normalise 'SPI-2' -> 'SPI-2'", normalise_law("SPI-2") == "SPI-2")
-
     print(f"praxis selftest: {'PASS' if not fails else 'FAIL'} — "
-          f"{10 - len(fails)}/10 trials")
+          f"{7 - len(fails)}/7 trials")
     return 0 if not fails else 1
 
 
@@ -480,10 +370,7 @@ def main() -> int:
 
     # The task directive is operational state, not a second lawbook. Binding laws are
     # read only from DARKITH.md; propagation carries task text plus a pointer, never law copies.
-    corpus = {}
-    declared = []
-    derived = []
-    block = render_block(title, body, declared, derived, corpus)
+    block = render_block(title, body)
 
     # --check must never write. A gate that repairs what it inspects cannot report drift,
     # because it destroys the evidence before judging it.
