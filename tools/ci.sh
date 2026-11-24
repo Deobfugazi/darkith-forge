@@ -71,6 +71,12 @@ run() {
 # announced loudly — a silent skip is how a broken tree ships looking green.
 have() { command -v "$1" >/dev/null 2>&1; }
 
+# Fresh-session blindness is a repository defect: keep the mandatory boot formulary
+# pinned at the top of both auto-loaded entry documents and fail CI if it drifts.
+if have python3 && [ -f tools/session_boot_gate.py ]; then
+  run "fresh-session boot contract" python3 tools/session_boot_gate.py
+fi
+
 if have python3; then
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
   run "savf cli contract"                 python3 build/savf-cli-test.py

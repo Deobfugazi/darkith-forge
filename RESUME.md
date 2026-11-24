@@ -1,5 +1,30 @@
 # RESUME — read this first in any new session
 
+## SESSION BOOT — EXECUTE BEFORE ANY TASK (MANDATORY)
+
+This section is deliberately first. A fresh agent has no conversational memory; this file and
+the repository are its durable instructions. Reading only this heading or the first screen
+is NOT compliance. Do not diagnose, edit, generate, or report before completing this boot.
+
+1. Restore the latest landed working tree: `bash tools/restore.sh`. Never assume a recycled
+   workspace contains the current repository state.
+2. Read the COMPLETE contents of `RESUME.md`, `TASKS.md`, `DARKITH.md`, and this entire
+   `AGENTS.md`. The opening summary is an index, not a substitute for the governing corpus.
+3. Load the actual formulary, not a remembered or paraphrased version:
+   - `python3 tools/autophagy.py` — execute its repair-to-fixed-point loop; do not replace
+     this with `--check`, which detects but deliberately does not heal.
+   - `python3 tools/revitalization.py selftest` — verify the sixteen-stage engine and I1–I10.
+4. Only after boot, inspect the durable board and current branch state, then perform the task.
+   Run `bash tools/ci.sh` against the resulting tree; read its complete on-disk log.
+5. Preserve the distinction: detection is not repair, repair is not verification, and
+   verification is not closure. Never infer a green result from a partial log or stale receipt.
+
+If a required file or command is absent, STOP task mutation, report the exact missing item,
+and repair the boot surface itself before resuming. Do not silently continue with partial
+context.
+
+---
+
 ## 0a. STANDING-AUTHORITY (NEVER #21) — never wait for approval that already exists
 
 **If this repo automates a decision, that automation is the approval. Execute it.** In
