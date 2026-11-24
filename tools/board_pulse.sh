@@ -1,19 +1,8 @@
 #!/usr/bin/env bash
-# board_pulse.sh — push the task board in REAL TIME so a parallel worker sees it at once.
-#
-# The Operator runs two or more agents in parallel. When one agent updates the board, the
-# other must be pinged without the Operator repeating himself. The board is only "pushed"
-# when its bytes are on the remote, so this tool commits and pushes the board the moment it
-# changes, and records a ping (SHA + timestamp) the parallel worker can read.
-#
-#   tools/board_pulse.sh            push the board now (commit + push); write the ping
-#   tools/board_pulse.sh --check    gate: fail if the board has uncommitted changes (not
-#                                   pushed in real time)
-#   tools/board_pulse.sh --ping     print the last ping (SHA + when) so a worker can react
-#
-# Provider-neutral: pushes to `origin` (or $DARKITH_REMOTE). Auth is whatever the git
-# credential helper already provides. The ping is a tracked file so it travels with the
-# push and is visible to every checkout.
+# board_pulse.sh — local checks by default; remote publication requires --publish.
+#   --check     verify local TASKS.md matches HEAD
+#   --ping      print last pulse
+#   --publish   commit and push current branch; governed by DARKITH.md NEVER #21
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 2
 
@@ -31,7 +20,7 @@ STAMP="$(python3 -c 'import sys;sys.path.insert(0,"build/gen");import omega_time
 # other's commit window and the loser's work is silently folded into the winner's commit. The
 # lock is taken only on the push path (--check/--ping are read-only), and it blocks rather than
 # skipping, because a skipped pulse is exactly the stall this tool exists to prevent.
-if [ "${1:-}" = "" ] && command -v flock >/dev/null 2>&1; then
+if [ "${1:-}" = "--publish" ] && command -v flock >/dev/null 2>&1; then
   exec 9>"$(git rev-parse --git-dir)/darkith-board-pulse.lock"
   flock -w 120 9 || { echo "board_pulse: FAIL — another pulse held the lock >120s; not pushing blind"; exit 1; }
 fi
@@ -42,35 +31,20 @@ case "${1:-}" in
     exit 0
     ;;
   --check)
-    # The law applies to the branch a writer owns. A CI PR checkout is a detached HEAD
-    # (a merge ref), where there is no local branch to compare against — comparing the
-    # literal name "main" would compare the wrong thing and fail every PR. Skip, named.
-    if ! git symbolic-ref -q HEAD >/dev/null 2>&1; then
-      echo "board_pulse: SKIP — detached HEAD (CI PR checkout); the board law applies to the writer's branch"
-      exit 0
+    if ! git diff --quiet HEAD -- "$BOARD"; then
+      echo "board_pulse: FAIL — TASKS.md has local changes not included in HEAD"; exit 1
     fi
-    # "pushed" means the board's bytes are on the REMOTE, not merely committed locally —
-    # a local commit a parallel worker cannot fetch is still a private view. Compare the
-    # local board against the remote branch's copy.
-    if ! git diff --quiet -- "$BOARD" 2>/dev/null || ! git diff --cached --quiet -- "$BOARD" 2>/dev/null; then
-      echo "board_pulse: FAIL — $BOARD has uncommitted changes: the board was NOT pushed in"
-      echo "             real time, so a parallel worker cannot see it. Run tools/board_pulse.sh."
-      exit 1
-    fi
-    git fetch -q "$REMOTE" "$BRANCH" 2>/dev/null || { echo "board_pulse: WARN — remote unreachable; local board clean but push unverified"; exit 0; }
-    LOCAL="$(git rev-parse "$BRANCH" 2>/dev/null)"
-    REMOTE_SHA="$(git rev-parse "$REMOTE/$BRANCH" 2>/dev/null)"
-    if [ "$LOCAL" != "$REMOTE_SHA" ]; then
-      echo "board_pulse: FAIL — local $BRANCH ($LOCAL) != $REMOTE/$BRANCH ($REMOTE_SHA):"
-      echo "             the board is not on the remote, so a parallel worker is blind."
-      exit 1
-    fi
-    echo "board_pulse: PASS — the board is pushed to $REMOTE/$BRANCH ($(git rev-parse --short HEAD))"
-    exit 0
+    echo "board_pulse: PASS — TASKS.md matches the local commit"; exit 0
+    ;;
+  --publish) ;;
+  *)
+    echo "board_pulse: no publication performed. Use --check, --ping, or --publish."
+    echo "--publish requires current authorization under DARKITH.md NEVER #21."
+    exit 2
     ;;
 esac
 
-# default: push the board now — with the whole tree, so the push is a consistent snapshot a
+# explicit --publish: commit the complete tree, then publish the current branch.
 # parallel worker can converge onto (a board that names a commit whose tree is elsewhere is
 # not a ping, it is noise).
 python3 - "$STAMP" <<'PY' > "$PING"
