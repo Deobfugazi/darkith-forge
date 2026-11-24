@@ -72,6 +72,22 @@ run() {
 have() { command -v "$1" >/dev/null 2>&1; }
 
 if have python3; then
+  # ── ABSOLUTION IS A PRECONDITION OF HASHING, NOT A REPORT FILED AFTER IT ────────
+  # This ran wrong for months: the hashing gates ran first, and the defect registry ran
+  # last as a dry `--check` that repairs nothing. So CI sealed a tree that still held every
+  # residual inconsistency, then detected the inconsistency, then did nothing about it —
+  # detect-forever, heal-never. `--repair` was never called by CI at all.
+  #
+  # The order is the defect. You cannot attest bytes that are still moving. This phase
+  # ingests every producer that absorbs outside state, runs the registry to repair, and
+  # loops until residue is zero BEFORE any gate below hashes anything. If it cannot reach
+  # zero it REFUSES, and the hashing gates never run on an inconsistent tree — so a seal
+  # can never attest a lie. That refusal is the prophylaxis, and it is not destructive:
+  # the phase only produces a consistent working tree and proves it, then hands it on.
+  if [ -f tools/absolution_phase.py ]; then
+    run "absolution phase (ingest+repair to zero before hashing)" python3 tools/absolution_phase.py
+    run "absolution phase selftest"                               python3 tools/absolution_phase.py --selftest
+  fi
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
   run "savf cli contract"                 python3 build/savf-cli-test.py
   run "darkbot self-test"                 python3 tools/darkbot.py selftest

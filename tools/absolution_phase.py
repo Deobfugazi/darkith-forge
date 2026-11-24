@@ -39,6 +39,7 @@ Exit: 0 = tree is consistent (residue 0); 1 = residue remains, hashing must not 
 from __future__ import annotations
 
 import argparse
+import os
 import pathlib
 import subprocess
 import sys
@@ -68,6 +69,11 @@ def run(cmd: tuple) -> tuple:
 
 def residue() -> tuple:
     """(code, dirty class names) — code 0 clean, 1 dirty, 3 registry absent."""
+    if os.environ.get("AUTOPHAGY_PROBE"):
+        # autophagy is probing this class right now. Re-entering it would recurse forever,
+        # and a detector that hangs is not a detector. Inside a probe the honest answer is
+        # "nothing to say here" — the ORDER check below is what the class actually asserts.
+        return 3, []
     code, out = run(("python3", "tools/autophagy.py", "--check"))
     if code == 3:
         return 3, []
@@ -88,6 +94,32 @@ def residue() -> tuple:
     return (0 if code == 0 else 1), dirty
 
 
+def order_violations() -> list:
+    """Static check: every hashing gate must come AFTER the absolution phase in ci.sh.
+
+    This is what the class actually asserts. It reads ci.sh's line order and never runs the
+    registry, so it cannot recurse into the probe that is calling it.
+    """
+    ci = ROOT / "tools" / "ci.sh"
+    if not ci.is_file():
+        return []
+    lines = ci.read_text(encoding="utf-8").splitlines()
+    phase = next((i for i, l in enumerate(lines)
+                  if "absolution_phase.py" in l and "--selftest" not in l), None)
+    if phase is None:
+        return ["tools/absolution_phase.py is never invoked by ci.sh"]
+    # The gates that hash or seal the tree. Each must appear after the phase.
+    hashing = ("tree_invariant.py", "kb_index.py", "revitalization.py gate")
+    bad = []
+    for i, line in enumerate(lines):
+        if line.strip().startswith("#"):
+            continue
+        for token in hashing:
+            if token in line and i < phase:
+                bad.append(f"{token} (line {i + 1}) hashes before the phase (line {phase + 1})")
+    return bad
+
+
 def heal_once() -> None:
     for name, cmd in INGEST:
         code, out = run(cmd)
@@ -99,8 +131,20 @@ def heal_once() -> None:
 def main(argv: list) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--order-check", action="store_true",
+                    help="static: does ci.sh run the phase before every hashing gate?")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args(argv[1:])
+
+    if args.order_check:
+        bad = order_violations()
+        if bad:
+            print("absolution_phase: FAIL — the tree is hashed before it is absolved:")
+            for b in bad:
+                print(f"  - {b}")
+            return 1
+        print("absolution_phase: PASS — the phase runs before every hashing gate")
+        return 0
 
     if args.selftest:
         # The phase must be able to REFUSE. A healer that always reports zero is the blind

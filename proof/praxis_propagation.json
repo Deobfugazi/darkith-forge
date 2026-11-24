@@ -1,7 +1,7 @@
 {
   "directive": "DIRECTIVE PRIME TASK \u2014 the Operator's orders, ingested from chat",
   "directive_sha256": "79a763507cde259214a7776376e5b0cf0464a1f608ee057c2328eb6857a2e301",
-  "board_sha256": "3a48dae7ba06e1a0911f79086d8d802812ed45715607d3d7b98a8fa50c2dd135",
+  "board_sha256": "43e8112043aa0a81ac704e1b0fccf8010fc12cb38afb9db32745f74f5ad58a31",
   "laws": {
     "declared": [
       "MUST #17",
@@ -46,14 +46,14 @@
     {
       "target": "durable",
       "path": "/workspace/project/darkith-forge/TASKS.md",
-      "status": "updated",
-      "detail": "22380->22694 B"
+      "status": "current",
+      "detail": ""
     },
     {
       "target": "session:18393131094c4acfb45d943764549f23",
       "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
-      "status": "updated",
-      "detail": "mirror beside board"
+      "status": "current",
+      "detail": "mirror"
     }
   ],
   "mode": "apply",

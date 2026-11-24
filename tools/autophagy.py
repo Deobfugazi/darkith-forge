@@ -222,6 +222,20 @@ CLASSES = [
     # and the agent has started writing code long before it reads that far. Documentation
     # cannot fix this; a gate that runs on the next agent's first CI can. The mechanical
     # signature of the silo is a gate with no caller, so that is what is policed — not intent.
+    # Found 2026-11-24 (the Operator's order, verbatim): "any run that fails must autophagize
+    # and ingest everything to clear residual inconsistencies to zero in isolation before
+    # hashing." CI did the opposite for months — hashed first, then ran the registry as a dry
+    # --check that repairs nothing, so a seal attested a tree that was still moving.
+    # tools/absolution_phase.py is the ordering fix: ingest + repair, looped, to residue zero,
+    # BEFORE any hashing gate, and it REFUSES rather than letting a dirty tree be sealed.
+    # Placed FIRST in this registry because it is the precondition of every class below it.
+    Class_("hashing before absolution",
+           "python3 tools/absolution_phase.py --order-check",
+           "python3 tools/absolution_phase.py",
+           "ci: absolution phase (ingest+repair to zero before hashing)",
+           "a seal computed over a tree that still holds residual inconsistency attests bytes "
+           "that were moving; detect-forever/heal-never can never close the cycle"),
+
     Class_("uncalled gate",
            "python3 tools/gate_coverage_gate.py",
            "python3 tools/gate_coverage_gate.py --selftest",
