@@ -164,7 +164,7 @@ CLASSES = [
     # Found 2026-11-22: a cycle closed 16/16, sealed its receipts, wrote its verdict into
     # TASKS.md — and stopped. Three gates went red on that one fact (board_pulse,
     # convergence_gate, authority_gate) and not one of them was allowed to repair it. The
-    # repairer existed all along: board_pulse.sh with no arguments commits and pushes.
+    # repairer existed all along: board_pulse.sh with no arguments previously committed and pushed.
     # Nothing called it. That is FM-03 exactly ("a correct table with no caller"), so this
     # class is the caller, and it is placed LAST so it lands whatever the classes above it
     # left dirty in a single pass.
@@ -184,7 +184,7 @@ CLASSES = [
            "python3 tools/drift_gate.py --fix",
            "ci: drift gate (NEVER #22)",
            "uncommitted or unpushed edits are invisible to the other tab and ship half a "
-           "repair; the detector fails the tree and the repair commits and pushes it"),
+           "repair; the detector fails the tree and the repair commits it locally; publication is separate"),
 
 ]
 
