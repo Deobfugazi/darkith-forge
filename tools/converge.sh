@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
-# converge.sh — reconcile locally and verify. --publish is explicit and separately authorized.
-#   no args = local reconcile + CI; --publish = local reconcile + CI + remote publication.
+# Reconcile locally and verify. This helper never publishes.
 set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$ROOT"
-
-echo "=== 1/2 sync (converge histories) ==="
-if [ "${1:-}" = "--publish" ]; then bash tools/sync.sh --publish; else bash tools/sync.sh; fi
-
-echo
-echo "=== 2/2 gate (prove the merged tree) ==="
+cd "$(git rev-parse --show-toplevel)"
+if [[ " $* " == *" --publish "* ]]; then
+  echo "converge: REFUSED — publication is a separate Operator-authorized action"
+  exit 2
+fi
+bash tools/sync.sh
 bash tools/ci.sh
