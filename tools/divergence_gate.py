@@ -166,7 +166,7 @@ if __name__ == "__main__":
         sys.exit(selftest())
     if "--publish" in argv_sys:
         print("divergence repair: REFUSED — this tool never publishes")
-        return 2
+        sys.exit(2)
     if "--fix" in argv_sys:
         state, detail = repair()
         if state == "skip":
