@@ -5,7 +5,7 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T11:12:50.559662`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T13:50:56.034614`. This section is regenerated, never hand-edited._
 >
 > **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 >
@@ -41,6 +41,10 @@
 >    - prompt index `39189` at `2026-11-24T11:12:50.559662`
 >    - **Coupled laws:** SPI-37, SPI-38
 >    - sha256 `76c63d48c101977e`
+> 10. **[forbid]** # PRIME DIRECTIVE — SINGLE AUTHORITY, SELF-CORRECTING GOVERNANCE, VERIFIED PROMOTION, ZERO FALSE CLOSURE **Repository:** `Deobfugazi/darkith-forge` *…
+>    - prompt index `40102` at `2026-11-24T13:50:56.034614`
+>    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
+>    - sha256 `7b7ebddd4aa11995`
 >
 
 **Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-6`
@@ -275,7 +279,7 @@ Named skips this cycle (SKIP is never PASS): clearanceloop webapp gate (headless
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T11:12:50.559662`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T13:50:56.034614`. This section is regenerated, never hand-edited._
 
 **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 
@@ -311,5 +315,9 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
    - prompt index `39189` at `2026-11-24T11:12:50.559662`
    - **Coupled laws:** SPI-37, SPI-38
    - sha256 `76c63d48c101977e`
+10. **[forbid]** # PRIME DIRECTIVE — SINGLE AUTHORITY, SELF-CORRECTING GOVERNANCE, VERIFIED PROMOTION, ZERO FALSE CLOSURE **Repository:** `Deobfugazi/darkith-forge` *…
+   - prompt index `40102` at `2026-11-24T13:50:56.034614`
+   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
+   - sha256 `7b7ebddd4aa11995`
 
 <!-- CHAT-GATE:END -->
