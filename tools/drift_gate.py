@@ -62,9 +62,22 @@ def repair(root=ROOT):
     st = git(["status", "--porcelain"], root=root)
     if st.returncode != 0:
         return 'skip', [st.stderr.strip() or 'git unavailable']
-    if not st.stdout.strip():
+    state, dirty_lines = find_drift(root=root)
+    if state != "drift":
+        return state, dirty_lines
+    paths_to_stage = [line[3:] for line in dirty_lines if len(line) > 3]
+    if not paths_to_stage:
         return "clean", []
-    git(["add", "-A"], root=root)
+    git(["add", "--", *paths_to_stage], root=root)
+    staged = git(["diff", "--cached", "--name-only", "-z"], root=root)
+    import re
+    secret_name = re.compile(r"(^|/)(release_key|release_cert)$|\\.(keystore|jks|p8|p12|pfx|pem|key)$", re.I)
+    private_key = re.compile(r"BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY")
+    for name in (p for p in staged.stdout.split("\\0") if p):
+        target = pathlib.Path(root) / name
+        if secret_name.search(name) or (target.is_file() and private_key.search(target.read_text(errors="ignore"))):
+            git(["restore", "--staged", "--", name], root=root)
+            return "drift", [f"refused to stage secret material: {name}"]
     c = git(["-c", "user.name=openhands",
              "-c", "user.email=openhands@all-hands.dev",
              "commit", "-q", "-m",
