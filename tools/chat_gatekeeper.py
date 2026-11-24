@@ -400,7 +400,7 @@ def run(write: bool, since_day: str | None = None) -> int:
             "block_sha256": sha(block.encode()),
             "ingested": [
                 {"index": o["index"], "kind": o["kind"], "sha256": o["sha256"],
-                 "timestamp": o["timestamp"], "laws": o["laws"]}
+                 "timestamp": o["timestamp"]}
                 for o in orders
             ],
         }, indent=2, sort_keys=True) + "\n")
