@@ -32,20 +32,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PROOF = ROOT / "proof" / "admission"
 
-# Gates whose verdict is a function of the REMOTE state, not the content of the change.
-# board_pulse compares local main to origin/main; the stall clock measures how long a
-# finished change has sat unpushed; authority_gate flags the same thing. In a worktree
-# those three are guaranteed red because the change has, by definition, not been pushed
-# yet. They are not suppressed -- they are reported in their own column, and they resolve
-# the instant the push lands. Every other red is a real content failure.
-REMOTE_ONLY = ("board pulse", "stall clock", "authority gate")
-
-# Red for a second structural reason: the chain gate hashes the tree against the CURRENT
-# cycle's S01 baseline. Any governing-source change is therefore chain-red until a cycle
-# seals it, and the prescribed repair is to run the cycle, not to edit anything. This is not
-# a loophole: the cycle's own S14 runs the full suite and refuses to seal on failure, so a
-# genuinely broken tree still cannot land through this path.
-SEAL_ONLY = ("revitalization chain gate",)
+# Sigma-zero rehearsal treats every failure, skip, and inactive required gate as blocking.
 
 
 def sh(cmd: list[str], cwd: Path = ROOT, timeout: int = 1800) -> subprocess.CompletedProcess:
@@ -185,17 +172,11 @@ def preflight() -> list[str]:
 # rehearse: the real suite, on the exact bytes, in isolation
 # --------------------------------------------------------------------------------------
 
-def classify(fail_lines: list[str]) -> tuple[list[str], list[str], list[str]]:
-    content, remote, seal = [], [], []
-    for line in fail_lines:
-        low = line.lower()
-        if any(tok in low for tok in SEAL_ONLY):
-            seal.append(line)
-        elif any(tok in low for tok in REMOTE_ONLY):
-            remote.append(line)
-        else:
-            content.append(line)
-    return content, remote, seal
+def classify(lines: list[str]) -> tuple[list[str], list[str], list[str]]:
+    failures = [line for line in lines if re.match(r"^--- .*: FAIL", line)]
+    skips = [line for line in lines if re.match(r"^--- .*: SKIP", line)]
+    inactive = [line for line in lines if re.match(r"^INACTIVE:", line)]
+    return failures, skips, inactive
 
 
 def rehearse(keep: bool = False) -> int:
@@ -239,29 +220,24 @@ def rehearse(keep: bool = False) -> int:
               f"+ uncommitted files, in {tree}")
         env = os.environ.copy()
         env.pop("REVITALIZATION_BOOTSTRAP", None)  # a rehearsal is not a cycle
+        env["SIGMA_ZERO"] = "1"
         env["CI_LOG"] = str(log_path)
         cp = subprocess.run(["bash", "tools/ci.sh"], cwd=str(tree), env=env,
                             capture_output=True, text=True, timeout=1800)
         output = cp.stdout + cp.stderr
         log_path.write_text(output, encoding="utf-8")
 
-        fails = [l for l in output.splitlines() if re.match(r"^--- .*: FAIL", l)]
-        content, remote, seal = classify(fails)
-
-        verdict = "PASS" if not content and not seal else "BLOCKED"
+        failures, skips, inactive = classify(output.splitlines())
+        verdict = "PASS" if cp.returncode == 0 and not failures and not skips and not inactive else "BLOCKED"
         print(f"admission: verdict={verdict} "
-              f"(content reds={len(content)}, seal-pending reds={len(seal)}, "
-              f"remote-state reds={len(remote)})")
-        for line in content:
+              f"(failures={len(failures)}, skips={len(skips)}, inactive={len(inactive)}, "
+              f"ci_exit={cp.returncode})")
+        for line in failures:
             print(f"  BLOCKING  {line}")
-        for line in seal:
-            print(f"  needs-seal  {line}")
-        for line in remote:
-            print(f"  resolves-on-push  {line}")
-        if seal:
-            print("admission: a governing-source change is unsealed -- run "
-                  "`python3 tools/revitalization.py run`; its S14 re-runs this suite "
-                  "and refuses to seal on a real failure.")
+        for line in skips:
+            print(f"  BLOCKING  {line} — SKIP is not sigma-zero")
+        for line in inactive:
+            print(f"  BLOCKING  {line} — INACTIVE acceptance condition is unresolved")
         print(f"admission: full log -> {log_path.relative_to(ROOT)}")
         return 0 if verdict == "PASS" else 1
     finally:
@@ -318,19 +294,17 @@ def selftest() -> int:
     labels = gate_labels('  run "chain gate" python3 x\n  run "chain gate" python3 y\n'
                          '  run "other" python3 z\n')
     check(labels == {"chain gate": 2, "other": 1}, "duplicate gate label is counted")
-    content, remote, seal = classify([
+    failures, skips, inactive = classify([
         "--- drift gate (NEVER #22): FAIL (exit 1)",
-        "--- board pulse (real-time push): FAIL (exit 1)",
-        "--- revitalization chain gate: FAIL (exit 1)",
+        "--- board pulse: SKIP (exit 3)",
+        "INACTIVE: required evidence deferred",
     ])
-    check(content == ["--- drift gate (NEVER #22): FAIL (exit 1)"],
-          "content red stays blocking")
-    check(remote == ["--- board pulse (real-time push): FAIL (exit 1)"],
-          "remote-state red is separated, not hidden")
-    check(seal == ["--- revitalization chain gate: FAIL (exit 1)"],
-          "seal-pending red is named, neither blocking nor hidden")
-    check(classify(["--- authority gate (NEVER #21): FAIL (exit 1)"])[1] != [],
-          "authority gate classified as remote-state")
+    check(failures == ["--- drift gate (NEVER #22): FAIL (exit 1)"],
+          "every failure remains blocking")
+    check(skips == ["--- board pulse: SKIP (exit 3)"],
+          "SKIP is classified as blocking")
+    check(inactive == ["INACTIVE: required evidence deferred"],
+          "INACTIVE evidence is classified as blocking")
 
     # R3 / SPI-40 P3: cross-branch collision detection.
     check(added_paths("tools/drift_gate.py\ntools/ci.sh\n\n") ==
