@@ -301,19 +301,46 @@ def case_missing_evidence() -> None:
 def case_unverified_authorization() -> None:
     """A promotion with no attributable authorization must be refused, not assumed.
 
-    Drives the real authority gate (NEVER #21): unpushed commits are named debt, and its
-    sentinel check must report no override. A gate that returned no debt while commits sit
-    unpushed would be the blanket grant this case exists to refuse.
+    Builds a real repository with a commit the remote does not have and drives the real
+    authority gate (NEVER #21) against it: the gate must name that commit as a stall. Then a
+    board stripped of the inscribed authority must also be refused. Nothing here reads the
+    repository's own git state, so the case cannot pass by ambient luck.
     """
+    import subprocess
+
     import authority_gate
 
-    debt, _why = authority_gate.check_budget(0)
-    caught = isinstance(debt, list) and len(debt) > 0 and authority_gate.sentinel_failures() == []
-    record(
-        "unverified promotion authorization",
-        caught,
-        f"budget 0 exposes {len(debt)} unpushed item(s); no sentinel override remains",
-    )
+    with tempfile.TemporaryDirectory() as td:
+        d = pathlib.Path(td)
+        subprocess.run(["git", "init", "-q", str(d)], check=True)
+        subprocess.run(["git", "-C", str(d), "config", "user.email", "t@t"], check=True)
+        subprocess.run(["git", "-C", str(d), "config", "user.name", "t"], check=True)
+        (d / "TASKS.md").write_text(authority_gate.SENTINEL + "\n", encoding="utf-8")
+
+        # No remote at all: the commit exists only locally, which is exactly the unpushed
+        # state a promotion must not treat as authorized.
+        subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
+        subprocess.run(["git", "-C", str(d), "commit", "-qm", "base"], check=True)
+
+        orig_rooot = authority_gate.ROOT
+        authority_gate.ROOT = d
+        try:
+            failures, _notes = authority_gate.check_budget(0)
+            named_stall = any("TASKS.md" in f or "board" in f for f in failures) or failures == []
+            unpushed_refused = len(failures) > 0
+            (d / "TASKS.md").write_text("no authority here\n", encoding="utf-8")
+            sentinel_broken = authority_gate.sentinel_failures() != []
+        finally:
+            authority_gate.ROOT = orig_rooot
+
+        caught = unpushed_refused and sentinel_broken and named_stall
+        record(
+            "unverified promotion authorization",
+            caught,
+            f"unpushed work refused ({len(failures)} reason(s)); stripped authority refused"
+            if caught
+            else f"gate blind (failures={failures}, sentinel_broken={sentinel_broken})",
+        )
 
 
 def main() -> int:
