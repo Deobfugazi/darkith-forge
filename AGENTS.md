@@ -605,9 +605,9 @@ have gates: `tools/circadian_gate.py`, `tools/download_gate.py`, `tools/stall_ga
 Two agents run in parallel; their outputs must CONVERGE in the repo, and the comparison must
 be executable, not asserted. `tools/convergence_gate.py` derives the clock, the circadian
 phase and the working tree through two independent implementations each and fails on any
-divergence (proof -> `proof/convergence.json`). When the board changes, push it in the SAME
-action with `tools/board_pulse.sh` (writes `proof/board_pulse.json` as the parallel-worker
-ping; `--check` is gated in CI) — never leave the board as a private local view. The clock
+divergence (proof -> `proof/convergence.json`). When the board changes, checkpoint it locally and update the local pulse receipt. Do not
+publish it as a side effect. Cross-session propagation uses the declared local board
+mechanism; remote visibility requires the explicit authorization in DARKITH.md NEVER #21. The clock
 AUTOCCOUPLES the edge device's own hardware system time to the global clock and reports
 whether the device's zone agrees with the Operator's; every session BOOTS timestamp-aware and
 records its boot instant, the user's last activity, and the circadian phase of each
@@ -965,9 +965,6 @@ Publication authority is not duplicated here. Follow DARKITH.md NEVER #21 for th
 ## §41 LOCAL WORK DWELL
 
 The local dirty-work timer is specified only by DARKITH.md MUST #36. A committed change awaiting review is not a defect and is not permission to publish.
-## CNS-DIRECTIVE — canonical source
-
-The project-wide execution principles are defined once in DARKITH.md. This file does not reproduce or amend them.
 ## A seal is only a seal if its evidence can leave the machine
 
 The revitalization seal cited `S16_POST_SEAL.log` as evidence while `.gitignore` dropped
