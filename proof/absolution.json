@@ -11,14 +11,14 @@
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "72b6e03e281bcda7d872229e350b3616be7536a1c269689a436dc04997a42e67",
+      "first_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
       "fixed_point": true,
       "owns": [
         "proof/kb-reconcile.json"
       ],
       "producer": "kb_reconcile",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "72b6e03e281bcda7d872229e350b3616be7536a1c269689a436dc04997a42e67",
+      "second_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
       "verdict": "ABSOLVED",
       "why": "fixed point, and every byte it owns is carried by git",
       "wrote": []
@@ -30,7 +30,7 @@
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "72b6e03e281bcda7d872229e350b3616be7536a1c269689a436dc04997a42e67",
+      "first_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
       "fixed_point": true,
       "owns": [
         "docs/INDEX.md",
@@ -38,7 +38,7 @@
       ],
       "producer": "kb_index",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "72b6e03e281bcda7d872229e350b3616be7536a1c269689a436dc04997a42e67",
+      "second_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
       "verdict": "ABSOLVED",
       "why": "fixed point, and every byte it owns is carried by git",
       "wrote": []
@@ -52,7 +52,7 @@
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "72b6e03e281bcda7d872229e350b3616be7536a1c269689a436dc04997a42e67",
+      "first_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
       "fixed_point": true,
       "owns": [
         "TASKS.md",
@@ -62,7 +62,7 @@
       ],
       "producer": "chat_gatekeeper",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "72b6e03e281bcda7d872229e350b3616be7536a1c269689a436dc04997a42e67",
+      "second_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
       "verdict": "ABSOLVED",
       "why": "fixed point, and every byte it owns is carried by git",
       "wrote": []

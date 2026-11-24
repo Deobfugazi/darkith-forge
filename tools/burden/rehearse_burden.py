@@ -108,6 +108,77 @@ def s05_phantom_constant(tmp: pathlib.Path, witness: pathlib.Path) -> tuple[str,
              "real_witness_is_input_sensitive": sensitive})
 
 
+def s04b_phantom_duplicate_baseline(record: dict) -> tuple[str, str, dict]:
+    """GATE-1's SECOND refusal path: same (path, sha) baseline under a different id.
+
+    A gate is only as strong as its unrehearsed branches. S04 exercises duplicate ids;
+    this exercises the baseline collision, which is the shape a double-count actually
+    takes when two agents name the same absence differently.
+    """
+    phantom = dict(record)
+    phantom["id"] = record["id"] + "-ALIAS"
+    phantom.pop("baseline_key", None)  # let GATE-1 derive it from (path, base_sha)
+    problems = burden_gates.gate1_duplicate_registry([record, phantom])
+    if any(p.startswith("GATE1_DUPLICATE_BASELINE") for p in problems):
+        return ("REFUSED",
+                "GATE-1 refused a same-baseline record under a different id",
+                {"phantom": "duplicate baseline, distinct id", "refusal": problems})
+    return ("FAIL", "GATE-1 did NOT refuse a duplicate baseline under a new id",
+            {"phantom": "duplicate baseline, distinct id", "observed": problems})
+
+
+def s05b_phantom_unrunnable_witness(tmp: pathlib.Path) -> tuple[str, str, dict]:
+    """GATE-2's fail-closed branch: a witness that cannot run must be refused, not trusted.
+
+    A gate that treats 'could not measure' as 'fine' passes when the evidence is missing —
+    the exact failure mode the barrier exists to prevent. The phantom must be genuinely
+    unmeasurable (it hangs), not merely a script that exits non-zero: a non-zero exit is a
+    measurement and is handled by a different branch.
+    """
+    good = tmp / "good"
+    broken = tmp / "broken"
+    for t in (good, broken):
+        (t / "evidence").mkdir(parents=True, exist_ok=True)
+        (t / "evidence" / "data.txt").write_text("x")
+    hanging = tmp / "hanging_witness.py"
+    hanging.write_text("import time\ntime.sleep(30)\n")
+
+    problems = burden_gates.gate2_witness_strength(hanging, good, broken, timeout=1)
+    if any(p.startswith("GATE2_UNRUNNABLE") for p in problems):
+        return ("REFUSED", "GATE-2 refused an unmeasurable witness (fail-closed)",
+                {"phantom": "hanging witness", "refusal": problems})
+    return ("FAIL", "GATE-2 trusted a witness it could not measure",
+            {"phantom": "hanging witness", "observed": problems})
+
+
+def s05c_control_honest(tmp: pathlib.Path) -> tuple[str, str, dict]:
+    """THE HONEST CONTROL: a genuine, input-sensitive witness must PASS the gate.
+
+    Four refusals prove the barrier can say no; they do not prove it can say yes. A gate
+    stuck on 'refuse' would satisfy every phantom and still be worthless. This control
+    requires GATE-2 to ACCEPT a witness that reads its evidence, so the rehearsal measures
+    discrimination rather than a constant verdict.
+    """
+    good = tmp / "ctl_good"
+    broken = tmp / "ctl_broken"
+    for t, val in ((good, "INTACT"), (broken, "TAMPERED")):
+        (t / "evidence").mkdir(parents=True, exist_ok=True)
+        (t / "evidence" / "data.txt").write_text(val)
+    sensitive = tmp / "sensitive_witness.py"
+    sensitive.write_text(
+        "import pathlib, sys\n"
+        "val = pathlib.Path('evidence/data.txt').read_text().strip()\n"
+        "print('EXPECT:INTACT' if val == 'INTACT' else 'TAMPERED')\n"
+        "sys.exit(0 if val == 'INTACT' else 1)\n"
+    )
+    problems = burden_gates.gate2_witness_strength(sensitive, good, broken)
+    if not problems:
+        return ("PASS", "a genuine input-sensitive witness passed GATE-2 (barrier discriminates)",
+                {"control": "honest witness accepted", "problems": []})
+    return ("FAIL", "a genuine witness was refused by GATE-2 — gate is stuck, not strict",
+            {"control": "honest witness", "problems": problems})
+
+
 def s07_curve(out: pathlib.Path, kappa: float = 0.15, r_max: float = 0.60,
               epochs: int = 12) -> tuple[str, str, dict]:
     """Write the entrainment sensitivity table. Every a_n here is MODELED.
@@ -203,10 +274,15 @@ def main(argv: list[str]) -> int:
            {"command": "python3 tools/burden/witness_e2e.py",
             "expect": "EXPECT:BURDEN_ABSENT_REHEARSAL_OK <merkle-root>"}))
     stage("S04_PHANTOM_DUPLICATE_ID", s04_phantom_duplicate(record))
+    stage("S04b_PHANTOM_DUPLICATE_BASELINE", s04b_phantom_duplicate_baseline(record))
     stage("S05_PHANTOM_CONSTANT_WITNESS", s05_phantom_constant(tmp, witness))
+    stage("S05b_PHANTOM_UNMEASURABLE_WITNESS", s05b_phantom_unrunnable_witness(tmp))
+    stage("S05c_CONTROL_HONEST_WITNESS", s05c_control_honest(tmp))
     stage("S06_BARRIER_STATUS",
           ("PASS", "verdict NOT_CLOSED, mainnet FORBIDDEN — closure not claimed",
            {"barrier_verdict": "NOT_CLOSED", "mainnet_issuance": "FORBIDDEN",
+            "phantoms_executed": 4,
+            "honest_controls": 1,
             "closure_requires": ["2 independent third parties re-run S03 witness",
                                  "BURDEN-GATE-1/2 exercised in CI"]}))
     stage("S07_ENTRAINMENT_CURVE", s07_curve(out))
