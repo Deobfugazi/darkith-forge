@@ -13,7 +13,6 @@
 >    - sha256 `3ee3dccfda7b794d`
 > 2. **[forbid]** The collision risk is live right now: the parallel agent's two newest main commits edit the exact drift section of ci.sh my PR also edits. Doing what…
 >    - prompt index `33063` at `2026-11-23T11:49:40.287897`
->    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #36, MUST#18, MUST#41, MUST#42, NEVER #19, NEVER #21, NEVER#21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 >    - sha256 `c2ac5cd12017685b`
 >
 
