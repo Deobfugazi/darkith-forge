@@ -19,9 +19,25 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 REMOTE="${DARKITH_REMOTE:-origin}"
-BRANCH="${DARKITH_BRANCH:-main}"
+# Default to the branch you are actually on. This used to default to `main`
+# unconditionally, so a bare `tools/sync.sh` on a feature branch fetched main, rebased
+# against main, and pushed `HEAD:main` — publishing whatever branch you happened to be on
+# onto main. Publishing is not an implicit side effect of syncing.
+BRANCH="${DARKITH_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
 CHECK=0
 [ "${1:-}" = "--check" ] && CHECK=1
+
+# main is the Operator's branch. Syncing onto it requires the Operator to say so, per call.
+if [ "$BRANCH" = "main" ] && [ "${DARKITH_ALLOW_MAIN_PUSH:-0}" != "1" ]; then
+  if [ "$CHECK" = 1 ]; then
+    echo "sync: will not check main without DARKITH_ALLOW_MAIN_PUSH=1" >&2
+    exit 3
+  fi
+  echo "sync: refusing to publish to main." >&2
+  echo "      main is the Operator's branch; publishing to it is not a sync side effect." >&2
+  echo "      to publish on purpose: DARKITH_ALLOW_MAIN_PUSH=1 tools/sync.sh" >&2
+  exit 3
+fi
 
 # ---- resolve the remote URL, without naming a vendor ---------------------
 if [ -n "${DARKITH_REMOTE_URL:-}" ]; then

@@ -1,0 +1,502 @@
+{
+  "count": 99,
+  "criteria": [
+    {
+      "acceptance": "absent build.gradle",
+      "gate": "tools/directive_core.py",
+      "id": "SPI-1"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/source_inspector.py",
+      "id": "SPI-2"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/convergence_gate.py",
+      "id": "SPI-3"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/stall_gate.py",
+      "id": "SPI-4"
+    },
+    {
+      "acceptance": "forbids app/src/**/*.kt :: ^\\s*import\\s+androidx",
+      "gate": "tools/directive_core.py",
+      "id": "SPI-5"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/source_inspector.py",
+      "id": "SPI-6"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/stall_gate.py",
+      "id": "SPI-7"
+    },
+    {
+      "acceptance": "implies app/src/**/*Bridge.kt :: fun fileRoots :: getExternalStorageDirectory",
+      "gate": "tools/directive_core.py",
+      "id": "SPI-8"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/stall_clock.py",
+      "id": "SPI-9"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/kt_comment_scan.py",
+      "id": "SPI-10"
+    },
+    {
+      "acceptance": "forbids tools/*.py :: /data/data/com\\.termux/files/home/\\.gradle",
+      "gate": "tools/directive_core.py",
+      "id": "SPI-11"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/apk_gate.py",
+      "id": "SPI-21"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/fork_integrity_gate.sh",
+      "id": "NEVER #11"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "NEVER #12"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "NEVER #13"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/fork_integrity_gate.sh",
+      "id": "MUST #10"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "MUST #11"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/blueprint_gate.py",
+      "id": "MUST #12"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "MUST #13"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/fork_integrity_gate.sh",
+      "id": "SPI-12"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "SPI-13"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/blueprint_gate.py",
+      "id": "SPI-14"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "SPI-15"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "NEVER #14"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "MUST #14"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "SPI-16"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "NEVER #15"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/circadian_gate.py",
+      "id": "MUST #15"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/download_gate.py",
+      "id": "MUST #16"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "SPI-17"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/consolidate_docs.sh",
+      "id": "NEVER #16"
+    },
+    {
+      "acceptance": "runs python3 tools/pack_delivery.py --check",
+      "gate": "tools/pack_delivery.py",
+      "id": "MUST #17"
+    },
+    {
+      "acceptance": "runs python3 tools/pack_delivery.py --check",
+      "gate": "tools/pack_delivery.py",
+      "id": "MUST #18"
+    },
+    {
+      "acceptance": "runs bash tools/consolidate_docs.sh --check",
+      "gate": "tools/consolidate_docs.sh",
+      "id": "SPI-18"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/stall_gate.py",
+      "id": "NEVER #17"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/board_gate.py",
+      "id": "MUST #19"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_gate.sh",
+      "id": "MUST #20"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/bridge_contract_audit.py",
+      "id": "SPI-19"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "NEVER #18"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "MUST #21"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "MUST #22"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "SPI-23"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "SPI-24"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/synchrony_gate.py",
+      "id": "MUST #23"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/synchrony_gate.py",
+      "id": "MUST #24"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/synchrony_gate.py",
+      "id": "MUST #25"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/synchrony_gate.py",
+      "id": "SPI-25"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/board_pulse.sh",
+      "id": "MUST #26"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/convergence_gate.py",
+      "id": "MUST #27"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/synchrony_pulse.py",
+      "id": "MUST #28"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/synchrony_gate.py",
+      "id": "SPI-26"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/kb_index.py",
+      "id": "MUST #29"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/fracture_scout.py",
+      "id": "MUST #30"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/secret_gate.py",
+      "id": "MUST #31"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/source_inspector.py",
+      "id": "NEVER #19"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/source_inspector.py",
+      "id": "MUST #32"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/source_inspector.py",
+      "id": "SPI-27"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/source_inspector.py",
+      "id": "MUST #33"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/test_icon_forge.js",
+      "id": "NEVER #20"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/test_icon_forge.js",
+      "id": "MUST #34"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/test_icon_forge.js",
+      "id": "SPI-28"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/board_pulse.sh",
+      "id": "MUST #35"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/stall_clock.py",
+      "id": "MUST #36"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/nodal_gate.py",
+      "id": "MUST #37"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/authority_gate.py",
+      "id": "NEVER #21"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/praxis_propagate.py",
+      "id": "SPI-29"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/law_gate.py",
+      "id": "SPI-30"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/tree_invariant.py",
+      "id": "NEVER #22"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/admission.py",
+      "id": "NEVER #23"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/ci.sh",
+      "id": "SPI-31"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/ci.sh",
+      "id": "SPI-32"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/loophole_gate.py",
+      "id": "SPI-33"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/loophole_gate.py",
+      "id": "SPI-34"
+    },
+    {
+      "acceptance": "runs python3 tools/directive_core.py --check",
+      "gate": "tools/directive_core.py",
+      "id": "SPI-35"
+    },
+    {
+      "acceptance": "runs python3 tools/directive_core.py --check",
+      "gate": "tools/directive_core.py",
+      "id": "SPI-36"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/unit_ledger_gate.py",
+      "id": "SPI-37"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/controller_gate.py",
+      "id": "SPI-38"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/ofif_gate.py",
+      "id": "SPI-39"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/chat_gatekeeper.py",
+      "id": "MUST #38"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/ci.sh",
+      "id": "MUST #40"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/admission.py",
+      "id": "MUST #41"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/drift_gate.py",
+      "id": "MUST #42"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/admission.py",
+      "id": "SPI-40"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_law_gate.py",
+      "id": "NEVER #24"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_law_gate.py",
+      "id": "MUST #43"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/audience_gate.py",
+      "id": "NEVER #25"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/audience_gate.py",
+      "id": "MUST #44"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_surface_gate.py",
+      "id": "NEVER #26"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/delivery_surface_gate.py",
+      "id": "MUST #45"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/citation_gate.py",
+      "id": "NEVER #27"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/citation_gate.py",
+      "id": "MUST #46"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/exactness_gate.py",
+      "id": "NEVER #28"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/exactness_gate.py",
+      "id": "MUST #47"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/burden/kb_reconcile.py",
+      "id": "NEVER #29"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/burden/kb_reconcile.py",
+      "id": "MUST #48"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/domain_bridge_gate.py",
+      "id": "NEVER #30"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/domain_bridge_gate.py",
+      "id": "MUST #49"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/thesis_gate.py",
+      "id": "NEVER #31"
+    },
+    {
+      "acceptance": "gate exits zero",
+      "gate": "tools/thesis_gate.py",
+      "id": "MUST #50"
+    }
+  ],
+  "schema": "darkith-acceptance-set",
+  "sha256": "684d63d42f1357ff0900adbd911f6b0b8ae89c64a70c03047a8ab81d0e6a06db"
+}

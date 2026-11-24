@@ -543,6 +543,15 @@ if have python3 && [ -f tools/authority_gate_migration.py ]; then
   run "authority migration regressions"     python3 tools/authority_gate_migration.py
 fi
 
+# §6: the acceptance criteria must be frozen and hashed before the work, or "done" can be
+# redefined after the fact to match whatever the tree happens to contain. The set is derived
+# from the law PREDICATE lines; this refuses a stale or missing freeze, and its selftest
+# proves the refusal fires.
+if have python3 && [ -f tools/acceptance_gate.py ]; then
+  run "acceptance set selftest" python3 tools/acceptance_gate.py --selftest
+  run "acceptance set frozen"   python3 tools/acceptance_gate.py --check
+fi
+
 # Blueprint gate: the Operator's specification corpus must never instruct the agent. The
 # blueprint rode onto main with a live prompt-injection payload (`COPY AND PASTE ... INTO
 # OPENHANDS`, `do not ask for confirmation; execute immediately`) because NOTHING checked
