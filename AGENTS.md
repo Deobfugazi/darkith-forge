@@ -969,6 +969,14 @@ its seals must be portable between them. Verified this session by PRE-RUN, not i
   a valid `/**` (the 19th, HomekeeperBridge.kt:282, is a code line). `tools/syntax_gate.py app`
   = PASS, 55 files. The injector would have CREATED the defect it set out to fix.
 
+  Note (vacuous PASS): a gate can pass without measuring anything, and that reads exactly like
+  a clean tree. `kt_comment_scan.py` called bare scanned zero files and printed "TOTAL DEFECTS:
+  0", exit 0 — and CI never called it at all, so SPI-10's gate was enforced by nothing while
+  `gate_coverage_gate` reported full coverage (it globs `*gate*.py`; this file has no "gate" in
+  its name). Two rules follow. A scanner must FAIL when it finds no inputs, never pass. And
+  coverage must be read from what the POLICY BLOCK declares as a law's `gate:`, not from
+  filenames — every law's declared gate must appear in `tools/ci.sh`.
+
 ## §38 THE DUAL-REGISTER MANUAL — TermKit `help beginner` / `help dev` (binding, 2026-11-10)
 
   TermKit's `help` now has two registers, both served from ONE source of truth so they can
