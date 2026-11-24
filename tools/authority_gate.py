@@ -8,7 +8,7 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 SECONDARY = ("AGENTS.md", "TASKS.md", "README.md", "RESUME.md")
 LAW21 = re.compile(r"^───\s*NEVER\s*#21\b", re.M)
-CNS = re.compile(r"^## CNS-DIRECTIVE \(v1\)\b", re.M)
+CNS = re.compile(r"^## CNS-DIRECTIVE \(v1\)", re.M)
 LAW_DECL = re.compile(r"^\s*───\s*(?:NEVER|MUST|SPI)\s*-?\s*#?\s*\d+\b", re.M)
 STANDING = re.compile(r"^#{1,4}\s*STANDING-AUTHORITY\b", re.M)
 BLANKET = re.compile(r"Agents publish without asking|standing authority to publish|never ask to push|with no approval|pre-authori[sz]ed.{0,40}push", re.I)
