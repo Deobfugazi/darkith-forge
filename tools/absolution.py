@@ -72,7 +72,7 @@ PRODUCERS = (
     {
         "name": "kb_reconcile",
         "cmd": ("python3", "tools/burden/kb_reconcile.py"),
-        "owns": ("proof/kb-reconcile.json",),
+        "owns": ("proof/kb-reconcile.json", "docs/kb-reconcile.json"),
         "why": "writes the reconciliation receipt on every invocation unless guarded",
     },
     {

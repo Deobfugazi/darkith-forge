@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 90,
+  "count": 88,
   "files": [
     {
       "bytes": 86222,
@@ -31,18 +31,6 @@
       "path": "RESUME.md",
       "register": "A-apparatus",
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
-    },
-    {
-      "bytes": 19491,
-      "path": "TASKS.md",
-      "register": "A-apparatus",
-      "sha256": "7d697ad8e313e2442a68e27f6b515c46b284f112dce3a2a611e4ef5239f698d7"
-    },
-    {
-      "bytes": 19491,
-      "path": "TASKS.md",
-      "register": "A-apparatus",
-      "sha256": "7d697ad8e313e2442a68e27f6b515c46b284f112dce3a2a611e4ef5239f698d7"
     },
     {
       "bytes": 19491,
