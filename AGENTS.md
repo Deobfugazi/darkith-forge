@@ -59,7 +59,7 @@ by `board_pulse.sh`. A parallel worker was blind the whole time. That is the def
 this law closes.
 
 ## 0. CONTINUITY (read first — the VM is ephemeral)
-- **Canonical private host:** `Deobfugazi/darkith-forge` (branch `main`). Nothing
+- **Canonical public host:** `Deobfugazi/darkith-forge` (branch `main`). Nothing
   survives a recycled VM except what is pushed there.
 - **Restore at session start:** `bash tools/restore.sh`
 - **Save before session end:** `bash tools/continuity.sh "what changed"`
