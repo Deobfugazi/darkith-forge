@@ -2,6 +2,45 @@
 
 Repository-specific knowledge for future sessions. Read before acting.
 
+## 0.0000. ABSENCE IS NOT EVIDENCE — AND A DISCONNECT IS NOT A VERDICT (MUST #33)
+
+Two defects produced the same symptom this session: a gate that failed on the exact remote
+bytes while passing on the Operator's machine. Both are the same mistake — reporting "I could
+not look" as "I looked and it is wrong". Do not repeat them.
+
+**1. A missing input is a SKIP, never a FAIL.** The signature and citation gates read the
+Operator's corpus (`real upliftment.txt`, `nikola tesla.txt`, …). That corpus lives OUTSIDE
+the repository by design (SPI-8: the home is the SD card, not the cloud checkout), so a fresh
+clone cannot see it. The gates scored "file unreachable" identically to "file says something
+wrong", and so reported `LEGEND_MASQUERADING` and `COINAGE_DELETED` — accusing the tree of
+fabricating and of deleting the author's wording — when the truth was "not examined". Fix:
+absence returns exit 3 (SKIP). A skip is never a pass (SPI-31), but it is also not a verdict.
+When a gate cannot see its input, make it say so and stop; never let it guess a failure.
+
+**2. `autophagy.py` exit 3 is not one fact.** It means both "no registry at all" and "registry
+ran, residue 0, but some classes were unexamined (a skipped probe needs a toolchain this
+machine lacks)". `absolution_phase.residue()` collapsed them, so on a tree whose residue was
+provably 0 it returned an indefinite verdict and its own selftest refused to accept it. Read
+the `residue: N` summary line, which is the ground truth; do not infer the answer from the
+exit code alone.
+
+**3. A run that disconnects must not brick the cycle forever.** Cycle 20261124T105704Z967 died
+between S03 and S04 and left `CURRENT` pointing at a directory nothing would finish. After
+that `revitalization.py run` refused forever with UPSTREAM_STALE and `gate` failed forever
+with "I1 chain gap", with no exit from either. One interrupted run was a permanent tombstone.
+`revitalization.py abandon` retires an incomplete cycle: it writes `ABANDONED.json` (which
+stages landed, which did not, why) and clears `CURRENT` so the gate reports SKIP and the next
+run starts clean. It is wired into `absolution_phase` as an ingest, so the next run heals what
+the last one left. Nothing is deleted — the partial receipts stay as evidence.
+
+Do NOT re-point `CURRENT` at an earlier cycle to "fix" a stall. That cycle only *claims*
+closed while its own tasks are open; restoring it transfers the lie. It turned 1 honest
+failure into 40. Removing `CURRENT` is the honest end state.
+
+**4. Close on remote bytes, not on your working tree.** Everything above was invisible
+locally and only appeared in a fresh clone of the pushed branch. If a gate passes locally and
+fails in a clone, the gate is lying about what it examined — that asymmetry IS the bug.
+
 ## 0.000. STOP — BEFORE YOU BUILD ANYTHING, CHECK THE FORMULARY (MUST #32)
 
 **You are a fresh agent. You have no memory of last session. The tree does.**
