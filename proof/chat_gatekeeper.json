@@ -1,5 +1,5 @@
 {
-  "block_sha256": "a050a093765182001fac07a9062ab32a652a1f51c0ad0c97f6c9cb384458011b",
+  "block_sha256": "a400b7de5d0a77abf6e56756ca3a3ce23e76bcde3d30d476fc6dea7c597c2f49",
   "conversation": "18393131094c4acfb45d943764549f23",
   "ingested": [
     {
@@ -78,17 +78,24 @@
       "laws": [],
       "sha256": "a5701e9cd25fb26b5e0e2e8d797a799cff9eb26d4ec495785ec899847616f552",
       "timestamp": "2026-11-24T10:02:51.413696"
+    },
+    {
+      "index": 38646,
+      "kind": "forbid",
+      "laws": [],
+      "sha256": "49b417e7f45a924a02cadabf41bfc87b1baddc1067892e9fc0e472a017c1efd6",
+      "timestamp": "2026-11-24T10:29:20.943206"
     }
   ],
   "occupation": {
-    "gapHours": 0.0,
+    "gapHours": 0.003,
     "phase": "wake/active",
     "state": "engaged"
   },
   "watermark": {
     "conversation": "18393131094c4acfb45d943764549f23",
-    "ingested_total": 6,
-    "last_index": 38032,
-    "last_timestamp": "2026-11-24T10:02:51.413696"
+    "ingested_total": 7,
+    "last_index": 38646,
+    "last_timestamp": "2026-11-24T10:29:20.943206"
   }
 }
