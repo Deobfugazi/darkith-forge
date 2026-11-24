@@ -28,6 +28,19 @@ def inspect(name: str, spec: dict) -> list[str]:
         return [f"{name}: title is {first!r}, expected {spec['title']!r}"]
     return []
 
+def fix_titles() -> list[str]:
+    repaired = []
+    for name, spec in GUARDED.items():
+        path = ROOT / name
+        if not path.is_file() or "title" not in spec:
+            continue
+        text = path.read_text(encoding="utf-8")
+        first = text.splitlines()[0] if text.splitlines() else ""
+        if first != spec["title"]:
+            path.write_text(spec["title"] + "\n\n" + text.lstrip("\n"), encoding="utf-8")
+            repaired.append(name)
+    return repaired
+
 def load_baseline() -> dict:
     try:
         return json.loads(BASELINE.read_text(encoding="utf-8")) if BASELINE.is_file() else {}
@@ -35,6 +48,9 @@ def load_baseline() -> dict:
         return {}
 
 def main(argv: list[str]) -> int:
+    if "--fix" in argv:
+        for name in fix_titles():
+            print(f"board_header_gate: FIXED — restored title in {name}")
     baseline = load_baseline()
     problems = []
     for name, spec in GUARDED.items():
