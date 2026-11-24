@@ -55,16 +55,23 @@ def check(rows: list[dict], read) -> list[str]:
 def check_coinages(coinages: list[dict], read) -> list[str]:
     """A protected coinage must still exist in the Operator's source. Absence = deletion."""
     problems = []
+    absent = []
     for c in coinages:
         phrase, src = c.get("phrase", ""), c.get("source")
         try:
             text = read(src)
         except Exception:
-            problems.append(f"COINAGE_SOURCE_ABSENT {phrase!r} -> {src}")
+            # The source is the Operator's own file, kept outside the repo (SPI-8). When a
+            # clone cannot reach it the honest answer is "not examined", not "deleted" -
+            # the two were conflated and the gate accused the tree of deleting the author's
+            # wording whenever it ran without the corpus. Collected separately so the
+            # verdict can say SKIP instead of DEFECT.
+            absent.append(f"{phrase!r} -> {src}")
             continue
         if phrase not in text:
             problems.append(f"COINAGE_DELETED {phrase!r} is absent from {src} — the author's "
                             f"wording was removed")
+    problems.extend(f"COINAGE_SOURCE_ABSENT {a}" for a in absent)
     return problems
 
 
@@ -80,7 +87,14 @@ def run() -> int:
         if f is None:
             raise FileNotFoundError(p)
         return f.read_text()
-    problems = check(rows, read) + check_coinages(coinages, read)
+    all_problems = check(rows, read) + check_coinages(coinages, read)
+    # A COINAGE_SOURCE_ABSENT means the Operator's file was unreachable, not that its
+    # wording was deleted. The gate used to score both as DEFECT, so it accused the tree of
+    # deleting the author's own coinages every time it ran in a clone that could not see the
+    # corpus - a false accusation that made the gate pass on the Operator's machine and fail
+    # on the exact remote bytes. Absence of evidence is not evidence of deletion.
+    absent = [p for p in all_problems if p.startswith("COINAGE_SOURCE_ABSENT")]
+    problems = [p for p in all_problems if not p.startswith("COINAGE_SOURCE_ABSENT")]
 
     present = sum(1 for c in coinages
                   if resolve(c["source"]) and c.get("phrase", "") in read(c["source"]))
@@ -93,8 +107,15 @@ def run() -> int:
     print(f"coinages present   : {present}")
     for p in problems:
         print(f"  [DEFECT] {p}")
+    for a in absent:
+        print(f"  [ABSENT] {a}")
     ok = not problems
     print("\n" + "=" * 78)
+    if ok and absent:
+        print(f"VERDICT: SKIP corpus_absent ({len(absent)} source(s) unreachable; a skip is "
+              f"never a pass, SPI-31)")
+        print("=" * 78)
+        return 3
     print(f"VERDICT: {'CITATIONS_REAL_AND_AUTHOR_INTACT' if ok else 'DEFECT'}")
     print("=" * 78)
     return 0 if ok else 1

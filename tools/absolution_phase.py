@@ -85,8 +85,19 @@ def residue() -> tuple:
         # "nothing to say here" — the ORDER check below is what the class actually asserts.
         return 3, []
     code, out = run(("python3", "tools/autophagy.py", "--check"))
-    if code == 3:
+    # Exit 3 is NOT one fact. autophagy uses it both for "there is no registry at all" and
+    # for "the registry ran, found residue 0, but some classes were unexaminable" (a skipped
+    # probe needs a toolchain this machine lacks). Collapsing those two into "absent" made
+    # this phase report an indefinite verdict on a tree whose residue was provably zero, and
+    # the selftest - correctly - refused to call that a definite answer. The summary line is
+    # the ground truth; read it instead of trusting the exit code.
+    residue_zero = any(l.strip().startswith("residue: 0")
+                       or "residue: 0 " in l or l.strip().endswith("residue: 0")
+                       for l in out.splitlines())
+    if code == 3 and not out.strip():
         return 3, []
+    if code == 3 and residue_zero:
+        return 0, []
     # autophagy prints residue under "remaining:" as "    - <class>: <why>". Read the class
     # name from that block rather than from the summary line, so the refusal can name what
     # it refused — an unnamed refusal is indistinguishable from a crash.

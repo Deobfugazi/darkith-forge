@@ -190,12 +190,20 @@ def run() -> int:
     print("PROCEDURAL SIGNATURE GATE — is this a loop, or a biography?")
     print("=" * 78)
     bad = 0
+    absent = 0
     for it in items:
         path, thinker = it.get("path", "?"), it.get("thinker", "?")
         p = resolve(path)
         if p is None:
+            # The Operator's corpus lives OUTSIDE the repository (SPI-8: the home is the
+            # SD card, not the cloud checkout), so a fresh clone legitimately cannot see
+            # these files. Counting that as `bad` reported "LEGEND_MASQUERADING" - a claim
+            # that the work is a biography - when the truth was "I could not look". That
+            # accusation is the same blindness the gate exists to catch, pointed the wrong
+            # way, and it made the gate PASS on the Operator's machine while FAILING on the
+            # exact bytes a clone would run. Absence of evidence is not evidence of a legend.
             print(f"  [ABSENT] {thinker}: {path} (not found in repo or corpus)")
-            bad += 1
+            absent += 1
             continue
         problems = audit(p.read_text())
         verdict = "SIGNATURE" if not problems else "BIOGRAPHY"
@@ -204,9 +212,18 @@ def run() -> int:
             print(f"      {pr}")
         bad += bool(problems)
     print("\n" + "=" * 78)
-    print(f"VERDICT: {'ALL_SIGNATURES' if not bad else 'LEGEND_MASQUERADING'}")
+    if bad:
+        print("VERDICT: LEGEND_MASQUERADING")
+        print("=" * 78)
+        return 1
+    if absent:
+        print(f"VERDICT: SKIP corpus_absent ({absent} source(s) unreachable; a skip is "
+              f"never a pass, SPI-31)")
+        print("=" * 78)
+        return 3
+    print("VERDICT: ALL_SIGNATURES")
     print("=" * 78)
-    return 0 if not bad else 1
+    return 0
 
 
 def selftest() -> int:
