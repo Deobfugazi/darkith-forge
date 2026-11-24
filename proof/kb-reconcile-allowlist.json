@@ -1,0 +1,8 @@
+{
+  "_law": "Only paths here are tolerated as drift. Each must name why it drifts and the fix. An empty list means zero tolerance. Adding a path here without a fix is itself a defect.",
+  "allow": ["TASKS.md", "d-arkith-omega.html"],
+  "reasons": {
+    "TASKS.md": "Live task board, mutated by every working session. Manifest pinned a snapshot. Fix: regenerate the manifest entry at each promotion, or exclude live boards from the manifest.",
+    "d-arkith-omega.html": "Derived artifact regenerated from docs/DARKITH-OMEGA-repo.txt. Disk is newer than the pinned hash. Fix: regenerate and re-pin in the same commit as any change to its source."
+  }
+}

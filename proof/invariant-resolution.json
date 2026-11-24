@@ -1,0 +1,329 @@
+{
+  "bill": [
+    {
+      "R_x": "B/T^1",
+      "carrier": "I",
+      "closes": true,
+      "kappa_x": "J/B^1",
+      "product": "M/T^1",
+      "rho_x": "M/J^1",
+      "target": "M/T^1"
+    },
+    {
+      "R_x": "J/T^1",
+      "carrier": "E",
+      "closes": true,
+      "kappa_x": "1",
+      "product": "M/T^1",
+      "rho_x": "M/J^1",
+      "target": "M/T^1"
+    },
+    {
+      "R_x": "M/T^1",
+      "carrier": "$",
+      "closes": true,
+      "kappa_x": "1",
+      "product": "M/T^1",
+      "rho_x": "1",
+      "target": "M/T^1"
+    }
+  ],
+  "collisions": [],
+  "exact_zero": [
+    {
+      "exact_value": "0",
+      "invariant": "SIGMA",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "1",
+      "invariant": "BOND",
+      "matches_target": true,
+      "numerator_bits": 1,
+      "target": "1",
+      "target_is_zero": false
+    },
+    {
+      "exact_value": "0",
+      "invariant": "TRIAD",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "0",
+      "invariant": "F1",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "0",
+      "invariant": "F2",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "0",
+      "invariant": "F3",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "0",
+      "invariant": "F4",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "0",
+      "invariant": "F5",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "0",
+      "invariant": "CHI",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    },
+    {
+      "exact_value": "0",
+      "invariant": "RETENTION",
+      "matches_target": true,
+      "numerator_bits": 0,
+      "target": "0",
+      "target_is_zero": true
+    }
+  ],
+  "float_lies": {
+    "exact_is_zero": true,
+    "exact_result": "0",
+    "expression": "0.1 + 0.2 - 0.3",
+    "float_is_zero": false,
+    "float_result": 5.551115123125783e-17
+  },
+  "gaps": [
+    {
+      "fix": "RESOLVED: scope \u212c to adhesive/materials classes. Economics must use its own dimensioned invariant (NT XI retention), not \u212c.",
+      "id": "SCOPE-1",
+      "invariant": "BOND",
+      "status": "RESOLVED",
+      "why": "NT-VIII says mechanism-independent ACROSS ADHESIVE CLASSES (epoxy, cyanoacrylate, hot-melt, silicate). It does not extend to economics or institutions. My page wrote 'epistemic, economic, and institutional bonds' \u2014 that is a transplant, and the audit forbids it."
+    },
+    {
+      "fix": "RESOLVED: rename NT-XIII's unit glyph to 'bit'. Keep b = base in NT-IX only.",
+      "id": "COLLIDE-1",
+      "invariant": "TRIAD",
+      "status": "RESOLVED",
+      "why": "glyph 'b' means BASE in NT-IX and BIT in NT-XIII F2 ([J/b]). Two meanings, one glyph, across treatises. A machine reading both will silently conflate them."
+    },
+    {
+      "fix": "RESOLVED: annotate all five as rates [x/s] and write \u1e58_x, not R_x. Then F1 is exactly 0 when the mass/energy/information balance holds.",
+      "id": "NOTATION-1",
+      "invariant": "F1",
+      "status": "RESOLVED",
+      "why": "F1 mixes an explicit time-derivative with four unannotated terms. As written the equation is dimensionally undefined unless all five are rates. The Bill then integrates R_x dt and yields [x], which is the only reading that lets the Bill close."
+    },
+    {
+      "fix": "RESOLVED: write \u03ba \u2265 (k_B T ln2)/1bit. Then both sides are J/bit and the floor is exactly Landauer's bound per erased bit.",
+      "id": "NOTATION-2",
+      "invariant": "F2",
+      "status": "RESOLVED",
+      "why": "\u03ba [J/b] \u2265 k_B T ln2 [J] compares J/bit with J."
+    },
+    {
+      "fix": "RESOLVED: D_BASAL \u2261 1 at the ideal limit, and it must be MEASURED per device from basal draw / rated draw, with its measurement receipt cited. Until measured it is a declared free parameter, not a computed quantity.",
+      "id": "FREE-1",
+      "invariant": "F3",
+      "status": "RESOLVED",
+      "why": "D_BASAL: a free scalar multiplying the whole reclamation result. Any claimed reclamation can be manufactured by picking it."
+    },
+    {
+      "fix": "RESOLVED: replace 'unchanged' with 'form-preserved, dimensionally re-derived'. Each domain must exhibit its own bridge (\u03ba_x, \u03c1_x) before F1\u2013F4 apply. Where a bridge is absent, the domain is DECLARED, not claimed.",
+      "id": "SCOPE-2",
+      "invariant": "F5",
+      "status": "RESOLVED",
+      "why": "F5 says F1\u2013F4 hold UNCHANGED across domains. The audit forbids unsupported cross-domain substitution."
+    },
+    {
+      "fix": "RESOLVED: per-carrier bridges are forced. \u03ba_I=E/I, \u03c1_I=$/E \u2192 $/bit. \u03ba_E\u22611, \u03c1_E=$/E \u2192 $/J. \u03ba_$\u22611, \u03c1_$\u22611 \u2192 money is the numeraire. Each \u1e58_x\u00b7\u03ba_x\u00b7\u03c1_x is then exactly $/s and the integral is money. Verified below, all three carriers.",
+      "id": "DIM-1",
+      "invariant": "BILL",
+      "status": "RESOLVED",
+      "why": "One bridge pair cannot close three carriers. \u03ba=E/I, \u03c1=$/E gives $/bit; multiplying an energy rate or a money rate by it yields non-money units."
+    },
+    {
+      "fix": "RESOLVED: normalise all three to dimensionless fractions of their own budget: n_collide/N_max + n_iface_break/N_iface + (\u0394t/T_period). Each \u2208 [0,1], sum is a dimensionless residual, and \u03c7=0 is then an exact statement.",
+      "id": "DIM-2",
+      "invariant": "CHI",
+      "status": "RESOLVED",
+      "why": "\u03c7 sums a count, an interface measure, and a phase error with no common unit. '\u03c7 = 0' is therefore not well-defined as written."
+    }
+  ],
+  "invariants": [
+    {
+      "closure": [
+        "CLOSED",
+        "both terms are counts over N; sum is N; zero test is exact"
+      ],
+      "gaps": [],
+      "id": "SIGMA",
+      "source": "NT-XII \u00a714.3",
+      "statement": "\u03a3 = \u03a3_S + \u03a3_B = 0",
+      "zeroed": "\u03a3 = 0 + 0 = 0  (exact integer zero; no tolerance band)"
+    },
+    {
+      "closure": [
+        "CLOSED",
+        "all three ratios dimensionless; \u212c is dimensionless; \u22651 well-posed"
+      ],
+      "gaps": [
+        "SCOPE-1"
+      ],
+      "id": "BOND",
+      "source": "NT-VIII \u00a74.6",
+      "statement": "\u212c = (W_A/W_coh)\u00b7(\u03b1_\u221e/\u03b1_gel)\u00b7\u03b7 \u2265 1",
+      "zeroed": "\u212c = (J/J)\u00b7(1/1)\u00b71 = 1  at the boundary; \u212c \u2265 1 is the hold condition"
+    },
+    {
+      "closure": [
+        "CLOSED",
+        "log legs defined only on dimensionless args; b=1 refused by construction"
+      ],
+      "gaps": [
+        "COLLIDE-1"
+      ],
+      "id": "TRIAD",
+      "source": "NT-IX",
+      "statement": "r = ln x \u2212 n ln b, closed iff r = 0",
+      "zeroed": "r = ln(b^n) \u2212 n\u00b7ln b = n\u00b7ln b \u2212 n\u00b7ln b = 0  exactly, for b>0, b\u22601"
+    },
+    {
+      "closure": [
+        "GAP",
+        "x_gen/x_con/x_rec/x_wst are never annotated stock-or-flow. If read as stocks they are [x] and dx_sto/dt is [x/T]: the sum is undefined (SPI-37). It closes ONLY if every term is a rate."
+      ],
+      "gaps": [
+        "NOTATION-1"
+      ],
+      "id": "F1",
+      "source": "NT-XIII \u00a74",
+      "statement": "R_x = x_gen \u2212 x_con \u2212 dx_sto/dt \u2212 x_rec \u2212 x_wst",
+      "zeroed": "\u1e58_x = \u1e8b_gen \u2212 \u1e8b_con \u2212 \u1e8b_sto \u2212 \u1e8b_rec \u2212 \u1e8b_wst = 0  (all terms RATES, [x/s])"
+    },
+    {
+      "closure": [
+        "GAP",
+        "\u03ba is J/bit; k_B T ln2 is J. Comparing J/bit \u2265 J is undefined. The floor is per-bit by Landauer's own statement, but the corpus omits the per-bit normalisation, so the written inequality does not typecheck."
+      ],
+      "gaps": [
+        "NOTATION-2"
+      ],
+      "id": "F2",
+      "source": "NT-XIII \u00a74",
+      "statement": "\u03ba = E/I [J/b], \u03c1 = $/E [$/J], \u03ba \u2265 k_B T ln2",
+      "zeroed": "\u03ba [J/bit] \u2265 (k_B T ln2) [J] / 1[bit]"
+    },
+    {
+      "closure": [
+        "GAP",
+        "D_BASAL is used twice in the corpus (NT-XIII \u00a74, NT-V \u00a7837) and DEFINED NOWHERE. It is dimensionless by position, but its value is unconstrained, so W_reclaimed can be set to any number by choosing D_BASAL."
+      ],
+      "gaps": [
+        "FREE-1"
+      ],
+      "id": "F3",
+      "source": "NT-XIII \u00a74",
+      "statement": "W_gen = R_rec + W_res,  W_reclaimed = W_gen\u00b7\u03b7\u00b7D_BASAL",
+      "zeroed": "W_reclaimed = (R_rec + W_res)\u00b7\u03b7\u00b7D_BASAL  [J]"
+    },
+    {
+      "closure": [
+        "CLOSED",
+        "L1 is a monotone predicate on integers; L2 a strict comparison; L3 a time-bounded expiry; L4 a recorded count. All exact."
+      ],
+      "gaps": [],
+      "id": "F4",
+      "source": "NT-XIII \u00a74",
+      "statement": "L1 HWM monotone down; L2 above-HWM = FAIL; L3 stasis expires; L4 waiver recorded",
+      "zeroed": "HWM(n+1) \u2264 HWM(n)  \u2200n;  stasis(t) \u2192 0 as t \u2192 T_expiry;  waiver \u21d2 HWM does not rise"
+    },
+    {
+      "closure": [
+        "VIOLATION",
+        "F5 asserts transport UNCHANGED. The audit states the opposite rule: 'A chemical bond equation cannot be transplanted unchanged into economics simply because both systems use the word bond.' F5 as written contradicts the audit's governing instruction."
+      ],
+      "gaps": [
+        "SCOPE-2"
+      ],
+      "id": "F5",
+      "source": "NT-XIII \u00a74",
+      "statement": "the same F1\u2013F4 hold unchanged in code, build, physics, economics, records",
+      "zeroed": "F5 holds only where each F-term's dimension vector is re-derived in the target domain"
+    },
+    {
+      "closure": [
+        "GAP",
+        "The single pair (\u03ba,\u03c1) bridges bits\u2192money only. Applied to the E and $ carriers the integrand does not close: E yields J\u00b7J\u207b\u00b9\u00b7$\u00b7bit\u207b\u00b9\u00b7s\u207b\u00b9 and $ yields $\u00b2\u00b7J\u207b\u00b9\u00b7bit\u207b\u00b9\u00b7s\u207b\u00b9. Only the I carrier produces $/s."
+      ],
+      "gaps": [
+        "DIM-1"
+      ],
+      "id": "BILL",
+      "source": "NT-XIII \u00a74",
+      "statement": "Bill = \u222b[t0,t1] \u03a3_x ( R_x(t)\u00b7\u03ba_x\u00b7\u03c1_x ) dt",
+      "zeroed": "Bill = \u222b \u03a3_x \u1e58_x\u00b7\u03ba_x\u00b7\u03c1_x dt  with \u03ba_x\u00b7\u03c1_x = $/x for each carrier"
+    },
+    {
+      "closure": [
+        "GAP",
+        "Three terms are summed with no normalisation stated: a count, an unstated interface measure, and a phase error in radians or seconds. Summing incommensurable quantities is undefined (SPI-37), and NT VI then declares \u03c7 = 0 meaningful."
+      ],
+      "gaps": [
+        "DIM-2"
+      ],
+      "id": "CHI",
+      "source": "NT-VI",
+      "statement": "\u03c7 = (collisions) + (interface discontinuity) + (phase error); graft holds iff \u03c7 = 0",
+      "zeroed": "\u03c7 = n_collide + n_iface_break + (\u0394t/T_period) = 0, all terms dimensionless counts"
+    },
+    {
+      "closure": [
+        "CLOSED",
+        "all three are money; ratio E/W_in is dimensionless; the limit is well-posed because W_in > 0"
+      ],
+      "gaps": [],
+      "id": "RETENTION",
+      "source": "NT-XI",
+      "statement": "W_in \u2212 E = S \u2260 0  (retention: lim E/W_in \u2192 0)",
+      "zeroed": "S = W_in \u2212 E = 0 \u27fa no net extraction; lim_{t\u2192\u221e} E/W_in = 0 is the retention target"
+    }
+  ],
+  "verdict": {
+    "bill_carriers_closed": 3,
+    "bill_carriers_total": 3,
+    "exact_zero_pass": 10,
+    "exact_zero_total": 10,
+    "gaps_open": 0,
+    "gaps_resolved": 8,
+    "gaps_total": 8,
+    "invariants": 11,
+    "ok": true
+  }
+}

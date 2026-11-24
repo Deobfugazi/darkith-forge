@@ -101,6 +101,22 @@ if have python3; then
   if [ -f tools/burden/witness_e2e.py ]; then
     run "burden rehearsal witness"        python3 tools/burden/witness_e2e.py
   fi
+  # Invariant resolver: every NT invariant driven to its exact target over rationals.
+  # A gap left OPEN exits 1, so a declared repair that is not actually a repair fails
+  # here rather than being narrated as closed.
+  if [ -f tools/burden/resolve_invariants.py ]; then
+    run "invariant resolver"              python3 tools/burden/resolve_invariants.py
+  fi
+  # The resolver must be able to say NO. Without this the resolver passing means
+  # nothing: V9 injects an open gap and requires FAIL, V10 requires the control to live.
+  if [ -f tools/burden/falsify_resolver.py ]; then
+    run "resolver falsification"          python3 tools/burden/falsify_resolver.py
+  fi
+  # KB manifest reconciliation: the audit's specific charge was that the 78 entries
+  # were never checked line by line. Undeclared drift or a missing file fails here.
+  if [ -f tools/burden/kb_reconcile.py ]; then
+    run "kb manifest reconcile"           python3 tools/burden/kb_reconcile.py
+  fi
   # Kotlin syntax gate: fail if any source tree has an unclosed block comment.
   # A scanner, not kotlinc (W-023), but exact about the defect that silently
   # swallows the rest of a file. Runs only when the app tree is present.

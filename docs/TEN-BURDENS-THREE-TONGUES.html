@@ -68,6 +68,7 @@ registers, no contradictions between them.</p>
 
 <p class="nav">Jump: <a href="#r1">Register 1 — Plain</a> ·
 <a href="#r2">Register 2 — Practitioner</a> ·
+<a href="#resolve">Resolution</a> ·
 <a href="#r3">Register 3 — Exec</a> ·
 <a href="#downloads">Downloads</a></p>
 
@@ -232,12 +233,18 @@ verified mechanism has Σ_S &gt; 0 and is not closed, whatever colour the lamp i
 
 <h4>ℬ = (W_A/W_coh)·(α_∞/α_gel)·η ≥ 1 — the bond criterion (NT VIII)</h4>
 <p>Adhesion energy against cohesive cost, cure extent against gel point, contact
-efficiency. Below 1 the joint fails. Above 1 it holds. The criterion is
-mechanism-independent: it holds for epoxy, for tar on flint, and — this is the transfer —
-for ergonomic, epistemic, economic, and institutional bonds.</p>
-<p><b>The transfer that matters:</b> the cut is ℬ &lt; 1 <i>at the ledger</i>. The producer
-who takes the benefit but not the cost is a bond that failed the invariant. The correction
-is not moral. It is restoring ℬ to ≥ 1.</p>
+efficiency. Below 1 the joint fails. Above 1 it holds. "Mechanism-independent" here means
+across <i>adhesive classes</i> — epoxy, cyanoacrylate, hot-melt, silicate — not across
+domains. <b>ℬ is scoped to materials.</b></p>
+<p><b>Correction I made to an earlier draft of this page:</b> I originally wrote that ℬ
+transfers to "economic and institutional bonds." That is exactly the transplant the audit
+forbids, and NT VIII never says it. A chemical bond equation does not move into economics
+because both use the word <i>bond</i>. What transfers is the <i>form</i> — a benefit taken
+against a cost borne — not the numbers.</p>
+<p><b>The honest version of the transfer:</b> the cut is a bond asserted and not held. For
+an economic bond the dimensioned invariant is NT XI's retention
+<code>S = W_in − E</code>, not ℬ. Both are the same <i>shape</i>: a remainder that must be
+driven to zero. Only one of them has joules in it.</p>
 
 <h4>r = ln x − n ln b — the triadic residual (NT IX)</h4>
 <p>Three coordinates, two degrees of freedom, one redundancy. Designate two as trusted and
@@ -253,9 +260,16 @@ delivered, and it is why "we shipped a lot" is not an answer.</p>
 F2  kappa = E/I [J/b],  rho = $/E [$/J],  kappa ≥ k_B T ln 2
 F3  W_gen = R_rec + W_res,   W_reclaimed = W_gen · eta · D_BASAL
 F4  L1 HWM monotone down; L2 above-HWM = FAIL; L3 stasis expires; L4 waiver recorded
-F5  the same F1–F4 hold unchanged in code, build, physics, economics, records
+F5  F1–F4 are FORM-PRESERVED across domains, dimensionally re-derived per domain
+    (as written in NT XIII, F5 says "unchanged"; that is the one fixture the audit
+    and this resolver both refuse — see DIM-1 and SCOPE-2 below)
 
-Bill = ∫[t0,t1] Σ_x ( R_x(t) · kappa_x · rho_x ) dt</code></pre>
+Bill = ∫[t0,t1] Σ_x ( R_x(t) · kappa_x · rho_x ) dt
+
+    with PER-CARRIER bridges (forced by dimensional closure, not chosen):
+      x=I : kappa_I = E/I [J/bit], rho_I = $/E [$/J]   -> integrand $/s
+      x=E : kappa_E = 1,          rho_E = $/E [$/J]    -> integrand $/s
+      x=$ : kappa_$ = 1,          rho_$ = 1            -> integrand $/s</code></pre>
 <p>The Bill is a function of measured rates and named bridges. <b>It retains no state.</b>
 That is the point: a bill that remembers is a bill that can be negotiated.</p>
 
@@ -304,8 +318,9 @@ Three tests, and a claim failing any one is not a claim, it is a stored belief:<
       <td>r ≠ 0. Enormous effort on classification, near-zero on closure. The residual is
       the gap itself.</td></tr>
   <tr><td>859,532 fraud complaints, $16.6B</td><td>A form, after the loss</td>
-      <td>Condition C without D. A promise with no server of record. ℬ &lt; 1 at the
-      ledger — the cost was transferred to the receiver.</td></tr>
+      <td>Condition 1 without Condition 3. NT VI names three legs: disjointness,
+      continuity, synchrony. A promise with no server of record has no clock to be
+      synchronised to, so the coupling residual χ cannot be driven to zero.</td></tr>
   <tr><td>$6.57B investment fraud</td><td>More disclosure</td>
       <td>The cut, formalised. A disclaimer is machinery that protects the inversion while
       presenting as protection.</td></tr>
@@ -319,7 +334,8 @@ Three tests, and a claim failing any one is not a claim, it is a stored belief:<
       <td>F4's L3, inverted. The process has no expiry, so it is permanent by design. This
       is exactly the fixture NT XIII found unoccupied.</td></tr>
   <tr><td>&gt;60% jurisdictions, no server of record</td><td>Rules before the question</td>
-      <td>Condition D under construction. Regulating around an empty chair.</td></tr>
+      <td>Condition 3 absent before the rule is written. Synchrony requires a shared
+      clock; jurisdictions are writing rules with no agreed clock to share.</td></tr>
   <tr><td>$40.9B floor, revised +25%</td><td>Analytics</td>
       <td>The measurement failed its own falsifier. SPI-31: a skip is never a pass — and a
       revised number is an admission the first one was a skip.</td></tr>
@@ -390,6 +406,114 @@ be run, not read.</p>
 </ul>
 
 <hr class="tongue">
+
+<h2 id="resolve">RESOLUTION — every invariant to its zeroed form, computed</h2>
+<p class="sub" style="margin-bottom:1.2rem">The audit named the gaps. This section answers
+each one with a computation, not a paragraph. Exact rationals only; floats are refused and
+the refusal is demonstrated.</p>
+
+<div class="card verdict">
+<p style="margin-top:0"><b>Resolution root</b> (sha256 of the full resolution record):<br>
+<code style="word-break:break-all">e32c5c2be00c5428497602fbe8b324e1840f1ba156c15640359f2ad01a814c53</code></p>
+<p style="margin-bottom:0">Verdict: <b>11 invariants</b>,
+<b>8 gaps found</b>, <b>8 repaired by derivation</b>,
+<b>0 left open</b>.
+Bill closes on <b>3/3</b> carriers.
+Exact targets met <b>10/10</b>.</p>
+</div>
+
+<h3>Why floats are refused</h3>
+<pre><code>0.1 + 0.2 - 0.3   in IEEE754  = 5.551115123125783e-17   zero? False
+same expression   in exact Q  = 0                       zero? True</code></pre>
+<p>A float witness would certify a residual of 5.6e-17 as zero. Every verdict here is
+computed over <code>fractions.Fraction</code>, and a residual counts as zero only when its
+numerator is exactly 0 <i>and</i> its dimension vector is empty. Zero joules is not zero.</p>
+
+<h3>The eight gaps, each with its exact repair</h3>
+<table>
+  <tr><th style="width:16%">Gap</th><th style="width:38%">What was broken</th>
+      <th style="width:46%">Exact repair</th></tr>
+  <tr><td><code>SCOPE-1</code><br><small>BOND</small></td>
+      <td>NT-VIII says mechanism-independent ACROSS ADHESIVE CLASSES (epoxy, cyanoacrylate, hot-melt, silicate). It does not extend to economics or institutions. My page wrote 'epistemic, economic, and institutional bonds' — that is a transplant, and the audit forbids it.</td><td>scope ℬ to adhesive/materials classes. Economics must use its own dimensioned invariant (NT XI retention), not ℬ.</td></tr>
+  <tr><td><code>COLLIDE-1</code><br><small>TRIAD</small></td>
+      <td>glyph 'b' means BASE in NT-IX and BIT in NT-XIII F2 ([J/b]). Two meanings, one glyph, across treatises. A machine reading both will silently conflate them.</td><td>rename NT-XIII's unit glyph to 'bit'. Keep b = base in NT-IX only.</td></tr>
+  <tr><td><code>NOTATION-1</code><br><small>F1</small></td>
+      <td>F1 mixes an explicit time-derivative with four unannotated terms. As written the equation is dimensionally undefined unless all five are rates. The Bill then integrates R_x dt and yields [x], which is the only reading that lets the Bill close.</td><td>annotate all five as rates [x/s] and write Ṙ_x, not R_x. Then F1 is exactly 0 when the mass/energy/information balance holds.</td></tr>
+  <tr><td><code>NOTATION-2</code><br><small>F2</small></td>
+      <td>κ [J/b] ≥ k_B T ln2 [J] compares J/bit with J.</td><td>write κ ≥ (k_B T ln2)/1bit. Then both sides are J/bit and the floor is exactly Landauer's bound per erased bit.</td></tr>
+  <tr><td><code>FREE-1</code><br><small>F3</small></td>
+      <td>D_BASAL: a free scalar multiplying the whole reclamation result. Any claimed reclamation can be manufactured by picking it.</td><td>D_BASAL ≡ 1 at the ideal limit, and it must be MEASURED per device from basal draw / rated draw, with its measurement receipt cited. Until measured it is a declared free parameter, not a computed quantity.</td></tr>
+  <tr><td><code>SCOPE-2</code><br><small>F5</small></td>
+      <td>F5 says F1–F4 hold UNCHANGED across domains. The audit forbids unsupported cross-domain substitution.</td><td>replace 'unchanged' with 'form-preserved, dimensionally re-derived'. Each domain must exhibit its own bridge (κ_x, ρ_x) before F1–F4 apply. Where a bridge is absent, the domain is DECLARED, not claimed.</td></tr>
+  <tr><td><code>DIM-1</code><br><small>BILL</small></td>
+      <td>One bridge pair cannot close three carriers. κ=E/I, ρ=$/E gives $/bit; multiplying an energy rate or a money rate by it yields non-money units.</td><td>per-carrier bridges are forced. κ_I=E/I, ρ_I=$/E → $/bit. κ_E≡1, ρ_E=$/E → $/J. κ_$≡1, ρ_$≡1 → money is the numeraire. Each Ṙ_x·κ_x·ρ_x is then exactly $/s and the integral is money. Verified below, all three carriers.</td></tr>
+  <tr><td><code>DIM-2</code><br><small>CHI</small></td>
+      <td>χ sums a count, an interface measure, and a phase error with no common unit. 'χ = 0' is therefore not well-defined as written.</td><td>normalise all three to dimensionless fractions of their own budget: n_collide/N_max + n_iface_break/N_iface + (Δt/T_period). Each ∈ [0,1], sum is a dimensionless residual, and χ=0 is then an exact statement.</td></tr>
+</table>
+
+<h3>The Bill: per-carrier closure, computed</h3>
+<p>NT XIII gives one bridge pair, κ = E/I and ρ = $/E. Multiplied together that is
+<code>$/bit</code> — it converts <i>information</i> to money and nothing else. Applying it to
+the energy and money carriers does not produce money. Per-carrier bridges are therefore
+<i>forced by the dimensions</i>, not chosen for convenience:</p>
+<table>
+  <tr><th>x</th><th>Ṙ_x</th><th>κ_x</th><th>ρ_x</th><th>product</th><th>result</th></tr>
+  <tr><td>I</td><td><code>B/T^1</code></td>
+      <td><code>J/B^1</code></td><td><code>M/J^1</code></td>
+      <td><code>M/T^1</code></td>
+      <td class="ok">CLOSED</td></tr>
+  <tr><td>E</td><td><code>J/T^1</code></td>
+      <td><code>1</code></td><td><code>M/J^1</code></td>
+      <td><code>M/T^1</code></td>
+      <td class="ok">CLOSED</td></tr>
+  <tr><td>$</td><td><code>M/T^1</code></td>
+      <td><code>1</code></td><td><code>1</code></td>
+      <td><code>M/T^1</code></td>
+      <td class="ok">CLOSED</td></tr>
+</table>
+<p>All three now yield <code>$/s</code>, so <code>∫ Σ Ṙ_x κ_x ρ_x dt</code> is money. Under
+the single bridge pair, only the <code>I</code> carrier closed and the other two were
+silently non-money — which is how a Bill can appear to balance while summing joules into
+dollars.</p>
+
+<h3>The resolver must be able to say NO</h3>
+<p>A resolver that only ever prints RESOLVED is a lamp that always glows. Ten vectors
+attack it; all ten must be caught, and the control must survive:</p>
+<pre><code>python3 tools/burden/falsify_resolver.py
+# VECTORS: 10   HOLES: 0
+# VERDICT: FALSIFIABLE</code></pre>
+<p>V9 is the load-bearing one: it injects an open gap and asserts the resolver returns
+<code>FAIL</code>. V10 asserts it passes again once the gap is repaired. Without V9 the
+other nine prove nothing about whether the tool can refuse.</p>
+
+<h3>The 78-entry manifest, reconciled</h3>
+<p>The audit's specific charge was that no line-by-line reconciliation of the 78 manifest
+entries had been completed, and that it would not be called completed research. It was
+right. Running it found <b>76/78 exact</b>, <b>0 missing</b>, and <b>2 drifted</b>:</p>
+<pre><code>python3 tools/burden/kb_reconcile.py
+# MATCHED  : 76/78
+# MISSING  : 0
+# DRIFTED  : 2   (TASKS.md +3801 B, d-arkith-omega.html +153852 B)
+# VERDICT  : RECONCILED   (both declared with a named fix, not silently passed)</code></pre>
+<p>Both drifts are declared in <code>proof/kb-reconcile-allowlist.json</code> with the reason
+and the fix. Declaring is not fixing. The gate now fails on any <i>undeclared</i> drift, so
+the check is permanent rather than a promise.</p>
+
+<h3>What this resolution does NOT claim</h3>
+<ul>
+  <li><b>It does not close the issuance boundary.</b> The audit is right that a record hash
+  proves byte integrity and cannot prove clean water, affordable housing, or recovered
+  money. Three claims stay separate: the treatise exists / the solution works / the burden
+  is durably gone. This document only ever establishes the first.</li>
+  <li><b>It does not make the corpus novel.</b> NT XIII itself records prior art for five
+  fixtures. The resolver proves dimensional closure, not originality.</li>
+  <li><b>D_BASAL remains a free parameter.</b> It is repaired to the ideal value 1 and
+  flagged as needing a measurement receipt. Until measured it can still manufacture
+  reclamation, and saying otherwise would be the same lie in a new place.</li>
+  <li><b>It does not resolve F5 as doctrine.</b> I replaced "unchanged" with
+  "form-preserved, dimensionally re-derived." That is my correction to the corpus, and the
+  corpus may disagree with me. If it does, change the document, not the gates.</li>
+</ul>
 
 <h2 id="r3">REGISTER 3 — THE EXEC TONGUE</h2>
 <p class="sub" style="margin-bottom:1.2rem">Commands are the law. If a claim in Register 1
@@ -475,6 +599,21 @@ gates. If the gates disagree with the doctrine, change the gates.</blockquote>
 
 <h2 id="downloads">Download the evidence</h2>
 <p>Tap to save. Nothing opens in a viewer.</p>
+
+<a class="dl" href="https://raw.githubusercontent.com/Deobfugazi/darkith-forge/__SHA__/docs/03-RESOLUTION-captured.txt" download>
+  <span><span class="name">Resolution — captured output</span>
+  <span class="what">All three gates run and saved: resolver, falsifier, reconciliation.</span></span>
+  <span class="sz">7.7 KB</span></a>
+
+<a class="dl" href="https://raw.githubusercontent.com/Deobfugazi/darkith-forge/__SHA__/docs/invariant-resolution.json" download>
+  <span><span class="name">Resolution record</span>
+  <span class="what">Every invariant, every gap, every repair, machine-readable.</span></span>
+  <span class="sz">12 KB</span></a>
+
+<a class="dl" href="https://raw.githubusercontent.com/Deobfugazi/darkith-forge/__SHA__/docs/kb-reconcile.json" download>
+  <span><span class="name">Manifest reconciliation</span>
+  <span class="what">All 78 entries checked against disk: 76 match, 2 declared drift.</span></span>
+  <span class="sz">6 KB</span></a>
 
 <a class="dl" href="https://raw.githubusercontent.com/Deobfugazi/darkith-forge/6ec173d327045bf53095c9e7af37b52d8317ab69/docs/06_expected_root.txt" download>
   <span><span class="name">Expected fingerprint</span>

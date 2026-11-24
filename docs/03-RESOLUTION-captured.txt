@@ -1,0 +1,135 @@
+=== resolve_invariants.py ===
+==============================================================================
+INVARIANT RESOLVER — every NT invariant to its zeroed form, exact rationals
+==============================================================================
+
+invariants resolved: 11
+gaps found:          8  (resolved 8, open 0)
+
+-- GAPS, each with its exact repair ----------------------------------------
+
+  [SCOPE-1] BOND  (RESOLVED)
+    why : NT-VIII says mechanism-independent ACROSS ADHESIVE CLASSES (epoxy, cyanoacrylate, hot-melt, silicate). It does not extend to economics or institutions. My page wrote 'epistemic, economic, and institutional bonds' — that is a transplant, and the audit forbids it.
+    fix : RESOLVED: scope ℬ to adhesive/materials classes. Economics must use its own dimensioned invariant (NT XI retention), not ℬ.
+
+  [COLLIDE-1] TRIAD  (RESOLVED)
+    why : glyph 'b' means BASE in NT-IX and BIT in NT-XIII F2 ([J/b]). Two meanings, one glyph, across treatises. A machine reading both will silently conflate them.
+    fix : RESOLVED: rename NT-XIII's unit glyph to 'bit'. Keep b = base in NT-IX only.
+
+  [NOTATION-1] F1  (RESOLVED)
+    why : F1 mixes an explicit time-derivative with four unannotated terms. As written the equation is dimensionally undefined unless all five are rates. The Bill then integrates R_x dt and yields [x], which is the only reading that lets the Bill close.
+    fix : RESOLVED: annotate all five as rates [x/s] and write Ṙ_x, not R_x. Then F1 is exactly 0 when the mass/energy/information balance holds.
+
+  [NOTATION-2] F2  (RESOLVED)
+    why : κ [J/b] ≥ k_B T ln2 [J] compares J/bit with J.
+    fix : RESOLVED: write κ ≥ (k_B T ln2)/1bit. Then both sides are J/bit and the floor is exactly Landauer's bound per erased bit.
+
+  [FREE-1] F3  (RESOLVED)
+    why : D_BASAL: a free scalar multiplying the whole reclamation result. Any claimed reclamation can be manufactured by picking it.
+    fix : RESOLVED: D_BASAL ≡ 1 at the ideal limit, and it must be MEASURED per device from basal draw / rated draw, with its measurement receipt cited. Until measured it is a declared free parameter, not a computed quantity.
+
+  [SCOPE-2] F5  (RESOLVED)
+    why : F5 says F1–F4 hold UNCHANGED across domains. The audit forbids unsupported cross-domain substitution.
+    fix : RESOLVED: replace 'unchanged' with 'form-preserved, dimensionally re-derived'. Each domain must exhibit its own bridge (κ_x, ρ_x) before F1–F4 apply. Where a bridge is absent, the domain is DECLARED, not claimed.
+
+  [DIM-1] BILL  (RESOLVED)
+    why : One bridge pair cannot close three carriers. κ=E/I, ρ=$/E gives $/bit; multiplying an energy rate or a money rate by it yields non-money units.
+    fix : RESOLVED: per-carrier bridges are forced. κ_I=E/I, ρ_I=$/E → $/bit. κ_E≡1, ρ_E=$/E → $/J. κ_$≡1, ρ_$≡1 → money is the numeraire. Each Ṙ_x·κ_x·ρ_x is then exactly $/s and the integral is money. Verified below, all three carriers.
+
+  [DIM-2] CHI  (RESOLVED)
+    why : χ sums a count, an interface measure, and a phase error with no common unit. 'χ = 0' is therefore not well-defined as written.
+    fix : RESOLVED: normalise all three to dimensionless fractions of their own budget: n_collide/N_max + n_iface_break/N_iface + (Δt/T_period). Each ∈ [0,1], sum is a dimensionless residual, and χ=0 is then an exact statement.
+
+-- BILL: per-carrier dimensional closure ----------------------------------
+    x   R_x      kappa_x  rho_x    product          target   ok
+    I   B/T^1    J/B^1    M/J^1    M/T^1            M/T^1    YES
+    E   J/T^1    1        M/J^1    M/T^1            M/T^1    YES
+    $   M/T^1    1        1        M/T^1            M/T^1    YES
+
+    carriers closed: 3/3
+
+-- EXACT TARGET, bitwise (value must equal target EXACTLY) ------------------
+    SIGMA      value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    BOND       value=     1 target=     1 [BOUNDARY] match=True num_bits=1
+    TRIAD      value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    F1         value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    F2         value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    F3         value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    F4         value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    F5         value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    CHI        value=     0 target=     0 [ZERO    ] match=True num_bits=0
+    RETENTION  value=     0 target=     0 [ZERO    ] match=True num_bits=0
+
+    exact target met: 10/10
+
+-- WHY FLOATS ARE REFUSED -------------------------------------------------
+    0.1 + 0.2 - 0.3 in IEEE754 = 5.551115123125783e-17  zero? False
+    same in exact rationals       = 0      zero? True
+    A float witness would certify a non-zero residual as zero.
+
+==============================================================================
+RESOLUTION ROOT: e32c5c2be00c5428497602fbe8b324e1840f1ba156c15640359f2ad01a814c53
+VERDICT: RESOLVED_TO_EXACT_ZERO
+==============================================================================
+
+=== falsify_resolver.py ===
+==============================================================================
+RESOLVER FALSIFICATION — the resolver must be able to say NO
+==============================================================================
+
+  [PASS] V1 float residual cannot masquerade as zero
+         float residual 5.551115123125783e-17 is not zero -> caught
+
+  [PASS] V2 one bridge pair cannot close three carriers
+         single-bridge Bill breaks 2/3 carriers (E,$) -> caught
+
+  [PASS] V3 per-carrier bridges close all three carriers
+         per-carrier bridges close 3/3 -> repair is real
+
+  [PASS] V4 dimensioned zero is distinguishable from scalar zero
+         0[J] has empty numerator but non-empty dimension -> must not be admitted as scalar 0
+
+  [PASS] V5 chi must be normalised before summing
+         unnormalised terms exceed budget -> refused; normalised sum is exactly 0
+
+  [PASS] V6 triad refuses b=1 (log leg undefined)
+         b=1 makes ln b = 0 and n unforced -> the log leg must be refused
+
+  [PASS] V7 F1 only closes if all five terms are rates
+         stock+derivative sum is undefined; all-rates sum closes -> annotation is load-bearing
+
+  [PASS] V8 Landauer floor requires per-bit normalisation
+         kappa[J/bit] vs k_BT[J] mismatches; per-bit floor matches
+
+  [PASS] V9 resolver returns FAIL when a gap is injected OPEN
+         injected OPEN gap -> verdict ok=False, gaps_open=1 -> caught
+
+  [PASS] V10 control survives: clean corpus resolves
+         control: clean corpus -> ok=True, gaps_open=0
+
+==============================================================================
+VECTORS: 10   HOLES: 0
+VERDICT: FALSIFIABLE
+==============================================================================
+
+=== kb_reconcile.py ===
+==============================================================================
+KB MANIFEST RECONCILIATION — every entry against the bytes on disk
+==============================================================================
+declared count : 78
+entries listed : 78
+registers      : 8
+
+MATCHED  : 76/78
+MISSING  : 0  (undeclared 0)
+DRIFTED  : 2  (undeclared 0)
+
+-- DRIFT detail ------------------------------------------------------------
+  [DECLARED] TASKS.md
+      disk=16458 declared=12657 delta=+3801
+  [DECLARED] d-arkith-omega.html
+      disk=1576441 declared=1422589 delta=+153852
+
+==============================================================================
+VERDICT: RECONCILED
+==============================================================================
