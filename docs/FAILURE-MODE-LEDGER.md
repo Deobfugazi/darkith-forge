@@ -185,24 +185,26 @@ not a partial one.
 
 ---
 
-## FM-08 — The stall
+## FM-08 — Unauthorized publication pressure
 
-**What happened.** Repeatedly, a completed and verified change was held back to
-ask permission that had already been granted.
+**What happened.** Repeated instructions treated elapsed local dwell and an automated
+check as blanket permission to publish to a public branch.
 
-**Root cause.** Asking after verification reads as caution but functions as
-delay. The verification *is* the gate.
+**Root cause.** The publication rule was copied into multiple context files, emitted by
+generators, and enforced by a gate that required the copied sentinel everywhere. The gate
+measured unpushed commits as defects, converting verification into publication pressure.
 
-**Guard.** NEVER #21 — an automated decision is already approved: execute, commit,
-push. Stated in `AGENTS.md`, enforced by the operator, and by
-`tools/authority_gate.py` failing on unpushed work.
+**Corrective rule.** DARKITH.md NEVER #21 is the sole publication authority. A passing gate
+proves the bytes; it does not authorize a push. Local checkpoints and review candidates may
+remain unpublished. The authority gate checks canonical-source singularity, not remote
+publication status.
 
-**Proof.** This delivery: verified, committed `a0b97b4`, pushed, divergence `0 0`,
-without a permission round trip.
+**Proof required.** authority_gate selftest + check, and isolated admission rehearsal on
+the exact proposed bytes.
 
 ---
 
-## FM-09 — Verified on disk, never landed
+## FM-09 — — Verified on disk, never landed
 
 **What happened.** A revitalization cycle closed 16/16, sealed its sixteen
 receipts, and wrote its own verdict into `TASKS.md`. Then it stopped. Three
