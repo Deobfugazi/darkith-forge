@@ -120,7 +120,7 @@ to add it. Everything else in this repo follows from that refusal.
 > hand-and-machine place is the **manufactory** — from Latin *manufactorium*, "a place
 > where something is made by hand" (*manus* + *facere*).
 > **Machine.** Concretely: no annotation processor, no code generator, no template
-> engine produces the app's classes. The 55 Kotlin files are written out in full. The
+> engine produces the app's classes. The 69 Kotlin source files are written out in full. The
 > doctrine is in `docs/nt/NT-XII.txt` (Part Fifteen).
 
 ### 2.3 The nine corruption modes (why hand-coding makes the app pristine)
@@ -668,6 +668,7 @@ and the corruption mode each one guards:
 | `tools/secret_gate.py` | a credential committed to the tree |
 | `tools/source_inspector.py` | an unexamined source feature: unclosed comment, foreign import, `!!`, stub, swallowed exception, duplicate node function (and the stasis gate that would tolerate them) |
 | `tools/board_gate.py` | a board item marked done with no evidence |
+| `tools/session_boot_gate.py` | a fresh agent starting work without the mandatory first-screen restore/heal/self-test/CI formulary |
 | `tools/stall_gate.py` | a named deficit left open across deliveries |
 | `tools/law_gate.py` | a rule with no executable gate (mode 5) |
 | `tools/synchrony_gate.py` | a surface with no clock (coupling leg 3) |
