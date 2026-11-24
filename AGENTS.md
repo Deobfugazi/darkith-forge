@@ -992,20 +992,12 @@ the project gate should be suspected before the project is.
 
 ## The recurring-red defect class: a derived fact rebuilt from too narrow a window
 
-`tools/chat_gatekeeper.py` renders the board's `**Coupled laws:**` line, and
-`praxis_propagate.py` refuses a directive that declares no laws. The line was rebuilt from
-the DAY-WINDOWED order set (`since_day` defaults to the session's latest day). On a day
-whose first prompt named no law it regenerated as "none named in these prompts" and praxis
-failed. Measured on the live log: the day window held 1 order with 0 laws, the whole log
-held 114 orders with 83 distinct laws.
+The task ingester and propagator carry operational task text only. They do not derive,
+declare, or copy laws. Binding laws live in DARKITH.md; secondary boards contain only a
+pointer. This removes calendar-dependent coupled-law regeneration as an authority path.
 
-That is why the Operator saw 9-of-10 GitHub runs red while every local run was green: the
-verdict tracked the calendar day of the run, not the bytes in the commit. A gate whose
-answer depends on when it runs is not measuring the tree.
-
-The fix is to make a durable fact a fixed point: the declaration is the union of what the
-window names and what the board ALREADY declares, read off the board's own bytes
-(`prior_declaration`). Two things to keep in mind when applying this pattern elsewhere:
+The task directive is a work record, not a second lawbook. Its propagation must be byte-stable
+and idempotent; governance remains anchored to the canonical law corpus.
 
 - The durable record is the board, not the raw session log. The log also carries agent
   echoes and pasted documents; unioning those invented law numbers that no order ever
