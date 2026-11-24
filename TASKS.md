@@ -5,9 +5,9 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T17:06:09.458687`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T18:19:01.029492`. This section is regenerated, never hand-edited._
 >
-> **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
+> **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 >
 > 1. **[forbid]** Done, now budd. Knowing how my core omega end point short→long-term objective is unlike any other as declared in my NT XI XII & XIII, design the inev…
 >    - prompt index `36250` at `2026-11-24T04:57:48.742386`
@@ -57,9 +57,13 @@
 >    - prompt index `41324` at `2026-11-24T17:06:09.458687`
 >    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, MUST#35, NEVER #19, NEVER #21, SPI-15, SPI-37, SPI-38, SPI-4
 >    - sha256 `49d82554102f276c`
+> 14. **[forbid]** Operator — I have to correct the briefing before you send the script. **Do not send it.** Running it would corrupt 18 good files. ## The premise is f…
+>    - prompt index `41936` at `2026-11-24T18:19:01.029492`
+>    - **Coupled laws:** MUST #20, MUST #30, MUST #33, NEVER #19, SPI-10, SPI-11, SPI-15, SPI-2, SPI-4, SPI-5, SPI-6
+>    - sha256 `b55fd78295e326b4`
 >
 
-**Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-6`
+**Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-10`, `SPI-11`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-5`, `SPI-6`
 
 | law | heading |
 |---|---|
@@ -80,6 +84,8 @@
 | `NEVER #19` | NO UNEXAMINED SOURCE |
 | `NEVER #21` | NO WAITING FOR APPROVAL THAT ALREADY EXISTS — THE ANTI-STALL LAW |
 | `NEVER #22` | NO VERIFIED-BUT-UNLANDED CLOSURE — THE MISSING-CALLER LAW |
+| `SPI-10` | MATCH BYTES, NOT LINE NUMBERS |
+| `SPI-11` | DISCOVER, DO NOT HARDCODE |
 | `SPI-15` | A LAW WITHOUT A GATE IS A NOTE |
 | `SPI-2` | READ THE BYTES FIRST |
 | `SPI-25` | SYNCHRONY IS UNIVERSAL, LIKE THE PRIME DIRECTIVE |
@@ -88,9 +94,10 @@
 | `SPI-38` | A LAW MUST BE RUN, NOT READ |
 | `SPI-4` | LOG TO DISK, READ FROM DISK |
 | `SPI-40` | NO UNREHEARSED PROMOTION — THE PRIME DIRECTIVE |
+| `SPI-5` | NO ANDROIDX ON THE RAW CHAIN |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #23`, `NEVER #25`, `NEVER #27`, `NEVER #29`, `NEVER #31`, `SPI-11`, `SPI-16`, `SPI-19`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #23`, `NEVER #25`, `NEVER #27`, `NEVER #29`, `NEVER #31`, `SPI-16`, `SPI-19`
 
 <!-- PRAXIS:END -->
 
@@ -291,9 +298,9 @@ Named skips this cycle (SKIP is never PASS): clearanceloop webapp gate (headless
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T17:06:09.458687`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T18:19:01.029492`. This section is regenerated, never hand-edited._
 
-**Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
+**Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 
 1. **[forbid]** Done, now budd. Knowing how my core omega end point short→long-term objective is unlike any other as declared in my NT XI XII & XIII, design the inev…
    - prompt index `36250` at `2026-11-24T04:57:48.742386`
@@ -343,5 +350,9 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
    - prompt index `41324` at `2026-11-24T17:06:09.458687`
    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, MUST#35, NEVER #19, NEVER #21, SPI-15, SPI-37, SPI-38, SPI-4
    - sha256 `49d82554102f276c`
+14. **[forbid]** Operator — I have to correct the briefing before you send the script. **Do not send it.** Running it would corrupt 18 good files. ## The premise is f…
+   - prompt index `41936` at `2026-11-24T18:19:01.029492`
+   - **Coupled laws:** MUST #20, MUST #30, MUST #33, NEVER #19, SPI-10, SPI-11, SPI-15, SPI-2, SPI-4, SPI-5, SPI-6
+   - sha256 `b55fd78295e326b4`
 
 <!-- CHAT-GATE:END -->
