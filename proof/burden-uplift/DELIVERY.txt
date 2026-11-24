@@ -1,0 +1,20 @@
+=== DELIVERY STATE (2026-11-24) ===
+SERVED (this session, forced-download, MUST #16):
+  https://work-1-ztisaoehlcyoilix.prod-runtime.all-hands.dev/
+  https://work-2-ztisaoehlcyoilix.prod-runtime.all-hands.dev/
+  /                                  hub (inline)
+  /PRIME-DIRECTIVE-GAMEPLAN.md       attachment 16,257B
+  /PRIME-DIRECTIVE-GAMEPLAN.txt      attachment 15,867B
+  /burden-uplift-EVIDENCE.txt        attachment  3,819B
+  /darkith-prime-directive.zip       attachment 28,410B (5 files, integrity OK)
+  /evidence.html                     attachment  6,161B
+
+PERMANENT (public repo, survives this sandbox):
+  PR:     https://github.com/Deobfugazi/darkith-forge/pull/24
+  branch: docs/prime-directive-only (3 files only, off main)
+  raw:    https://raw.githubusercontent.com/Deobfugazi/darkith-forge/main/docs/PRIME-DIRECTIVE-GAMEPLAN.md
+          (live after PR 24 merges)
+  blob:   https://github.com/Deobfugazi/darkith-forge/blob/main/docs/PRIME-DIRECTIVE-GAMEPLAN.md
+
+NOTE: dist/ is gitignored, so the served hub is session-scoped.
+      The repo copy is the durable artifact.
