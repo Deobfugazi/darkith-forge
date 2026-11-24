@@ -7,7 +7,13 @@ __pycache__/
 # verified locally (tools/ci_receipts.py --verify) and regenerates from a fresh run.
 proof/ci_receipts.db
 .forge_work/
+# Both forms are required. `.tools/` matches only a real directory; tools/admission.py
+# symlinks .tools into its rehearsal worktree, and a trailing-slash pattern does NOT match a
+# symlink — so the link became stageable, landed in the index, and every tree gate (convergence,
+# doc path, divergence) read it as untracked drift. A gate that fails on the harness's own
+# scaffolding is a broken gate.
 .tools/
+.tools
 *.log
 # Sealed cycle evidence is the exception: the seal cites these logs and I8 checks that
 # each citation resolves. A cited .log that git drops turns a sealed cycle into one
