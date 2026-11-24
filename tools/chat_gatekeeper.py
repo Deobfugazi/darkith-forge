@@ -1,40 +1,15 @@
 #!/usr/bin/env python3
-"""chat_gatekeeper.py — the chat directive becomes the board, without a human in the loop.
+"""Ingest explicit Operator task orders into TASKS.md, without creating or copying laws.
 
-The order this closes (Operator, 2026-11-20T02:32, prompt [126]):
-  "every clear executive prompt as job order instructions must be instantiated syncronically
-   in all tasks boards (local ephemeral tab/branch) and the DURABLE core Directive Prime Task
-   BOARD, add a bot that auto-propagates this after an agent (ai or me) insribes the most
-   current task directive musta along with its coupled nevers!"
-
-and (prompt [144]) the gatekeeper must be
-  "auto COUPLED in sync to my CIRCADIAN circulatory vital feedback as real time occupation
-   aware".
-
-praxis_propagate.py already mirrors a directive from TASKS.md to every board. What was
-missing is the other end: the OPERATOR'S SPEECH was not a source. A directive existed only
-if someone typed it into TASKS.md by hand. This tool makes the conversation the source.
-
-Pipeline:
-  ingest   read user MessageEvents from the session event log, past the watermark
-  classify executive prompts (job orders) from corrections and chatter
-  couple   stamp each with the circadian phase and the occupation state at ingest
-  board    write today's orders as the topmost `## ★` section of TASKS.md, so the existing
-           praxis propagator carries them to every board (one source, one carrier)
-  ping     record a durable ping per known board target in proof/agent_pings.json, so an
-           agent waking on any branch reads the order without asking the Operator again
-
-Watermark, not replay. The session is one continuous 10-day stream (2026-11-10 -> 2026-11-20),
-so a full replay would re-ingest every prompt on every run. proof/chat_watermark.json stores the
-last ingested index; ingest resumes after it. A genuine reboot (new conversation id) resets to
-full replay, which is correct: a new session has read nothing.
-
-Deterministic (MUST #18): same events + same watermark -> byte-identical board and receipt.
+This tool classifies new user MessageEvents as operational orders, maintains a durable
+watermark, and writes the current task directive to the durable board. Binding laws are
+never inferred from chat text; agents read them from DARKITH.md. The task block is
+deterministic and replaced in place, never appended.
 
 Usage:
-  python3 tools/chat_gatekeeper.py --check      # fail if a new directive is un-ingested
-  python3 tools/chat_gatekeeper.py --write      # ingest, board, ping
-  python3 tools/chat_gatekeeper.py --selftest   # prove classify + watermark + idempotency
+  python3 tools/chat_gatekeeper.py --check
+  python3 tools/chat_gatekeeper.py --write
+  python3 tools/chat_gatekeeper.py --selftest
 """
 from __future__ import annotations
 
@@ -114,33 +89,6 @@ REBUKE = re.compile(
     r"you have been|you still|i said|now the fuck)",
     re.IGNORECASE,
 )
-LAW_TOKEN = re.compile(r"\b((?:NEVER|MUST|SPI)[-\s]?#?\d+)\b")
-
-# COUPLING is a DECLARATION, not an inference. Each row says: when an order speaks of this,
-# these laws bind it. praxis_propagate refuses a directive that does not declare its laws, and
-# it is right to — a derived guess is not an order. This table is written, reviewed, and fixed,
-# so the same prompt always couples to the same laws (MUST #18 determinism).
-COUPLING = [
-    (re.compile(r"propagat|board|praxis|ping|syncron|synchron", re.I),
-     ["MUST #26", "MUST #27"]),
-    (re.compile(r"circadian|occupation|vital|rest|digest", re.I),
-     ["MUST #28", "SPI-25", "SPI-26"]),
-    (re.compile(r"GO SIGNAL|permission|autocorrect|stall|waiting|dwell|idle", re.I),
-     ["NEVER #21", "MUST #36", "NEVER #21"]),
-    (re.compile(r"loophole|\bgap|hunt|leak", re.I),
-     ["NEVER #19", "MUST #30"]),
-    (re.compile(r"gate|heading|\blaw|invariant", re.I),
-     ["SPI-15", "MUST #33"]),
-    (re.compile(r"agnostic|universal|portable|platform", re.I),
-     ["MUST #21", "MUST #22"]),
-    (re.compile(r"receipt|hash|tamper|proof", re.I),
-     ["SPI-4", "MUST #20"]),
-    (re.compile(r"\bread\b|bytes|\blog\b", re.I),
-     ["SPI-2", "SPI-6"]),
-    (re.compile(r"formulary|novel|formulation", re.I),
-     ["SPI-37", "SPI-38"]),
-]
-
 # Not every "user" MessageEvent is the Operator speaking. The runtime injects nudges, and the
 # UI can echo the agent's own prior text back as a user turn. Ingesting those as orders would
 # put the machine's words on the Operator's board and make him answer for them.
@@ -250,46 +198,12 @@ def occupation(pulse: dict) -> dict:
     return {"phase": phase, "gapHours": gap, "state": state}
 
 
-def normalise_law(tok: str) -> str:
-    """'NEVER#19', 'must 19', 'SPI-2', 'NEVER #21' -> the canonical heading spelling.
-
-    The prompts are typed fast and often lose the separator ("MUST#41", "MUST17"), and the
-    rendered declaration is what praxis reads back. Spelling it canonically here means the
-    board states the law the same way the corpus does, instead of carrying a token that only
-    matches by luck.
-    """
-    t = tok.upper().replace("  ", " ").strip()
-    m = re.match(r"(NEVER|MUST|SPI)\s*-?\s*#?\s*(\d+)$", t)
-    if not m:
-        return t
-    kind, num = m.group(1), m.group(2)
-    return f"SPI-{num}" if kind == "SPI" else f"{kind} #{num}"
-
-
-def prior_declaration(board_text: str) -> list[str]:
-    """The laws the board's CHAT-GATE directive already declares, in canonical spelling.
-
-    Read off the bytes the board currently carries, so a declaration made on any earlier day
-    survives today's re-render. Returns [] when the board has no directive yet.
-    """
-    block = block_of(board_text) if BEGIN in board_text else board_text
-    for line in block.splitlines():
-        m = re.match(r"\s*>?\s*\*\*Coupled laws:\*\*\s*(.+)", line)
-        if not m:
-            continue
-        if "none named" in m.group(1).lower():
-            return []
-        return [normalise_law(t.group(1)) for t in LAW_TOKEN.finditer(m.group(1))]
-    return []
-
-
 def one_line(t: str, n: int = 150) -> str:
     s = " ".join(t.split())
     return s if len(s) <= n else s[: n - 1] + "…"
 
 
-def render_orders(conv: str, orders: list[dict], occ: dict,
-                  standing: list[dict] | None = None) -> str:
+def render_orders(conv: str, orders: list[dict], occ: dict) -> str:
     L = [BEGIN, ""]
     L.append("## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat")
     L.append("")
@@ -403,10 +317,6 @@ def build(conv: str, events: list[tuple[int, str, str]], mark: dict,
             "timestamp": ts,
             "kind": k,
             "text": txt,
-            "laws": sorted(set(
-                [m.group(1).replace(" ", "") for m in LAW_TOKEN.finditer(txt)]
-                + [law for rx, laws in COUPLING if rx.search(txt) for law in laws]
-            )),
             "sha256": h,
         })
     new_mark = {
@@ -457,19 +367,7 @@ def run(write: bool, since_day: str | None = None) -> int:
         foreign = True
     else:
         foreign = False
-    # The laws the board stands on are DURABLE, so the declaration is a fixed point: it is the
-    # union of what the window names and what the board ALREADY declares. Rebuilding it from
-    # the day window alone made the standing order expire at midnight — on a day whose first
-    # prompt named no law the line became "none named in these prompts" and praxis failed with
-    # "the directive declares no coupled laws". That is why CI read 9-of-10 red while every
-    # local run was green: the verdict tracked the calendar day, not the bytes.
-    #
-    # The board is the durable record, not the raw log: the log also carries agent echoes and
-    # pasted documents, and unioning those invented laws (a pasted DARKITH.md yielded
-    # "NEVER #1") that no order ever named.
-    standing = prior_declaration(BOARD.read_text(encoding="utf-8")) if BOARD.is_file() else []
-    block = render_orders(conv, orders, meta["occupation"],
-                          standing=orders + [{"laws": standing}])
+    block = render_orders(conv, orders, meta["occupation"])
     if not BOARD.is_file():
         # A project with no board is not a fault in the ingester; it is a project that has not
         # been wired yet. Say so in one line instead of a traceback that reads like a bug.
@@ -616,24 +514,10 @@ def selftest() -> int:
     chk("rest phase detected", occupation({"gapHours": 9.0, "currentPhase": "rest/digest/restore"})["state"] == "returning-from-rest")
     chk("engaged detected", occupation({"gapHours": 0.1, "currentPhase": "wake/active"})["state"] == "engaged")
 
-    # a propagation order must declare the board laws, not leave them to a term guess
-    oc, _ = build("c1", [(1, "t1", "auto-propagate this to every board")], {"conversation": "c1", "last_index": -1})
-    chk("coupling declared", "MUST #26" in oc[0]["laws"])
     chk("grace window sane", GRACE_MINUTES > 0)
-    chk("coupling deterministic", oc[0]["laws"] == build("c1", [(1, "t1", "auto-propagate this to every board")], {"conversation": "c1", "last_index": -1})[0][0]["laws"])
-
-    # The declaration is durable. A window that names no law must NOT erase the laws the board
-    # already declares: rebuilding from the day slice alone expired the standing order at
-    # midnight, and CI read 9-of-10 red while every local run was green.
-    chk("law spelling is canonical", normalise_law("MUST#41") == "MUST #41"
-        and normalise_law("MUST17") == "MUST #17" and normalise_law("SPI-2") == "SPI-2")
-    prior = prior_declaration(merge("", render_orders("c1", oc, {}, )))
-    chk("board declares the window's laws", "MUST #26" in prior)
-    empty_day = render_orders("c1", [], {}, standing=[{"laws": prior}])
-    chk("a lawless day keeps the standing laws", "MUST #26" in empty_day
-        and "none named" not in empty_day)
-    chk("prior_declaration ignores 'none named'",
-        prior_declaration(render_orders("c1", [], {}, standing=[])) == [])
+    chk("task record carries no law declarations",
+        all("laws" not in order for order in o1)
+        and "**Coupled laws:**" not in render_orders("c1", o1, m1["occupation"]))
 
     print(f"chat_gatekeeper selftest: {'ok' if ok else 'BROKEN'}")
     return 0 if ok else 1
