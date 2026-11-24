@@ -58,7 +58,7 @@ def find_drift(root=ROOT):
 
 
 def repair(root=ROOT):
-    """One deterministic sweep: stage, commit, push. Never force, never rewrite."""
+    """One deterministic sweep: stage and commit locally. Never publish or rewrite."""
     st = git(["status", "--porcelain"], root=root)
     if st.returncode != 0:
         return 'skip', [st.stderr.strip() or 'git unavailable']
