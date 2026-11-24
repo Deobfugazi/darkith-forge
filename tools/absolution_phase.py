@@ -53,6 +53,10 @@ INGEST = (
     ("praxis propagation", ("python3", "tools/praxis_propagate.py")),
     ("kb manifest reconcile", ("python3", "tools/burden/kb_reconcile.py", "--write")),
     ("knowledge-base index", ("python3", "tools/kb_index.py", "--write")),
+    # convergence_gate writes proof/convergence.json whenever it runs bare, so CI dirtied
+    # the tree on every run and the next run failed on the file the last one wrote. Absorb
+    # it here: it is a genuine fixed point (stable across runs) that nobody was carrying.
+    ("convergence proof", ("python3", "tools/convergence_gate.py")),
     ("absolution receipt", ("python3", "tools/absolution.py", "--write")),
 )
 
