@@ -1357,24 +1357,19 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
      by `preflight`. Two gates sharing one summary label is a silent failure, not a
      cosmetic duplicate: the second can fail behind the first one's PASS.
 
-  3. A RED THAT RESOLVES ON PUSH IS NAMED, NOT HIDDEN. `board pulse`, the stall clock and
-     `authority gate` are functions of remote state, so they are guaranteed red in a
-     worktree. The chain gate is red for a second structural reason: it hashes the tree
-     against the CURRENT cycle's S01 baseline, so any governing-source change is unsealed
-     until a cycle runs. Both are reported in their own columns, neither blocking nor
-     suppressed. Suppressing them would be the SPI-31 loophole; conflating them with content
-     failures would make the gate unfalsifiable. The seal-pending path is not a bypass: the
-     cycle's own S14 re-runs this suite and refuses to seal on a real failure, so a broken
-     tree still cannot land through it.
+  3. EVERY REQUIRED CHECK MUST EXECUTE AND PASS. No remote-state failure is reclassified as
+     "resolves on push", and no seal-pending failure is ignored. A required SKIP or INACTIVE
+     state is unresolved evidence, not a pass. Sigma-zero is reported only when the exact-byte
+     rehearsal exits zero with no FAIL, SKIP, INACTIVE, missing witness, or missing receipt.
 
   4. THE REHEARSAL MUST SEE THE REAL TOOLCHAIN. `.tools/` is gitignored, so a fresh worktree
      has none and the §19 compile proof reports L-07 OPEN -- a red that does not exist on
      the branch. The worktree shares `.tools/` by symlink. A gate that manufactures its own
      red is as useless as one that manufactures a green.
 
-  Self-test: `python3 tools/admission.py --selftest` proves declarations are counted while
-  prose citations are not, duplicate gate labels are caught, content reds block while
-  remote-state reds are separated, and the authority gate is classified correctly.
+  Self-test: `python3 tools/admission.py --selftest` proves law declarations are counted while
+  prose citations are not, duplicate gate labels are caught, and FAIL, SKIP, and INACTIVE
+  states all block sigma-zero.
 
   ---
 
@@ -1595,7 +1590,7 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
 
   Binding laws are not generated from chat text. The law corpus is authored and maintained only
   in DARKITH.md; chat ingestion records task orders and never creates law declarations. So
-  the same prompt always couples to the same laws (MUST #18).
+  the same prompt always renders to the same task bytes (MUST #18).
 
   Gate: --selftest proves classification, watermark, dedupe, day window, determinism and
   replace-never-append; --check fails if any prompt past the watermark is un-ingested, if the
