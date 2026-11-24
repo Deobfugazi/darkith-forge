@@ -431,6 +431,14 @@ fi
     run "savf gate verdict" node tools/test_savf_gate_verdict.js
   fi
 
+  # The burden ledger and the mint gate. The gate's value is entirely in its refusals:
+  # the suite asserts that a self-certified mint, a mint with no permanence bond, a
+  # Terra-style over-issue, a missing counterfactual, and a war zone classified as
+  # addressable are all convicted (LIED), while unattested economics stays REVIEW.
+  if have python3 && [ -f tools/test_burden_ledger.py ]; then
+    run "burden ledger + mint gate" python3 tools/test_burden_ledger.py
+  fi
+
   # The reader's interaction surface, driven in a real browser from file://. The
   # shim test above proves the corpus and renderer; only a real click proves the
   # listeners are wired. Skipped when playwright is absent.
