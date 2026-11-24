@@ -5,7 +5,7 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T16:08:54.088372`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T17:06:09.458687`. This section is regenerated, never hand-edited._
 >
 > **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 >
@@ -53,6 +53,10 @@
 >    - prompt index `41051` at `2026-11-24T16:08:54.088372`
 >    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
 >    - sha256 `d31d99750f50bbd5`
+> 13. **[forbid]** **Verdict: NOT COMPLETE.** Here is the honest status against your directive, not a narrative. ## Closed this session (verified on disk) | Item | Evid…
+>    - prompt index `41324` at `2026-11-24T17:06:09.458687`
+>    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #30, MUST #33, MUST #35, MUST #36, MUST#35, NEVER #19, NEVER #21, SPI-15, SPI-37, SPI-38, SPI-4
+>    - sha256 `49d82554102f276c`
 >
 
 **Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-6`
@@ -86,7 +90,7 @@
 | `SPI-40` | NO UNREHEARSED PROMOTION — THE PRIME DIRECTIVE |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #23`, `NEVER #25`, `NEVER #27`, `NEVER #29`, `NEVER #31`, `SPI-11`, `SPI-19`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #23`, `NEVER #25`, `NEVER #27`, `NEVER #29`, `NEVER #31`, `SPI-11`, `SPI-16`, `SPI-19`
 
 <!-- PRAXIS:END -->
 
