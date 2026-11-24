@@ -1,0 +1,16 @@
+=== FULL TREE COMMENT-INTEGRITY PROOF ===
+date: 2026-11-23T18:56:38Z
+HEAD: 9b64d989e0a9e863e267f63b8fc79526ae380edc
+
+project gate (tools/kt_comment_scan.py) over all 69 .kt:
+TOTAL DEFECTS: 0
+
+independent char-level parser over all 69 .kt:
+parsed 69 file(s); 0 with defects; ALL CLEAN
+
+kotlinc 1.9.24 full compile (69 files + generated R.java):
+  error: lines       = 0
+  unclosed comment   = 0
+  .class emitted     = 226
+
+19 cited files, byte-identical to HEAD: 0 diffs

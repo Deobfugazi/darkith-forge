@@ -1,0 +1,58 @@
+=== LIVE BURDEN + MARKET UPLIFT (cross-checked, 2026-11-24) ===
+Every figure below was fetched by direct HTTP from the primary API named.
+Tavily web-search was quota-exhausted (HTTP 432); no figure here depends on it.
+
+--- A. GLOBAL BURDENS (measured, current) ---
+indicator                                   value            source
+population                                  8,140,897,523    World Bank SP.POP.TOTL 2024
+extreme poverty (<$3.00/day, 2021 PPP)      10.1%            World Bank SI.POV.DDAY 2024
+extreme poverty (absolute)                  810,946,785      OWID number-of-people-in-extreme-poverty 2026
+undernourishment                            8.2%             OWID/SOFI 2.1.1 2024  (~667M)
+forcibly displaced (total)                  100,636,629      UNHCR population API 2024
+  refugees 30,353,722 | IDPs 63,335,728 | asylum-seekers 6,947,179 | stateless 4,360,087
+basic drinking water access                 91.45%           World Bank SH.H2O.BASW.ZS 2024 (~695M without)
+internet access                             71.2%            World Bank IT.NET.USER.ZS 2024 (~2.34B offline)
+financial account ownership (15+)           78.74%           World Bank FX.OWN.TOTL.ZS 2024 (~1.73B unbanked)
+under-5 mortality                           3.74 / 100       OWID child-mortality 2024
+life expectancy                             73.17 yr         OWID 2023
+forest cover                                31.10%           World Bank AG.LND.FRST.ZS 2023
+
+--- B. MONEY ALREADY MOVING (the real market size) ---
+world GDP                                    $111.7T          World Bank NY.GDP.MKTP.CD 2024
+global health expenditure                    10.1% of GDP     World Bank SH.XPD.CHEX.GD.ZS 2023
+remittances                                  $870B            World Bank BX.TRF.PWKR.CD.DT 2024
+official development assistance (ODA)        $259B            World Bank DT.ODA.ODAT.CD 2023
+  -> remittances are 3.4x ODA. Private flows already dwarf aid.
+
+--- C. CRYPTO/FINTECH MARKET STATE (live) ---
+DeFi TVL                                     $68.7B           DefiLlama 2026-11-24
+stablecoins circulating                      $284B / 459      DefiLlama stablecoins API
+  chain split: Ethereum $128.2B, Tron $92.9B, Solana $13.3B, BSC $12.7B
+RWA (tokenized real assets)                  $2.83B / 190     DefiLlama protocols
+DePIN (tokenized infrastructure)             10 protocols, ~$0 TVL
+CEX                                          $211.5B          DefiLlama
+Lending                                      $44.3B
+
+--- D. THE GRAVEYARD: "mint a token when a verified burden is retired" ---
+This is the Operator's exact mechanism. It has already been run at scale.
+asset                     peak                now            drawdown
+KLIMA (KlimaDAO)          $3,777.30 (2021-10-23)  $0.0010734   -100.00%
+BCT (Toucan carbon tonne) $8.60               $0.00099186  -99.99%
+MCO2 (Moss carbon)        -                   $0.0087444   -
+HNT (Helium DePIN)        $54.88              $0.213809    -99.61%
+KlimaDAO on DefiLlama     delisted (TVL None)
+Toucan Protocol on DefiLlama  delisted (TVL None)
+
+--- E. THE CONTRAST THAT MATTERS ---
+EU ETS carbon allowance    ~EUR 70-80/tonne   (compliance market, 20,000x BCT)
+  EU ETS has: capped supply (regulator), compelled demand (legal surrender
+  obligation), sovereign verification (state registry).
+  BCT has: uncapped minting, voluntary demand, contested verification.
+  Difference is NOT technology. It is those three properties.
+
+--- F. STATUS ---
+RESOLVED: every figure above (direct API fetch, re-runnable).
+INFERRED: the causal attribution in E (why ETS holds value and BCT does not).
+FALSIFIER for E: find a voluntary, uncapped-supply, privately-verified
+  burden-token that has held value >5 years. KlimaDAO/Toucan/Moss/Helium all
+  failed it; none found.
