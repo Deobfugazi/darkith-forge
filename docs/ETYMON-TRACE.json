@@ -1,0 +1,54 @@
+{
+  "_law": "NEVER #27 clause 4 / MUST #46 clause 3. A semantic argument that rests on an etymon is a claim; it carries its source and retrieved date, or it is OPEN. Every row below was fetched from the named source on 2026-11-10 and the literal sense is quoted, not paraphrased from memory.",
+  "_method": "Fetched the raw Wiktionary wikitext (action=raw) for each word and read the Etymology section. The literal sense is the reconstructable one, not the modern gloss.",
+  "traces": [
+    {
+      "word": "war",
+      "etymon": "Middle English werre < Anglo-Norman/French guerre < Medieval Latin werra < Frankish *werru 'confusion; quarrel' < PIE *wers- 'to mix up, confuse, beat, thresh'",
+      "literal": "confusion, quarrel, a mixing-up",
+      "modern_drift": "armed conflict between states (the outcome, not the root)",
+      "attested_in": "docs/MISCOMMUNICATION-AND-WAR.html",
+      "src": {
+        "url": "https://en.wiktionary.org/wiki/war",
+        "retrieved": "2026-11-10"
+      },
+      "note": "The word for war means confusion before it means battle. Wiktionary also records that werra is related to German verwirren 'to confuse', and explicitly NOT to Wehr 'defence'."
+    },
+    {
+      "word": "communication",
+      "etymon": "Latin communicatio < communicare 'to share, to impart' < communis 'common'",
+      "literal": "a making common; a sharing",
+      "modern_drift": "the transmission of messages (the channel, not the commonality)",
+      "attested_in": "docs/MISCOMMUNICATION-AND-WAR.html",
+      "src": {
+        "url": "https://en.wiktionary.org/wiki/communication",
+        "retrieved": "2026-11-10"
+      },
+      "note": "communico is glossed 'share, impart; make common'. Communication is the act of making something common between two parties. A message delivered that does not become common is not communication."
+    },
+    {
+      "word": "condition",
+      "etymon": "Latin condicio < con- 'with' + dico 'to say, speak' (condico 'to agree upon, promise; to fix')",
+      "literal": "a speaking-together; an agreement, covenant, pact",
+      "modern_drift": "a requirement, a stipulation (a static thing, with the second speaker lost)",
+      "attested_in": "docs/TEN-BURDENS-THREE-TONGUES.html",
+      "src": {
+        "url": "https://en.wiktionary.org/wiki/condicio",
+        "retrieved": "2026-11-10"
+      },
+      "note": "This is the doubly-mean word. Wiktionary records that condicio is 'often conflated with conditio in manuscripts and editions', and that the English spelling change was 'unetymological ... due to a confusion with conditio'. Two etymons fused into one spelling. The Operator's 'Condition C without D' uses the original sense: a covenant with no second speaker."
+    },
+    {
+      "word": "communicate",
+      "etymon": "Latin communicatus, past participle of communico 'to make commune, to share' < communis 'common'",
+      "literal": "to make common",
+      "modern_drift": "to convey information one-way",
+      "attested_in": "docs/MISCOMMUNICATION-AND-WAR.html",
+      "src": {
+        "url": "https://en.wiktionary.org/wiki/communicate",
+        "retrieved": "2026-11-10"
+      },
+      "note": "The verb's root is 'make common'. The test for whether communication happened is whether something became common, not whether a signal was sent."
+    }
+  ]
+}

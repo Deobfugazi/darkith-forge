@@ -117,6 +117,42 @@ if have python3; then
   if [ -f tools/burden/kb_reconcile.py ]; then
     run "kb manifest reconcile"           python3 tools/burden/kb_reconcile.py
   fi
+  # ── PART VII delivery laws (NEVER #24-#31 / MUST #43-#50) ─────────────────────
+  # Each NEVER must carry a coupled MUST and a gate that exists. Orphans fail here.
+  if [ -f tools/delivery_law_gate.py ]; then
+    run "delivery law pairing"            python3 tools/delivery_law_gate.py
+  fi
+  # The general-reader register must be burden-first and apparatus-free (NEVER #25).
+  if [ -f tools/audience_gate.py ]; then
+    run "audience register"               python3 tools/audience_gate.py
+  fi
+  # Every delivered link absolute, SHA-pinned, size-declared (NEVER #26). Structure only
+  # in CI; --fetch is for the pre-delivery check with network.
+  if [ -f tools/delivery_surface_gate.py ]; then
+    run "delivery surface"                python3 tools/delivery_surface_gate.py
+  fi
+  # Every attributed citation greppable in its named source (NEVER #27).
+  if [ -f tools/citation_gate.py ]; then
+    run "citation provenance"             python3 tools/citation_gate.py
+  fi
+  # An etymon used as an argument is a claim: it carries its source and retrieved date, or
+  # it is OPEN (NEVER #27 clause 4 / MUST #46 clause 3). Unsourced etymology is the "doubly
+  # mean word" the Operator traced by hand.
+  if [ -f tools/etymon_trace.py ]; then
+    run "etymon trace (sourced, literal, located)" python3 tools/etymon_trace.py
+  fi
+  # No float in a verdict path; the resolver must be falsifiable (NEVER #28).
+  if [ -f tools/exactness_gate.py ]; then
+    run "verdict exactness"               python3 tools/exactness_gate.py
+  fi
+  # Every carrier closes to the target dimension independently (NEVER #30).
+  if [ -f tools/domain_bridge_gate.py ]; then
+    run "domain bridge closure"           python3 tools/domain_bridge_gate.py
+  fi
+  # Apparatus is not progress: count thesis advance, name what is unwritten (NEVER #31).
+  if [ -f tools/thesis_gate.py ]; then
+    run "thesis advance"                  python3 tools/thesis_gate.py
+  fi
   # Kotlin syntax gate: fail if any source tree has an unclosed block comment.
   # A scanner, not kotlinc (W-023), but exact about the defect that silently
   # swallows the rest of a file. Runs only when the app tree is present.

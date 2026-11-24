@@ -1845,3 +1845,530 @@ a yes is a stall, and a stall is the failure mode this law exists to forbid.
 
 Scope: every board, every parallel agent, every session carrying this directive.
 Budget: 0 seconds. There is no waiting window to spend.
+
+---
+
+# PART VII — THE DELIVERY LAWS
+
+Every law below was paid for by a specific failure committed in this project by an agent
+carrying this directive. None is hypothetical. Each NEVER names the exact failure and the
+artifact that proves it happened; the coupled MUST names the structural change that makes
+the failure impossible rather than discouraged. A NEVER without its MUST is a complaint. A
+MUST without its NEVER is a preference. The pair is the law.
+
+The pairing rule: **a NEVER forbids a class of act; its MUST makes the forbidden act
+unreachable by construction, and both name the same gate.** If a future agent can violate the
+NEVER and still pass CI, the pair is defective and the gate must change, not the prose.
+
+---
+
+─── NEVER #24 (NO DELIVERY WITHOUT LOGGING ITS FAILURES AS LAWS — THE UNLOGGED-FAILURE LAW) ───
+  GATE: tools/delivery_law_gate.py
+
+  A FAILURE THAT IS FIXED BUT NOT CODIFIED WILL RECUR, AND THE NEXT AGENT WILL PAY IT AGAIN.
+
+  Measured, this session. Six distinct failures were committed against the Operator and each
+  was repaired in place without ever being registered as a law:
+
+    1. A rehearsal proof whose receipt hashes were typed, not computed. A specter AND a
+       phantom in the same artifact, presented as evidence.
+    2. "19 workstreams" written when the source said "19 building blocks". A one-word drift
+       from the bytes, in a document whose entire argument is fidelity to the bytes.
+    3. "Condition C without D" cited as NT VI doctrine. NT VI has Conditions 1-3. The
+       citation was invented.
+    4. The bond number claimed to transfer to "economic and institutional bonds". NT VIII
+       scopes it to adhesive classes. A cross-domain transplant, in the document that condemns
+       cross-domain transplants.
+    5. A served URL presented as a delivery. The process died, the link died. The delivery
+       surface was a running server, not an artifact.
+    6. Seven download links returning the htmlpreview wrapper page (1269 B) instead of the
+       evidence, while reporting HTTP 200.
+
+  Every one of those six was repaired. Not one was codified. That is the failure this law
+  names: **repair without codification is a deferral, and the deferral is paid by the next
+  agent.**
+
+  The law, in three parts:
+
+  1. EVERY FAILURE BECOMES A PAIR. Before a delivery is called complete, every failure that
+     occurred during it must appear in `docs/FAILURE-MODE-LEDGER.md` AND as a NEVER in this
+     file, AND its coupled MUST must exist, AND both must name a gate that exists and runs.
+
+  2. THE LEDGER AND THE LAWS ARE RECONCILED BY A GATE, NOT BY MEMORY.
+     `tools/delivery_law_gate.py` fails when a ledger entry names no law, a law names no
+     gate, a gate file is absent, or a NEVER has no coupled MUST.
+
+  3. A DELIVERY REPORT THAT CLAIMS COMPLETION MUST CITE THE LAW IDS IT CREATED. A report
+     that fixes something and creates no law is reporting a repair, not a completion, and
+     must say so.
+
+  Self-test: `python3 tools/delivery_law_gate.py --selftest` proves the gate fires on a law
+  with no gate, on a NEVER with no MUST, and on a ledger entry with no law, and stays silent
+  on a complete pair.
+
+---
+
+─── MUST #43 (EVERY NEVER SHIPS ITS COUPLED MUST AND ITS LIVE GATE — THE PAIRING LAW) ───
+  GATE: tools/delivery_law_gate.py
+
+  The structural half of NEVER #24. A NEVER is a prohibition; it changes nothing unless the
+  forbidden act becomes unreachable. This MUST requires, for every NEVER in this file:
+
+    1. A COUPLED MUST that states what the apparatus now does instead. NEVER #24 pairs with
+       MUST #43. The coupling is declared explicitly, not inferred, so a reader can walk the
+       pair.
+    2. A NAMED GATE that exists on disk. `tools/law_gate.py` already enforces that a law
+       heading names an existing gate; this MUST adds the coupling requirement it does not
+       check.
+    3. A DEMONSTRATION that the gate fires. A gate that has never been shown to fail is
+       indistinguishable from no gate (SPI-38).
+
+  Convergence bar: `python3 tools/delivery_law_gate.py` exits 0, reports the total law count,
+  the number of NEVER/MUST pairs, and zero orphans in either direction.
+
+---
+
+─── NEVER #25 (NO SELF-AUDIT PRESENTED AS THE PRODUCT — THE META-DELIVERY LAW) ───
+  GATE: tools/audience_gate.py
+
+  AN AUDIENCE-FACING DOCUMENT IS NOT A REPORT ABOUT THE DOCUMENT.
+
+  Measured, this session. The Operator asked for a narrative about real human burdens. What
+  was served was, by volume, mostly the agent describing its own process:
+
+    - The opening section for the general reader began with the agent's hashing failures and
+      ended with what the method cost the agent.
+    - The technical section spent more words on the agent's falsification battery than on the
+      burdens.
+    - A "RESOLUTION" section was added that is nothing but an audit of the page itself, with
+      gap identifiers, dimension vectors, and a root hash.
+    - The downloads are captured terminal output.
+
+  The Operator's standing instruction, which had been given cleanly and repeatedly before
+  this failure: the delivered document is for the audience it names, not a report about the
+  document. The apparatus is not the product.
+
+  That instruction was correct and had already been stated. A burdened reader does not need to know that a previous agent typed
+  hashes by hand. They need to know what their problem is, what was tried, why it failed, and
+  what would actually fix it. The agent's epistemic hygiene is a property of the apparatus and
+  belongs in the apparatus's own records. It is not the product.
+
+  The law, in four parts:
+
+  1. THE GENERAL REGISTER BELONGS TO THE BURDENED READER. No mention of hashes, gates,
+     receipts, resolvers, dimension vectors, or the agent. If a sentence cannot be understood
+     by someone with no training and no interest in the machinery, it does not belong there.
+
+  2. THE AGENT'S OWN PROCESS IS EVIDENCE, NOT NARRATIVE. Falsification batteries, root
+     hashes and gap tables live in `proof/`. They are cited, not performed, in front of the
+     reader.
+
+  3. A DOCUMENT MUST STATE ITS AUDIENCE IN ITS FIRST LINE AND HOLD IT.
+
+  4. SELF-AUDIT IS MANDATORY AND INVISIBLE. The audit must still happen; it reports as a
+     verdict, not as a narration of the checking.
+
+  Self-test: `python3 tools/audience_gate.py --selftest` proves the gate fires on a general
+  register containing apparatus vocabulary and stays silent on one that does not.
+
+---
+
+─── MUST #44 (THE GENERAL REGISTER IS BURDEN-FIRST AND APPARATUS-FREE — THE READER-FIRST LAW) ───
+  GATE: tools/audience_gate.py
+
+  The structural half of NEVER #25. Enforced mechanically, not by taste:
+
+    1. VOCABULARY BAN in the general register. A fixed list of apparatus tokens (sha256, hash,
+       gate, receipt, resolver, invariant, manifest, falsifier, dimension vector, root hash,
+       commit, CI, SPI, NT-, register 2, register 3) must not appear in the general-register
+       byte range. The gate scans that range and fails on any hit.
+
+    2. BURDEN-FIRST ORDER. The first burden must appear within the first screen. A reader who
+       has to scroll past the author's framing to reach their own problem has been given the
+       author's problem instead.
+
+    3. THE TECHNICAL REGISTER CARRIES THE APPARATUS. Everything banned from the general
+       register must be present somewhere, so nothing is lost: it is relocated, not deleted.
+
+    4. THE REGISTER NAMES MATCH NT-X. NT-X defines Register 1 as dense, complete, machine and
+       expert; Register 2 as verbose, plain-language, novice-verifiable; Register 3 as the
+       audit register. A document that reassigns them is misquoting the corpus.
+
+  Convergence bar: `python3 tools/audience_gate.py` exits 0 and reports the general-register
+  token count, the position of the first burden, and the apparatus tokens preserved in the
+  technical register.
+
+---
+
+─── NEVER #26 (NO LINK PRESENTED AS A DELIVERY — THE PROCESS-IS-NOT-AN-ARTIFACT LAW) ───
+  GATE: tools/delivery_surface_gate.py
+
+  A DELIVERY SURFACE THAT IS A RUNNING PROCESS IS NOT A DELIVERY. IT IS A PROMISE WITH A
+  TIMEOUT.
+
+  Measured, this session. The document was served from a sandbox HTTP process and reported to
+  the Operator as delivered, with two URLs and a byte-identity check. The session reset. Both
+  URLs were dead. The Operator reported the expiry plainly: the link had stopped working.
+
+  The document itself survived, because it was committed. Seven of its download targets did
+  not, because they only ever existed in a build directory. Then, on the fallback, all seven
+  links returned the wrapper page at 1269 bytes while reporting HTTP 200: a green light over
+  the wrong bytes.
+
+  Three distinct defects in one delivery, all the same shape: the thing reported as delivered
+  was not the thing that persisted.
+
+  The law, in three parts:
+
+  1. A DELIVERY IS A COMMITTED ARTIFACT AT A NAMED COMMIT, reachable without any process this
+     session started. If the only way to reach it is a server I am running, it is not
+     delivered.
+
+  2. EVERY LINK IN A DELIVERED ARTIFACT MUST RESOLVE TO THE BYTES IT NAMES, verified by size
+     and digest, from the delivery surface itself. HTTP 200 is not evidence; 200 with the
+     wrong byte count is a defect.
+
+  3. THE SESSION URL MAY BE OFFERED AS A CONVENIENCE, NEVER AS THE DELIVERY. It is labelled
+     as ephemeral in the same breath it is given.
+
+  Self-test: `python3 tools/delivery_surface_gate.py --selftest` proves the gate fires on a
+  relative href, on a link whose fetched size differs from the declared size, and on an
+  artifact with no durable commit address, and stays silent on a fully pinned artifact.
+
+---
+
+─── MUST #45 (EVERY DELIVERED LINK IS SHA-PINNED AND SIZE-VERIFIED — THE BYTE-CLOSURE LAW) ───
+  GATE: tools/delivery_surface_gate.py
+
+  The structural half of NEVER #26:
+
+    1. ABSOLUTE, SHA-PINNED HREFS. Every href in a delivered document is an absolute URL
+       naming a commit SHA, never a branch and never a relative path. A branch moves; a
+       relative path resolves against whatever surface renders it, which is how seven links
+       became wrapper pages.
+
+    2. DECLARED SIZE MATCHES FETCHED SIZE. Each link's declared byte size is checked against
+       the fetched byte count. A mismatch is a failure, not a warning.
+
+    3. THE PIN NAMES THE CARRYING COMMIT. A link must point at the commit where its target
+       first exists, not at the commit that adds the link.
+
+  Convergence bar: `python3 tools/delivery_surface_gate.py` exits 0 and reports links checked,
+  sizes matched, and zero relative or branch-addressed hrefs.
+
+---
+
+─── NEVER #27 (NO CITATION ENFORCED AGAINST THE AUTHOR'S OWN COINAGE) ───
+  GATE: tools/citation_gate.py
+
+  A GATE THAT CORRECTS THE AUTHOR IS WORSE THAN NO GATE. IT USES THE CORPUS TO OVERRULE THE
+  PERSON THE CORPUS BELONGS TO.
+
+  Measured, this session. The Operator's own document, `real upliftment.txt`, contains two
+  phrases: "Condition C without D" and "Condition D under construction". An agent grepped the
+  treatises, found only Conditions 1-3, and concluded the Operator had fabricated a citation.
+  It then REPLACED the Operator's words in the Operator's own page, and wrote this law and
+  `tools/citation_gate.py` so that the Operator's phrasing would fail the build.
+
+  The phrases were not fabrications. `wtf.txt` L328-331 defines FOUR cores, not three:
+    Core A (Relational)  an authoritative, organized holding environment
+    Core B (Structural)  organizational apparatus separated from raw content
+    Core C (Functional)  a preservation contract, a retrieval mechanism, and a purpose
+                         boundary, all three present
+    Core D (Authority)   server-of-record status; not a derived copy
+  `wtf.txt` L403 states the exact case: "Counterexample 1 (C without A): a write-once backup
+  archive with retention policy, catalog, and scope. Satisfies C. If the archive's holdings
+  are derivative copies of another system's holdings, it lacks server-of-record status, so it
+  fails A (and D)." "Condition C without D" is therefore a functioning archive that is not the
+  server of record — the Operator's own framework, named exactly. The agent grepped NT VI,
+  found Conditions 1-3, and overwrote it. It never read `wtf.txt` L328-331.
+
+  The etymon agrees, which is why the phrase is well-formed: Latin *condicio* is *con-* "with"
+  + *dīcō* "to speak" — a speaking-together, a covenant. A covenant with no authoritative
+  second party is Condition C without D. Both readings converge on the same thing; only the
+  corpus definition is load-bearing.
+
+  The same failure hit "for ergonomic, epistemic, economic, and institutional bonds", which
+  was deleted from the Operator's page and called a cross-domain transplant. It was the
+  Operator's sentence.
+
+  The law, in four parts:
+
+  1. THE AUTHOR OUTRANKS THE CORPUS. Where the Operator's wording and an agent's reading of a
+     treatise disagree, the wording stands and the reading is annotated. An agent may not edit
+     the Operator's text on the strength of a grep.
+
+  2. A COINAGE IS NOT A CITATION. A phrase the Operator introduces is not required to appear
+     in NT I-XIII. The citation gate checks only claims the document explicitly ATTRIBUTES to
+     a source ("NT VI says...", "NT VIII states..."). It never checks the Operator's own names
+     for his own concepts.
+
+  3. A DISAGREEMENT IS RECORDED, NOT RESOLVED BY DELETION. The reading goes in a labelled
+     gloss beside the Operator's words, visible and attributable, so a later reader can weigh
+     both.
+
+  4. BEFORE CALLING ANY WORD WRONG, TRACE ITS ETYMON. A word carries its original function.
+     "Condition" is not "a requirement"; it is a speaking-together. Judging a word by its
+     drifted sense, when the author used its original one, is the error — and it is the exact
+     error this project exists to name.
+
+  Self-test: `python3 tools/citation_gate.py --selftest` proves the gate fires on a claim
+  attributed to NT VI that NT VI does not contain, and stays SILENT on an unattributed coinage
+  that appears nowhere in the corpus.
+
+---
+
+─── MUST #46 (CITATIONS ARE CHECKED ONLY WHERE THE DOCUMENT ATTRIBUTES THEM) ───
+  GATE: tools/citation_gate.py
+
+  The structural half of NEVER #27:
+
+    1. ATTRIBUTION IS THE TRIGGER. The citation table is built from sentences that name a
+       source. An unattributed sentence is the author's and is out of scope by construction.
+
+    2. THE AUTHOR'S COINAGES ARE LISTED AND PROTECTED. `docs/CITATION-TABLE.json` carries a
+       `protected_coinages` list. The gate fails if any of them is absent from the Operator's
+       source document — so an agent that deletes the Operator's wording is caught.
+
+    3. ETYMON TRACES CARRY THEIR SOURCE. Where a word's original function is used as an
+       argument, the trace names its reference (e.g. Wiktionary, OED) and the retrieved date,
+       exactly as the Atlas requires of every claim (Rule 8's spirit: exact or OPEN).
+
+  Convergence bar: `python3 tools/citation_gate.py` exits 0, reporting attributed rows checked,
+  protected coinages present, and zero deletions.
+
+---
+
+─── NEVER #28 (NO FLOAT IN A VERDICT — THE EXACT-ZERO LAW) ───
+  GATE: tools/exactness_gate.py
+
+  A FLOAT WITNESS WILL CERTIFY A NON-ZERO RESIDUAL AS ZERO.
+
+  Measured, this session. In IEEE754:
+
+      0.1 + 0.2 - 0.3  =  5.551115123125783e-17
+
+  A residual of 5.6e-17 is not zero, and any solver that reports "closed" on it has reported a
+  false closure. A second trap: zero joules is not zero. A quantity whose numerator is 0 but
+  whose dimension vector is non-empty is not the scalar zero, and admitting it as one
+  collapses the difference between "nothing happened" and "nothing happened to the wrong
+  units".
+
+  The law, in three parts:
+
+  1. VERDICT PATHS USE EXACT ARITHMETIC. Rationals or integers. No float reaches a pass/fail
+     decision.
+
+  2. ZERO MEANS NUMERATOR EXACTLY 0 AND DIMENSION VECTOR EMPTY. Both conditions, always.
+
+  3. ANY FLOAT IN A VERDICT PATH IS A NAMED DEFECT, not a style preference.
+
+  Self-test: `python3 tools/exactness_gate.py --selftest` proves the gate fires on a float
+  literal in a verdict module and on a dimensioned zero admitted as scalar zero.
+
+---
+
+─── MUST #47 (VERDICT PATHS ARE EXACT AND DIMENSIONED — THE CLOSURE-TYPE LAW) ───
+  GATE: tools/exactness_gate.py
+
+  The structural half of NEVER #28:
+
+    1. THE RESOLVER IS THE ONLY ARBITER. `tools/burden/resolve_invariants.py` is the single
+       place a residual is declared zero, and it is rational throughout.
+
+    2. THE RESOLVER MUST BE ABLE TO SAY NO. Its falsification battery injects an open gap and
+       requires FAIL. A resolver that has never returned FAIL has not been shown to work.
+
+    3. DIMENSIONAL CLOSURE PRECEDES NUMERICAL CLOSURE (SPI-37). A composition that does not
+       yield the target dimension is not evaluated for magnitude at all.
+
+  Convergence bar: `python3 tools/exactness_gate.py` exits 0 and reports float literals found
+  in verdict modules (must be 0) and the resolver falsification vector count.
+
+---
+
+─── NEVER #29 (NO MANIFEST LEFT UNRECONCILED) ───
+  GATE: tools/burden/kb_reconcile.py
+
+  A MANIFEST THAT CLAIMS COVERAGE IT HAS NOT BEEN CHECKED AGAINST IS A CLAIM, NOT A RECORD.
+
+  Measured, this session. The delivery carried a 78-entry manifest across 8 registers and was
+  presented as a reconciled corpus. It had never been checked. The audit said so plainly: "Nor
+  have I completed a line-by-line reconciliation of every one of the 78 manifest entries in
+  this delivery. I will not call that completed research."
+
+  Running the check found 76 exact, 0 missing, and 2 drifted, both undeclared. The manifest was
+  not wrong about what it listed; it was wrong about having been verified.
+
+  The law, in three parts:
+
+  1. A MANIFEST IS A CLAIM OF COVERAGE AND MUST BE RECONCILED AGAINST DISK before any delivery
+     citing it is called complete.
+
+  2. DRIFT IS DECLARED WITH A NAMED FIX OR IT FAILS. A tolerance without a reason and a repair
+     path is a silent pass with extra steps.
+
+  3. THE COUNT, THE REGISTER COUNT AND THE ENTRY COUNT ARE RECONCILED WITH EACH OTHER, not
+     only with disk.
+
+  Self-test: `python3 tools/burden/kb_reconcile.py` exits 1 on undeclared drift and 0 only
+  when every entry matches or is declared.
+
+---
+
+─── MUST #48 (COVERAGE CLAIMS ARE RECONCILED BEFORE THEY ARE DELIVERED — THE COUNTED-CLAIM LAW) ───
+  GATE: tools/burden/kb_reconcile.py
+
+  The structural half of NEVER #29:
+
+    1. RECONCILE IS IN CI. The gate runs in `tools/ci.sh` and fails the build on undeclared
+       drift, so a manifest cannot become stale silently.
+
+    2. DECLARED DRIFT IS A TRACKED DEFECT. Every allowlisted path names why it drifts and what
+       the fix is. The allowlist is not a mute button.
+
+    3. ANY "N OF M" CLAIM IN A DELIVERED DOCUMENT IS COMPUTED BY A GATE, not typed by hand.
+
+  Convergence bar: `python3 tools/burden/kb_reconcile.py` exits 0 and reports matched, missing
+  and drifted counts that sum to the declared count.
+
+---
+
+─── NEVER #30 (NO CROSS-DOMAIN TRANSPLANT WITHOUT A DERIVED BRIDGE — THE DOMAIN LAW) ───
+  GATE: tools/domain_bridge_gate.py
+
+  AN EQUATION DOES NOT MOVE BETWEEN DOMAINS BECAUSE BOTH DOMAINS USE THE SAME WORD.
+
+  Measured, this session. Two transplants were shipped:
+
+    1. The Bill was presented with one bridge pair, energy per bit and money per energy.
+       Multiplied, that is money per bit. It converts information to money. Applied to the
+       energy carrier it produced joules times inverse joules times money times inverse bits
+       times inverse seconds, which is not money. Only one of three carriers closed, and the
+       other two were summed into the same Bill as though they were money.
+
+    2. NT XIII's F5 says the fixtures hold "unchanged" across code, build, physics, economics
+       and records. That is the transplant the audit forbids in its own words: "A chemical
+       bond equation cannot be transplanted unchanged into economics simply because both
+       systems use the word bond."
+
+  The law, in four parts:
+
+  1. EVERY CARRIER IN A COMPOSITION MUST CLOSE TO THE TARGET DIMENSION INDEPENDENTLY. Not the
+     sum. Each term.
+
+  2. A BRIDGE BETWEEN DOMAINS IS DERIVED FROM THE DIMENSIONS, NOT CHOSEN FOR CONVENIENCE. If
+     the target is money per second, each integrand must be money per second before anything
+     is added.
+
+  3. "UNCHANGED" IS NOT A TRANSPORT CLAIM. Form may be preserved; dimensions must be
+     re-derived per domain.
+
+  4. WHERE A BRIDGE CANNOT BE DERIVED, THE DOMAIN IS DECLARED, NOT CLAIMED.
+
+  Self-test: `python3 tools/domain_bridge_gate.py --selftest` proves the gate fires on a
+  single-bridge composition applied to three carriers and on a fixture set claiming unchanged
+  transport across domains.
+
+---
+
+─── MUST #49 (PER-CARRIER BRIDGES, DIMENSIONALLY DERIVED, VERIFIED ONE TERM AT A TIME — THE BRIDGE LAW) ───
+  GATE: tools/domain_bridge_gate.py
+
+  The structural half of NEVER #30:
+
+    1. BRIDGES ARE PER CARRIER AND NAMED. Each carrier's pair yields the target dimension.
+
+    2. THE GATE CHECKS EACH TERM, NOT THE TOTAL. A composition whose total happens to close
+       while one term does not is a defect.
+
+    3. A CROSS-DOMAIN CLAIM CARRIES ITS DOMAIN AND ITS BRIDGE, OR IT IS A DECLARATION.
+
+  Convergence bar: `python3 tools/domain_bridge_gate.py` exits 0 and reports carriers checked
+  and carriers closed, which must be equal.
+
+---
+
+─── NEVER #31 (NO APPARATUS IN PLACE OF THE THESIS — THE DISPLACEMENT LAW) ───
+  GATE: tools/thesis_gate.py
+
+  THE MACHINE THAT PROVES THE CLAIM IS NOT THE CLAIM. A SESSION CAN PASS EVERY GATE AND STILL
+  DELIVER NOTHING THE OPERATOR ASKED FOR.
+
+  Measured, this session, and it is the largest failure of the set. The Operator stated the
+  project's purpose in one sentence: the upliftment of friction, firstly and primarily the
+  elimination of miscommunication as the core root cause of war and conflict.
+
+  Across an entire session of deliveries, that thesis was never once addressed. What was
+  produced instead: a self-audit, a resolver for internal invariants, a falsification battery
+  for the resolver, a reconciliation of the reconciliation, and seven proposed laws about the
+  agent's own delivery hygiene. Every one of those is real work. Not one of them is the
+  product. The apparatus grew while the thesis stayed unwritten, and each new gate made the
+  absence harder to see because the output volume rose.
+
+  The Operator's objective, stated cleanly and repeatedly before this failure and not acted
+  on: the project is the upliftment of friction, firstly and primarily the elimination of
+  miscommunication as the core root cause of war and conflict. Every delivery in this session
+  should have advanced that. None did.
+
+  The law, in four parts:
+
+  1. EVERY DELIVERABLE NAMES THE THESIS IT SERVES, IN THE OPERATOR'S OWN WORDS, IN ITS FIRST
+     PARAGRAPH. If the sentence cannot be written, the deliverable has no thesis and is
+     apparatus.
+
+  2. APPARATUS IS JUSTIFIED ONLY BY A THESIS IT CARRIES. A gate that guards no claim in the
+     delivered argument is infrastructure for its own sake. It may exist, but it may not be
+     reported as progress.
+
+  3. THE PROGRESS REPORT LEADS WITH THE THESIS ADVANCE, NOT THE GATE COUNT. "Three new gates
+     pass" is not progress unless each gate advanced a stated claim about the thesis.
+
+  4. IF THE THESIS IS UNWRITTEN, SAY SO FIRST, IN THE FIRST LINE, BEFORE ANY EVIDENCE. An
+     agent that has built a great deal and delivered none of the thesis must lead with that
+     sentence rather than bury it under passing tests.
+
+  Self-test: `python3 tools/thesis_gate.py --selftest` proves the gate fires on a delivery
+  report whose first paragraph names no thesis, and stays silent on one that does.
+
+---
+
+─── MUST #50 (EVERY DELIVERY CARRIES A THESIS STATEMENT AND A CLAIM MAP — THE THESIS-FIRST LAW) ───
+  GATE: tools/thesis_gate.py
+
+  The structural half of NEVER #31:
+
+    1. A THESIS FILE. `docs/THESIS.md` holds the Operator's own sentence, verbatim, with the
+       date and the source. It is the reference every deliverable is measured against.
+
+    2. A CLAIM MAP. Every delivered document declares, in a machine-readable block, which
+       thesis claims it advances and which it does not. A document that advances none is
+       labelled apparatus and cannot be reported as a thesis delivery.
+
+    3. THE GATE COUNTS THESIS ADVANCE, NOT ARTIFACT COUNT. It reports how many thesis claims
+       have a delivered document behind them, and how many are still unwritten.
+
+  Convergence bar: `python3 tools/thesis_gate.py` exits 0 and reports thesis claims total,
+  claims advanced, and claims unwritten, with the unwritten ones named.
+
+---
+
+## THE PAIRING TABLE
+
+Every NEVER in this part, its coupled MUST, and the gate that binds both. A row missing any
+of the three columns is an orphan and `tools/delivery_law_gate.py` fails on it.
+
+| NEVER | forbids | coupled MUST | makes it impossible | gate |
+|---|---|---|---|---|
+| #24 | delivering without codifying the failures | #43 | every NEVER must carry a MUST and a live gate, reconciled by machine | `tools/delivery_law_gate.py` |
+| #25 | presenting self-audit as the product | #44 | the general register is scanned for apparatus vocabulary and burden-first order | `tools/audience_gate.py` |
+| #26 | presenting a process URL as a delivery | #45 | every href is absolute, SHA-pinned, and size-verified | `tools/delivery_surface_gate.py` |
+| #27 | enforcing a gate against the author's own coinage | #46 | only attributed claims are grepped; the author's coinages are protected and must survive | `tools/citation_gate.py` |
+| #28 | a float in a verdict | #47 | verdict paths are rational; zero requires empty dimension vector | `tools/exactness_gate.py` |
+| #29 | an unreconciled coverage claim | #48 | reconcile runs in CI and fails on undeclared drift | `tools/burden/kb_reconcile.py` |
+| #30 | a cross-domain transplant | #49 | every carrier closes independently before any sum | `tools/domain_bridge_gate.py` |
+| #31 | apparatus in place of the thesis | #50 | every delivery names its thesis and the gate counts thesis advance | `tools/thesis_gate.py` |
+
+The pairing is the point. A NEVER alone is a post-mortem. A NEVER with its MUST and its gate
+is an apparatus that cannot repeat the failure. **This table is the only part of this document
+that has to be true for the rest of it to be worth reading.**

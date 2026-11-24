@@ -41,7 +41,10 @@ LAW = re.compile(r"───\s*((?:NEVER|MUST|SPI)-?\s*#?\d+)\s*(?:\(([^)]*)\))?
 # `tools/unit_ledger.js` + a stranded `on`, because `js` is an alternative and the
 # character class before it happily eats the dot. A detector that matches a PREFIX of
 # the name it is looking for reports a gate that does not exist (SPI-35).
-GATE = re.compile(r"tools/[\w.-]+\.(?:py|sh|js)(?![\w.-])")
+# Nested paths are load-bearing: `tools/burden/kb_reconcile.py` is a real gate, and a
+# pattern that cannot see the slash reports an existing gate as missing — the inverse of
+# the prefix bug noted above, same defect class (SPI-35).
+GATE = re.compile(r"tools/(?:[\w.-]+/)*[\w.-]+\.(?:py|sh|js)(?![\w.-])")
 NOTE = "[NOTE: not yet gated]"
 
 # A law declaration in prose: the id at the start of a line, followed by "(" or ":".

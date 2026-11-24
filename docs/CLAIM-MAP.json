@@ -1,0 +1,50 @@
+{
+  "_law": "NEVER #31 / MUST #50. Each claim states whether a delivered document advances it. 'unwritten' is a legitimate and honest status; it is the backlog. A claim marked 'advanced' must name at least one document that exists.",
+  "thesis": "The upliftment of friction as a class, ordered so that miscommunication comes first, because miscommunication is the core root cause of war and conflict.",
+  "claims": [
+    {
+      "id": "T1",
+      "claim": "Miscommunication is the CORE ROOT CAUSE of war and conflict (rank claim, not existence claim).",
+      "status": "advanced",
+      "docs": [
+        "docs/MISCOMMUNICATION-AND-WAR.html"
+      ],
+      "needs": "Written: mechanism, pre-stated falsifier, three measurable gates, ordered repair, and the bound. Next: test the falsifier against real cases."
+    },
+    {
+      "id": "T2",
+      "claim": "The mechanism is the cut: an error is severed from the process that made it and the account becomes inadmissible.",
+      "status": "advanced",
+      "docs": [
+        "docs/MISCOMMUNICATION-AND-WAR.html",
+        "docs/nt/NT-V.txt"
+      ],
+      "needs": "Carried to two human parties in conflict: the account becomes inadmissible. Corpus leg cited."
+    },
+    {
+      "id": "T3",
+      "claim": "A coupling holds only if disjoint, continuous, and synchronous (NT VI Conditions 1-3); the residual chi must be exactly zero.",
+      "status": "advanced",
+      "docs": [
+        "docs/nt/NT-VI.txt"
+      ],
+      "needs": "Written and greppable. Applied here to substrates, not yet to parties."
+    },
+    {
+      "id": "T4",
+      "claim": "The upliftment of friction as a class, with miscommunication ordered first.",
+      "status": "unwritten",
+      "docs": [],
+      "needs": "The ordering itself is a claim: that other frictions are downstream. Not yet argued or tested."
+    },
+    {
+      "id": "T5",
+      "claim": "The delivered document advances the thesis for a general reader.",
+      "status": "advanced",
+      "docs": [
+        "docs/MISCOMMUNICATION-AND-WAR.html"
+      ],
+      "needs": "A general-reader document that is burden-first and apparatus-free."
+    }
+  ]
+}

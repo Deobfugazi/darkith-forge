@@ -1,0 +1,9 @@
+{
+  "_law": "NEVER #30 / MUST #49. Every carrier must close to the target dimension independently. The per-carrier bridges are derived from the dimensions, not chosen.",
+  "target": {"M": 1, "T": -1},
+  "carriers": [
+    {"x": "I", "R": {"B": 1, "T": -1}, "kappa": {"J": 1, "B": -1}, "rho": {"M": 1, "J": -1}},
+    {"x": "E", "R": {"J": 1, "T": -1}, "kappa": {}, "rho": {"M": 1, "J": -1}},
+    {"x": "$", "R": {"M": 1, "T": -1}, "kappa": {}, "rho": {}}
+  ]
+}

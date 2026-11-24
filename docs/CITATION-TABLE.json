@@ -1,0 +1,117 @@
+{
+  "_law": "NEVER #27 / MUST #46. Only claims the document ATTRIBUTES to a source are checked. The author's own coinages are protected: if one goes missing, an agent deleted it.",
+  "citations": [
+    {
+      "claim": "NT VI names exactly three conditions",
+      "source": "docs/nt/NT-VI.txt",
+      "must_contain": [
+        "Condition 1",
+        "Condition 2",
+        "Condition 3"
+      ]
+    },
+    {
+      "claim": "NT VI defines the coupling residual as a sum of three terms",
+      "source": "docs/nt/NT-VI.txt",
+      "must_contain": [
+        "chi = (collisions) + (interface discontinuity) + (phase error)"
+      ]
+    },
+    {
+      "claim": "NT VIII scopes the bond criterion to adhesive classes",
+      "source": "docs/nt/NT-VIII.txt",
+      "must_contain": [
+        "epoxy",
+        "cyanoacrylate",
+        "hot-melt",
+        "silicate"
+      ]
+    },
+    {
+      "claim": "NT VIII states the bond criterion",
+      "source": "docs/nt/NT-VIII.txt",
+      "must_contain": [
+        "(W_A / W_coh)"
+      ]
+    },
+    {
+      "claim": "NT IX states the triadic residual",
+      "source": "docs/nt/NT-IX.txt",
+      "must_contain": [
+        "r = ln x",
+        "n ln b"
+      ]
+    },
+    {
+      "claim": "NT-X defines Register 1 as machine and expert, Register 2 as novice-verifiable",
+      "source": "docs/nt/NT-X.txt",
+      "must_contain": [
+        "Register 1",
+        "machine + expert",
+        "Register 2",
+        "novice-verifiable",
+        "Register 3"
+      ]
+    },
+    {
+      "claim": "NT XIII states the Landauer floor",
+      "source": "docs/nt/NT-XIII-OFIF.txt",
+      "must_contain": [
+        "kappa = E/I",
+        "rho = $/E",
+        "k_B T ln2"
+      ]
+    },
+    {
+      "claim": "NT XIII states the Bill composition",
+      "source": "docs/nt/NT-XIII-OFIF.txt",
+      "must_contain": [
+        "Bill = INTEGRAL[t0,t1]"
+      ]
+    },
+    {
+      "claim": "NT XIII states F5 as 'unchanged' across domains",
+      "source": "docs/nt/NT-XIII-OFIF.txt",
+      "must_contain": [
+        "hold unchanged"
+      ]
+    },
+    {
+      "claim": "NT XIII states D_BASAL",
+      "source": "docs/nt/NT-XIII-OFIF.txt",
+      "must_contain": [
+        "D_BASAL"
+      ]
+    },
+    {
+      "claim": "NT V states the interactional cut and 'works on my machine'",
+      "source": "docs/nt/NT-V.txt",
+      "must_contain": [
+        "interactional cut",
+        "works on my machine"
+      ]
+    }
+  ],
+  "protected_coinages": [
+    {
+      "phrase": "Condition C without D",
+      "source": "real upliftment.txt",
+      "note": "The Operator's phrase, and it is exact. `wtf.txt` L328-331 defines four cores: Core A (Relational) an authoritative organized holding environment; Core B (Structural) apparatus separated from raw content; Core C (Functional) a preservation contract, a retrieval mechanism, and a purpose boundary, all three present; Core D (Authority) server-of-record status, not a derived copy. `wtf.txt` L403 gives the exact case: 'Counterexample 1 (C without A): a write-once backup archive... if the archive's holdings are derivative copies... it fails A (and D).' C without D is a functioning archive that is not the server of record. It is NOT a citation of NT VI Conditions 1-3, and it must never be 'corrected' into them."
+    },
+    {
+      "phrase": "Condition D under construction",
+      "source": "real upliftment.txt",
+      "note": "Core D (Authority) = server-of-record status, not a derived copy (`wtf.txt` L331). D under construction = the record has no authority yet, while rules are already being written around it."
+    },
+    {
+      "phrase": "ergonomic, epistemic, economic, and institutional bonds",
+      "source": "real upliftment.txt",
+      "note": "The Operator's extension of the bond criterion to non-adhesive bonds. His claim, not a misquotation of NT VIII."
+    },
+    {
+      "phrase": "hold unchanged",
+      "source": "real upliftment.txt",
+      "note": "F5 as the Operator carries it. Units are re-derived per domain (DIM-1); the form is preserved."
+    }
+  ]
+}
