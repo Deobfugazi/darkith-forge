@@ -60,6 +60,10 @@ run() {
     if [ "$rc" -eq 3 ]; then
       printf -- '--- %s: SKIP (exit 3)\n' "$name"
       SKIPPED=$((SKIPPED+1))
+      if [ "${SIGMA_ZERO:-0}" = "1" ]; then
+        echo "sigma-zero: required gate '$name' did not execute to PASS"
+        FAILED=1
+      fi
     else
       printf -- '--- %s: FAIL (exit %s)\n' "$name" "$rc"
       FAILED=1
@@ -807,6 +811,10 @@ elif [ "${REVITALIZATION_BOOTSTRAP:-0}" = "1" ]; then
   echo "INACTIVE: CI receipt emitter deferred until the sealed cycle is available"
 fi
 
+if [ "${SIGMA_ZERO:-0}" = "1" ] && [ "$SKIPPED" -gt 0 ]; then
+  FAILED=1
+  echo "sigma-zero: BLOCKED — $SKIPPED gate(s) skipped; every required gate must execute and pass"
+fi
 printf '\nCI: %s (%d skipped)\n' "$([ "$FAILED" -eq 0 ] && echo PASS || echo FAIL)" "$SKIPPED"
 exit "$FAILED"
 
