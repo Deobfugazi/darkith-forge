@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Darkith — Ten Burdens, Three Tongues</title>
+<style>
+  :root { --ink:#171614; --muted:#5f5a52; --line:#ded9cf; --paper:#faf8f3;
+          --good:#1c5f36; --bad:#9d2119; --warn:#7d5200; --rule:#c9c2b4; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:1.1rem; background:var(--paper); color:var(--ink);
+         font:17px/1.68 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+         -webkit-text-size-adjust:100%; }
+  main { max-width:44rem; margin:0 auto; }
+  h1 { font-size:1.5rem; line-height:1.22; margin:0 0 .35rem; letter-spacing:-.01em; }
+  .sub { color:var(--muted); margin:0 0 1.4rem; font-size:.93rem; }
+  h2 { font-size:1.22rem; margin:2.4rem 0 .7rem; padding-top:1.1rem;
+       border-top:2px solid var(--ink); }
+  h3 { font-size:1.02rem; margin:1.7rem 0 .45rem; }
+  h4 { font-size:.95rem; margin:1.2rem 0 .3rem; color:var(--muted);
+       text-transform:uppercase; letter-spacing:.05em; font-weight:700; }
+  p { margin:.75rem 0; }
+  ul,ol { margin:.6rem 0 .8rem; padding-left:1.3rem; }
+  li { margin:.3rem 0; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px;
+          padding:.95rem 1.05rem; margin:1rem 0; }
+  .verdict { border-left:5px solid var(--warn); }
+  .burden { border-left:5px solid var(--bad); }
+  .tag { display:inline-block; font-size:.68rem; font-weight:700; letter-spacing:.07em;
+         text-transform:uppercase; padding:.16rem .45rem; border-radius:4px;
+         background:#efece4; color:var(--muted); margin-right:.4rem; }
+  table { width:100%; border-collapse:collapse; margin:.85rem 0; font-size:.9rem; }
+  th,td { text-align:left; padding:.5rem .45rem; border-bottom:1px solid var(--line);
+          vertical-align:top; }
+  th { font-size:.72rem; text-transform:uppercase; letter-spacing:.05em;
+       color:var(--muted); font-weight:700; }
+  code { background:#eeeae1; padding:.1rem .32rem; border-radius:4px;
+         font-size:.86em; word-break:break-word; }
+  pre { background:#242220; color:#eae6dd; padding:.85rem; border-radius:8px;
+        overflow-x:auto; font-size:.8rem; line-height:1.55; }
+  pre code { background:none; padding:0; color:inherit; }
+  .num { font-variant-numeric:tabular-nums; font-weight:700; }
+  .ok { color:var(--good); font-weight:700; }
+  .no { color:var(--bad); font-weight:700; }
+  blockquote { margin:.9rem 0; padding:.2rem 0 .2rem 1rem;
+               border-left:3px solid var(--rule); color:#3d3933; font-style:italic; }
+  a.dl { display:flex; align-items:center; justify-content:space-between; gap:1rem;
+         background:#fff; border:1px solid var(--line); border-radius:9px;
+         padding:.8rem .95rem; margin:.5rem 0; text-decoration:none; color:var(--ink); }
+  a.dl .name { font-weight:700; }
+  a.dl .what { display:block; font-weight:400; font-size:.84rem;
+               color:var(--muted); margin-top:.15rem; }
+  a.dl .sz { font-size:.78rem; color:var(--muted); white-space:nowrap; }
+  .nav { font-size:.85rem; color:var(--muted); margin:0 0 1.2rem; }
+  .nav a { color:var(--muted); }
+  footer { margin:3rem 0 1rem; padding-top:1rem; border-top:1px solid var(--line);
+           font-size:.83rem; color:var(--muted); }
+  hr.tongue { border:0; border-top:2px solid var(--ink); margin:2.6rem 0; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Ten Burdens, Three Tongues</h1>
+<p class="sub">What the world is actually bleeding, how it tried to stop the bleeding or
+sell the bandage, and the one thing we do that it does not. Same document, three
+registers, no contradictions between them.</p>
+
+<p class="nav">Jump: <a href="#r1">Register 1 — Plain</a> ·
+<a href="#r2">Register 2 — Practitioner</a> ·
+<a href="#r3">Register 3 — Exec</a> ·
+<a href="#downloads">Downloads</a></p>
+
+<div class="card verdict">
+  <strong>Read this before the rest.</strong>
+  <p style="margin-bottom:0">Every number below was fetched from the issuing body and
+  re-tested as a literal string in their own bytes. Where a source could not be read, it
+  is named as unread rather than estimated. The corpus this draws on is NT I–XIII. One
+  thing the whitepaper cites — <code>nt12/</code> — is <b>not in this tree</b>, so I do not
+  cite it as landed. That is the discipline this document is about.</p>
+</div>
+
+<h2 id="r1">REGISTER 1 — THE PLAIN TONGUE</h2>
+<p class="sub" style="margin-bottom:1.2rem">Read this if you know nothing about any of it.
+No training needed. Nothing here is a metaphor.</p>
+
+<h3>The shape of the thing</h3>
+<p>There is one move that causes most of the damage in the world, and it is boringly
+simple. Somebody makes a promise. The promise turns out to be false. The person who made
+it keeps the money, and the person who believed it eats the loss.</p>
+<p>That is it. That is the whole disease. Our corpus calls it <b>the cut</b>: a current
+state is separated from the process that produced it, and whoever produced the state keeps
+the benefit while whoever receives it absorbs the cost when it fails.</p>
+<p>Everything else is machinery that protects the cut. The disclaimer. The liability cap.
+The "works on my machine." The compliance certificate. The roadmap that never arrives. The
+audit that finds nothing because it was paid for by the thing it audits.</p>
+
+<h3>Ten real wounds, with real numbers</h3>
+<p>These are not my opinions. Each number was read out of the issuing body's own document
+and tested for the literal string. If the string was not there, the row was thrown out.</p>
+
+<div class="card burden">
+<p><span class="tag">1 · software</span><b class="num">1,786</b> vulnerabilities are known
+to be actively exploited right now. <b class="num">361</b> of them are used by ransomware
+crews.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> it published a list. A catalogue
+of the known-bad. That is genuinely useful. But a list is not a repair — it is a receipt for
+a wound nobody closed. And it created a new game: <i>stay off the list</i>. Companies now
+manage their reputation against a catalogue instead of fixing the hole.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">2 · software</span><b class="num">428,256</b> vulnerability records
+exist in the national database.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> it counted them. An industry grew
+up around counting, scoring, and triaging them. Almost nobody is paid to <i>close</i> one.
+The scoring became the product.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">3 · people</span>Americans reported <b class="num">859,532</b> fraud
+complaints last year and lost <b class="num">$16.6 billion</b>. Up a third in one year.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> a reporting form, after the
+money is gone. The form is honest. It also cannot get your money back, because by the time
+you file, the promise has already been cut loose from the person who made it.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">4 · savings</span>Investment fraud alone took
+<b class="num">$6.57 billion</b>. It was $4.57B the year before, and $3.31B the year before
+that.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> more disclosure. Longer
+prospectuses. More signatures. The disclosure grew exactly as fast as the fraud, because a
+disclaimer is not a bond — it is a document that <i>transfers</i> the cost to the reader
+while looking like it protects them.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">5 · business</span><b class="num">$2.77 billion</b> lost to email
+impersonation across <b class="num">21,442</b> cases.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> two-factor login. Good, and
+insufficient, because the attack does not break the lock — it wears the owner's name. The
+attacker stands where the trusted party should be standing.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">6 · money</span><b class="num">$9.6 trillion</b> changes hands every
+single day in currency markets.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> netting and settlement houses.
+Real engineering. It also built a permanent toll booth on the world's settlement surface,
+and the toll is charged to everyone downstream of it.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">7 · the poor</span>The world's own financial board names four failures
+in cross-border payments: <b>high costs, low speed, limited access, insufficient
+transparency</b>. A plan has been running since 2020 with <b class="num">19</b> separate
+building blocks.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> a roadmap. Nineteen building blocks. The
+roadmap is now six years old and the four failures are still the four failures. The process
+became the product, because a process that never finishes is a salary that never stops.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">8 · money</span>More than <b class="num">60%</b> of jurisdictions are
+writing rules for stablecoins.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> regulation before the question is
+settled. Nobody has agreed on <i>who is the server of record</i> when the promise fails. The
+rules are being written around an empty chair.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">9 · crime</span><b class="num">$40.9 billion</b> in illicit crypto
+flows — a floor, not a total. Last year's figure was revised from $24.2B up to
+<b class="num">$46.1 billion</b>.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> analytics. And the analytics
+revised its own past by nearly double, on average <b class="num">25%</b> upward. The
+measurement of the failure was itself failing, and quietly.</p>
+</div>
+
+<div class="card burden">
+<p><span class="tag">10 · builders</span><b class="num">986 million</b> code pushes last
+year.</p>
+<p style="margin-bottom:0"><b>How the world answered:</b> automation. Pipelines that turn
+red or green. And here is the wound inside the cure: a pipeline can be made green without
+the code being right. A test that only checks that something ran is not a test. It is a
+lamp that always glows.</p>
+</div>
+
+<h3>What we do that is different</h3>
+<p>One thing, and it is not clever. It is just expensive.</p>
+<p><b>We do not accept a claim because something said it passed. We re-run the work and
+compare the bytes.</b></p>
+<p>That is the whole difference. A green light is not evidence. A green light plus a
+reproducer that anyone can run offline, which recomputes the answer from scratch and
+compares it to what was claimed — that is evidence.</p>
+<p>And we apply it to ourselves first. In the last two days I built an end-to-end rehearsal
+to prove a piece of work was real. Then I tested my own proof. It was fake. The hashes in it
+had never been computed by anything — they were typed. So I threw it away and rebuilt it,
+and then I attacked the rebuilt version fifteen different ways to see if it would lie to me.
+It refused all fifteen. <b>That story is on this page below, because a system that will not
+turn its own test on itself is just another disclaimer.</b></p>
+
+<h3>And here is what it costs</h3>
+<p>Honesty is slower. The fake proof took an hour. The real one took most of a day, and
+it still says the work is <i>not finished</i>, because two strangers have not yet run it
+and agreed with me.</p>
+<p>That is the trade. You get a number you can check instead of a promise you must believe.
+I would rather hand you a smaller true thing than a larger comfortable one.</p>
+
+<hr class="tongue">
+
+<h2 id="r2">REGISTER 2 — THE PRACTITIONER TONGUE</h2>
+<p class="sub" style="margin-bottom:1.2rem">For people who build. The invariants, named,
+with the formula and the gate that enforces each.</p>
+
+<h3>The one-sentence architecture</h3>
+<p>Every burden is a <b>bond that was asserted and did not hold</b>. We do not measure
+intentions, promises, or adoption. We measure the residual — the exact size of the gap
+between what was claimed and what the bytes do — and we refuse to ship while it is non-zero.</p>
+
+<h3>The formularies, and where each one bites</h3>
+
+<h4>Σ = Σ_S + Σ_B = 0 — the closure criterion (NT XII §14.3)</h4>
+<p>Σ_S is the count of verified mechanisms the emitted source does not actually satisfy.
+Σ_B is the count of compiler rejections on the final pass. The build is closed iff both
+are zero. A build with Σ_S &gt; 0 ships a mechanism that was verified but not used —
+semantic drift at the substrate layer. Sibling of ℬ ≥ 1 and r = 0: one remainder, one
+sharp zero, one exact repair.</p>
+<p><b>What it kills:</b> the green pipeline. A CI that compiles but does not satisfy the
+verified mechanism has Σ_S &gt; 0 and is not closed, whatever colour the lamp is.</p>
+
+<h4>ℬ = (W_A/W_coh)·(α_∞/α_gel)·η ≥ 1 — the bond criterion (NT VIII)</h4>
+<p>Adhesion energy against cohesive cost, cure extent against gel point, contact
+efficiency. Below 1 the joint fails. Above 1 it holds. The criterion is
+mechanism-independent: it holds for epoxy, for tar on flint, and — this is the transfer —
+for ergonomic, epistemic, economic, and institutional bonds.</p>
+<p><b>The transfer that matters:</b> the cut is ℬ &lt; 1 <i>at the ledger</i>. The producer
+who takes the benefit but not the cost is a bond that failed the invariant. The correction
+is not moral. It is restoring ℬ to ≥ 1.</p>
+
+<h4>r = ln x − n ln b — the triadic residual (NT IX)</h4>
+<p>Three coordinates, two degrees of freedom, one redundancy. Designate two as trusted and
+the third is <i>forced</i>; the residual localises which one is untrusted. When b = 1 the
+arithmetic refuses the log leg outright. The device refuses to guess rather than guessing
+well.</p>
+<p><b>Where it bites the industry:</b> 30% more code generated, 0% more issues resolved.
+That ratio is r ≠ 0. It is the measurable gap between the effort spent and the value
+delivered, and it is why "we shipped a lot" is not an answer.</p>
+
+<h4>F1–F5 and the Bill — the field-invariant formulary (NT XIII §4)</h4>
+<pre><code>F1  R_x = x_gen − x_con − dx_sto/dt − x_rec − x_wst      x ∈ {E, I, $}
+F2  kappa = E/I [J/b],  rho = $/E [$/J],  kappa ≥ k_B T ln 2
+F3  W_gen = R_rec + W_res,   W_reclaimed = W_gen · eta · D_BASAL
+F4  L1 HWM monotone down; L2 above-HWM = FAIL; L3 stasis expires; L4 waiver recorded
+F5  the same F1–F4 hold unchanged in code, build, physics, economics, records
+
+Bill = ∫[t0,t1] Σ_x ( R_x(t) · kappa_x · rho_x ) dt</code></pre>
+<p>The Bill is a function of measured rates and named bridges. <b>It retains no state.</b>
+That is the point: a bill that remembers is a bill that can be negotiated.</p>
+
+<h4>F4's L3 — the fixture the scan found unoccupied</h4>
+<p>NT XIII's prior-art sweep is explicit about what is genuinely new and what is citation.
+Five fixtures have shipping prior art. Three things are unoccupied:</p>
+<table>
+  <tr><th>#</th><th>Unoccupied</th><th>Why nobody ships it</th></tr>
+  <tr><td>U1</td><td>A defect ratchet whose <b>stasis is scheduled to expire</b></td>
+      <td>Gates freeze a debt forever and call the freeze health. None schedules its own
+      tolerance to die.</td></tr>
+  <tr><td>U2</td><td>The residual <b>emitted as a bill</b></td>
+      <td>Solow prices the residual as productivity. Social cost of carbon prices damage.
+      Pigou prices the externality. None prices <i>closure failure</i>.</td></tr>
+  <tr><td>U3</td><td>Closure run on a <b>contract</b> rather than a plant</td>
+      <td>Material-flow cost accounting closes a process. The contract as the closure
+      boundary is unoccupied.</td></tr>
+</table>
+<p>Everything else in the formulary is a citation, and NT XIII says so in its own text.
+That honesty is the load-bearing part — a fixture that restates Pacioli must be
+<b>cited</b>, not claimed.</p>
+
+<h4>The seven ledgers (NT V)</h4>
+<p>Every open problem drains seven at once: money, time, sleep, attention, body,
+opportunity, relationship. The drain is not constant, it accelerates — sleep debt worsens
+attention, attention worsens money, money worsens relationship, relationship worsens body,
+body worsens sleep. The token is singular because the relief is singular: the problem
+stopped, and all seven stopped in the same instant.</p>
+
+<h4>Re-enterability — the three tests (NT II)</h4>
+<p>A claim is verified only when the operator can re-enter its derivation from the trace.
+Three tests, and a claim failing any one is not a claim, it is a stored belief:</p>
+<ol>
+  <li><b>Source</b> — can the operator see where this came from?</li>
+  <li><b>Transformation</b> — can the operator re-run the chain that produced it?</li>
+  <li><b>Falsifier</b> — can the operator catch a lie by the same means?</li>
+</ol>
+
+<h3>Now map each wound to the invariant that closes it</h3>
+<table>
+  <tr><th>Wound</th><th>What the world did</th><th>The invariant it violated</th></tr>
+  <tr><td>1,786 exploited vulns</td><td>Published a catalogue</td>
+      <td>Σ_B ≠ 0. A known-exploited defect still shipping is an unclosed residual with a
+      published receipt.</td></tr>
+  <tr><td>428,256 CVE records</td><td>Scored and triaged</td>
+      <td>r ≠ 0. Enormous effort on classification, near-zero on closure. The residual is
+      the gap itself.</td></tr>
+  <tr><td>859,532 fraud complaints, $16.6B</td><td>A form, after the loss</td>
+      <td>Condition C without D. A promise with no server of record. ℬ &lt; 1 at the
+      ledger — the cost was transferred to the receiver.</td></tr>
+  <tr><td>$6.57B investment fraud</td><td>More disclosure</td>
+      <td>The cut, formalised. A disclaimer is machinery that protects the inversion while
+      presenting as protection.</td></tr>
+  <tr><td>$2.77B BEC, 21,442 cases</td><td>Two-factor login</td>
+      <td>C = D ∩ P ≠ ∅. The attacker occupies the trusted namespace. Coupling leg 1
+      (disjointness) fails.</td></tr>
+  <tr><td>$9.6T/day FX</td><td>Netting, settlement houses</td>
+      <td>Scale is not closure. The toll booth is a permanent residual accruing on the
+      settlement surface.</td></tr>
+  <tr><td>4 failures, 19 building blocks since 2020</td><td>A roadmap</td>
+      <td>F4's L3, inverted. The process has no expiry, so it is permanent by design. This
+      is exactly the fixture NT XIII found unoccupied.</td></tr>
+  <tr><td>&gt;60% jurisdictions, no server of record</td><td>Rules before the question</td>
+      <td>Condition D under construction. Regulating around an empty chair.</td></tr>
+  <tr><td>$40.9B floor, revised +25%</td><td>Analytics</td>
+      <td>The measurement failed its own falsifier. SPI-31: a skip is never a pass — and a
+      revised number is an admission the first one was a skip.</td></tr>
+  <tr><td>986M pushes</td><td>Automation</td>
+      <td>Σ_S &gt; 0. Each push is a graft that must satisfy C = D ∩ P. A green lamp over
+      an unsatisfied mechanism is the defect, not the fix.</td></tr>
+</table>
+
+<h3>The four lies, and why one test kills all four</h3>
+<p>This is the operational core, and it is the thing the industry has no equivalent of:</p>
+<table>
+  <tr><th>Name</th><th>What it does</th><th>How it is caught</th></tr>
+  <tr><td><b>Stub</b></td><td>Returns a canned answer</td>
+      <td rowspan="4">Re-run the reproducer and compare digests. All four die at the same
+      comparison.</td></tr>
+  <tr><td><b>Mock</b></td><td>Says success without doing the work</td></tr>
+  <tr><td><b>Specter</b></td><td>Echoes back the expected answer it was handed</td></tr>
+  <tr><td><b>Phantom</b></td><td>Cites evidence that does not exist</td></tr>
+</table>
+<p>The control matters as much: an honest claim must <b>survive</b> the same test. A test
+that rejects everything proves nothing. So the barrier requires all four to die <i>and</i>
+the control to live, and it raises if it is handed fewer kills than it planted.</p>
+
+<h3>What actually happened when I applied this to my own work</h3>
+<p>This is the part that makes the rest of the page worth reading, because it is not a
+description of a principle — it is the principle catching me.</p>
+<p>I built a rehearsal. It produced a receipt chain and a witness that printed
+<code>EXPECT:BURDEN_ABSENT_REHEARSAL_OK</code>. It looked exactly like evidence.</p>
+<p>Then I turned the four-phantom test on it:</p>
+<table>
+  <tr><th>Phantom</th><th>Was it present?</th><th>Evidence</th></tr>
+  <tr><td><b>Specter</b></td><td class="no">Yes</td>
+      <td>The witness printed its token <i>regardless of its input</i>. I appended a byte
+      to the evidence — same answer. Restored it — same answer. It was echoing the expected
+      answer it had been handed.</td></tr>
+  <tr><td><b>Phantom</b></td><td class="no">Yes</td>
+      <td>The receipt hashes cited a computation that never happened. Fifty different
+      hashing conventions reproduced none of them.</td></tr>
+</table>
+<p>Both died. I rebuilt the chain so <code>prev</code> sits <i>inside</i> the hashed body,
+made the token the merkle root of the chain so it cannot be printed without the evidence,
+and wrote the two gates that were previously only described in prose:</p>
+<pre><code>BURDEN-GATE-1  duplicate registry   — refuses double-counted burdens
+BURDEN-GATE-2  witness strength     — refuses a witness whose output does not
+                                      depend on its input</code></pre>
+<p>Each gate is proven to <b>fire on a phantom and stay silent on a good record</b>. A gate
+that cannot be shown to fire is indistinguishable from no gate, which is SPI-38: a law must
+be run, not read.</p>
+<p>Then fifteen attacks, all refused, and the sixteenth — claim the barrier closed,
+<i>and rebuild the manifest so every hash agrees again</i> — caught by
+<code>BARRIER_OVERCLAIM</code>.</p>
+
+<h3>Where the corpus is honest about its own limits</h3>
+<p>I am not going to sell you past these, because the corpus does not:</p>
+<ul>
+  <li><b>Novelty is textual, not semantic.</b> G1 is a textual check today. Semantic
+  novelty is an open item.</li>
+  <li><b>The OFIF sweep was not exhaustive.</b> Its verdict is "no novelty found in the
+  named precedents", never "no novelty exists". Those are different sentences and NT XIII
+  forbids collapsing them.</li>
+  <li><b>The curve is a sensitivity table, not a forecast.</b> With one burden in the
+  ledger there is no receipt window to derive <code>a_n</code> from. G3 is explicit: no
+  receipts, no growth, no estimates, ever.</li>
+  <li><b>SPI-37.</b> A residual summed across mismatched units is undefined, not small.
+  Dimensional closure precedes numerical closure.</li>
+  <li><b><code>nt12/</code> is not in this tree.</b> The whitepaper cites it as landed. It
+  is not present here, so this document does not lean on it.</li>
+</ul>
+
+<hr class="tongue">
+
+<h2 id="r3">REGISTER 3 — THE EXEC TONGUE</h2>
+<p class="sub" style="margin-bottom:1.2rem">Commands are the law. If a claim in Register 1
+or 2 is not reachable by a command here, it is a note, not a law (SPI-15).</p>
+
+<h3>Verify the rehearsal yourself</h3>
+<pre><code>git clone https://github.com/Deobfugazi/darkith-forge.git
+cd darkith-forge &amp;&amp; git checkout 86b4920
+
+python3 tools/burden/witness_e2e.py
+# intact  -&gt; EXPECT:BURDEN_ABSENT_REHEARSAL_OK e14350baf18719f1e1f7ddb79cccd0a6ce416eb4143b037fa40436a37ac6047e
+# tampered-&gt; MANIFEST_TAMPER &lt;path&gt;   (exit 1)
+
+python3 tools/burden/burden_gates.py --selftest
+# BURDEN GATES SELFTEST: PASS (0 failed)
+
+python3 tools/burden/adversarial_battery.py
+# 15 vectors, 0 hole(s)</code></pre>
+
+<h3>Reproduce a burden from the sector ledger</h3>
+<pre><code># every figure in Register 1 must survive a literal-string test in the source bytes
+# CISA KEV
+curl -s https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json \
+  | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['count'])"      # 1786
+
+# NVD
+curl -s 'https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1' \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['totalResults'])"   # 428256</code></pre>
+<p>Rule: a claim passes only if the string is present in the bytes. If the source returns
+a JS placeholder, a <code>null</code>, or a 403, the row is <b>dropped and named</b>, never
+estimated. See <code>docs/evidence/SECTOR-PAIN-LEDGER.md</code> for the rejected rows and
+the second-pass verification table.</p>
+
+<h3>The gates that enforce the corpus</h3>
+<table>
+  <tr><th>Law</th><th>Gate (verified present in this tree)</th></tr>
+  <tr><td>NT II — re-enterability</td>
+      <td><code>tools/delivery_gate.sh</code>, <code>tools/board_gate.py</code></td></tr>
+  <tr><td>NT II/XIII — no foreign symbol (SPI-13)</td>
+      <td><code>tools/fork_integrity_gate.sh</code></td></tr>
+  <tr><td>NT IX — API-34 ceiling, align before sign</td>
+      <td><code>build.sh</code>, <code>tools/api_level_gate.py</code></td></tr>
+  <tr><td>NT X — never write a stub (Prime Directive)</td>
+      <td><code>tools/law_gate.py</code>, <code>tools/syntax_gate.py</code></td></tr>
+  <tr><td>NT VI — disjointness / continuity / synchrony</td>
+      <td><code>tools/fork_integrity_gate.sh</code>,
+      <code>tools/bridge_contract_audit.py</code>, <code>tools/synchrony_gate.py</code></td></tr>
+  <tr><td>all NT — corpus carried and contradiction-free</td>
+      <td><code>tools/nt_gate.py</code></td></tr>
+  <tr><td>BURDEN-GATE-1 / 2 (this work)</td>
+      <td><code>tools/burden/burden_gates.py</code>, wired into <code>tools/ci.sh</code></td></tr>
+</table>
+
+<h3>Exit-code contract</h3>
+<pre><code>0  pass
+1  fail
+3  skip — and a skip is NEVER a pass (SPI-31)</code></pre>
+
+<h3>The promotion ladder</h3>
+<pre><code>G0 code   preflight (collision vs origin/main) + rehearse (real ci.sh, detached worktree)
+G1 value  trial-net phantom barrier: 4 phantoms die, control lives, digest equality
+G2 record promote to mainnet ONLY with barrier evidence attached to the ledger
+G3 growth S(n+1) = S(n) + r_n(1 - S(n)),  r_n = clamp(kappa*a_n, 0, r_max)
+          a_n = activations per potential device MEASURED in the mint-ledger receipt window
+          no receipts -&gt; no growth -&gt; no estimates, ever
+G4 satur. reported, never promised; measured from the same receipts</code></pre>
+
+<h3>Standing laws for any executor</h3>
+<pre><code>NEVER #21  standing authority - push finished work
+NEVER #22  uncommitted drift is a defect class (detector + repair + prevention + test)
+MUST  #41  rehearse on the real bytes, in isolation, before the push
+MUST  #42  drift auto-repaired - all four parts or it is not a fix
+SPI-40     no unrehearsed promotion
+SPI-2      a repair is trusted only when the same detector that found the defect
+           reports clean against the bytes on disk
+SPI-31     a skip is never a pass
+SPI-37     a residual across mismatched units is undefined, not small
+SPI-38     a law must be run, not read</code></pre>
+
+<h3>The one instruction that cannot drift</h3>
+<blockquote>If any statement here disagrees with the gates, change the document, not the
+gates. If the gates disagree with the doctrine, change the gates.</blockquote>
+
+<h2 id="downloads">Download the evidence</h2>
+<p>Tap to save. Nothing opens in a viewer.</p>
+
+<a class="dl" href="06_expected_root.txt" download>
+  <span><span class="name">Expected fingerprint</span>
+  <span class="what">The exact line a verifier must get back.</span></span>
+  <span class="sz">168 B</span></a>
+
+<a class="dl" href="01-PROOF-captured.txt" download>
+  <span><span class="name">Proof — captured output</span>
+  <span class="what">Witness and both gates, run and saved, not retyped.</span></span>
+  <span class="sz">817 B</span></a>
+
+<a class="dl" href="02-ATTACKS-captured.txt" download>
+  <span><span class="name">Attacks — captured output</span>
+  <span class="what">All 15 attacks and what refused each one.</span></span>
+  <span class="sz">1.7 KB</span></a>
+
+<a class="dl" href="05_viability_curve.csv" download>
+  <span><span class="name">Sensitivity table</span>
+  <span class="what">Not a forecast. Every a_n is MODELED; read the notes at the bottom.</span></span>
+  <span class="sz">1.8 KB</span></a>
+
+<a class="dl" href="04_receipts.jsonl" download>
+  <span><span class="name">Receipts</span>
+  <span class="what">Seven steps, each sealed against the one before it.</span></span>
+  <span class="sz">3.7 KB</span></a>
+
+<a class="dl" href="00_burden_record.json" download>
+  <span><span class="name">The burden</span>
+  <span class="what">What was wrong, and the falsifiable baseline.</span></span>
+  <span class="sz">653 B</span></a>
+
+<a class="dl" href="manifest.json" download>
+  <span><span class="name">Manifest</span>
+  <span class="what">A fingerprint for every file above.</span></span>
+  <span class="sz">779 B</span></a>
+
+<footer>
+Corpus read for this document: NT I–IV protocol, NT V, VI, VII, VIII, IX, X, XI, XII,
+NT XIII (OFIF), the sector pain ledger, the nodal comparison, and the black &amp; whitepaper —
+9,578 lines across <code>docs/nt/</code>, plus <code>docs/evidence/</code> and
+<code>docs/BLACK-AND-WHITEPAPER-2026-11-23.md</code>.<br>
+Every sector figure is a literal-string-verified quote from the issuing body.
+Rejected sources are named in the ledger, not estimated.<br>
+Rehearsal commit <code>86b4920</code>, branch <code>fix/burden-rehearsal-e2e-v2</code>.
+Main is at <code>9897685</code>, untouched.<br>
+Prepared by an AI agent (OpenHands) on behalf of the Operator.
+</footer>
+
+</main>
+</body>
+</html>
