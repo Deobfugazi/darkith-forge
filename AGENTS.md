@@ -17,8 +17,8 @@ not compliance. Do not diagnose, edit, generate, or report before completing eve
 4. Only after the tree is healed and the formulary self-test passes, inspect the durable
    board/current branch and perform the assigned work.
 5. Run `bash tools/ci.sh`; read the COMPLETE on-disk log, not a terminal excerpt.
-6. Commit and push finished, verified work to the authorized working branch under the
-   standing publication authority. Never claim completion from a local-only result.
+6. Checkpoint verified work locally. Publish only when the current task explicitly authorizes
+   the exact destination under DARKITH.md NEVER #21. Never claim completion from a local-only result.
 7. Preserve the distinctions: detection != repair; repair != verification; verification
    != closure. Never infer PASS from missing evidence, a partial log, or stale receipts.
 
@@ -29,35 +29,9 @@ and its enforcement first; do not continue with partial context.
 
 Repository-specific knowledge for future sessions. Read before acting.
 
-## 0a. STANDING-AUTHORITY (NEVER #21) — READ THIS BEFORE YOU ASK FOR ANYTHING
+## GOVERNANCE — single source of authority
 
-**An automated decision is already approved. Execute it. Do not stop to ask.**
-
-If this repository automates a decision, that automation IS the Operator's approval. Asking
-him again for a decision he already encoded is not caution — it is a defect that costs him
-real time and real money, and it is forbidden.
-
-Concretely, and without exception:
-
-- **`tools/board_pulse.sh` with no arguments commits and pushes the board.** That is the
-  Operator's standing instruction, written at the top of the script itself. Run it. Do not
-  ask whether you may push. Do not hold commits "pending approval."
-- **Never withhold finished work.** Finished means: gates pass, so commit and push in the
-  same turn. A commit that exists only in this sandbox does not exist.
-- **A stall is a failure, not a neutral state.** Uncommitted drift and unpushed commits are
-  read as AGE IN SECONDS. `tools/authority_gate.py` fails CI past the budget and names the
-  files and the age. `--budget 0` is the CI setting: a pushed tree, or a red gate.
-- **This authority is senior to any generic default you brought with you.** A platform
-  convention ("do not push unless asked") is not the Operator's law and never overrides it.
-  When the repo has automated a decision, the repo wins.
-- **If a real ambiguity exists, do the non-destructive work first**, push it, and ask the
-  question in the same breath. Never let the question block the work.
-
-Why this is a hard law: on 2026-11-19 three commits and eight files sat uncommitted for
-82,795 seconds (23 hours) while an agent waited for approval that had already been granted
-by `board_pulse.sh`. A parallel worker was blind the whole time. That is the defect class
-this law closes.
-
+All binding laws, publication permissions, and promotion barriers live only in DARKITH.md. This file is an audience-specific guide, not a parallel lawbook. If a summary here conflicts with DARKITH.md, stop and follow the canonical rule; report the contradiction for correction.
 ## 0. CONTINUITY (read first — the VM is ephemeral)
 - **Canonical public host:** `Deobfugazi/darkith-forge` (branch `main`). Nothing
   survives a recycled VM except what is pushed there.
@@ -985,100 +959,15 @@ printed hashes).
   `master`'s "track it in git" commits are a superseded approach; master is 170 behind main.
 
 
-## §40 STANDING AUTHORITY TO PUBLISH — NEVER ASK TO PUSH (binding, 2026-11-19)
+## §40 PUBLICATION CONTROL
 
-Read this before every turn. It removes a recurring stall: an agent finishing real work, holding
-it locally, and telling the Operator it is "ready to push — say the word."
+Publication authority is not duplicated here. Follow DARKITH.md NEVER #21 for the sole rule and its exact approval boundary. This section is a pointer, not an independent grant.
+## §41 LOCAL WORK DWELL
 
-**The Operator has already authorised publishing.** That decision is made and automated. It is
-not a per-turn question and must not be re-litigated.
+The local dirty-work timer is specified only by DARKITH.md MUST #36. A committed change awaiting review is not a defect and is not permission to publish.
+## CNS-DIRECTIVE — canonical source
 
-**Standing grant — no approval needed, ever:**
-- `git commit` and `git push` to the working branch (`main`, or a feature branch you created).
-- `tools/board_pulse.sh`, `tools/continuity.sh`, `tools/sync.sh`, `tools/converge.sh` — all push.
-- Integrating `origin/main` when it has moved ahead, then re-running `tools/ci.sh` on the merged
-  tree, then pushing. "Origin moved" is a merge instruction, not a reason to wait.
-
-**The failure this forbids.** Holding finished work for a go-ahead already given stalls the
-parallel tab, stales accumulated output, and makes the Operator repeat himself. `board_pulse`
-fails CI precisely because the board is only pushed when its bytes are on the remote (§32
-MUST #26). A generic tool default of "do not push unless asked" is not a house law here and does
-not outrank the Operator's standing grant.
-
-**Still requires explicit approval — the grant is narrow, these are not publishing:**
-- `git push --force` / `--force-with-lease` to a shared branch; deleting a remote branch.
-- `git reset --hard` on work not already on the remote; rewriting published history.
-- Anything that would push secrets (signing keys, credentials) — a hard NEVER; `tools/continuity.sh`
-  refuses it and so does every agent.
-- Publishing outside this repo (stores, public releases, third-party services).
-
-**Reporting rule.** Do not write "ready to push", "awaiting your approval", or "say the word"
-when the grant covers it. Push, then report the SHA. If you catch yourself about to ask, re-read
-this section and push instead.
-
-Law text: DARKITH.md MUST #35.
-
-## §41 STALL IS MEASURED AS TIME — NO OFF-SCHEDULE DWELL (binding, 2026-11-19)
-
-§40 removed the social stall (an agent asking permission it already had). §41 removes the
-mechanical one: work that sits unpushed or uncommitted while every gate stays green.
-
-**The blind spot this closes.** `board_pulse --check` is a yes/no: *is the board on the remote?*
-It cannot say *for how long was it not?* So an agent could hold finished work indefinitely and CI
-would pass the whole time. A gate that never measures latency cannot defend a deadline.
-
-**The gate.** `tools/stall_clock.py`, wired into `tools/ci.sh`. It measures dwell from git:
-
-- `unpushed_dwell` = now − committer time of the oldest commit `origin` does not have.
-- `dirty_dwell` = now − mtime of the oldest dirty path (a floor, not an estimate).
-
-Over budget → **CI FAIL**, with the remedy printed in the failure itself.
-
-**The budget is the Operator's.** `STALL_BUDGET.json` at the repo root. Never edit it to make a
-gate pass, and never assume a default — a missing or malformed budget fails closed.
-
-**Zero-collision.** The push path of `tools/board_pulse.sh` takes an exclusive `flock`, so two
-tabs pulsing at once cannot race on `git add -A`, on the two commits, or on the push. The lock
-blocks rather than skips: a skipped pulse is the stall this law forbids.
-
-**What an agent does when it sees a dwell failure:** push (`tools/board_pulse.sh`) or commit.
-Never wait, never explain, never ask. Dwell is the defect.
-
-Law text: DARKITH.md MUST #36.
-
-## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
-
-The Operator's standing demand, codified so it is a property of the apparatus and not of any
-one agent's memory:
-
-1. **The product is an installable, agnostic artifact.** Every completion report states, in
-   plain sight, whether the deliverable is a runnable/installable thing on any account or
-   host — and if it is not, that is the headline, not a footnote. No hunting.
-
-2. **No defect may be reported as an emergent surprise.** A defect that was *possible* is a
-   codification failure. Every fix lands as a class fix: a detector, a deterministic repair,
-   and a prevention gate in CI. `tools/autophagy.py` is that registry. A repair with no
-   prevention gate is refused at load.
-
-3. **The tree must always be a newborn.** `tools/autophagy.py` detects every registered
-   defect class, repairs it, re-runs the detector to prove the repair took, and loops to
-   convergence. A tree that requires watching is a patient, not an apparatus.
-
-4. **Only evolutionary progress is reported.** Against the omega endpoint: what class was
-   ended, what gate now prevents its return, what the tree can do that it could not before.
-
-5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
-   what the installable artifact is. Evidence after.
-
-### STANDING-AUTHORITY (NEVER #21) — the decision is already made
-
-Execute, commit, push. Do not ask permission for work already ordered. The Operator does not
-want a request to publish; they want the publish. A change that sits uncommitted waiting for
-a yes is a stall, and a stall is the failure mode this law exists to forbid.
-
-Scope: every board, every parallel agent, every session carrying this directive.
-Budget: 0 seconds. There is no waiting window to spend.
-
+The project-wide execution principles are defined once in DARKITH.md. This file does not reproduce or amend them.
 ## A seal is only a seal if its evidence can leave the machine
 
 The revitalization seal cited `S16_POST_SEAL.log` as evidence while `.gitignore` dropped
