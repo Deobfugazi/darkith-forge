@@ -15,12 +15,12 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 86,224 | `499bbf437442` | AGENTS.md — Darkith |
+| `AGENTS.md` | 86,222 | `8bac2a044085` | AGENTS.md — Darkith |
 | `DARKITH.md` | 169,112 | `a3cdb073cae3` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 70,235 | `e7dc5bdf2592` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 17,483 | `b5e5cce48b9d` | TASKS — the durable board |
+| `TASKS.md` | 19,078 | `eab4d3843515` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -34,7 +34,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/BLACK-AND-WHITEPAPER-2026-11-23.md` | 7,519 | `9cbfbeb13fbb` | THE BLACK & WHITEPAPER — Three Tongues, Zero Hedges |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
 | `docs/DARKITH-OMEGA-repo.txt` | 120,500 | `40e583a08a9c` | Repository: An Invariant Decomposition Across Eleven Attested Senses a |
-| `docs/FAILURE-MODE-LEDGER.md` | 13,931 | `ad2bd6c48691` | DARKITH — FAILURE MODE LEDGER |
+| `docs/FAILURE-MODE-LEDGER.md` | 13,929 | `32df29806df9` | DARKITH — FAILURE MODE LEDGER |
 | `docs/FOREMAN-DELEGATION-SPI40-2026-11-23.md` | 5,542 | `6244c12d14d8` | FOREMAN DELEGATION — SPI-40 WORK QUEUE (2026-11-23) |
 | `docs/FOREMAN-DISPATCH-2026-11-23.md` | 2,999 | `fe95975a5dcd` | FOREMAN DISPATCH — 2026-11-23 |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |

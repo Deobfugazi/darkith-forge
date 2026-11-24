@@ -3,10 +3,10 @@
   "count": 88,
   "files": [
     {
-      "bytes": 86224,
+      "bytes": 86222,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "499bbf43744228cdf9362596394c04952c8a7d8a2c7ba5ce80ab69e5b5484164"
+      "sha256": "8bac2a04408559715caef049c0459b15448b5aaa3a800ac9852d6993c8dad997"
     },
     {
       "bytes": 169112,
@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 17483,
+      "bytes": 19078,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "b5e5cce48b9d4dd3f82bb7746551150903024f833f3c9e4292fcf12963e2b64b"
+      "sha256": "eab4d3843515f2c4a6d87dc103630d24b3b5e354220e391aedb57e7653a1214a"
     },
     {
       "bytes": 817,
@@ -87,10 +87,10 @@
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
     },
     {
-      "bytes": 13931,
+      "bytes": 13929,
       "path": "docs/FAILURE-MODE-LEDGER.md",
       "register": "B-knowledge",
-      "sha256": "ad2bd6c48691c34d0eed607b5f6673736290092570c0d2f0314264f9f80143d5"
+      "sha256": "32df29806df9315c46362aad0a8627eaa8829d958a94f7e533935a8ecd9bd18f"
     },
     {
       "bytes": 5542,

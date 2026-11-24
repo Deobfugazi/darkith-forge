@@ -1,36 +1,39 @@
 {
-  "absolved": 3,
-  "extraction": 0,
+  "absolved": 0,
+  "extraction": 3,
   "law": "NT XI: W_in - E = S != 0; absolution as E/W_in -> 0",
   "producers": 3,
-  "ratio": 0.0,
+  "ratio": 1.0,
   "results": [
     {
       "evidence": {
-        "proof/kb-reconcile.json": "ac562dba95ab81405ac0b9ffb62948d50838cb4480fe4f3d4ae1cb4b1098077d"
+        "proof/kb-reconcile.json": "0cefc115e07889818a666119f24e6736cec04a13f4fb71cb1764fce0eb666e98"
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
+      "first_tree_sha256": "46eaaf70b111e7fa21256776f04166b1dd361f26ed6fb40bbfb19605734fb5d4",
       "fixed_point": true,
       "owns": [
         "proof/kb-reconcile.json"
       ],
       "producer": "kb_reconcile",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
-      "verdict": "ABSOLVED",
-      "why": "fixed point, and every byte it owns is carried by git",
-      "wrote": []
+      "second_tree_sha256": "46eaaf70b111e7fa21256776f04166b1dd361f26ed6fb40bbfb19605734fb5d4",
+      "verdict": "FAIL",
+      "why": "unmarked write outside declared outputs: docs/kb-reconcile.json",
+      "wrote": [
+        "docs/kb-reconcile.json",
+        "proof/kb-reconcile.json"
+      ]
     },
     {
       "evidence": {
-        "docs/INDEX.md": "415bf70010e0f5b44a335d650675881eebec12b441dac87aa1bdb1878ea2e208",
-        "docs/kb_manifest.json": "51bc3f57ea6d5fd01a6f5352ecf224ddfe969708c9da71b874139360e41c0664"
+        "docs/INDEX.md": "7624c4ccfddf68154e99e3f9555e1a78de85f3441909b6ea90522eebf9bb569b",
+        "docs/kb_manifest.json": "0cbfa2e6956688f6010be72378bb5364388d9f96e3989f42f99ed07cbf478e7b"
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
+      "first_tree_sha256": "46eaaf70b111e7fa21256776f04166b1dd361f26ed6fb40bbfb19605734fb5d4",
       "fixed_point": true,
       "owns": [
         "docs/INDEX.md",
@@ -38,21 +41,21 @@
       ],
       "producer": "kb_index",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
-      "verdict": "ABSOLVED",
-      "why": "fixed point, and every byte it owns is carried by git",
+      "second_tree_sha256": "46eaaf70b111e7fa21256776f04166b1dd361f26ed6fb40bbfb19605734fb5d4",
+      "verdict": "CARRIAGE_REQUIRED",
+      "why": "rewrite is a fixed point but has left the system: docs/INDEX.md, docs/kb_manifest.json",
       "wrote": []
     },
     {
       "evidence": {
-        "TASKS.md": "5be35d96c9fe007f5cadfdede02079cda85e00e249a53413653c145b0e17ef4b",
-        "proof/chat_gatekeeper.json": "84bef59f91d669989895d485d3dd5a7a12232dede5cdfc7f862e6cc49f83be69",
+        "TASKS.md": "d9735d7a37f9d1b0cdf922199cd29e6ff04815817cb4dbd1f91ca8a7d37d77a1",
+        "proof/chat_gatekeeper.json": "b9dc194c35dc0b822d9bfa1e886addce44b5b08a0a5983e687efd320158e96f8",
         "proof/chat_pings.json": null,
-        "proof/chat_watermark.json": "d525d27484bd7a070205e4b562ee5285d3d935bb40811a7a04b47975d3a331aa"
+        "proof/chat_watermark.json": "1aa8793f194e534e69250c9bccb80c535fbb6adbf7b24639a5209bb4a26db4ba"
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
+      "first_tree_sha256": "46eaaf70b111e7fa21256776f04166b1dd361f26ed6fb40bbfb19605734fb5d4",
       "fixed_point": true,
       "owns": [
         "TASKS.md",
@@ -62,9 +65,9 @@
       ],
       "producer": "chat_gatekeeper",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "fd20578da2b669e31af5e10da8b38bf56c4ef34fb883f6b1fbf491d3fc2fa048",
-      "verdict": "ABSOLVED",
-      "why": "fixed point, and every byte it owns is carried by git",
+      "second_tree_sha256": "46eaaf70b111e7fa21256776f04166b1dd361f26ed6fb40bbfb19605734fb5d4",
+      "verdict": "CARRIAGE_REQUIRED",
+      "why": "rewrite is a fixed point but has left the system: TASKS.md, proof/chat_gatekeeper.json, proof/chat_watermark.json",
       "wrote": []
     }
   ]

@@ -1,5 +1,5 @@
 {
-  "block_sha256": "ed542fa0ef58868cb1a766fcbcd149283cfe758bcddcec49a68d7302e853f996",
+  "block_sha256": "85633e3cb43e8c5cbdc7c55e29eae5aa13a85eb124a222b315f22ae8039be5d2",
   "conversation": "18393131094c4acfb45d943764549f23",
   "ingested": [
     {
@@ -124,6 +124,46 @@
       ],
       "sha256": "7b7ebddd4aa119954d7ee523a8344dc016ad20b43978fcf78b3203a306c49d19",
       "timestamp": "2026-11-24T13:50:56.034614"
+    },
+    {
+      "index": 40886,
+      "kind": "forbid",
+      "laws": [
+        "MUST #20",
+        "MUST #26",
+        "MUST #27",
+        "MUST #30",
+        "MUST #33",
+        "NEVER #19",
+        "SPI-15",
+        "SPI-2",
+        "SPI-4",
+        "SPI-6"
+      ],
+      "sha256": "41da184cb130dbed154735d70ae77c6813d043a318b8b163632f762889e74b6b",
+      "timestamp": "2026-11-24T15:54:40.631269"
+    },
+    {
+      "index": 41051,
+      "kind": "forbid",
+      "laws": [
+        "MUST #20",
+        "MUST #26",
+        "MUST #27",
+        "MUST #28",
+        "MUST #33",
+        "MUST #35",
+        "MUST #36",
+        "NEVER #21",
+        "SPI-15",
+        "SPI-2",
+        "SPI-25",
+        "SPI-26",
+        "SPI-4",
+        "SPI-6"
+      ],
+      "sha256": "d31d99750f50bbd55d1c7030a9b0099f6867e002c9d1c010c5e5903c00e236b2",
+      "timestamp": "2026-11-24T16:08:54.088372"
     }
   ],
   "occupation": {
@@ -133,8 +173,8 @@
   },
   "watermark": {
     "conversation": "18393131094c4acfb45d943764549f23",
-    "ingested_total": 10,
-    "last_index": 40102,
-    "last_timestamp": "2026-11-24T13:50:56.034614"
+    "ingested_total": 12,
+    "last_index": 41051,
+    "last_timestamp": "2026-11-24T16:08:54.088372"
   }
 }
