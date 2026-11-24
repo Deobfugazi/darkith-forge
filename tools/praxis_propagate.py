@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Mirror the current operational task directive to local boards.
+"""Mirror operational task state to local boards without duplicating laws.
 
-DARKITH.md is the sole source of binding laws. This tool propagates task state only and
-adds a pointer to the canonical law corpus. It never derives, declares, or copies laws.
-Application is idempotent; --check is read-only.
+DARKITH.md is the sole source of binding laws. This tool reads the current task directive
+from TASKS.md and mirrors that task text to local session/worktree boards with a pointer to
+DARKITH.md. It never derives, declares, or copies laws. Application is idempotent; --check
+is read-only.
 
 Commands:
   no args       apply the current task directive to discovered local boards
@@ -88,10 +89,7 @@ EVENT_ROOTS = _discover_event_roots()
 def directive_section(text: str) -> tuple[str, str] | None:
     """Return (title, body) of the topmost ★ directive section, or None.
 
-    The body stops at the first table row. A directive section in this board is prose followed
-    by the task table that carries it out; mirroring the table too would copy every task into
-    every worker's board, which is not propagation — it is duplication, and it would make the
-    mirror fight the worker's own board for ownership of the same rows.
+    The body stops at the first table row. A directive section is operational task prose; its binding laws remain in DARKITH.md and are never mirrored as declarations.
     """
     m = DIRECTIVE_HEADING.search(text)
     if not m:
