@@ -3,8 +3,8 @@
   "drifted": [
     {
       "bytes_declared": 19078,
-      "bytes_on_disk": 25319,
-      "delta": 6241,
+      "bytes_on_disk": 25732,
+      "delta": 6654,
       "path": "TASKS.md"
     }
   ],
