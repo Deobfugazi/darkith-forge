@@ -93,6 +93,14 @@ def main() -> int:
     # never agree with itself.
     if not out.is_file() or out.read_text(encoding="utf-8") != receipt:
         out.write_text(receipt, encoding="utf-8")
+    # NEVER #11 permits a basename at two tracked paths only while the copies are
+    # byte-identical, and ci.sh fails the moment they drift. The docs/ copy is the mirror the
+    # rest of the tree reads, so the producer that owns the bytes must also keep its mirror
+    # in step. Leaving that to a human is how the pair diverged in the first place.
+    mirror = pathlib.Path("docs/kb-reconcile.json")
+    if mirror.parent.is_dir() and (not mirror.is_file()
+                                   or mirror.read_text(encoding="utf-8") != receipt):
+        mirror.write_text(receipt, encoding="utf-8")
     return 0 if ok else 1
 
 
