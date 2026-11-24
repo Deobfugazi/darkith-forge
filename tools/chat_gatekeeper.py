@@ -306,26 +306,15 @@ def render_orders(conv: str, orders: list[dict], occ: dict,
         L.append(f"_Source: conversation `{conv}`, ingested by `tools/chat_gatekeeper.py`. "
                  f"No order in window. This section is regenerated, never hand-edited._")
     L.append("")
-    # praxis_propagate requires the order in force to DECLARE its coupled laws; a derived guess
-    # is not an order. These are the laws the Operator named in the prompts themselves.
-    #
-    # The declaration is DURABLE, so it is read from every order the board has ever carried —
-    # not from the window being rendered. Rendering it from the day window made the standing
-    # order expire at midnight: on a day whose first prompt named no law, this line became
-    # "none named in these prompts" and praxis failed with "the directive declares no coupled
-    # laws". The same code passed or failed depending on the calendar day of the run, which is
-    # the whole reason CI read 9-of-10 red while every local run was green.
-    declaration = standing if standing is not None else orders
-    coupled = sorted({normalise_law(l) for o in declaration for l in o["laws"]})
-    L.append(f"**Coupled laws:** {', '.join(coupled) if coupled else 'none named in these prompts'}")
+    # Task directives carry operational work only. Binding laws are read from DARKITH.md;
+    # no law list or authority block is copied into the generated board.
+    L.append("**Binding law source:** `DARKITH.md` (canonical; no copied law text).")
     L.append("")
     if not orders:
         L.append("_No executive prompt past the watermark._")
     for i, o in enumerate(orders, 1):
         L.append(f"{i}. **[{o['kind']}]** {one_line(o['text'])}")
         L.append(f"   - prompt index `{o['index']}` at `{o['timestamp']}`")
-        if o["laws"]:
-            L.append(f"   - **Coupled laws:** {', '.join(o['laws'])}")
         L.append(f"   - sha256 `{o['sha256'][:16]}`")
     L.append("")
     L.append(END)
