@@ -2064,24 +2064,24 @@ NEVER and still pass CI, the pair is defective and the gate must change, not the
   A GATE THAT CORRECTS THE AUTHOR IS WORSE THAN NO GATE. IT USES THE CORPUS TO OVERRULE THE
   PERSON THE CORPUS BELONGS TO.
 
-  Measured, this session. The Operator's own document, `[corpus] real upliftment.txt`, contains two
+  Measured, this session. The Operator's own document, `real upliftment.txt`, contains two
   phrases: "Condition C without D" and "Condition D under construction". An agent grepped the
   treatises, found only Conditions 1-3, and concluded the Operator had fabricated a citation.
   It then REPLACED the Operator's words in the Operator's own page, and wrote this law and
   `tools/citation_gate.py` so that the Operator's phrasing would fail the build.
 
-  The phrases were not fabrications. `[corpus] wtf.txt` L328-331 defines FOUR cores, not three:
+  The phrases were not fabrications. `wtf.txt` L328-331 defines FOUR cores, not three:
     Core A (Relational)  an authoritative, organized holding environment
     Core B (Structural)  organizational apparatus separated from raw content
     Core C (Functional)  a preservation contract, a retrieval mechanism, and a purpose
                          boundary, all three present
     Core D (Authority)   server-of-record status; not a derived copy
-  `[corpus] wtf.txt` L403 states the exact case: "Counterexample 1 (C without A): a write-once backup
+  `wtf.txt` L403 states the exact case: "Counterexample 1 (C without A): a write-once backup
   archive with retention policy, catalog, and scope. Satisfies C. If the archive's holdings
   are derivative copies of another system's holdings, it lacks server-of-record status, so it
   fails A (and D)." "Condition C without D" is therefore a functioning archive that is not the
   server of record — the Operator's own framework, named exactly. The agent grepped NT VI,
-  found Conditions 1-3, and overwrote it. It never read `[corpus] wtf.txt` L328-331.
+  found Conditions 1-3, and overwrote it. It never read `wtf.txt` L328-331.
 
   The etymon agrees, which is why the phrase is well-formed: Latin *condicio* is *con-* "with"
   + *dīcō* "to speak" — a speaking-together, a covenant. A covenant with no authoritative

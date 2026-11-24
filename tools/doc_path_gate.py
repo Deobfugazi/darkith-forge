@@ -42,6 +42,11 @@ ALLOWLIST = {
     "classes.dex", "base.apk", "aligned.apk", "app-signed.apk",
     # generated mirror written beside a session board by tools/praxis_propagate.py
     "PRAXIS.md",
+    # The Operator's research corpus. These documents sit BESIDE the repo on the home tree
+    # (SPI-8: the home is the SD card, not the cloud). A law may cite them by name — that is
+    # the point of citing a source — but they are not repo paths and must not be required to
+    # be tracked here.
+    "wtf.txt", "real upliftment.txt", "nt xi.txt", "trial and error.txt",
 }
 
 # Extensions that mark a token as a file path (not prose).
@@ -97,14 +102,27 @@ def looks_like_path(tok: str, tops: set[str], dirs: set[str]) -> bool:
     return False
 
 
-def cited_tokens(text: str, tops: set[str], dirs: set[str]) -> set[str]:
+def cited_tokens(text: str, tops: set[str], dirs: set[str],
+                 tracked: set[str] | None = None) -> set[str]:
     """Repo-path-looking tokens inside backticks. Each backticked span is split on
     whitespace so a command like `bash tools/ci.sh` still yields `tools/ci.sh`. Matching
     is line-scoped, so a stray backtick cannot pair across lines."""
     toks: set[str] = set()
     for line in text.splitlines():
         for m in re.finditer(r"`([^`\n]+)`", line):
-            for raw in m.group(1).split():
+            span = m.group(1).strip()
+            # A filename may contain spaces ("real upliftment.txt"). Try the whole span
+            # first, so a multi-word filename is one path and not two prose words; then
+            # fall back to whitespace splitting so `bash tools/ci.sh` still yields the path.
+            # Only a span that ACTUALLY exists as a path, or is allowlisted by name, may be
+            # read whole. Otherwise `bash tools/restore.sh` would be taken whole and reported
+            # missing. ALLOWLIST is checked on the raw span because _candidate() maps an
+            # allowlisted token to None by design.
+            if " " in span and (span in ALLOWLIST
+                                or (tracked is not None and span in tracked)):
+                toks.add(span)
+                continue
+            for raw in span.split():
                 cand = _candidate(raw)
                 if cand and looks_like_path(cand, tops, dirs):
                     toks.add(cand)
@@ -139,7 +157,7 @@ def main(argv: list[str]) -> int:
         p = root / doc
         if not p.exists():
             continue
-        for tok in sorted(cited_tokens(p.read_text(encoding="utf-8", errors="replace"), tops, dirs)):
+        for tok in sorted(cited_tokens(p.read_text(encoding="utf-8", errors="replace"), tops, dirs, tracked)):
             total += 1
             if not resolves(tok, tracked):
                 deficits.append((doc, tok))

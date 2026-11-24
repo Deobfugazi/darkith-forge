@@ -1,0 +1,8 @@
+{
+  "_why": "The Procedural Signature Protocol's four validated recoveries, declared so the gate reads them. Edison is excluded because thomas edison.txt IS the protocol document, not a reconstruction of Edison.",
+  "reconstructions": [
+    { "path": "../nikola tesla.txt",   "thinker": "Tesla",  "loop": "desire -> incubation -> convergence -> pre-solution feeling -> mental operation -> instantiation -> confirmation" },
+    { "path": "../charles darwin.txt", "thinker": "Darwin", "loop": "encounter -> capture -> accumulate -> correspond -> experiment -> converge -> synthesize" },
+    { "path": "../karl marx.txt",      "thinker": "Marx",   "loop": "encounter -> excerpt -> abstract -> accumulate -> correspond -> synthesize -> draft -> revise" }
+  ]
+}

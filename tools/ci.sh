@@ -141,6 +141,14 @@ if have python3; then
   if [ -f tools/etymon_trace.py ]; then
     run "etymon trace (sourced, literal, located)" python3 tools/etymon_trace.py
   fi
+  # The Procedural Signature Protocol is a procedure, so it can be checked as one. A
+  # reconstruction that only explains the sanitized signals is a paraphrase of the legend;
+  # this gate requires the sections, the sequence, the body cost, the named factory, the
+  # quote cut, the prediction, and no load-bearing claim resting on self-presentation.
+  if [ -f tools/signature_protocol_gate.py ]; then
+    run "signature protocol selftest"      python3 tools/signature_protocol_gate.py --selftest
+    run "signature protocol (loop, not legend)" python3 tools/signature_protocol_gate.py
+  fi
   # No float in a verdict path; the resolver must be falsifiable (NEVER #28).
   if [ -f tools/exactness_gate.py ]; then
     run "verdict exactness"               python3 tools/exactness_gate.py
