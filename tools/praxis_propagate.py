@@ -91,7 +91,7 @@ def sha(b: bytes) -> str:
 
 
 def normalise_law(tok: str) -> str:
-    """'NEVER#19', 'never 19', 'SPI-2', 'MUST #35' -> the canonical heading spelling."""
+    """'NEVER#19', 'never 19', 'SPI-2', 'NEVER #21' -> the canonical heading spelling."""
     t = tok.upper().replace("  ", " ").strip()
     m = re.match(r"(NEVER|MUST|SPI)\s*-?\s*#?\s*(\d+)$", t)
     if not m:
@@ -502,7 +502,7 @@ def main() -> int:
     if not declared:
         print("praxis: FAIL — the directive declares no coupled laws.")
         print("        Add a line to the directive section in TASKS.md:")
-        print("          **Coupled laws:** NEVER #19, MUST #35, MUST #29, SPI-2")
+        print("          **Coupled laws:** NEVER #19, NEVER #21, MUST #29, SPI-2")
         if derived:
             print(f"        (term match suggests, as a hint only: {', '.join(derived)})")
         print("        The declaration is the order. A derived guess is not.")
