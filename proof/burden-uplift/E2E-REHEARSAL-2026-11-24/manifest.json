@@ -1,0 +1,9 @@
+{
+ "generated": "2026-11-24T00:00:00Z",
+ "files": {
+  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/00_burden_record.json": "4490316aeb45b6f40bc06012e57f44a612ca98b958bd9718b4a8201afa21563d",
+  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/04_receipts.jsonl": "8133d13db37e0e953d8b26ce41f49883b42145d8a49b4c4c09676fb16956a535",
+  "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/05_viability_curve.csv": "3d827d847347bae9bffbe89bd4757a07f18abae8042d8b6c8832dba38c327e76",
+  "tools/burden/witness_e2e.py": "9934007414d49bff7d76bd6af9e6d0cb18264c61b11f4c95715c66244b48ddcd"
+ }
+}

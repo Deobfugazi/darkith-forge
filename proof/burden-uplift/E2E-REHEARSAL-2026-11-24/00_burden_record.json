@@ -1,0 +1,9 @@
+{
+ "id": "KC-BURDEN-2026-1124-E2E",
+ "title": "Burden: no end-to-end rehearsal receipt exists in this repository",
+ "harmed_party": "the repository itself: any future operator inherits a plan and zero executed evidence",
+ "falsifiable_baseline": "path proof/burden-uplift/E2E-REHEARSAL-2026-11-24 does not exist at base 989768502",
+ "severity": "medium-low (self-referential rehearsal burden, chosen because its reproducer is byte-exact)",
+ "independent_corroboration": "self-located; corroboration class demo-only, NOT eligible for G2+ value claims",
+ "issued": "2026-11-24T00:00:00Z"
+}
