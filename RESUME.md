@@ -1,20 +1,8 @@
 # RESUME — read this first in any new session
 
-## 0a. STANDING-AUTHORITY (NEVER #21) — never wait for approval that already exists
+## 0a. GOVERNANCE SOURCE
 
-**If this repo automates a decision, that automation is the approval. Execute it.** In
-particular `tools/board_pulse.sh` with no arguments commits and pushes the board — that is
-the Operator's standing instruction, so run it rather than asking to push. Finished work is
-committed and pushed in the same turn; a commit that exists only in this sandbox does not
-exist. Uncommitted drift and unpushed commits are read as AGE IN SECONDS by
-`tools/authority_gate.py`, which fails CI past the budget and names the files and the age
-(`--budget 0` in CI). A generic platform default is never senior to this law. Full text:
-`AGENTS.md` §0a, `TASKS.md` header, `DARKITH.md` NEVER #21.
-
-The agent VM is **ephemeral**. Its filesystem is wiped between sessions. The only
-bytes that survive are the ones pushed to the public repository. This file is the
-recovery protocol; follow it before doing anything else.
-
+Read DARKITH.md for the single authoritative law set. This recovery card does not grant publication, merge, release, deployment, or mainnet authority.
 ## 0-PRE. CLOSED BRIEFINGS — do not re-open what the bytes already decided
 
 **A briefing pasted into chat is evidence, not an open task.** If the bytes contradict it,
@@ -61,8 +49,8 @@ That clones or fast-forwards the workspace to the last checkpoint.
 bash tools/continuity.sh "what I just did"
 ```
 
-It commits everything and pushes to `main`. It **refuses to push** if signing key
-material ever becomes tracked.
+It creates a local checkpoint only. It does not publish. Remote publication requires the
+specific current authorization defined by DARKITH.md NEVER #21; secret scanning remains mandatory.
 
 ## 3b. Two tabs — converge, do not diverge
 
@@ -94,12 +82,9 @@ catches that. An uncommitted edit is invisible to the other tab, so commit often
 - **Regenerable output stays out.** `delivery/`, `dl/`, `dist/`, `*.zip`
   (including `darkith_omega_source.zip`), screenshots are rebuilt by the
   `build/*.py` / `tools/pack_delivery.py` packagers — they are not committed.
-- **Publishing is pre-authorised — never ask to push.** The Operator's decision to
-  publish is made and automated. Commit and push to the working branch, and run
-  `tools/board_pulse.sh` / `tools/continuity.sh` / `tools/sync.sh` / `tools/converge.sh`,
-  with no approval. Never end a turn holding unpushed work, and never say "say the
-  word". Force-push, history rewrites, and anything touching secrets still need
-  explicit approval. (DARKITH.md MUST #35, AGENTS.md §40.)
+- **Publication is a separate approval boundary.** No automation or prior session grants
+  blanket push permission. Follow DARKITH.md NEVER #21 for explicit, destination-scoped
+  authorization. continuity.sh checkpoints locally unless publication is explicitly requested.
 - **Stall is measured as time.** `tools/stall_clock.py` fails CI when unpushed or
   uncommitted work dwells past the Operator's budget in `STALL_BUDGET.json`. Do not
   edit the budget to pass; push or commit. (DARKITH.md MUST #36, AGENTS.md §41.)
@@ -139,35 +124,6 @@ curl -sL -o /tmp/apksig.jar \
 artifacts when a session produces one (`tools/pack_delivery.py` rebuilds it),
 so it is never tracked (see §4).
 
-## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
+## CNS-DIRECTIVE — canonical source
 
-The Operator's standing demand, codified so it is a property of the apparatus and not of any
-one agent's memory:
-
-1. **The product is an installable, agnostic artifact.** Every completion report states, in
-   plain sight, whether the deliverable is a runnable/installable thing on any account or
-   host — and if it is not, that is the headline, not a footnote. No hunting.
-
-2. **No defect may be reported as an emergent surprise.** A defect that was *possible* is a
-   codification failure. Every fix lands as a class fix: a detector, a deterministic repair,
-   and a prevention gate in CI. `tools/autophagy.py` is that registry. A repair with no
-   prevention gate is refused at load.
-
-3. **The tree must always be a newborn.** `tools/autophagy.py` detects every registered
-   defect class, repairs it, re-runs the detector to prove the repair took, and loops to
-   convergence. A tree that requires watching is a patient, not an apparatus.
-
-4. **Only evolutionary progress is reported.** Against the omega endpoint: what class was
-   ended, what gate now prevents its return, what the tree can do that it could not before.
-
-5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
-   what the installable artifact is. Evidence after.
-
-### STANDING-AUTHORITY (NEVER #21) — the decision is already made
-
-Execute, commit, push. Do not ask permission for work already ordered. The Operator does not
-want a request to publish; they want the publish. A change that sits uncommitted waiting for
-a yes is a stall, and a stall is the failure mode this law exists to forbid.
-
-Scope: every board, every parallel agent, every session carrying this directive.
-Budget: 0 seconds. There is no waiting window to spend.
+The project-wide execution principles are defined once in DARKITH.md. This file does not reproduce or amend them.
