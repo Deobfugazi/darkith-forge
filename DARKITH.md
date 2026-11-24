@@ -1220,8 +1220,8 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
   GATE: tools/praxis_propagate.py
   A directive inscribed once is a directive known to one agent. The Operator runs several
   agents in parallel (MUST #27) across several tabs, branches and worktrees, and every one of
-  them reads a DIFFERENT board. MUST #26 pushes the durable board so parallel workers can see
-  it, but a pushed board is only visible to a worker that reads that board. A worker on a
+  them reads a DIFFERENT board. MUST #26 preserves and propagates the durable board locally. Remote publication is a
+  separate action governed by NEVER #21; a remote push is not the propagation mechanism. A worker on a
   sibling branch, or in a session whose tracker is its own `TASKS.json`, does not.
 
   So the ORDER must travel, not just the board: the directive in force and the laws coupled to
@@ -1350,15 +1350,15 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
 
   This is measured, not asserted. On 2026-11-22 eight workflow runs on main went red in a
   single day: 87dec398, 6102611e, 9f2413d2, 1be7ac8c. Every one of them was discovered by
-  a runner on the far side of the push. The gates were not wrong; they were late. A defect
-  that is only visible after landing is a defect that has already landed, and the next
-  agent then spends a full cycle repairing what a sixty-second preflight would have refused.
+  a runner on the far side of the push. The gates were not wrong; they were late. A defect that is only visible after landing has
+  already crossed the boundary, and the next agent then spends a full cycle repairing what
+  a sixty-second preflight would have refused.
 
   The law, in four parts:
 
   1. NOTHING LEAVES A BRANCH THAT THE SUITE ALREADY REJECTS. `tools/admission.py rehearse`
-     runs the real `tools/ci.sh` on the EXACT bytes about to be pushed, in an isolated git
-     worktree, and refuses on any content failure. The pre-push hook is the caller.
+     runs the real `tools/ci.sh` on the EXACT proposed bytes in an isolated git
+     worktree, and refuses on any failure, required SKIP, or missing acceptance evidence. The pre-push hook is the caller.
 
   2. COLLISIONS ARE CHECKED BEFORE THE CODE IS WRITTEN, NOT AFTER IT FAILS. Law ids, gate
      labels in `ci.sh`, tool names, stale derived artifacts and standing drift are counted
@@ -1659,8 +1659,7 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
 
   `python3 tools/admission.py rehearse` -- the real suite. Creates a detached worktree at
   HEAD, replays the uncommitted diff plus untracked files into it, symlinks the gitignored
-  `.tools/` toolchain, and runs `bash tools/ci.sh` there. The verdict separates content
-  failures (BLOCKING) from remote-state failures (resolves-on-push) and writes the full log
+  `.tools/` toolchain, and runs `bash tools/ci.sh` there. The verdict treats every failed or skipped required check as BLOCKING and writes the full log
   to `proof/admission/<stamp>.log`.
 
   `python3 tools/admission.py --install-hook` -- the caller. Installs `.git/hooks/pre-push`
@@ -1691,9 +1690,9 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
        work in the tree, names every path, and exits 3 (a named skip) only where git
        cannot run. Never a warn. The derived-artifact subclass remains gated by
        `tools/tree_invariant.py` (NEVER #22, the missing-caller law).
-    2. REPAIR — `python3 tools/drift_gate.py --fix` stages, commits and pushes
-       in one deterministic sweep. It never force-pushes, never rewrites history, and
-       never discards another agent's edits.
+    2. REPAIR — `python3 tools/drift_gate.py --fix` stages and commits a local checkpoint
+       in one deterministic sweep. It never publishes, force-pushes, rewrites history, or
+       discards another agent's edits.
     3. PREVENT — the class is registered in the CLASSES list of
        `tools/autophagy.py` with prevent "ci: drift gate (NEVER #22)", and
        `tools/ci.sh` runs the gate hard. The WARN variant is abolished forever.
