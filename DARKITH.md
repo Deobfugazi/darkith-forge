@@ -920,9 +920,8 @@ without a clock fails CI until it is injected. This is the prophylactic cure, no
 §32 — THE CONVERGENCE & COUPLING BYLAW (2026-11-18)
 
 The Operator runs at least TWO agents in parallel and tests their outputs for convergence in
-the repo. Two claims that "agree" without a comparison are notes (SPI-15). The board is the
-shared channel: if an agent updates it and does not push, the parallel worker is blind and
-the Operator must repeat himself. And the clock must AUTOCCOUPLE the edge device's own
+the repo. Two claims that "agree" without a comparison are notes (SPI-15). The board is the shared work record. Local propagation keeps workers aligned; remote
+publication is a separate action governed only by NEVER #21. And the clock must AUTOCCOUPLE the edge device's own
 hardware system time to the global clock, because the session that serves the sovereign user
 must boot real-time-stamp aware and track the user's last activity against the Operator's
 circadian cycle — as the DEFAULT, not as an option.
@@ -1224,17 +1223,10 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
   separate action governed by NEVER #21; a remote push is not the propagation mechanism. A worker on a
   sibling branch, or in a session whose tracker is its own `TASKS.json`, does not.
 
-  So the ORDER must travel, not just the board: the directive in force and the laws coupled to
-  it are mirrored into every board that can steer work — the durable board, each live session
-  board, each sibling worktree — by `tools/praxis_propagate.py`. Propagation is DERIVED from
-  the durable board on every run, never remembered, so a mirror cannot drift from its source
-  without the next run overwriting it and `--check` failing first.
-
-  DECLARATION IS MANDATORY. The directive must carry `**Coupled laws:** ...` naming its laws.
-  The tool fails closed when that line is absent, and fails again when it names a law that has
-  no heading in this file. It will suggest a term-matched set as a HINT, and never propagate
-  one: a lexical match is not an order, and a bot that promotes a substring hit to a law is
-  inventing law, which is the one thing an inscriber must never do.
+  So the operational ORDER travels with the board through `tools/praxis_propagate.py`. The
+  current task text is mirrored to local session/worktree boards; binding laws are not copied,
+  re-declared, or inferred. Every recipient reads the current law corpus directly from
+  `DARKITH.md`. The propagator is idempotent and `--check` is read-only.
 
   A SESSION BOARD IS NOT OURS TO RESHAPE. `TASKS.json` is a JSON list owned by the task
   tracker that reads it. The mirror is written as `PRAXIS.md` beside it, never by rewriting
@@ -1590,8 +1582,8 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
 
   The law: the session event log is the source of the order in force. Every user MessageEvent
   past the watermark is classified (order / forbid / rebuke / chatter / skip), the executive
-  ones are written as the topmost `## ★` section of TASKS.md with their coupled laws DECLARED,
-  and praxis carries that section to every board. A waking agent on any branch reads the ping
+  ones are written as the topmost `## ★` section of TASKS.md, and praxis carries that task
+  section to local boards with a pointer to DARKITH.md. A waking agent on any branch reads the ping
   and works; it does not ask the Operator to repeat himself.
 
   Three exclusions, each earned by a defect found while building this:
@@ -1601,8 +1593,8 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
   Watermark, not replay: the session is one continuous stream, so ingest resumes after the last
   index. A new conversation id replays from zero, because a new session has read nothing.
 
-  Coupling is a DECLARATION, not an inference. praxis refuses a directive with no declared
-  laws, correctly — a derived guess is not an order. The coupling table is written and fixed so
+  Binding laws are not generated from chat text. The law corpus is authored and maintained only
+  in DARKITH.md; chat ingestion records task orders and never creates law declarations. So
   the same prompt always couples to the same laws (MUST #18).
 
   Gate: --selftest proves classification, watermark, dedupe, day window, determinism and
@@ -1748,10 +1740,10 @@ governed exclusively by NEVER #21. Generated proof must be deterministic and ide
   Each lands as a four-part class fix: detector, deterministic repair, prevention
   gate, test — through the admission rehearsal path itself.
 
-## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
+## CNS-DIRECTIVE (v1) — canonical directive; stored only in DARKITH.md
 
-The Operator's standing demand, codified so it is a property of the apparatus and not of any
-one agent's memory:
+The Operator's standing demand, codified once here. Every agent and tool must read this
+canonical section from DARKITH.md; secondary files and session prompts must not reproduce it:
 
 1. **The product is an installable, agnostic artifact.** Every completion report states, in
    plain sight, whether the deliverable is a runnable/installable thing on any account or
