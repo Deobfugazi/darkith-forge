@@ -614,21 +614,38 @@ coupling law running at 60 Hz on the real device
 | `TASKS.md` | The durable board. |
 | `DEFICITS.json` | The deficit ledger. |
 
-**Agents publish without asking.** The Operator's decision to publish is made and
-automated, so an agent commits and pushes to the working branch (and runs
-`tools/board_pulse.sh` / `continuity.sh` / `sync.sh` / `converge.sh`) with no approval,
-and never ends a turn holding unpushed work. Force-pushes, history rewrites, and
-anything touching secrets still require explicit approval. Law: `DARKITH.md` MUST #35,
-`AGENTS.md` §40, `RESUME.md` §4.
+## Governance and promotion boundaries
 
-**Stall is measured as time, not as a flag.** `tools/stall_clock.py` (in `tools/ci.sh`)
-fails CI when unpushed or uncommitted work dwells past the budget in
-`STALL_BUDGET.json` — the schedule is the Operator's, and a missing budget fails
-closed. `board_pulse` asks *is it pushed?*; this asks *for how long was it not?*, which
-is the question that actually defends a deadline. Law: `DARKITH.md` MUST #36,
-`AGENTS.md` §41.
+DARKITH.md is the sole canonical source of binding laws and promotion rules. README.md,
+AGENTS.md, RESUME.md, and TASKS.md are audience-specific guides or work records; they do
+not grant authority or redefine a law. Directive propagation may carry the current task and
+a pointer to DARKITH.md, never copied law text or publication permission.
+
+No agent or automation has standing permission to push to a remote branch, open or update a
+public pull request, merge, release, deploy, or promote value. A current, explicit Operator
+instruction must identify the action and destination. A local commit is only a checkpoint.
+
+Code promotion requires isolated rehearsal of the exact proposed bytes with
+`python3 tools/admission.py rehearse`. Every required acceptance gate must execute and pass.
+A SKIP, INACTIVE required check, failed witness, missing evidence, or unresolved failure is
+not sigma-zero and blocks promotion.
+
+Testnet-to-mainnet promotion is a separate barrier. It must execute exactly four planted
+phantoms and at least one honest control; all four phantoms must be rejected, every honest
+control must pass, every candidate must independently verify, and both hash-chained ledgers
+must verify. Any missing or failed witness blocks mainnet. A green CI run alone is not
+mainnet authorization.
+
+The testnet implementation is not yet certified against that complete contract until the
+four-phantom-plus-honest-control trial and its negative tests are present and passing.
+Do not describe mainnet promotion as enabled before that evidence exists.
+
+Local work dwell measures uncommitted local edits only. Committed work awaiting review is
+not a defect and must never trigger automatic publication.
 
 ---
+
+## 9. The gates---
 
 ## 9. The gates (what runs and why)
 
@@ -937,7 +954,3 @@ holds only the file still holds all four registers.
 *This file is the README for `Deobfugazi/darkith-forge`. It is governed by the same rules
 it describes: if it is unclear, that is a defect here, and the fix is a change to this
 file.*
-
-## CNS-DIRECTIVE — canonical source
-
-The project-wide execution principles are defined once in DARKITH.md. This file does not reproduce or amend them.
