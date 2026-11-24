@@ -1,27 +1,18 @@
 #!/usr/bin/env bash
-# sync.sh — CONVERGE this tab with the authoritative history on the remote.
-#
-# Two (or more) OpenHands tabs run in separate ephemeral sandboxes that share
-# ONLY the git remote. The remote branch is the single authoritative history;
-# a tab is just a checkout of it. This script is the executable form of that
-# law: integrate the other tab's commits, then publish ours — and never lose a
-# commit, because the push is never forced.
-#
-#   tools/sync.sh            converge (fetch + rebase-if-diverged + push)
-#   tools/sync.sh --check    report only; non-zero if not in sync (a gate)
-#
-# Provider-neutral: it uses the `origin` remote (or $DARKITH_REMOTE /
-# $DARKITH_REMOTE_URL). No hosting provider is named. Auth is whatever your git
-# credential helper provides (token, SSH key, or nothing for a local bare repo).
-#
-# Exit: 0 in sync / 3 divergence needs a human (same lines edited) / 2 no remote.
+# sync.sh — fetch and reconcile locally by default; never publish implicitly.
+#   --check = read-only; no args = local reconcile; --publish = explicit remote push.
+# Publication is governed by DARKITH.md NEVER #21.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 REMOTE="${DARKITH_REMOTE:-origin}"
 BRANCH="${DARKITH_BRANCH:-main}"
 CHECK=0
-[ "${1:-}" = "--check" ] && CHECK=1
+PUBLISH=0
+for arg in "$@"; do
+  [ "$arg" = "--check" ] && CHECK=1
+  [ "$arg" = "--publish" ] && PUBLISH=1
+done
 
 # ---- resolve the remote URL, without naming a vendor ---------------------
 if [ -n "${DARKITH_REMOTE_URL:-}" ]; then
@@ -72,8 +63,7 @@ case "$STATE" in
     echo "sync: fast-forwarded to ${REMOTE_SHA:0:7}"
     ;;
   ahead)
-    git push -q "$URL" "HEAD:${BRANCH}"; mark_synced
-    echo "sync: pushed ${LOCAL_SHA:0:7} (was ahead)"
+    if [ "$PUBLISH" -eq 1 ]; then git push -q "$URL" "HEAD:${BRANCH}"; mark_synced; echo "sync: published ${LOCAL_SHA:0:7}"; else echo "sync: local branch is ahead; publication not performed"; fi
     ;;
   diverged)
     # The other tab published while we were working. Replay our commits on top
@@ -85,7 +75,6 @@ case "$STATE" in
       echo "      Resolve by hand, then: git rebase --continue  (or git rebase --abort)" >&2
       exit 3
     fi
-    git push -q "$URL" "HEAD:${BRANCH}"; mark_synced
-    echo "sync: rebased onto ${REMOTE_SHA:0:7} and pushed ${LOCAL_SHA:0:7}"
+    if [ "$PUBLISH" -eq 1 ]; then git push -q "$URL" "HEAD:${BRANCH}"; mark_synced; echo "sync: rebased and published"; else echo "sync: rebased locally; publication not performed"; fi
     ;;
 esac
