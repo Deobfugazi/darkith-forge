@@ -615,7 +615,7 @@ coupling law running at 60 Hz on the real device
 | Item | What it is |
 |---|---|
 | `app/` | The Android app: Kotlin source, resources, assets, manifest. |
-| `app/src/main/java/com/darkith/transliaison/` | The one authoritative Kotlin tree (55 `.kt` files). |
+| `app/src/main/java/com/darkith/transliaison/` | The one authoritative Kotlin tree (69 `.kt` files, counted from the current repository tree). |
 | `app/src/main/AndroidManifest.xml` | Declares identity, version, permissions, screens. |
 | `app/src/main/jniLibs/arm64-v8a/` | The hand-coded native binaries. |
 | `app/src/main/assets/` | The shipped web studio, the vendor engines, and the engine inputs. |
