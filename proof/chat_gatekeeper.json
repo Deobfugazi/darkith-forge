@@ -1,5 +1,5 @@
 {
-  "block_sha256": "19813bbe4e4c69dbd4214032938184cfa1ce84d4652ec9d76de9a097c7c8bcb3",
+  "block_sha256": "81ac618d773c4e1fc791909254e3706df65ba844905e41a9b11b73ae86a81097",
   "conversation": "18393131094c4acfb45d943764549f23",
   "ingested": [
     {
@@ -92,6 +92,16 @@
       "laws": [],
       "sha256": "3c63a3d6409b54fa2220f9f8d99f2d292be3d1e6ff698395943f909efe80777c",
       "timestamp": "2026-11-24T10:58:57.846905"
+    },
+    {
+      "index": 39189,
+      "kind": "order",
+      "laws": [
+        "SPI-37",
+        "SPI-38"
+      ],
+      "sha256": "76c63d48c101977e1b5e6f55ba348ebcb3476cbde2cc12731a4877385c4068db",
+      "timestamp": "2026-11-24T11:12:50.559662"
     }
   ],
   "occupation": {
@@ -101,8 +111,8 @@
   },
   "watermark": {
     "conversation": "18393131094c4acfb45d943764549f23",
-    "ingested_total": 8,
-    "last_index": 39079,
-    "last_timestamp": "2026-11-24T11:06:12.180515"
+    "ingested_total": 9,
+    "last_index": 39189,
+    "last_timestamp": "2026-11-24T11:12:50.559662"
   }
 }
