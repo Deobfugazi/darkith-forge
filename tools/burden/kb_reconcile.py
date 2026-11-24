@@ -78,7 +78,7 @@ def main() -> int:
 
     out = pathlib.Path("proof/kb-reconcile.json")
     out.parent.mkdir(exist_ok=True)
-    out.write_text(json.dumps({
+    receipt = json.dumps({
         "declared_count": doc.get("count"),
         "entries": len(files),
         "registers": len(doc.get("registers", {})),
@@ -86,7 +86,13 @@ def main() -> int:
         "undeclared_drift": [d["path"] for d in undeclared],
         "undeclared_missing": undeclared_missing,
         "verdict": "RECONCILED" if ok else "RECONCILIATION_INCOMPLETE",
-    }, indent=2, sort_keys=True))
+    }, indent=2, sort_keys=True)
+    # Write only on change. This runs inside `bash tools/ci.sh`, whose whole contract is that
+    # checking a clean tree leaves it clean. Rewriting an identical receipt made every CI run
+    # mutate a tracked file, so the revitalization seal chased CI's own output and I9 could
+    # never agree with itself.
+    if not out.is_file() or out.read_text(encoding="utf-8") != receipt:
+        out.write_text(receipt, encoding="utf-8")
     return 0 if ok else 1
 
 
