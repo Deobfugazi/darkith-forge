@@ -9,7 +9,7 @@ bytes while passing on the Operator's machine. Both are the same mistake — rep
 not look" as "I looked and it is wrong". Do not repeat them.
 
 **1. A missing input is a SKIP, never a FAIL.** The signature and citation gates read the
-Operator's corpus (`real upliftment.txt`, `nikola tesla.txt`, …). That corpus lives OUTSIDE
+Operator's corpus (the Operator's upliftment text, the Tesla and Darwin and Marx transcripts). That corpus lives OUTSIDE
 the repository by design (SPI-8: the home is the SD card, not the cloud checkout), so a fresh
 clone cannot see it. The gates scored "file unreachable" identically to "file says something
 wrong", and so reported `LEGEND_MASQUERADING` and `COINAGE_DELETED` — accusing the tree of
