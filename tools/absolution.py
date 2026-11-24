@@ -92,6 +92,13 @@ PRODUCERS = (
 
 EXCLUDED_PARTS = {".git", ".tools", ".gradle", "node_modules", "__pycache__", ".venv"}
 
+# This tool's own receipt records hashes of the tree. If the receipt were inside that tree,
+# writing it would change the very evidence it just wrote and the repair could never be a
+# fixed point — it would converge only by luck, one pass later, which is what "REPAIR DID NOT
+# CONVERGE" twice in a row actually meant. The receipt is the record OF the tree, not part of
+# what it records. Same reason proof/revitalization/ is excluded from the seal's snapshot.
+SELF_RECEIPT = "proof/absolution.json"
+
 
 def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -105,6 +112,8 @@ def tree_stamps(root: pathlib.Path = ROOT) -> dict:
         if any(part in EXCLUDED_PARTS for part in rel.parts) or not path.is_file():
             continue
         if rel.as_posix().startswith("proof/revitalization/"):
+            continue
+        if rel.as_posix() == SELF_RECEIPT:
             continue
         try:
             st = path.stat()
@@ -124,6 +133,8 @@ def tree_hashes(root: pathlib.Path = ROOT) -> dict:
             continue
         if rel.as_posix().startswith("proof/revitalization/"):
             continue  # the cycle's own receipts are written by the run that hashes them
+        if rel.as_posix() == SELF_RECEIPT:
+            continue  # this run's own receipt cannot be part of the tree it attests
         try:
             out[rel.as_posix()] = sha(path.read_bytes())
         except OSError:
