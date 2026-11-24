@@ -5,7 +5,7 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T10:58:57.846905`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T11:12:50.559662`. This section is regenerated, never hand-edited._
 >
 > **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 >
@@ -37,6 +37,10 @@
 > 8. **[forbid]** Root cause: `kb_reconcile.py` rewrites a tracked file on every CI run — even when nothing changed. That makes the seal chase CI's own output forever.…
 >    - prompt index `38936` at `2026-11-24T10:58:57.846905`
 >    - sha256 `3c63a3d6409b54fa`
+> 9. **[order]** Now I have the whole picture. The formulary is `detect / repair / prevent` registered in `autophagy.py`, and a class with no `prevent` is **refused a…
+>    - prompt index `39189` at `2026-11-24T11:12:50.559662`
+>    - **Coupled laws:** SPI-37, SPI-38
+>    - sha256 `76c63d48c101977e`
 >
 
 **Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-6`
@@ -70,7 +74,7 @@
 | `SPI-40` | NO UNREHEARSED PROMOTION — THE PRIME DIRECTIVE |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #25`, `NEVER #27`, `NEVER #31`, `SPI-19`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #23`, `NEVER #25`, `NEVER #27`, `NEVER #31`, `SPI-19`
 
 <!-- PRAXIS:END -->
 
