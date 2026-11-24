@@ -1,20 +1,14 @@
 #!/usr/bin/env bash
-# Continuity: persist ALL progress to a git remote so nothing is lost when the agent
-# VM is recycled. The VM filesystem is ephemeral; only pushed bytes survive.
-#
-#   tools/continuity.sh ["commit message"]
-#
-# Provider-neutral: it pushes to whatever git remote is configured as `origin` (or
-# $DARKITH_REMOTE). No hosting provider is named here. Auth is whatever your git
-# credential helper already provides (token, SSH key, or nothing for a local bare repo).
-# To pin a specific URL for one run, set DARKITH_REMOTE_URL.
-#
-# Safe by design: refuses to push if signing key material ever becomes tracked.
+# Continuity: create a guarded local checkpoint. Remote publication is separate.
+#   tools/continuity.sh [commit message] [--publish]
+# --publish delegates to sync.sh --publish and requires current authorization under NEVER #21.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 REMOTE="${DARKITH_REMOTE:-origin}"
 BRANCH="${DARKITH_BRANCH:-$(git symbolic-ref --short HEAD 2>/dev/null || echo main)}"
+PUBLISH=0
+if [ "${1:-}" = "--publish" ]; then PUBLISH=1; shift; fi
 MSG="${1:-checkpoint $(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 
 # ---- guard: never commit the signing identity ---------------------------
@@ -46,7 +40,7 @@ else
   echo "continuity: committed $(git rev-parse --short HEAD) — $MSG"
 fi
 
-# ---- commit locally (guarded above), then converge via the ONE path ---------
-# Convergence lives in ONE place: tools/sync.sh integrates the other tab's
-# commits and publishes ours (never forced). Do not duplicate that logic here.
-exec "$(git rev-parse --show-toplevel)/tools/sync.sh"
+if [ "$PUBLISH" -eq 1 ]; then
+  exec "$(git rev-parse --show-toplevel)/tools/sync.sh" --publish
+fi
+echo "continuity: local checkpoint complete; no remote publication performed"
