@@ -1,42 +1,17 @@
 #!/usr/bin/env python3
-"""praxis_propagate.py — propagate the current directive, and a pointer to the canonical law source, to every local board.
+"""Mirror the current operational task directive to local boards.
 
-The problem this closes: a directive is inscribed once (in TASKS.md), but the boards that
-actually steer work are plural — the durable core board, one ephemeral board per live agent
-tab, and the board in every other worktree on the box. A worker on a sibling branch that never
-receives the directive is not idle, it is working on a superseded order. The Operator must not
-be the bus that carries his own directive between his own tabs.
+DARKITH.md is the sole source of binding laws. This tool propagates task state only and
+adds a pointer to the canonical law corpus. It never derives, declares, or copies laws.
+Application is idempotent; --check is read-only.
 
-So propagation is derived, not remembered. This tool reads the current directive out of the
-durable board, writes the task text with a pointer to DARKITH.md, and writes that block into every board it
-can find. It is idempotent: a second run with no change writes nothing, which is what makes it
-safe to run after every inscription.
-
-What "coupled never" means here, exactly — two derivations, and the receipt keeps them apart:
-
-  DECLARED  the directive section names them itself (`**Coupled never:** NEVER #19, ...`).
-            An author who names the law is stating intent; this is the authoritative set.
-  DERIVED   laws whose own body in DARKITH.md mentions a term the directive uses. This is
-            recall, not judgement: it can only propose, and it is labelled as such in the
-            receipt so nobody mistakes a lexical hit for a legal opinion.
-
-The propagated block carries BOTH, but only DECLARED laws are presented as binding. A derived
-hit is marked `(derived)` so a reader can tell what the Operator ordered from what a substring
-match suggested. Silently promoting a lexical coincidence to a law would be worse than
-propagating nothing.
-
-Commands
-  (no args)        apply: write the block into every board, then receipt
-  --check          gate: fail if any board is stale, if the directive is missing, or if the
-                   directive names a law that does not exist
-  --receipt        print the last receipt
-  --dry-run        show what would change, write nothing
-  --targets        list the boards discovered
-
-Exit codes: 0 clean/applied, 1 drift or an unresolvable directive (--check), 2 usage.
-
-SPI-1 (no build): pure stdlib, no network, no Gradle. SPI-2: every read is bytes off disk.
-SPI-4: the receipt is the record; stdout is a convenience.
+Commands:
+  no args       apply the current task directive to discovered local boards
+  --check       fail if any discovered local board is stale
+  --dry-run     show proposed changes without writing
+  --receipt     print the last propagation receipt
+  --targets     list discovered local boards
+  --selftest    verify replacement and idempotence
 """
 from __future__ import annotations
 
@@ -57,7 +32,6 @@ import tempfile
 ROOT = pathlib.Path(os.environ.get("COORDINASYNC_ROOT") or
                     pathlib.Path(__file__).resolve().parent.parent).resolve()
 BOARD = ROOT / "TASKS.md"
-LAWS = ROOT / "DARKITH.md"
 RECEIPT = ROOT / "proof" / "praxis_propagation.json"
 
 # Markers bound the block so re-propagation is a replace, never an append. An append-only
