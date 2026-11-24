@@ -324,6 +324,13 @@ if have python3; then
       run "chat gatekeeper selftest (MUST #38)" python3 tools/chat_gatekeeper.py --selftest
       run "chat gatekeeper ingest (MUST #38)"   python3 tools/chat_gatekeeper.py --check
     fi
+    # A producer that rewrites its own output on every run cannot be sealed: the seal hashes
+    # the tree, the producer rewrites it, and the next gate calls that drift. This witnesses
+    # each registered producer twice and absolves only a fixed point git already carries.
+    if [ -f tools/absolution.py ]; then
+      run "absolution of self-rewriting producers" python3 tools/absolution.py
+      run "absolution gate selftest"               python3 tools/tests/absolution_test.py
+    fi
     # NT-XIII's falsifier, executed: on a known cut the deficit must be BOOKED, not silenced.
     if [ -f tools/ofif_gate.py ]; then
       run "OFIF falsifier (NT-XIII G6/G7)" python3 tools/ofif_gate.py
