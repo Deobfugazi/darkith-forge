@@ -126,7 +126,7 @@ COUPLING = [
     (re.compile(r"circadian|occupation|vital|rest|digest", re.I),
      ["MUST #28", "SPI-25", "SPI-26"]),
     (re.compile(r"GO SIGNAL|permission|autocorrect|stall|waiting|dwell|idle", re.I),
-     ["MUST #35", "MUST #36", "NEVER #21"]),
+     ["NEVER #21", "MUST #36", "NEVER #21"]),
     (re.compile(r"loophole|\bgap|hunt|leak", re.I),
      ["NEVER #19", "MUST #30"]),
     (re.compile(r"gate|heading|\blaw|invariant", re.I),
@@ -251,7 +251,7 @@ def occupation(pulse: dict) -> dict:
 
 
 def normalise_law(tok: str) -> str:
-    """'NEVER#19', 'must 19', 'SPI-2', 'MUST #35' -> the canonical heading spelling.
+    """'NEVER#19', 'must 19', 'SPI-2', 'NEVER #21' -> the canonical heading spelling.
 
     The prompts are typed fast and often lose the separator ("MUST#41", "MUST17"), and the
     rendered declaration is what praxis reads back. Spelling it canonically here means the
