@@ -1,0 +1,12 @@
+{
+  "_why": "The Operator's 19 files and the exact line where the opening '/*' sits. Verified 19/19 against ../tree.orig and ../tree. HomekeeperBridge.kt:282 is a comment there; it is NOT one in app/ (different revision), so the table is bound to the tree it was measured on.",
+  "tree": "../tree.orig/app/src/main/java",
+  "files": {
+    "AxmlWriter.kt": 7, "EntryPointRewriter.kt": 10, "DarkithChainReader.kt": 5,
+    "DarkithContentStore.kt": 5, "DarkithEVMKit.kt": 3, "DarkithRuntimeHost.kt": 5,
+    "DarkithAlpineGuest.kt": 5, "DarkithSolidityCompiler.kt": 5, "HomekeeperBridge.kt": 282,
+    "LayoutNode.kt": 3, "TransliaisonEngine.kt": 3, "AutofillCorrector.kt": 3,
+    "SubstrateIngestor.kt": 92, "CssLite.kt": 3, "HtmlDom.kt": 3, "SelfTest.kt": 3,
+    "Allocation.kt": 3, "AutophagicAllocator.kt": 5, "MemoryGovernor.kt": 5
+  }
+}

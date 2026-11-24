@@ -168,6 +168,16 @@ if have python3; then
     SYNTAX_ROOTS="app/src/main/java"
     [ -d omega-app/src/main/java ] && SYNTAX_ROOTS="$SYNTAX_ROOTS omega-app/src/main/java"
     run "kotlin syntax gate"              python3 tools/syntax_gate.py $SYNTAX_ROOTS
+    # Detection without a rehearsed repair is half a gate. This one damages a COPY at the
+    # Operator's stated lines, requires the lexer to see every removal, restores them, and
+    # requires the result to be byte-identical to the pristine tree. It refuses a run that
+    # removed nothing, because a rehearsal that damages nothing proves nothing (SPI-31).
+    if [ -f tools/kotlin_comment_repair.py ]; then
+      run "kotlin comment repair selftest" python3 tools/kotlin_comment_repair.py --selftest
+      if [ -d ../tree.orig/app/src/main/java ] && [ -f docs/KOTLIN-STRIP-TABLE.json ]; then
+        run "kotlin repair rehearsal (19 files)"           python3 tools/kotlin_comment_repair.py --rehearse           ../tree.orig/app/src/main/java docs/KOTLIN-STRIP-TABLE.json
+      fi
+    fi
     # API-level gate: a high-API call with no SDK_INT guard crashes the launcher on
     # older devices before the UI paints. Static, but exact about that defect.
     if [ -f tools/api_level_gate.py ]; then
