@@ -2,12 +2,6 @@
   "declared_count": 88,
   "drifted": [
     {
-      "bytes_declared": 79754,
-      "bytes_on_disk": 82482,
-      "delta": 2728,
-      "path": "AGENTS.md"
-    },
-    {
       "bytes_declared": 16046,
       "bytes_on_disk": 22287,
       "delta": 6241,
@@ -16,6 +10,7 @@
   ],
   "entries": 88,
   "matched": [
+    "AGENTS.md",
     "DARKITH.md",
     "DEFICITS.json",
     "README.md",
@@ -105,9 +100,7 @@
   ],
   "missing": [],
   "registers": 8,
-  "undeclared_drift": [
-    "AGENTS.md"
-  ],
+  "undeclared_drift": [],
   "undeclared_missing": [],
-  "verdict": "RECONCILIATION_INCOMPLETE"
+  "verdict": "RECONCILED"
 }
