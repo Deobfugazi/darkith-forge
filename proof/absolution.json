@@ -1,9 +1,9 @@
 {
-  "absolved": 0,
-  "extraction": 3,
+  "absolved": 3,
+  "extraction": 0,
   "law": "NT XI: W_in - E = S != 0; absolution as E/W_in -> 0",
   "producers": 3,
-  "ratio": 1.0,
+  "ratio": 0.0,
   "results": [
     {
       "evidence": {
@@ -12,7 +12,7 @@
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "4ca31623beafbb7e4c1899d5dc11c1e6fb0c03fd7985480fdfa78a0b7043e26f",
+      "first_tree_sha256": "958ca5d42a5d5a15b86a88f40f19fc5806bfe59e4db3b7646969ecef48fa467a",
       "fixed_point": true,
       "owns": [
         "docs/kb-reconcile.json",
@@ -20,13 +20,10 @@
       ],
       "producer": "kb_reconcile",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "4ca31623beafbb7e4c1899d5dc11c1e6fb0c03fd7985480fdfa78a0b7043e26f",
-      "verdict": "CARRIAGE_REQUIRED",
-      "why": "rewrite is a fixed point but has left the system: docs/kb-reconcile.json, proof/kb-reconcile.json",
-      "wrote": [
-        "docs/kb-reconcile.json",
-        "proof/kb-reconcile.json"
-      ]
+      "second_tree_sha256": "958ca5d42a5d5a15b86a88f40f19fc5806bfe59e4db3b7646969ecef48fa467a",
+      "verdict": "ABSOLVED",
+      "why": "fixed point, and every byte it owns is carried by git",
+      "wrote": []
     },
     {
       "evidence": {
@@ -35,7 +32,7 @@
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "4ca31623beafbb7e4c1899d5dc11c1e6fb0c03fd7985480fdfa78a0b7043e26f",
+      "first_tree_sha256": "958ca5d42a5d5a15b86a88f40f19fc5806bfe59e4db3b7646969ecef48fa467a",
       "fixed_point": true,
       "owns": [
         "docs/INDEX.md",
@@ -43,9 +40,9 @@
       ],
       "producer": "kb_index",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "4ca31623beafbb7e4c1899d5dc11c1e6fb0c03fd7985480fdfa78a0b7043e26f",
-      "verdict": "CARRIAGE_REQUIRED",
-      "why": "rewrite is a fixed point but has left the system: docs/INDEX.md, docs/kb_manifest.json",
+      "second_tree_sha256": "958ca5d42a5d5a15b86a88f40f19fc5806bfe59e4db3b7646969ecef48fa467a",
+      "verdict": "ABSOLVED",
+      "why": "fixed point, and every byte it owns is carried by git",
       "wrote": []
     },
     {
@@ -57,7 +54,7 @@
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "4ca31623beafbb7e4c1899d5dc11c1e6fb0c03fd7985480fdfa78a0b7043e26f",
+      "first_tree_sha256": "958ca5d42a5d5a15b86a88f40f19fc5806bfe59e4db3b7646969ecef48fa467a",
       "fixed_point": true,
       "owns": [
         "TASKS.md",
@@ -67,9 +64,9 @@
       ],
       "producer": "chat_gatekeeper",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "4ca31623beafbb7e4c1899d5dc11c1e6fb0c03fd7985480fdfa78a0b7043e26f",
-      "verdict": "CARRIAGE_REQUIRED",
-      "why": "rewrite is a fixed point but has left the system: TASKS.md, proof/chat_gatekeeper.json, proof/chat_watermark.json",
+      "second_tree_sha256": "958ca5d42a5d5a15b86a88f40f19fc5806bfe59e4db3b7646969ecef48fa467a",
+      "verdict": "ABSOLVED",
+      "why": "fixed point, and every byte it owns is carried by git",
       "wrote": []
     }
   ]

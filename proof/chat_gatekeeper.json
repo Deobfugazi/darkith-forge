@@ -1,5 +1,5 @@
 {
-  "block_sha256": "3975fad844c10528dfbb144577ff5cdd3af118f67545e22d2b66b994b306f3a9",
+  "block_sha256": "6e8a5b27611e8ca3e1cc2b48cb936cd952375f3202b01da8cdf67232e5e84503",
   "conversation": "18393131094c4acfb45d943764549f23",
   "ingested": [
     {
@@ -126,24 +126,6 @@
       "timestamp": "2026-11-24T13:50:56.034614"
     },
     {
-      "index": 40886,
-      "kind": "forbid",
-      "laws": [
-        "MUST #20",
-        "MUST #26",
-        "MUST #27",
-        "MUST #30",
-        "MUST #33",
-        "NEVER #19",
-        "SPI-15",
-        "SPI-2",
-        "SPI-4",
-        "SPI-6"
-      ],
-      "sha256": "41da184cb130dbed154735d70ae77c6813d043a318b8b163632f762889e74b6b",
-      "timestamp": "2026-11-24T15:54:40.631269"
-    },
-    {
       "index": 41051,
       "kind": "forbid",
       "laws": [
@@ -164,47 +146,6 @@
       ],
       "sha256": "d31d99750f50bbd55d1c7030a9b0099f6867e002c9d1c010c5e5903c00e236b2",
       "timestamp": "2026-11-24T16:08:54.088372"
-    },
-    {
-      "index": 41324,
-      "kind": "forbid",
-      "laws": [
-        "MUST #20",
-        "MUST #26",
-        "MUST #27",
-        "MUST #30",
-        "MUST #33",
-        "MUST #35",
-        "MUST #36",
-        "MUST#35",
-        "NEVER #19",
-        "NEVER #21",
-        "SPI-15",
-        "SPI-37",
-        "SPI-38",
-        "SPI-4"
-      ],
-      "sha256": "49d82554102f276ca7ac1817e347ab56a6f370de64b4fdb053ed0164a88349b3",
-      "timestamp": "2026-11-24T17:06:09.458687"
-    },
-    {
-      "index": 41936,
-      "kind": "forbid",
-      "laws": [
-        "MUST #20",
-        "MUST #30",
-        "MUST #33",
-        "NEVER #19",
-        "SPI-10",
-        "SPI-11",
-        "SPI-15",
-        "SPI-2",
-        "SPI-4",
-        "SPI-5",
-        "SPI-6"
-      ],
-      "sha256": "b55fd78295e326b41401fd53b381be23b46a420f97b83dcd7f7aff5977f95a39",
-      "timestamp": "2026-11-24T18:19:01.029492"
     }
   ],
   "occupation": {
@@ -214,8 +155,8 @@
   },
   "watermark": {
     "conversation": "18393131094c4acfb45d943764549f23",
-    "ingested_total": 14,
-    "last_index": 41936,
-    "last_timestamp": "2026-11-24T18:19:01.029492"
+    "ingested_total": 11,
+    "last_index": 41051,
+    "last_timestamp": "2026-11-24T16:08:54.088372"
   }
 }

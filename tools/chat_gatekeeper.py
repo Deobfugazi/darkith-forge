@@ -182,6 +182,44 @@ def sha(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
 
 
+def _msg_text(e: dict) -> str:
+    lm = e.get("llm_message") or {}
+    c = lm.get("content")
+    return "".join(x.get("text", "") for x in c if isinstance(x, dict)) if isinstance(c, list) else (c or "")
+
+
+ECHO_MIN = 80
+# An agent report addresses the Operator; an order does not address the person giving it.
+# Measured over 220 recorded user turns: this matched exactly one, the agent's own report.
+ADDRESSES_OPERATOR = re.compile(r"^operator\s*[—:,\-]", re.IGNORECASE)
+
+
+def _is_echo(user_text: str, assistant_texts: list[str]) -> bool:
+    """True when this 'user' turn is the agent's own reply recorded under the user role.
+
+    The session log carries the agent's replies under role="user" — sometimes duplicated from
+    an assistant event, sometimes ONLY as a user event, so a byte match against assistant
+    messages alone is not enough. Two signals, both narrow:
+
+    * a long message that reappears verbatim among the assistant messages, and
+    * a message that opens by addressing the Operator ("Operator — ...").
+
+    Both are the machine speaking about its work, never the Operator giving an order. Without
+    this, the agent's own report is ingested as a directive, lands on the board, and can even
+    re-open a brief the agent had just closed.
+    """
+    u = " ".join(user_text.split())
+    if ADDRESSES_OPERATOR.match(u):
+        return True
+    for a in assistant_texts:
+        a = " ".join(a.split())
+        if len(a) < ECHO_MIN:
+            continue
+        if u == a or (len(u) >= ECHO_MIN and (u.startswith(a) or a.startswith(u))):
+            return True
+    return False
+
+
 def session_events() -> tuple[str, list[tuple[int, str, str]]]:
     """Return (conversation_id, [(index, timestamp, text)]) for the newest session with events."""
     best = None
@@ -198,7 +236,7 @@ def session_events() -> tuple[str, list[tuple[int, str, str]]]:
     if best is None:
         return "", []
     conv_id, _, files = best
-    out = []
+    events = []
     for f in files:
         try:
             e = json.loads(f.read_text())
@@ -206,12 +244,18 @@ def session_events() -> tuple[str, list[tuple[int, str, str]]]:
             continue
         if e.get("kind") != "MessageEvent":
             continue
+        events.append((f, e))
+    assistant_texts = [" ".join(_msg_text(e).split()) for _, e in events
+                       if (e.get("llm_message") or {}).get("role") == "assistant"]
+    out = []
+    for f, e in events:
         lm = e.get("llm_message") or {}
         if lm.get("role") != "user":
             continue
-        c = lm.get("content")
-        txt = "".join(x.get("text", "") for x in c if isinstance(x, dict)) if isinstance(c, list) else (c or "")
+        txt = _msg_text(e)
         if not txt.strip():
+            continue
+        if _is_echo(txt, assistant_texts):
             continue
         idx = int(re.sub(r"^event-(\d+)-.*$", r"\1", f.name))
         out.append((idx, e.get("timestamp", ""), txt))
@@ -575,6 +619,18 @@ def selftest() -> int:
     chk("nudge skipped", classify("Your last response did not include a function call or a message. Please use a tool to proceed with the task.") == "skip")
     chk("agent echo skipped", classify("Confirmed: SelfTest.kt references the purged ComposeEmitter") == "skip")
     chk("withdrawal skipped", classify("Never mind for now. Ill come back later") == "skip")
+
+    # The agent's own report, recorded under the user role, must never become an order.
+    chk("operator-addressed report is echo",
+        _is_echo("Operator — I have to correct the briefing before you send the script. "
+                 "Do not send it. Running it would corrupt 18 good files.", []))
+    chk("verbatim assistant text is echo",
+        _is_echo("x" * 120, ["x" * 120]))
+    chk("short user order survives",
+        not _is_echo("push the branch now", []))
+    chk("genuine long order survives",
+        not _is_echo("Now I need you to build the whole chain and prove it compiles end to end "
+                     "on the phone, with a receipt on disk for every step you take.", []))
 
     # watermark: an order at or below the mark must not be re-ingested
     ev = [(10, "t10", "add the gatekeeper"), (20, "t20", "build the pulse")]
