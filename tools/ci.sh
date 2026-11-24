@@ -515,6 +515,25 @@ if have python3 && [ -f tools/doc_path_gate.py ]; then
   run "doc path gate" python3 tools/doc_path_gate.py
 fi
 
+# Single-authority migration (§1.2, §7.2, §7.3). Three gates, each able to fail:
+#   policy_block       DARKITH.md carries exactly one delimited, machine-readable policy
+#                      block, it parses under one strict parser, its ids are unique, its
+#                      precedence is total, and it is fresh against the law headings.
+#   authority_inventory no secondary prose document DEFINES law; DARKITH.md is the source.
+#   authority_gate_migration  plants the defects above and requires the checks to refuse
+#                      them, so a gate that has only ever seen a healthy tree cannot pass.
+# A migration whose result is only asserted is a claim; these make it a measurement.
+if have python3 && [ -f tools/policy_block.py ]; then
+  run "policy block (machine-readable law)" python3 tools/policy_block.py --check
+  run "policy parser selftest"              python3 tools/policy_block.py --selftest
+fi
+if have python3 && [ -f tools/authority_inventory.py ]; then
+  run "authority inventory (one source)"    python3 tools/authority_inventory.py --check
+fi
+if have python3 && [ -f tools/authority_gate_migration.py ]; then
+  run "authority migration regressions"     python3 tools/authority_gate_migration.py
+fi
+
 # Blueprint gate: the Operator's specification corpus must never instruct the agent. The
 # blueprint rode onto main with a live prompt-injection payload (`COPY AND PASTE ... INTO
 # OPENHANDS`, `do not ask for confirmation; execute immediately`) because NOTHING checked
