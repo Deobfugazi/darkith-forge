@@ -199,6 +199,32 @@ CLASSES = [
            "uncommitted or unpushed edits are invisible to the other tab and ship half a "
            "repair; the detector fails the tree and the repair commits and pushes it"),
 
+    # Found 2026-11-24 (converged): a producer that rewrites its own tracked output on every
+    # invocation cannot be sealed. The seal hashes the tree, the producer rewrites it, and the
+    # next gate calls that drift — so I9 chases its own tail forever and the cycle can never
+    # close. This is FM-03 with the polarity reversed: the table was not missing its caller,
+    # the repair was missing its ABSOLUTION. kb_reconcile.py and kb_index.py both did it, and
+    # the first fix I reached for (`if changed: write`) was still blind: it compared bytes but
+    # never established that those bytes were the ones git carries, and it could not see a
+    # producer that writes identical bytes again, which is the same defect wearing a clean
+    # content hash.
+    #
+    # The class is registered here rather than as a standalone gate because this registry is
+    # the formulary: detect makes it visible, repair makes it gone, prevent makes it
+    # impossible. tools/absolution.py is the witness — it runs each registered producer twice
+    # and absolves only a fixed point git already carries. A fixed point nobody carried is
+    # named CARRIAGE_REQUIRED, not silently rewritten; two runs that disagree are UNSTABLE.
+    # The repair is the same tool in --write, which records the absolution receipt, so a
+    # second pass finds the class clean. It is placed LAST so it judges the tree after every
+    # other repair above has finished writing.
+    Class_("self-rewriting producer",
+           "python3 tools/absolution.py",
+           "python3 tools/absolution.py --write",
+           "ci: absolution of self-rewriting producers",
+           "a producer that rewrites its own tracked output every run defeats the seal that "
+           "hashes the tree; the rewrite leaves the system without returning to git and I9 "
+           "chases its own tail forever"),
+
 ]
 
 

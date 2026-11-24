@@ -268,7 +268,7 @@ Named skips this cycle (SKIP is never PASS): clearanceloop webapp gate (headless
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T10:29:20.943206`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T10:58:57.846905`. This section is regenerated, never hand-edited._
 
 **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 
@@ -297,5 +297,8 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
 7. **[forbid]** And is my fucking README stale?🤬 It never fucking updated with the trial to zero error testnet before pushing to mainnet!🤬
    - prompt index `38646` at `2026-11-24T10:29:20.943206`
    - sha256 `49b417e7f45a924a`
+8. **[forbid]** Root cause: `kb_reconcile.py` rewrites a tracked file on every CI run — even when nothing changed. That makes the seal chase CI's own output forever.…
+   - prompt index `38936` at `2026-11-24T10:58:57.846905`
+   - sha256 `3c63a3d6409b54fa`
 
 <!-- CHAT-GATE:END -->
