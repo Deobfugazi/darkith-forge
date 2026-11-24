@@ -71,6 +71,13 @@ MIRRORS = [
     # The homekeeper Node app ships the same reader page the root serves, so the CLI and
     # the app cannot disagree about what a record looks like.
     ("omega-reader.html", "darkith-omega-homekeeper/src/reader-shell.html"),
+    # Captured resolver output, kept twice on purpose: the docs/ copy is the deliverable a
+    # reader opens, the proof/ copy is the evidence record filed beside the run that made it.
+    # Same bytes by construction. Declared as a mirror so a divergence still fails the gate
+    # (NEVER #11) instead of being silenced by deleting one of them.
+    ("docs/03-RESOLUTION-captured.txt", "proof/invariant-resolution/CAPTURED.txt"),
+    ("docs/06_expected_root.txt",
+     "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt"),
 ]
 
 REGISTERS = [

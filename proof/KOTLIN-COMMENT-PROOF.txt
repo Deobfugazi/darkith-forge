@@ -1,0 +1,43 @@
+KOTLIN COMMENT DEFECT — PHYSICAL PROOF
+generated: 2026-11-24T10:15:06Z  commit: 290887a
+SPI-4: this file is the record. The terminal is a liar.
+
+STEP 0 — does each stated line actually hold an opening /* ?
+  ../tree.orig/app/src/main/java   19/19 stated lines contain '/*'
+  app/src/main/java                18/19 stated lines contain '/*'
+
+STEP 1 — gate on the PRISTINE tree (before any damage)
+syntax_gate: PASS — 50 .kt file(s), every block comment closed.
+
+STEP 2 — strip /* at the 19 stated lines, then gate the DAMAGED copy
+  removed 19 openers
+  exit=1
+syntax_gate: FAIL — 19 defect(s) in 50 scanned .kt file(s):
+  defects listed: 19
+  one line of evidence, verbatim:
+      /tmp/proof_tree/com/darkith/transliaison/AxmlWriter.kt: orphan */ with no opening /* at line 12
+
+STEP 3 — re-inject /* at the 19 stated lines, then gate the REPAIRED copy
+  restored 19 openers
+syntax_gate: PASS — 50 .kt file(s), every block comment closed.
+  exit=0
+
+STEP 4 — is the repair byte-identical to the pristine tree?
+  diff: NO DIFFERENCES — repair is the exact inverse of the damage
+  pristine sha: d8949509e1263db4ca8d3c0e0f269abd50b5af462449191f7d4d63c4399e6c29
+  repaired sha: d8949509e1263db4ca8d3c0e0f269abd50b5af462449191f7d4d63c4399e6c29
+
+STEP 5 — automated rehearsal gate (same proof, re-runnable)
+  pristine: ../tree.orig/app/src/main/java  (50 .kt)
+  strip:   19 opener(s) removed -> 19 defect(s)
+  restore: 19 opener(s) re-injected -> 0 defect(s) remaining
+  PASS: byte-identical to pristine — the repair is the exact inverse
+
+STEP 6 — AndroidX status: NOT ADDRESSED (out of scope for this task, per the briefing)
+  real `import androidx` lines across all four trees: 0
+    tree.orig 0 | tree 0 | tree_omega 0 | app 0   (69 .kt files in app)
+  So the second problem as stated does not bind to these bytes either. The only androidx
+  text present is inside two files that NAME the symbols as data, not import them:
+    AutofillCorrector.kt:24-28  a map of short name -> fully-qualified name
+    SelfTest.kt:99              a string it searches for in generated source
+  Those are subject matter, not dependencies. Left untouched.

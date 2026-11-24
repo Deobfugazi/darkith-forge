@@ -16,7 +16,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 79,754 | `f2d29527e78a` | AGENTS.md — Darkith |
-| `DARKITH.md` | 142,204 | `d5e6700d9be5` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 142,168 | `09952091378f` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
@@ -142,6 +142,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 
 - `app/src/main/assets/darkith_ui.html` == `darkith-inscriber.html`
 - `omega-reader.html` == `darkith-omega-homekeeper/src/reader-shell.html`
+- `docs/03-RESOLUTION-captured.txt` == `proof/invariant-resolution/CAPTURED.txt`
+- `docs/06_expected_root.txt` == `proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt`
 
 ## The laws this index enforces
 

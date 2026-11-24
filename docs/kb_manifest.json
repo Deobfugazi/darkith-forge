@@ -33,10 +33,10 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 18821,
+      "bytes": 15020,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "a165bb53b7cd7cbb0dd1b9ab7428695882aca2130f6ffc6546d59c0b423ab273"
+      "sha256": "b5cbb1008db6e42aa096a1a44d9b8b05eaf55f9bce029b70b620bc5cd50842cd"
     },
     {
       "bytes": 817,
@@ -533,6 +533,14 @@
     {
       "a": "omega-reader.html",
       "b": "darkith-omega-homekeeper/src/reader-shell.html"
+    },
+    {
+      "a": "docs/03-RESOLUTION-captured.txt",
+      "b": "proof/invariant-resolution/CAPTURED.txt"
+    },
+    {
+      "a": "docs/06_expected_root.txt",
+      "b": "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt"
     }
   ],
   "registers": {

@@ -1,6 +1,13 @@
 {
   "declared_count": 87,
-  "drifted": [],
+  "drifted": [
+    {
+      "bytes_declared": 15020,
+      "bytes_on_disk": 18821,
+      "delta": 3801,
+      "path": "TASKS.md"
+    }
+  ],
   "entries": 87,
   "matched": [
     "AGENTS.md",
@@ -8,7 +15,6 @@
     "DEFICITS.json",
     "README.md",
     "RESUME.md",
-    "TASKS.md",
     "docs/01-PROOF-captured.txt",
     "docs/02-ATTACKS-captured.txt",
     "docs/03-RESOLUTION-captured.txt",
