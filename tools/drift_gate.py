@@ -71,9 +71,9 @@ def repair(root=ROOT):
     git(["add", "--", *paths_to_stage], root=root)
     staged = git(["diff", "--cached", "--name-only", "-z"], root=root)
     import re
-    secret_name = re.compile(r"(^|/)(release_key|release_cert)$|\\.(keystore|jks|p8|p12|pfx|pem|key)$", re.I)
+    secret_name = re.compile(r"(^|/)(release_key|release_cert)$|\.(keystore|jks|p8|p12|pfx|pem|key)$", re.I)
     private_key = re.compile(r"BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY")
-    for name in (p for p in staged.stdout.split("\\0") if p):
+    for name in (p for p in staged.stdout.split("\0") if p):
         target = pathlib.Path(root) / name
         if secret_name.search(name) or (target.is_file() and private_key.search(target.read_text(errors="ignore"))):
             git(["restore", "--staged", "--", name], root=root)
