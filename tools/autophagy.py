@@ -217,6 +217,19 @@ CLASSES = [
     # The repair is the same tool in --write, which records the absolution receipt, so a
     # second pass finds the class clean. It is placed LAST so it judges the tree after every
     # other repair above has finished writing.
+    # Found 2026-11-24 (the recurrence itself): every session, a fresh agent rebuilds a
+    # mechanism the tree already had, because the formulary lives at line 1033 of AGENTS.md
+    # and the agent has started writing code long before it reads that far. Documentation
+    # cannot fix this; a gate that runs on the next agent's first CI can. The mechanical
+    # signature of the silo is a gate with no caller, so that is what is policed — not intent.
+    Class_("uncalled gate",
+           "python3 tools/gate_coverage_gate.py",
+           "python3 tools/gate_coverage_gate.py --selftest",
+           "ci: gate coverage (no uncalled gate)",
+           "a gate CI never invokes cannot fail, and a gate that cannot fail is a comment; "
+           "an agent then rebuilds the same gate in a new silo because nothing told it the "
+           "gate already existed"),
+
     Class_("self-rewriting producer",
            "python3 tools/absolution.py",
            "python3 tools/absolution.py --write",

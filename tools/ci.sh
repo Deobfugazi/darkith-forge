@@ -332,6 +332,13 @@ if have python3; then
       run "absolution of self-rewriting producers" python3 tools/absolution.py
       run "absolution gate selftest"               python3 tools/tests/absolution_test.py
     fi
+    # FM-03, mechanically: a gate that CI never runs cannot fail, and a gate that cannot fail
+    # is a comment. This refuses any tools/*gate*.py with no caller, which is the exact silo
+    # a fresh agent builds when it does not yet know the gate it needs already exists.
+    if [ -f tools/gate_coverage_gate.py ]; then
+      run "gate coverage (no uncalled gate)" python3 tools/gate_coverage_gate.py
+      run "gate coverage selftest"           python3 tools/gate_coverage_gate.py --selftest
+    fi
     # NT-XIII's falsifier, executed: on a known cut the deficit must be BOOKED, not silenced.
     if [ -f tools/ofif_gate.py ]; then
       run "OFIF falsifier (NT-XIII G6/G7)" python3 tools/ofif_gate.py

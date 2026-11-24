@@ -2,6 +2,53 @@
 
 Repository-specific knowledge for future sessions. Read before acting.
 
+## 0.000. STOP — BEFORE YOU BUILD ANYTHING, CHECK THE FORMULARY (MUST #32)
+
+**You are a fresh agent. You have no memory of last session. The tree does.**
+
+Every session, an agent reads the top of this file, feels the problem is new, and rebuilds a
+mechanism the tree already had — in a new silo, beside the one that already worked. That is
+the single most expensive failure in this repository and it is why this section is now the
+first thing after the title instead of at line 1033 where it used to live, too late to matter.
+
+**The formulary is already here. It is `tools/autophagy.py`.** Every defect class in this
+repository is one `Class_` entry with three parts:
+
+| part | what it means | what it is not |
+|---|---|---|
+| `detect` | the command that makes the defect VISIBLE | not a narration that it is fixed |
+| `repair` | the command that makes it GONE, deterministically | not a judgement call |
+| `prevent` | the CI gate that makes it IMPOSSIBLE to return | not a note in a doc |
+
+A class with no `prevent` is **refused at registration**. Run it:
+
+```bash
+python3 tools/autophagy.py --check      # what is dirty, and which gate prevents each class
+python3 tools/autophagy.py --repair     # repair, then RE-RUN the detector to prove it took
+```
+
+**So, before writing a new tool, do these three things in order:**
+
+1. `grep -rn "<the symptom>" tools/ docs/FAILURE-MODE-LEDGER.md` — the class may already be
+   registered, with a repair you can just run.
+2. `python3 tools/autophagy.py --check` — see the 21 classes already known and the gate that
+   prevents each one. If your problem is on that list, you are about to duplicate it.
+3. If it is genuinely new, register a `Class_` with all three parts. **Do not ship a
+   standalone script.** A tool outside the registry is a silo: nothing repairs it, nothing
+   prevents it returning, and the next agent will rebuild it.
+
+**The mechanical enforcement, so this is not advice:** `tools/gate_coverage_gate.py` fails CI
+on any `tools/*gate*.py` that CI never invokes. A gate with no caller cannot fail, and a gate
+that cannot fail is a comment. That gate is class "uncalled gate" in the registry above, and
+it is what stops the next agent from silently adding a fourteenth orphan.
+
+Why this is a hard law: on 2026-11-24 an agent (me) spent a full session building
+`tools/absolution.py` as a brand-new silo to solve a problem `resolve_invariants.py`,
+`falsify_resolver.py` and the autophagy registry already solved — because this file told it
+so at line 1033, after the code was already written. The Operator asked the only question
+that matters: *what are you doing to prevent this on the next reset?* This section, and the
+gate that enforces it, are the answer.
+
 ## 0a. STANDING-AUTHORITY (NEVER #21) — READ THIS BEFORE YOU ASK FOR ANYTHING
 
 **An automated decision is already approved. Execute it. Do not stop to ask.**
