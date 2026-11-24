@@ -27,7 +27,7 @@ THE LOOP
 
     python3 tools/autophagy.py            heal, loop to convergence, print the verdict
     python3 tools/autophagy.py --check    report the defect classes, repair nothing
-    python3 tools/autophagy.py --commit   also commit + push what was healed (NEVER #21)
+    python3 tools/autophagy.py --commit   also create a local commit; publication is separate (DARKITH.md NEVER #21)
 """
 import subprocess
 import sys
@@ -102,24 +102,11 @@ CLASSES = [
            "ci: closed briefings stay closed",
            "a closed briefing back on the board is a fresh agent re-litigating a question the "
            "bytes already answered, and it costs a delivery cycle every time"),
-    Class_("standing authority inscribed",
-           "python3 tools/authority_gate.py --sentinel-only",
-           "python3 tools/cns_directive.py --write",
-           "ci: authority gate (NEVER #21)",
-           "the sentinel vanished three times through rebases; it is generated now, so it "
-           "cannot"),
-
     Class_("forge artifact in sync",
            "python3 build/build-forge.py --check",
            "python3 build/build-forge.py",
            "ci: repo gate (sync)",
            "a forge html older than its sources ships code the tree no longer contains"),
-
-    Class_("central directive on every board",
-           "python3 tools/cns_directive.py --check",
-           "python3 tools/cns_directive.py --write",
-           "ci: cns directive",
-           "a directive on four boards is a directive one agent does not have"),
 
     Class_("omega deficit indicator",
            "python3 tools/omega_deficit.py",
@@ -319,8 +306,7 @@ def main():
             sh('git -c user.name=openhands -c user.email=openhands@all-hands.dev '
                'commit -q -m "autophagy: return the tree to newborn\n\n'
                'Co-authored-by: openhands <openhands@all-hands.dev>"')
-            sh("git push -q origin main")
-            print("  committed and pushed the healed tree")
+            print("  committed healed tree locally; no remote publication performed")
 
     return verdict(rows or [(c, probe(c)) for c in CLASSES], passes, residue)
 
