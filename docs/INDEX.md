@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**87 readable files across 8 registers.**
+**88 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -106,6 +106,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `proof/FIELD_REPORT_THIS_TAB.md` | 11,203 | `bd7589bc3d93` | DARKITH — byte-measured field report (this tab) |
+| `proof/KOTLIN-COMMENT-PROOF.txt` | 2,158 | `a428f3236402` | KOTLIN COMMENT DEFECT — PHYSICAL PROOF |
 | `proof/NT_RECONCILIATION.md` | 7,185 | `fa523afa5914` | NT CORPUS RECONCILIATION — the SAVF run and the absolution |
 | `proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt` | 168 | `f6ab85268b43` | expected_root=e14350baf18719f1e1f7ddb79cccd0a6ce416eb4143b037fa40436a3 |
 | `proof/comment_19files_proof.txt` | 1,214 | `eb65d81efeb4` | file                       brief  open close  line-N bytes (SPI-2) |

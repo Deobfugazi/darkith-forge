@@ -1,5 +1,5 @@
 {
-  "declared_count": 87,
+  "declared_count": 88,
   "drifted": [
     {
       "bytes_declared": 15020,
@@ -8,7 +8,7 @@
       "path": "TASKS.md"
     }
   ],
-  "entries": 87,
+  "entries": 88,
   "matched": [
     "AGENTS.md",
     "DARKITH.md",
@@ -80,6 +80,7 @@
     "omega-app/src/main/assets/github_console.html",
     "omega-app/src/main/assets/omega_studio.html",
     "proof/FIELD_REPORT_THIS_TAB.md",
+    "proof/KOTLIN-COMMENT-PROOF.txt",
     "proof/NT_RECONCILIATION.md",
     "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt",
     "proof/comment_19files_proof.txt",

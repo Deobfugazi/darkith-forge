@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 87,
+  "count": 88,
   "files": [
     {
       "bytes": 79754,
@@ -427,6 +427,12 @@
       "path": "proof/FIELD_REPORT_THIS_TAB.md",
       "register": "E-evidence",
       "sha256": "bd7589bc3d9344ae2d0996d0774ed1b5ad543ab7259bf162a8a143fe31e26fb9"
+    },
+    {
+      "bytes": 2158,
+      "path": "proof/KOTLIN-COMMENT-PROOF.txt",
+      "register": "E-evidence",
+      "sha256": "a428f32364020f80d94c57ab430153d62f7e1c9660f84edb4943e47f89caa4d3"
     },
     {
       "bytes": 7185,
