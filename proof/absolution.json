@@ -7,18 +7,18 @@
   "results": [
     {
       "evidence": {
-        "proof/kb-reconcile.json": "7caac1e56396337315501965a81d895b9ac04924f6c7f8d90d2662346b88402f"
+        "proof/kb-reconcile.json": "1ec9e9caf16ad3ee07d78ae1050ac01e5b8e61f8c0420401769e18fafe1c8055"
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "1562fd2b5443e5b5f663a8eeb2e1f376e87297160a74326ae32aecee99b92f8b",
+      "first_tree_sha256": "9106bc541054cbd93b5672d3a245bf5a6f3fb9355d12606940856aae4755e254",
       "fixed_point": true,
       "owns": [
         "proof/kb-reconcile.json"
       ],
       "producer": "kb_reconcile",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "1562fd2b5443e5b5f663a8eeb2e1f376e87297160a74326ae32aecee99b92f8b",
+      "second_tree_sha256": "9106bc541054cbd93b5672d3a245bf5a6f3fb9355d12606940856aae4755e254",
       "verdict": "CARRIAGE_REQUIRED",
       "why": "rewrite is a fixed point but has left the system: proof/kb-reconcile.json",
       "wrote": [
@@ -27,12 +27,12 @@
     },
     {
       "evidence": {
-        "docs/INDEX.md": "9b0b9c99480b8ebf0e051ca20dc4b1f9b354cd61ed1be09b50d84e39c9d8297c",
-        "docs/kb_manifest.json": "1052de308a1e0c91cb3b1767e30ddd06751cd8d48c040206f8477179ca72ec0f"
+        "docs/INDEX.md": "f7a4a498f551dbdcb7671adebea76931fa4497da962d83905cadd7940a2fe618",
+        "docs/kb_manifest.json": "a04e3a77bcab83abce1b0d564696bec89520fb47fdee16a19922b6f5a83c6aae"
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "341dc53201247ace2920f458d18148e81852fe99004f15b6ae40e19ea7c54604",
+      "first_tree_sha256": "b2a971e09c17c278113b185325c9f64b365ca098e8886f5f155fd8ad9e2188fc",
       "fixed_point": true,
       "owns": [
         "docs/INDEX.md",
@@ -40,7 +40,7 @@
       ],
       "producer": "kb_index",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "341dc53201247ace2920f458d18148e81852fe99004f15b6ae40e19ea7c54604",
+      "second_tree_sha256": "b2a971e09c17c278113b185325c9f64b365ca098e8886f5f155fd8ad9e2188fc",
       "verdict": "CARRIAGE_REQUIRED",
       "why": "rewrite is a fixed point but has left the system: docs/INDEX.md, docs/kb_manifest.json",
       "wrote": [
@@ -50,14 +50,14 @@
     },
     {
       "evidence": {
-        "TASKS.md": "f1180fb65454cfbf87714fed647df19ca983cc87aef06394ffe2bc3524ce4e22",
+        "TASKS.md": "9fe1a04d64c01d303cc5aa22e4fd6d209145da80f0d8c92c93bc51a0ef225f3e",
         "proof/chat_gatekeeper.json": "d81f2ed9bc4fadc734774a57f37e8116e5b1733a723a70fbfff6eacdd17d554e",
         "proof/chat_pings.json": null,
         "proof/chat_watermark.json": "3a54112a0e05073450b5bbfe6f7ded98af5a4546cd0ee027c82ef897354d4115"
       },
       "exit": 0,
       "exit_again": 0,
-      "first_tree_sha256": "341dc53201247ace2920f458d18148e81852fe99004f15b6ae40e19ea7c54604",
+      "first_tree_sha256": "b2a971e09c17c278113b185325c9f64b365ca098e8886f5f155fd8ad9e2188fc",
       "fixed_point": true,
       "owns": [
         "TASKS.md",
@@ -67,7 +67,7 @@
       ],
       "producer": "chat_gatekeeper",
       "rewritten_unchanged": [],
-      "second_tree_sha256": "341dc53201247ace2920f458d18148e81852fe99004f15b6ae40e19ea7c54604",
+      "second_tree_sha256": "b2a971e09c17c278113b185325c9f64b365ca098e8886f5f155fd8ad9e2188fc",
       "verdict": "ABSOLVED",
       "why": "fixed point, and every byte it owns is carried by git",
       "wrote": []
