@@ -18,7 +18,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `AGENTS.md` | 79,754 | `f2d29527e78a` | AGENTS.md — Darkith |
 | `DARKITH.md` | 142,168 | `09952091378f` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
+| `README.md` | 70,235 | `e7dc5bdf2592` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
 | `TASKS.md` | 15,020 | `b5cbb1008db6` | TASKS — the durable board |
 

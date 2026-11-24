@@ -163,7 +163,36 @@ The tenth mode — the deliberate lie — is forbidden by the Prime Directive
 > HTML ↔ Kotlin contract); synchrony by `tools/synchrony_gate.py` (one clock,
 > UTC+8). Source: `docs/nt/NT-VI.txt`.
 
-### 2.5 The closure criterion (Sigma equals zero)
+### 2.5 The trial net, and the barrier to main net
+
+> **Plain.** Nothing reaches the main net on its own say-so. It is first exercised on a
+> trial net, where the failure it is supposed to stop is *injected on purpose*. Only what
+> survives a trial that actually caught something is promoted. A trial that tested
+> nothing promotes nothing.
+> **Precise.** Trial net and main net are **separate files**, and the barrier between
+> them is the gate, not a convention:
+> `proof/mint_ledger.jsonl` holds trial mints, phantoms, and trial receipts;
+> `proof/mint_mainnet.jsonl` holds only what survived a green trial. Promotion requires
+> all three conditions at once, with no override: (1) **at least one phantom was
+> executed** — an untested barrier is a claim, not a barrier; (2) **every phantom
+> FAILED** — a phantom that passes is a **PATHOGEN BREACH** and blocks promotion
+> absolutely, because a barrier that lets its own test case through is not a barrier;
+> (3) **every candidate re-executed green** in that same trial. Both ledgers are
+> hash-chained (`prev` + payload, the storage layer owns `seq`), so a rewritten line is
+> caught rather than trusted.
+> **Machine.** `tools/mint_ledger.py` (`mint`, `phantom`, `trial`, `promote`, `verify`,
+> `status`) enforces the barrier; `tools/tests/mint_ledger_test.py` proves each refusal
+> fires. State of this tree, read from the ledgers:
+>
+> ```
+> trial: green — phantoms 2/2 caught, candidates 5/5 green, breaches 0
+> mint_ledger: PASS — trial 13 entries, mainnet 5 entries, both chains intact
+> MINT LEDGER TEST: PASS
+> ```
+>
+> Source: `docs/NT-XII-IN-THE-OPEN.md` §3.
+
+### 2.6 The closure criterion (Sigma equals zero)
 
 > **Plain.** The build is finished only when the residual is exactly zero: nothing the
 > tools verified is missing from the source, and nothing in the source fails to
@@ -177,7 +206,7 @@ The tenth mode — the deliberate lie — is forbidden by the Prime Directive
 > `SubstrateIngestor.kt`); the proof of a clean close is `kotlinc` exit 0, recorded in
 > `proof/`. Source: `docs/nt/NT-X.txt` §5.
 
-### 2.6 The three registers (one artifact, three readers)
+### 2.7 The three registers (one artifact, three readers)
 
 > **Plain.** Anything that must serve both the expert who builds it and the novice who
 > checks it is written in three layers: the dense source, the plain-language proof log,
@@ -199,7 +228,7 @@ The tenth mode — the deliberate lie — is forbidden by the Prime Directive
 > the proof registers live inside the source; the presentation registers live in the
 > reader. Both are enumerated and closed.
 
-### 2.7 The repository invariant: A∧B∧C∧D
+### 2.8 The repository invariant: A∧B∧C∧D
 
 > **Plain.** A repository is not "a pile of files." It is a set of holdings that must
 > satisfy four conditions at once. This project treats those four as a law and applies
@@ -663,6 +692,9 @@ and the corruption mode each one guards:
 | `tools/api_level_gate.py` | a high-API call with no guard (mode 7) |
 | `tools/secret_gate.py` | a credential committed to the tree |
 | `tools/source_inspector.py` | an unexamined source feature: unclosed comment, foreign import, `!!`, stub, swallowed exception, duplicate node function (and the stasis gate that would tolerate them) |
+| `tools/mint_ledger.py verify` | a mint promoted to main net without a green trial that caught its phantoms; a rewritten ledger line |
+| `tools/tests/mint_ledger_test.py` | a barrier that has stopped refusing: an untested trial, a passing phantom (PATHOGEN BREACH), or promotion with no trial at all |
+| `tools/phantom_tree_gate.py` | a gitignored duplicate source tree that the gates would not be reading |
 | `tools/board_gate.py` | a board item marked done with no evidence |
 | `tools/stall_gate.py` | a named deficit left open across deliveries |
 | `tools/law_gate.py` | a rule with no executable gate (mode 5) |
