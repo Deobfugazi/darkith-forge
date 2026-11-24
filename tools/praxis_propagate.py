@@ -236,24 +236,10 @@ def render_block(title: str, body: str, declared: list[str], derived: list[str],
     # and each propagation pass then found two more copies of it. Markers are addresses, not
     # content — they do not survive being quoted.
     quoted = [ln for ln in body.strip("\n").splitlines()
-              if not ln.strip().startswith(("<!-- CHAT-GATE:", "<!-- PRAXIS:"))]
+              if not ln.strip().startswith(("<!-- CHAT-GATE:", "<!-- PRAXIS:"))
+              and not re.match(r"\s*>?\s*\*\*Coupled laws:\*\*", ln, re.I)]
     lines += [("> " + ln).rstrip() for ln in quoted]
-    lines += ["", f"**Coupled laws (declared by the directive):** "
-                  + (", ".join(f"`{l}`" for l in declared) if declared else "_none declared_"), ""]
-    if declared:
-        lines.append("| law | heading |")
-        lines.append("|---|---|")
-        for law_id in declared:
-            head = corpus.get(law_id, "")
-            first = head.splitlines()[0] if head else ""
-            m = re.search(r"───\s*.*?\s*(?:\(([^)]*)\))?\s*───", first)
-            title_txt = (m.group(1) if m and m.group(1) else "—") if first else "**NOT FOUND IN DARKITH.md**"
-            lines.append(f"| `{law_id}` | {title_txt} |")
-        lines.append("")
-    if derived:
-        lines.append(f"**Also matched by term (derived, advisory — not an order):** "
-                      + ", ".join(f"`{l}`" for l in derived))
-        lines.append("")
+    lines += ["", "**Binding law source:** `DARKITH.md` (sole canonical source; this mirror carries no law definitions or publication authority).", ""]
     lines += [END, ""]
     return "\n".join(lines)
 
@@ -492,38 +478,11 @@ def main() -> int:
         return 1
     title, body = found
 
-    corpus = law_corpus()
-    declared = declared_laws(body)
-    derived = derived_laws(body, corpus, declared)
-
-    # A directive without a declared coupled-law set cannot be propagated as an order, because
-    # the laws are the half of the order that constrains HOW it may be carried out. Deriving
-    # them lexically would be this tool inventing law, which is the one thing it must not do.
-    if not declared:
-        print("praxis: FAIL — the directive declares no coupled laws.")
-        print("        Add a line to the directive section in TASKS.md:")
-        print("          **Coupled laws:** NEVER #19, NEVER #21, MUST #29, SPI-2")
-        if derived:
-            print(f"        (term match suggests, as a hint only: {', '.join(derived)})")
-        print("        The declaration is the order. A derived guess is not.")
-        return 1
-
-    # A declared law that does not exist is a broken order, not a formatting nit: the worker
-    # would chase a law that no gate enforces. Fail closed, in --check and in apply alike.
-    missing = [l for l in declared if l not in corpus]
-    if missing:
-        if not corpus:
-            # No corpus at all: this account has not inscribed its laws yet, so nothing can be
-            # checked against them. Carrying the directive is still the right act — the order is
-            # the Operator's words and they do not become invalid because the heading table is
-            # missing. Fail-closed applies where a corpus EXISTS and contradicts the order; on a
-            # fresh account it would make the kit unusable exactly where it is needed first.
-            print(f"praxis: note — no law corpus at {LAWS.name}; carrying the directive "
-                  f"unverified against {len(missing)} declared law(s)")
-        else:
-            print(f"praxis: FAIL — the directive names law(s) absent from {LAWS.name}: {missing}")
-            return 1
-
+    # The task directive is operational state, not a second lawbook. Binding laws are
+    # read only from DARKITH.md; propagation carries task text plus a pointer, never law copies.
+    corpus = {}
+    declared = []
+    derived = []
     block = render_block(title, body, declared, derived, corpus)
 
     # --check must never write. A gate that repairs what it inspects cannot report drift,
@@ -549,7 +508,7 @@ def main() -> int:
         "directive": title,
         "directive_sha256": sha(body.strip().encode("utf-8")),
         "board_sha256": sha(board_bytes),
-        "laws": {"declared": declared, "derived_advisory": derived},
+        "governance": {"source": "DARKITH.md", "law_text_copied": False},
         "targets": results,
         "mode": "check" if args.check else ("dry-run" if args.dry_run else "apply"),
         "stale": len(stale),
@@ -564,7 +523,7 @@ def main() -> int:
         mark = {"current": "=", "updated": "+", "created": "*"}.get(r["status"], "!")
         print(f"  [{mark}] {r['target']:<28} {r['status']:<12} {r['detail']}")
     print(f"  directive: {title[:60]}")
-    print(f"  laws declared: {declared or 'none'} | derived (advisory): {derived or 'none'}")
+    print("  binding laws: DARKITH.md (canonical; no law text copied)")
 
     if problems:
         print(f"praxis: FAIL — {len(problems)} board(s) could not be read or written")
