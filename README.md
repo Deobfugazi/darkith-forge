@@ -7,6 +7,10 @@
 > If you finish this file and still have a question, that is a defect in this file,
 > not in you. The question belongs in the last section, which is a gate.
 
+## REPOSITORY STATUS — PUBLIC SOURCE, NO LICENSE GRANTED
+
+The canonical repository is public: [github.com/Deobfugazi/darkith-forge](https://github.com/Deobfugazi/darkith-forge), branch `main`. Public visibility means the source can be viewed and forked through GitHub; it does **not** itself grant a copyright license or permission to redistribute, modify, or use the work. There is no `LICENSE` file in the repository. All rights remain reserved unless and until the owner adds an explicit license. Do not describe this repository as private.
+
 ## STANDING-AUTHORITY (NEVER #21) — an automated decision is already approved
 
 If this repository automates a decision, that automation **is** the Operator's approval.
@@ -63,8 +67,8 @@ That is the whole prerequisite. Nothing below assumes you know more.
 > engine), an absolution/crash-recovery system, and a rule set enforced by executable
 > gates that run in one command: `bash tools/ci.sh`.
 >
-> **Machine.** Package `com.darkith.transliaison`; version `1.1.0-omega`
-> (`versionCode 2`); source in `app/src/main/java/com/darkith/transliaison/`; entry
+> **Machine.** Package `com.darkith.transliaison`; version `2.1.0-omega`
+> (`versionCode 4`; surface `v5.3.1`); source in `app/src/main/java/com/darkith/transliaison/`; entry
 > points `MainActivity` and `HomekeeperActivity`; build with `bash build&install.sh`;
 > verify with `bash tools/ci.sh`.
 
@@ -715,8 +719,9 @@ A README that hides its limits creates follow-up questions. These are the real o
    rather than faking success (the Prime Directive).
 6. **The local-assistant / terminal features in `docs/ARCHITECTURE-OMEGA.md` are
    design-stage.** Grounded in verified upstream facts; not all implemented.
-7. **There is no license file.** Treat the code as private unless the owner says
-   otherwise.
+7. **There is no license file.** The repository is public, but public visibility is
+   not a license. No permission to reuse, modify, or redistribute is granted by the
+   act of publication. All rights remain reserved until the owner adds a license.
 
 ---
 
@@ -732,7 +737,7 @@ and gated.
 **Q. What command builds it?** `bash build&install.sh`.
 **Q. What command checks it?** `bash tools/ci.sh` (ends in `CI: PASS`).
 **Q. Where is the version?** In `app/src/main/AndroidManifest.xml` — currently
-`1.1.0-omega` (`versionCode 2`).
+`2.1.0-omega` (`versionCode 4`; surface `v5.3.1`).
 **Q. Why is Gradle forbidden?** It exhausts the phone's memory and freezes it (SPI-1).
 **Q. Why not AndroidX/Compose?** The raw chain does not load them.
 **Q. Why is the code hand-written?** To ship pristine code — free of the nine corruption
