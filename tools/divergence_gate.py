@@ -32,6 +32,25 @@ def git(args, root=ROOT):
     return subprocess.run(["git"] + args, cwd=str(root), capture_output=True, text=True)
 
 
+def detached_branch(root=ROOT) -> str:
+    """The branch a detached HEAD belongs to, or '' when no branch points at it.
+
+    tools/admission.py rehearses the suite in `git worktree add --detach`, where
+    `rev-parse --abbrev-ref HEAD` answers "HEAD". Treating that as main measured a feature
+    branch against origin/main: the rehearsal reported "66 ahead, 8 behind origin" for a
+    branch that was in fact 4 ahead and 0 behind its own upstream, and blocked every push.
+    A worktree shares refs with its parent, so a local branch still pointing at this commit
+    names it exactly.
+    """
+    out = git(["branch", "--points-at", "HEAD", "--format=%(refname:short)"], root=root)
+    # `git branch` also emits pseudo-entries such as "(HEAD detached at abc)" / "(no branch)".
+    # They are labels, not refs, and would be read as an upstream name.
+    names = [n.strip() for n in out.stdout.splitlines()
+             if n.strip() and not n.strip().startswith("(")]
+    names = [n for n in names if n != "main"] or names
+    return sorted(names)[0] if names else ""
+
+
 def measure(root=ROOT):
     """Return (state, ahead, behind, branch). state: clean | diverged | skip."""
     if git(["rev-parse", "--is-inside-work-tree"], root=root).returncode != 0:
@@ -40,7 +59,14 @@ def measure(root=ROOT):
     if fetch.returncode != 0:
         return 'clean', 0, 0, ''   # offline: not judged here; unpushed age is NEVER #21's
     branch = git(["rev-parse", "--abbrev-ref", "HEAD"], root=root).stdout.strip()
-    upstream = "origin/main" if branch == "HEAD" else f"origin/{branch}"
+    if branch == "HEAD":
+        named = detached_branch(root=root)
+        if not named:
+            # A detached commit no branch owns is not a branch that can diverge. Unpushed
+            # work is NEVER #21's dwell, judged elsewhere — not a divergence verdict here.
+            return 'clean', 0, 0, 'HEAD'
+        branch = named
+    upstream = f"origin/{branch}"
     if git(["rev-parse", "--verify", "--quiet", upstream], root=root).returncode != 0:
         return 'clean', 0, 0, branch
     ahead = len(git(["rev-list", f"{upstream}..HEAD"], root=root).stdout.splitlines())
@@ -108,6 +134,13 @@ def selftest():
         d = pathlib.Path(tempfile.mkdtemp())
         (d / "origin").mkdir()
         subprocess.run(["git", "init", "-q", "--bare", str(d / "origin")], check=True)
+        # The fixture pushes to `main`, so the bare repo's HEAD must point there too. Git's
+        # default (master where init.defaultBranch is unset) left the peer clone on an unborn
+        # master: its commit shared no history with main and the push was rejected as
+        # non-fast-forward. The selftest then failed on the machine's git config, not on the
+        # gate. Pin the branch the fixture uses.
+        subprocess.run(["git", "-C", str(d / "origin"), "symbolic-ref", "HEAD",
+                        "refs/heads/main"], check=True)
         w = d / "work"
         subprocess.run(["git", "clone", "-q", str(d / "origin"), str(w)], check=True)
         for cwd in (w,):
@@ -158,6 +191,26 @@ def selftest():
     print("== no git repo is a named SKIP, never a pass ==")
     with tempfile.TemporaryDirectory() as bare:
         check("no repo -> skip", measure(root=bare)[0] == "skip")
+
+    print("== a detached HEAD is judged against the branch that owns it ==")
+    # admission.py rehearses in `worktree add --detach`, where abbrev-ref answers "HEAD".
+    # Reading that as main measured a feature branch against origin/main and refused pushes
+    # that were clean. Here HEAD is detached at a commit a feature branch owns and one commit
+    # ahead of it: ahead-only, therefore clean — never "N ahead, M behind origin".
+    d, w2, _ = clone_pair()
+    subprocess.run(["git", "checkout", "-q", "-b", "feat/x"], cwd=str(w2), check=True)
+    subprocess.run(["git", "push", "-q", "origin", "feat/x"], cwd=str(w2), check=True)
+    (w2 / "D.md").write_text("d\n")
+    subprocess.run(["git", "add", "-A"], cwd=str(w2), check=True)
+    commit(w2, "one ahead of its upstream")
+    subprocess.run(["git", "checkout", "-q", "--detach", "HEAD"], cwd=str(w2), check=True)
+    st, ahead2, behind2, branch2 = measure(root=w2)
+    check("detached HEAD resolves to its owning branch", branch2 == "feat/x", branch2)
+    check("detached ahead-only is not divergence", st == "clean", f"{st} {ahead2}/{behind2}")
+    check("detached counts are against feat/x, not main", (ahead2, behind2) == (1, 0),
+          f"{ahead2}/{behind2}")
+    check("an unowned detached commit is not a divergence",
+          measure(root=pathlib.Path(tempfile.mkdtemp()))[0] == "skip")
 
     print()
     if FAILS:
