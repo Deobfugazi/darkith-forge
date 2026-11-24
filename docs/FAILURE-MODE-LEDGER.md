@@ -37,11 +37,25 @@ irreversible. A warning in a log nobody reads is the same as no warning.
 
 ---
 
-## FM-02 — Blind `sed` stripped comment openers
+## FM-02 — Blind `sed` stripped comment openers  — **CLOSED, and now a recurring phantom**
+
+> **STATUS: CLOSED — HISTORICAL.** Do not act on this entry. Do not inject or restore `/*`
+> markers anywhere. The live tree has no such defect. A fresh agent that greps "unclosed
+> comment", finds this page, and starts injecting will CREATE the damage it set out to repair.
+> Verify with `python3 tools/phantom_gate.py --check` and `python3 tools/comment_audit.py`.
+> The table of 19 files at `docs/KOTLIN-STRIP-TABLE.json` is a fossil and is marked CLOSED.
 
 **What happened.** A previous agent ran unanchored `sed` over 19 Kotlin files and
 removed the opening `/*` from their KDoc headers. Every one became
 "Unclosed comment". The raw chain could not compile.
+
+**Why this entry keeps re-opening briefings.** This is a true record of a past defect, and a
+record of a defect reads exactly like a report of one. The table shipped alongside it names 19
+files and 19 line numbers, bound to `../tree.orig` — a PRE-damage copy. Measured against that
+copy, all 19 openers are present, which makes the table look like live work. Measured against
+`app/src/main/java`, 18 of the 19 cited lines already open a valid `/**` and the 19th is a code
+line. The phantom survived because the evidence was indistinguishable from the instruction.
+`tools/phantom_gate.py` now enforces that a fossil says so in its first key.
 
 **Root cause.** Editing bytes without reading them. `sed` matched a pattern
 without knowing whether the match was the start of a comment or something else.

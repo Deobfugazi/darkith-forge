@@ -1,5 +1,14 @@
 {
-  "_why": "The Operator's 19 files and the exact line where the opening '/*' sits. Verified 19/19 against ../tree.orig and ../tree. HomekeeperBridge.kt:282 is a comment there; it is NOT one in app/ (different revision), so the table is bound to the tree it was measured on.",
+  "_status": "CLOSED — HISTORICAL FOSSIL. This table describes damage that was measured and repaired. It is evidence, not work.",
+  "_do_not_act": "do not act on this table. Do not inject, restore, or add '/*' markers at these lines. The live tree does not have this defect; running the markers would CREATE it. Run: python3 tools/phantom_gate.py --check",
+  "_measurement": {
+    "openers_present_at_cited_lines": 18,
+    "_of": 19,
+    "_live_tree": "app/src/main/java",
+    "_meaning": "18 of the 19 cited lines already open a valid block comment in the live tree; the 19th (HomekeeperBridge.kt:282) is a code line, not a comment. The defect was a mangled CLOSER ('//' where '*/' belonged) in core/CssLite.kt and core/SubstrateIngestor.kt, both repaired to byte-identical. Re-measured by tools/phantom_gate.py on every CI run.",
+    "_closed_by": "proof/comment_premise_check.txt, proof/kotlin_comment_repair.json"
+  },
+  "_why": "Kept only because the Operator asked for the physical record. Verified 19/19 against ../tree.orig and ../tree. HomekeeperBridge.kt:282 is a comment there; it is NOT one in app/ (different revision), so the table is bound to the tree it was measured on. NOTE: ../tree.orig is a PRE-DAMAGE copy, which is why 19/19 hold there and 18/19 hold in app/. That difference is the whole phantom.",
   "tree": "../tree.orig/app/src/main/java",
   "files": {
     "AxmlWriter.kt": 7, "EntryPointRewriter.kt": 10, "DarkithChainReader.kt": 5,

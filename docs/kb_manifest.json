@@ -3,10 +3,10 @@
   "count": 88,
   "files": [
     {
-      "bytes": 84474,
+      "bytes": 86224,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "6be8be3afa53747160192139201a359493bd590fac2f192fb62e684832472e90"
+      "sha256": "499bbf43744228cdf9362596394c04952c8a7d8a2c7ba5ce80ab69e5b5484164"
     },
     {
       "bytes": 169112,
@@ -87,10 +87,10 @@
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
     },
     {
-      "bytes": 12778,
+      "bytes": 13931,
       "path": "docs/FAILURE-MODE-LEDGER.md",
       "register": "B-knowledge",
-      "sha256": "79f1bcf004e6709605cb809a3dcdfcffd64f6e606bb23cce8c159340c4311b80"
+      "sha256": "ad2bd6c48691c34d0eed607b5f6673736290092570c0d2f0314264f9f80143d5"
     },
     {
       "bytes": 5542,

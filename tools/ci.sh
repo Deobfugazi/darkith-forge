@@ -261,6 +261,15 @@ if have python3; then
     if [ -f tools/closed_briefings.py ]; then
       run "closed briefings stay closed"  python3 tools/closed_briefings.py --check
     fi
+    # closed_briefings.py reads the task BOARDS. A brief that arrives by chat is outside
+    # its field of view, while its payload stays tracked where a grep finds it. This gate
+    # covers that gap: every tracked payload must declare itself CLOSED and its closing
+    # measurement must still be true against the live tree, so the fossil cannot re-seed
+    # and a genuine regression still re-arms it.
+    if [ -f tools/phantom_gate.py ]; then
+      run "phantom guard selftest"        python3 tools/phantom_gate.py --selftest
+      run "closed brief payloads stay dead" python3 tools/phantom_gate.py --check
+    fi
     # Revitalization chain gate: the sixteen-stage serial corrective cycle. The
     # pipeline itself never runs inside CI (a run writes receipts, and a green run
     # must not dirty the tree); CI verifies the sealed chain instead: serial parent
