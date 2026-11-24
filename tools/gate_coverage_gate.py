@@ -94,6 +94,47 @@ def orphans(ci_text: str) -> list[str]:
     return [g for g in gates() if g not in MANUAL and not invoked(g, ci_text, looped)]
 
 
+def declared_gates() -> list[tuple[str, str]]:
+    """(law id, gate path) for every law that names a gate that exists.
+
+    The glob above only sees files whose NAME contains "gate". A law may declare any file as
+    its gate — SPI-10 names tools/kt_comment_scan.py — so a name-based scan reports full
+    coverage over a law whose gate has no caller. Same defect class as FM-03, one level up:
+    the registry cannot see the orphans it was built to find.
+    """
+    try:
+        import policy_block
+    except ImportError:
+        sys.path.insert(0, str(ROOT / "tools"))
+        import policy_block
+    out = []
+    for law in policy_block.derive_laws(policy_block.read_doc()):
+        gate = (law.get("gate") or "").strip()
+        if not gate:
+            continue
+        path = ROOT / gate
+        if path.is_file():
+            out.append((law["id"], gate))
+    return out
+
+
+def uncalled_declared(ci_text: str) -> list[tuple[str, str]]:
+    """Laws whose declared gate file exists but which ci.sh never runs.
+
+    `tools/ci.sh` is exempt: a law naming the suite itself is enforced by every gate in it,
+    so asking whether ci.sh calls ci.sh is a category error.
+    """
+    looped = loop_members(ci_text)
+    bad = []
+    for law_id, gate in declared_gates():
+        name = gate.rsplit("/", 1)[-1]
+        if name == "ci.sh":
+            continue
+        if not invoked(name, ci_text, looped) and name not in MANUAL:
+            bad.append((law_id, gate))
+    return bad
+
+
 def main(argv: list) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--selftest", action="store_true")
@@ -105,12 +146,28 @@ def main(argv: list) -> int:
         # A gate that only ever prints PASS is the defect it polices. Prove it can say NO:
         # a synthetic ci.sh that calls nothing must orphan every gate, and a synthetic one
         # that calls the orphans must clear them.
+        full_text = "".join(f"run x python3 tools/{g}\n" for g in gates())
         empty = orphans("# nothing is called here\n")
-        full = orphans("".join(f"run x python3 tools/{g}\n" for g in gates()))
+        full = orphans(full_text)
         ok = bool(empty) and not full and invoked("foo_gate.py", "run 'x' python3 tools/foo_gate.py")
-        print(f"gate_coverage_gate selftest: {'ok' if ok else 'FAIL'} — "
-              f"empty ci orphans {len(empty)}, full ci orphans {len(full)}")
-        return 0 if ok else 1
+        # The declared-gate check must also be able to say NO. Calling every *gate*.py is the
+        # blind spot in one line: that text still leaves SPI-10 unrun, because its gate has
+        # no "gate" in the filename. Clearing it requires naming every declared gate.
+        declared = declared_gates()
+        all_declared_text = "".join(f"run x python3 {g}\n" for _, g in declared)
+        blind_spot = uncalled_declared(full_text)
+        declared_ok = (
+            bool(declared)
+            and bool(blind_spot)
+            and any(gate == "tools/kt_comment_scan.py" for _, gate in blind_spot)
+            and not uncalled_declared(all_declared_text)
+            and len(uncalled_declared("# nothing is called here\n")) >= len(blind_spot)
+        )
+        print(f"gate_coverage_gate selftest: {'ok' if ok and declared_ok else 'FAIL'} — "
+              f"empty ci orphans {len(empty)}, full ci orphans {len(full)}, "
+              f"declared gates {len(declared)}, "
+              f"declared-and-uncalled under empty ci {len(uncalled_declared('# nothing is called here\n'))}")
+        return 0 if (ok and declared_ok) else 1
 
     bad = orphans(ci_text)
     if bad:
@@ -122,7 +179,18 @@ def main(argv: list) -> int:
               "MANUAL with the reason it is not a gate.")
         return 1
 
-    print(f"gate_coverage_gate: PASS — all {len(gates())} gate(s) have a CI caller")
+    uncalled = uncalled_declared(ci_text)
+    if uncalled:
+        print(f"gate_coverage_gate: FAIL — {len(uncalled)} law(s) name a gate that CI never "
+              f"calls, so the law is enforced by nothing:")
+        for law_id, gate in uncalled:
+            print(f"  - {law_id} -> {gate}  (no caller in tools/ci.sh)")
+        print("  Either wire the gate into ci.sh, or point the law at the gate that does "
+              "run. A law whose gate is never invoked is a comment with a filename.")
+        return 1
+
+    print(f"gate_coverage_gate: PASS — all {len(gates())} gate(s) have a CI caller, and "
+          f"every law's declared gate is invoked")
     return 0
 
 

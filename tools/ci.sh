@@ -184,6 +184,13 @@ if have python3; then
     SYNTAX_ROOTS="app/src/main/java"
     [ -d omega-app/src/main/java ] && SYNTAX_ROOTS="$SYNTAX_ROOTS omega-app/src/main/java"
     run "kotlin syntax gate"              python3 tools/syntax_gate.py $SYNTAX_ROOTS
+    # SPI-10 names kt_comment_scan.py as its gate and nothing ran it, so the law was
+    # enforced by nothing. It also scanned zero files and returned 0 when called bare: a
+    # vacuous PASS over no sources reads exactly like a clean tree. Fixed both — a bare run
+    # now discovers app/src, and a run that finds no sources fails instead of passing.
+    if [ -f tools/kt_comment_scan.py ]; then
+      run "SPI-10 comment scanner"        python3 tools/kt_comment_scan.py
+    fi
     # Detection without a rehearsed repair is half a gate. This one damages a COPY at the
     # Operator's stated lines, requires the lexer to see every removal, restores them, and
     # requires the result to be byte-identical to the pristine tree. It refuses a run that

@@ -9,7 +9,7 @@ Aware of: nested block comments, '//' line comments, "..." strings,
 '...' char literals, \"\"\"...\"\"\" raw strings, and backslash escapes.
 Exit 0 iff zero defects.
 """
-import sys, json, argparse
+import sys, os, json, argparse
 
 def scan(src):
     n = len(src); i = 0; line = 1; col = 1
@@ -80,6 +80,14 @@ def selftest():
     print("SELFTEST:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
+def discover():
+    """Every Kotlin source under app/src. The default target, so a bare run is a real check."""
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out = []
+    for dirpath, _, names in os.walk(os.path.join(root, 'app', 'src')):
+        out.extend(os.path.join(dirpath, n) for n in names if n.endswith('.kt'))
+    return sorted(out)
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('files', nargs='*')
@@ -87,8 +95,13 @@ def main():
     ap.add_argument('--json', action='store_true')
     a = ap.parse_args()
     if a.selftest: return selftest()
+    files = a.files or discover()
+    if not files:
+        print('DEFECT: no Kotlin sources found — a scan over zero files proves nothing',
+              file=sys.stderr)
+        return 1
     total = 0; report = []
-    for f in a.files:
+    for f in files:
         src = open(f, 'r', encoding='utf-8', errors='surrogateescape').read()
         d = scan(src)
         report.append({'file': f, 'defects': d})
