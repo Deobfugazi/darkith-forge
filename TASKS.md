@@ -5,17 +5,32 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-23T11:49:40.287897`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T10:02:51.413696`. This section is regenerated, never hand-edited._
 >
 > **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 >
-> 1. **[forbid]** You lying fuckers!!!! I need this directive as an urgent emergency top priority! Why the fuck does my github app notifications 9 out of 10 all failin…
->    - prompt index `32271` at `2026-11-23T08:13:34.210433`
->    - sha256 `3ee3dccfda7b794d`
-> 2. **[forbid]** The collision risk is live right now: the parallel agent's two newest main commits edit the exact drift section of ci.sh my PR also edits. Doing what…
->    - prompt index `33063` at `2026-11-23T11:49:40.287897`
->    - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#41, MUST#42, NEVER #19, NEVER #21, NEVER#21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
->    - sha256 `c2ac5cd12017685b`
+> 1. **[forbid]** Done, now budd. Knowing how my core omega end point short→long-term objective is unlike any other as declared in my NT XI XII & XIII, design the inev…
+>    - prompt index `36250` at `2026-11-24T04:57:48.742386`
+>    - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, SPI-15, SPI-37, SPI-38
+>    - sha256 `b2479003be1ee8fe`
+> 2. **[forbid]** Never publish to main any gameplan yet! Wtf!!🤬🤬🤬 Fix this fuckery!!i explicitly designed rehearse and converge first ensuring everything is unassaila…
+>    - prompt index `36538` at `2026-11-24T05:19:32.901337`
+>    - sha256 `ec383a87d4a8fb42`
+> 3. **[forbid]** How can you all embarass me without fucking even explicitly running an actual rehearsed Real world end to end sample with pre mitigation and anticipa…
+>    - prompt index `36722` at `2026-11-24T06:53:33.015409`
+>    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
+>    - sha256 `f9392a1cb9beeefd`
+> 4. **[order]** I fucking damn gave a directive to follow my reader 3 tongue register narrative presentation complete with real sampled problem/burdens statements, h…
+>    - prompt index `36971` at `2026-11-24T07:28:06.441708`
+>    - **Coupled laws:** MUST #21, MUST #22, MUST #33, SPI-15, SPI-2, SPI-6
+>    - sha256 `c850adebd03d0bf3`
+> 5. **[forbid]** Served bytes are byte-identical to committed. Here it is. https://work-1-ztisaoehlcyoilix.prod-runtime.all-hands.dev/ https://work-2-ztisaoehlcyoilix…
+>    - prompt index `37112` at `2026-11-24T08:08:48.944122`
+>    - **Coupled laws:** MUST #20, MUST #33, SPI-15, SPI-2, SPI-4, SPI-6
+>    - sha256 `b835d429d82c581d`
+> 6. **[forbid]** You have no fucking idea how extensive and broad my methodological mechanistic mental technical metaphysical procedural scope is!!🤬🤬🤬 NEW FILES ADDED…
+>    - prompt index `38032` at `2026-11-24T10:02:51.413696`
+>    - sha256 `a5701e9cd25fb26b`
 >
 
 **Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-6`
@@ -49,7 +64,7 @@
 | `SPI-40` | NO UNREHEARSED PROMOTION — THE PRIME DIRECTIVE |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #25`, `SPI-19`
 
 <!-- PRAXIS:END -->
 
@@ -229,16 +244,31 @@ Named skips this cycle (SKIP is never PASS): autophagy (defect classes are impos
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-23T11:49:40.287897`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T10:02:51.413696`. This section is regenerated, never hand-edited._
 
 **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
 
-1. **[forbid]** You lying fuckers!!!! I need this directive as an urgent emergency top priority! Why the fuck does my github app notifications 9 out of 10 all failin…
-   - prompt index `32271` at `2026-11-23T08:13:34.210433`
-   - sha256 `3ee3dccfda7b794d`
-2. **[forbid]** The collision risk is live right now: the parallel agent's two newest main commits edit the exact drift section of ci.sh my PR also edits. Doing what…
-   - prompt index `33063` at `2026-11-23T11:49:40.287897`
-   - **Coupled laws:** MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST#18, MUST#41, MUST#42, NEVER #19, NEVER #21, NEVER#21, NEVER#22, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-6
-   - sha256 `c2ac5cd12017685b`
+1. **[forbid]** Done, now budd. Knowing how my core omega end point short→long-term objective is unlike any other as declared in my NT XI XII & XIII, design the inev…
+   - prompt index `36250` at `2026-11-24T04:57:48.742386`
+   - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, SPI-15, SPI-37, SPI-38
+   - sha256 `b2479003be1ee8fe`
+2. **[forbid]** Never publish to main any gameplan yet! Wtf!!🤬🤬🤬 Fix this fuckery!!i explicitly designed rehearse and converge first ensuring everything is unassaila…
+   - prompt index `36538` at `2026-11-24T05:19:32.901337`
+   - sha256 `ec383a87d4a8fb42`
+3. **[forbid]** How can you all embarass me without fucking even explicitly running an actual rehearsed Real world end to end sample with pre mitigation and anticipa…
+   - prompt index `36722` at `2026-11-24T06:53:33.015409`
+   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
+   - sha256 `f9392a1cb9beeefd`
+4. **[order]** I fucking damn gave a directive to follow my reader 3 tongue register narrative presentation complete with real sampled problem/burdens statements, h…
+   - prompt index `36971` at `2026-11-24T07:28:06.441708`
+   - **Coupled laws:** MUST #21, MUST #22, MUST #33, SPI-15, SPI-2, SPI-6
+   - sha256 `c850adebd03d0bf3`
+5. **[forbid]** Served bytes are byte-identical to committed. Here it is. https://work-1-ztisaoehlcyoilix.prod-runtime.all-hands.dev/ https://work-2-ztisaoehlcyoilix…
+   - prompt index `37112` at `2026-11-24T08:08:48.944122`
+   - **Coupled laws:** MUST #20, MUST #33, SPI-15, SPI-2, SPI-4, SPI-6
+   - sha256 `b835d429d82c581d`
+6. **[forbid]** You have no fucking idea how extensive and broad my methodological mechanistic mental technical metaphysical procedural scope is!!🤬🤬🤬 NEW FILES ADDED…
+   - prompt index `38032` at `2026-11-24T10:02:51.413696`
+   - sha256 `a5701e9cd25fb26b`
 
 <!-- CHAT-GATE:END -->

@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 78,
+  "count": 87,
   "files": [
     {
       "bytes": 79754,
@@ -9,10 +9,10 @@
       "sha256": "f2d29527e78a0f5040e263f2c8d734f6e872e4bcbeb31e08338d7ac2f8d2f8f3"
     },
     {
-      "bytes": 115350,
+      "bytes": 142204,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "2764ea33a1c7b6d8e9115573092900db6d939331af79f817ff58f4d904bb47fa"
+      "sha256": "d5e6700d9be56a6dedd062a587f1333f13a2b55a9d9a8fb8009d68b5e08dd0be"
     },
     {
       "bytes": 3356,
@@ -33,10 +33,34 @@
       "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
     },
     {
-      "bytes": 12657,
+      "bytes": 15020,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "4ab2cd2fbc7be06db13cdcd8697249146801a157091e196008c7802339798587"
+      "sha256": "b5cbb1008db6e42aa096a1a44d9b8b05eaf55f9bce029b70b620bc5cd50842cd"
+    },
+    {
+      "bytes": 817,
+      "path": "docs/01-PROOF-captured.txt",
+      "register": "B-knowledge",
+      "sha256": "4decd5039b9b90775ce57180e9617cb160c83cbb763c6d9abca2ea9770f08149"
+    },
+    {
+      "bytes": 1718,
+      "path": "docs/02-ATTACKS-captured.txt",
+      "register": "B-knowledge",
+      "sha256": "bff648fbc3a08ee8750bbc9075be3035fc6e1008d855a6633cfe53f6d2648d36"
+    },
+    {
+      "bytes": 7701,
+      "path": "docs/03-RESOLUTION-captured.txt",
+      "register": "B-knowledge",
+      "sha256": "543c899d3523f7c47d722157720ea826d14af92defff314942bd2b126357c546"
+    },
+    {
+      "bytes": 168,
+      "path": "docs/06_expected_root.txt",
+      "register": "B-knowledge",
+      "sha256": "f6ab85268b43e443c65fbc43a4ba5499c1c808197e11fdcf27edf7c341fffbce"
     },
     {
       "bytes": 9608,
@@ -93,6 +117,12 @@
       "sha256": "fbf7d5d0f43aba977a6d7187d249e8862d2243a0110f5681cba97010a0a457e5"
     },
     {
+      "bytes": 20400,
+      "path": "docs/MISCOMMUNICATION-AND-WAR.html",
+      "register": "B-knowledge",
+      "sha256": "470be611110bc7dcb2069dfb06d2ea40a7261bbcc78fb54e40c3fb5b20136dca"
+    },
+    {
       "bytes": 11254,
       "path": "docs/NT-XII-IN-THE-OPEN.md",
       "register": "B-knowledge",
@@ -109,6 +139,18 @@
       "path": "docs/SECURITY_REMEDIATION.md",
       "register": "B-knowledge",
       "sha256": "714045540aa609926a3f1fed7c94d7282296016db34f73a4e1e824d2f635fddf"
+    },
+    {
+      "bytes": 41117,
+      "path": "docs/TEN-BURDENS-THREE-TONGUES.html",
+      "register": "B-knowledge",
+      "sha256": "289c22857e81114480ef6f76bf02ff4831ace4c7f8e0616767bea761c2f92dbf"
+    },
+    {
+      "bytes": 4095,
+      "path": "docs/THESIS.md",
+      "register": "B-knowledge",
+      "sha256": "93d546d9959934a6ec2a68ff539431e0e6790f57bc59859f2bd86f4aa81ae578"
     },
     {
       "bytes": 2729,
@@ -201,10 +243,10 @@
       "sha256": "ae16a99a055e902d0f0dec144134b660fbd9e76baee743a0a7d9cd868e5d32ab"
     },
     {
-      "bytes": 1422589,
+      "bytes": 1576441,
       "path": "d-arkith-omega.html",
       "register": "C-skillbase",
-      "sha256": "f68d8b3d848235b5cc76afadc0555e96e0eedb9e914c2136eff8b4442cf35b59"
+      "sha256": "a2f41fb071d685b34f709827090fd6213d10f4eb227f5d9ae1b8a208e42365ba"
     },
     {
       "bytes": 601576,
@@ -393,6 +435,12 @@
       "sha256": "fa523afa591475099b08349515e14f8e73c96661b3dfcaf97483d79b0feed920"
     },
     {
+      "bytes": 168,
+      "path": "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt",
+      "register": "E-evidence",
+      "sha256": "f6ab85268b43e443c65fbc43a4ba5499c1c808197e11fdcf27edf7c341fffbce"
+    },
+    {
       "bytes": 1214,
       "path": "proof/comment_19files_proof.txt",
       "register": "E-evidence",
@@ -403,6 +451,12 @@
       "path": "proof/comment_premise_check.txt",
       "register": "E-evidence",
       "sha256": "f4110f2272d78d64b9fec79b2e8095caafc27a8d8bcd26aa9a5e794c8a84897b"
+    },
+    {
+      "bytes": 7701,
+      "path": "proof/invariant-resolution/CAPTURED.txt",
+      "register": "E-evidence",
+      "sha256": "543c899d3523f7c47d722157720ea826d14af92defff314942bd2b126357c546"
     },
     {
       "bytes": 1003,

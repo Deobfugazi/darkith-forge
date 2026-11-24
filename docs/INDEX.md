@@ -9,23 +9,27 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**78 readable files across 8 registers.**
+**87 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 79,754 | `f2d29527e78a` | AGENTS.md — Darkith |
-| `DARKITH.md` | 115,350 | `2764ea33a1c7` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 142,204 | `d5e6700d9be5` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 68,196 | `b2394283f3bf` | DARKITH — README |
 | `RESUME.md` | 8,801 | `17f9bb036d44` | RESUME — read this first in any new session |
-| `TASKS.md` | 12,657 | `4ab2cd2fbc7b` | TASKS — the durable board |
+| `TASKS.md` | 15,020 | `b5cbb1008db6` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
+| `docs/01-PROOF-captured.txt` | 817 | `4decd5039b9b` | === CAPTURED 2026-11-24T07:16:05Z === |
+| `docs/02-ATTACKS-captured.txt` | 1,718 | `bff648fbc3a0` | baseline intact: rc=0  EXPECT:BURDEN_ABSENT_REHEARSAL_OK e14350baf1871 |
+| `docs/03-RESOLUTION-captured.txt` | 7,701 | `543c899d3523` | === resolve_invariants.py === |
+| `docs/06_expected_root.txt` | 168 | `f6ab85268b43` | expected_root=e14350baf18719f1e1f7ddb79cccd0a6ce416eb4143b037fa40436a3 |
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/BLACK-AND-WHITEPAPER-2026-11-23.md` | 7,519 | `9cbfbeb13fbb` | THE BLACK & WHITEPAPER — Three Tongues, Zero Hedges |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
@@ -35,9 +39,12 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/FOREMAN-DISPATCH-2026-11-23.md` | 2,999 | `fe95975a5dcd` | FOREMAN DISPATCH — 2026-11-23 |
 | `docs/GITHUB-CICD-AGENTS-KB.md` | 70,065 | `759522f608b4` | GITHUB, CI/CD, AGENTS.md & THE DARKITH REPO — A KNOWLEDGE BASE FROM ZE |
 | `docs/GITHUB-STUDIO-MANUAL.md` | 18,292 | `fbf7d5d0f43a` | GITHUB STUDIO — the uncut operator manual |
+| `docs/MISCOMMUNICATION-AND-WAR.html` | 20,400 | `470be611110b` | Why Wars Start — and the One Thing That Would Stop Them |
 | `docs/NT-XII-IN-THE-OPEN.md` | 11,254 | `dbf7a79f1821` | NT XII IN THE OPEN — a contribution ledger that mints re-runnable clos |
 | `docs/RECOVERY_MANIFEST.md` | 1,423 | `0cc6e23164c8` | Recovery manifest — reconstructed from the conversation event store |
 | `docs/SECURITY_REMEDIATION.md` | 3,960 | `714045540aa6` | SECURITY REMEDIATION — committed-credential class (MUST #31) |
+| `docs/TEN-BURDENS-THREE-TONGUES.html` | 41,117 | `289c22857e81` | Darkith — Ten Burdens, Three Tongues |
+| `docs/THESIS.md` | 4,095 | `93d546d99599` | THE THESIS |
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
 | `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
 | `docs/evidence/SECTOR-PAIN-LEDGER.md` | 5,077 | `9d6b452e87d8` | Sector pain ledger — primary-source observations |
@@ -58,7 +65,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `clearanceloop.html` | 98,859 | `ae16a99a055e` | ClearanceLoop — Homeokinetic Debt Ratchet |
-| `d-arkith-omega.html` | 1,422,589 | `f68d8b3d8482` | DARKITH Ω — terminal + local assistant |
+| `d-arkith-omega.html` | 1,576,441 | `a2f41fb071d6` | DARKITH Ω — terminal + local assistant |
 | `darkith code studio.html` | 601,576 | `5cd553c1653f` | darkith · audit-studio v1.1 |
 | `darkith home forge.html` | 1,471,908 | `877e35c5d3d1` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `darkith-inscriber.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
@@ -100,8 +107,10 @@ content (B), one retrieval surface (C), one canonical copy (D).
 |---|---|---|---|
 | `proof/FIELD_REPORT_THIS_TAB.md` | 11,203 | `bd7589bc3d93` | DARKITH — byte-measured field report (this tab) |
 | `proof/NT_RECONCILIATION.md` | 7,185 | `fa523afa5914` | NT CORPUS RECONCILIATION — the SAVF run and the absolution |
+| `proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt` | 168 | `f6ab85268b43` | expected_root=e14350baf18719f1e1f7ddb79cccd0a6ce416eb4143b037fa40436a3 |
 | `proof/comment_19files_proof.txt` | 1,214 | `eb65d81efeb4` | file                       brief  open close  line-N bytes (SPI-2) |
 | `proof/comment_premise_check.txt` | 2,819 | `f4110f2272d7` | === DARKITH COMMENT-DEFECT AUDIT (SPI-2/4/6) === |
+| `proof/invariant-resolution/CAPTURED.txt` | 7,701 | `543c899d3523` | === resolve_invariants.py === |
 | `proof/kt_compile_proof.txt` | 1,003 | `ca98b4c82cb3` | === §19 FORK-INTEGRITY GATE — COMPILE PROOF (SPI-2/4/6) === |
 | `proof/nt_ledger_prereconcile.txt` | 2,924 | `800061c03912` | ENGINE-RULE A->A  analysis |
 | `proof/offline_oneshot_proof.txt` | 1,780 | `fce363ef10fd` | DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6) |
