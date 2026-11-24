@@ -1,0 +1,45 @@
+epoch,a_activation,r_n,S_saturation,scenario
+0,0.300,0.0450,0.0000,pessimistic
+1,0.300,0.0450,0.0450,pessimistic
+2,0.300,0.0450,0.0880,pessimistic
+3,0.300,0.0450,0.1290,pessimistic
+4,0.300,0.0450,0.1682,pessimistic
+5,0.300,0.0450,0.2056,pessimistic
+6,0.300,0.0450,0.2414,pessimistic
+7,0.300,0.0450,0.2755,pessimistic
+8,0.300,0.0450,0.3081,pessimistic
+9,0.300,0.0450,0.3393,pessimistic
+10,0.300,0.0450,0.3690,pessimistic
+11,0.300,0.0450,0.3974,pessimistic
+12,0.300,0.0450,0.4245,pessimistic
+0,0.500,0.0750,0.0000,measured_baseline
+1,0.500,0.0750,0.0750,measured_baseline
+2,0.500,0.0750,0.1444,measured_baseline
+3,0.500,0.0750,0.2085,measured_baseline
+4,0.500,0.0750,0.2679,measured_baseline
+5,0.500,0.0750,0.3228,measured_baseline
+6,0.500,0.0750,0.3736,measured_baseline
+7,0.500,0.0750,0.4206,measured_baseline
+8,0.500,0.0750,0.4640,measured_baseline
+9,0.500,0.0750,0.5042,measured_baseline
+10,0.500,0.0750,0.5414,measured_baseline
+11,0.500,0.0750,0.5758,measured_baseline
+12,0.500,0.0750,0.6076,measured_baseline
+0,0.500,0.0750,0.0000,optimistic
+1,0.650,0.0975,0.0750,optimistic
+2,0.800,0.1200,0.1652,optimistic
+3,0.950,0.1425,0.2654,optimistic
+4,1.100,0.1650,0.3701,optimistic
+5,1.250,0.1875,0.4740,optimistic
+6,1.400,0.2100,0.5726,optimistic
+7,1.550,0.2325,0.6624,optimistic
+8,1.700,0.2550,0.7409,optimistic
+9,1.850,0.2775,0.8069,optimistic
+10,2.000,0.3000,0.8605,optimistic
+11,2.150,0.3225,0.9024,optimistic
+12,2.300,0.3450,0.9339,optimistic
+# r_n = clamp(kappa*a_n,0,r_max); S(n+1)=S(n)+r_n*(1-S(n))
+# EVERY a_n in this file is MODELED. One burden exists, so no receipt
+# window can supply a_n; this is a sensitivity table, NOT a forecast.
+# pessimistic = flat a_n (nobody new verifies). Production a_n must come
+# from mint-ledger receipt windows only (law G3). No verdict rests on this.

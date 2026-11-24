@@ -1,0 +1,25 @@
+=== CAPTURED 2026-11-24T07:16:05Z ===
+
+--- commit ---
+86b492093b031cd707c6cf72a70b7a7e65bbad6d
+86b4920 Burden rehearsal v2: a chain that verifies on its own landed bytes
+
+--- 1. witness on intact bytes ---
+EXPECT:BURDEN_ABSENT_REHEARSAL_OK e14350baf18719f1e1f7ddb79cccd0a6ce416eb4143b037fa40436a37ac6047e
+exit=0
+
+--- 2. gate selftest ---
+BURDEN-GATE-1 (duplicate registry)
+  ok   silent on one good record
+  ok   silent on two distinct records
+  ok   FIRES on duplicate id
+  ok   FIRES on duplicate baseline under different ids
+  ok   FIRES on record with no id
+BURDEN-GATE-2 (witness strength)
+  ok   silent on a REAL witness
+  ok   FIRES on constant-output witness
+  ok   FIRES on witness that passes tampered evidence
+  ok   FIRES on witness that fails good evidence
+
+BURDEN GATES SELFTEST: PASS (0 failed)
+exit=0

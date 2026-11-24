@@ -1,0 +1,20 @@
+baseline intact: rc=0  EXPECT:BURDEN_ABSENT_REHEARSAL_OK e14350baf18719f1e1f7ddb79cccd0a6ce41
+
+  REFUSED  A01 rehearsal dir deleted                    BURDEN_PRESENT
+  REFUSED  A02 receipts file deleted                    BURDEN_PRESENT
+  REFUSED  A03 chain truncated 7->6                     CHAIN_STAGES: stage sequence ['S01_BASELINE', 'S02_REPAI
+  REFUSED  A04 two receipts swapped                     CHAIN_SEQ: line 2 has seq=3, expected 2
+  REFUSED  A05 receipt body edited, hash kept           CHAIN_HASH: line 1 hash=b93fdb5db6d2d697cd647be5d9eee9be
+  REFUSED  A06 curve appended to                        MANIFEST_TAMPER proof/burden-uplift/E2E-REHEARSAL-2026-1
+  REFUSED  A07 burden record appended to                MANIFEST_TAMPER proof/burden-uplift/E2E-REHEARSAL-2026-1
+  REFUSED  A08 record claims barrier CLOSED             MANIFEST_TAMPER proof/burden-uplift/E2E-REHEARSAL-2026-1
+  REFUSED  A09 record claims mainnet ALLOWED            MANIFEST_TAMPER proof/burden-uplift/E2E-REHEARSAL-2026-1
+  REFUSED  A10 manifest generated stamp rewritten       MANIFEST_MISSING proof/burden-uplift/E2E-REHEARSAL-1970-
+  REFUSED  A11 manifest deleted                         BURDEN_PRESENT
+  REFUSED  A12 curve scenarios relabelled               MANIFEST_TAMPER proof/burden-uplift/E2E-REHEARSAL-2026-1
+  REFUSED  A13 all evidence removed                     BURDEN_PRESENT
+  REFUSED  A14 witness script itself edited             MANIFEST_TAMPER tools/burden/witness_e2e.py
+  REFUSED  A15 manifest file hash lowered to match nothing MANIFEST_TAMPER proof/burden-uplift/E2E-REHEARSAL-2026-1
+
+15 vectors, 0 hole(s)
+post-battery integrity: rc=0 EXPECT:BURDEN_ABSENT_REHEARSAL_OK e14350baf18719f1e1f7ddb79cccd0a6ce41
