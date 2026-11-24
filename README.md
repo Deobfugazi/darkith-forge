@@ -645,11 +645,10 @@ not a defect and must never trigger automatic publication.
 
 ---
 
-## 9. The gates---
-
 ## 9. The gates (what runs and why)
 
-`bash tools/ci.sh` runs every check and exits `0` only if all pass. The important gates,
+`bash tools/ci.sh` records PASS, FAIL, and SKIP separately. The strict promotion rehearsal
+sets `SIGMA_ZERO=1` and fails on every SKIP or INACTIVE required condition. The important gates,
 and the corruption mode each one guards:
 
 | Gate | Prevents |
