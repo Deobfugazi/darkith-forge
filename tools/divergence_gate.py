@@ -50,8 +50,8 @@ def measure(root=ROOT):
     return 'clean', ahead, behind, branch
 
 
-def repair(root=ROOT):
-    """Park, fast-forward, rebase. Never force. Converge, or stop with the park intact."""
+def repair(root=ROOT, publish=False):
+    """Park and rebase locally; publish refs only when explicitly requested."""
     state, ahead, behind, branch = measure(root=root)
     if state == 'skip':
         return "skip", None
@@ -60,16 +60,17 @@ def repair(root=ROOT):
     park = "divergence-park-" + time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
     if git(["branch", park, "HEAD"], root=root).returncode != 0:
         return "drift", "could not park commits on " + park
-    if git(["push", "origin", park], root=root).returncode != 0:
-        return "drift", "parked on " + park + " but the park ref could not be pushed"
     base = "origin/main" if branch == "HEAD" else f"origin/{branch}"
     rb = git(["rebase", base], root=root)
     if rb.returncode != 0:
         git(["rebase", "--abort"], root=root)
         return ("drift", f"park is safe on {park}; rebase onto {base} hit conflicts and"
                 " was aborted — needs an operator decision, never a force-push")
-    if git(["push", "origin", "HEAD"], root=root).returncode != 0:
-        return "drift", "rebased but push refused"
+    if publish:
+        if git(["push", "origin", park], root=root).returncode != 0:
+            return "drift", "local park exists but publication failed: " + park
+        if git(["push", "origin", "HEAD"], root=root).returncode != 0:
+            return "drift", "park published; rebased branch publication failed"
     st = measure(root=root)[0]
     if st != "clean":
         return "drift", "repair did not converge"
@@ -127,7 +128,7 @@ def selftest():
     _, w, peer = clone_pair()
     check("synced clone reads clean", measure(root=w)[0] == "clean")
 
-    print("== ahead only is not divergence (unpushed age is NEVER #21) ==")
+    print("== ahead-only local work is not a publication defect ==")
     (w / "B.md").write_text("b\n")
     subprocess.run(["git", "add", "-A"], cwd=str(w), check=True)
     commit(w, "ahead only")
@@ -143,17 +144,13 @@ def selftest():
     check("ahead count is 1", ahead == 1, str(ahead))
     check("behind count is 1", behind == 1, str(behind))
 
-    print("== the repair converges without ever force-pushing ==")
+    print("== the repair converges locally without publishing ==")
     r_state, park = repair(root=w)
     check("repair converges", r_state == "clean", str(park))
     check("detector agrees: clean", measure(root=w)[0] == "clean")
-    on_origin = subprocess.run(["git", "ls-remote", "origin", "refs/heads/main"],
-                               cwd=str(w), capture_output=True, text=True).stdout.split()[0]
-    local = git(["rev-parse", "HEAD"], root=w).stdout.strip()
-    check("local main is now what origin has", local == on_origin)
-    ls_park = subprocess.run(["git", "ls-remote", "origin", "refs/heads/" + str(park)],
-                             cwd=str(w), capture_output=True, text=True).stdout
-    check("the parked branch exists on the origin", ls_park.strip() != "", park)
+    check("local branch rebased onto origin", git(["merge-base", "--is-ancestor", "origin/main", "HEAD"], root=w).returncode == 0)
+    local_park = subprocess.run(["git", "show-ref", "--verify", "--quiet", "refs/heads/" + str(park)], cwd=str(w)).returncode == 0
+    check("the parked branch exists locally", local_park, park)
 
     print("== no git repo is a named SKIP, never a pass ==")
     with tempfile.TemporaryDirectory() as bare:
@@ -173,7 +170,7 @@ if __name__ == "__main__":
     if "--selftest" in argv_sys:
         sys.exit(selftest())
     if "--fix" in argv_sys:
-        state, detail = repair()
+        state, detail = repair(publish="--publish" in argv_sys)
         if state == "skip":
             print("divergence repair: SKIP (no git repository)")
             sys.exit(3)
