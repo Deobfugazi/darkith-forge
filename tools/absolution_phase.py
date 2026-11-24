@@ -53,6 +53,12 @@ INGEST = (
     ("praxis propagation", ("python3", "tools/praxis_propagate.py")),
     ("kb manifest reconcile", ("python3", "tools/burden/kb_reconcile.py", "--write")),
     ("knowledge-base index", ("python3", "tools/kb_index.py", "--write")),
+    # A run that dies mid-cycle (automation disconnect, phone killed, tab closed) leaves
+    # CURRENT pointing at a directory that will never be finished, and every later run then
+    # fails forever on "I1 chain gap" with no way out. Retire it here, at the front, so the
+    # next run heals what the last one left instead of inheriting a permanent tombstone.
+    # Non-destructive: the partial receipts stay as evidence, only CURRENT is cleared.
+    ("stalled cycle retirement", ("python3", "tools/revitalization.py", "abandon")),
     # convergence_gate is deliberately NOT here. It attests "git index == independent blob
     # hash", so it exits 1 on a tree this phase is still healing — it is the gate that judges
     # absolution, not a producer that performs it. Once its proof is a fixed point (411 files,

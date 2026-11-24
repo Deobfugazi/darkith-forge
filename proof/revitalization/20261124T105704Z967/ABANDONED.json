@@ -1,0 +1,1 @@
+{"cycle_id":"20261124T105704Z967","previous_closed_cycle":"20261124T104247Z842","reason":"run disconnected before the cycle completed; receipts preserved as evidence","retired":true,"stages_missing":["S04","S05","S06","S07","S08","S09","S10","S11","S12","S13","S14","S15","S16"],"stages_present":["S01","S02","S03"],"written_at_utc":"2026-11-24T12:25:53Z"}

@@ -1756,6 +1756,87 @@ def command_gate(root: pathlib.Path, as_json=False) -> int:
     return 1
 
 
+ABANDONED = "ABANDONED.json"
+
+
+def abandon_stalled_cycle(root: pathlib.Path) -> tuple:
+    """Retire a cycle that a disconnected run left half-written, so it stops blocking.
+
+    THE RECURRENCE THIS CLOSES
+        A run that dies between stages (the automation disconnects, the phone is killed,
+        the tab closes) leaves CURRENT pointing at a directory that will never be finished.
+        command_run then refuses forever with UPSTREAM_STALE, and command_gate fails forever
+        with "I1 chain gap". Neither has a way out. One interrupted run bricks the cycle for
+        every session that follows, and the next agent sees a red gate it cannot explain —
+        which is exactly how an agent goes blind and starts rebuilding things.
+
+        The fix is not to delete the dead cycle: it is evidence, and the whole point of this
+        apparatus is that evidence is never destroyed to make a gate go green. The cycle is
+        RETIRED — its partial receipts stay on disk under the same directory, and an
+        ABANDONED.json records that it was cut short, why, and what it managed to emit. Only
+        then is CURRENT moved back to the last cycle that actually closed.
+
+    Returns (rc, message). rc 0 = nothing stalled, or stalled cycle retired; 1 = refused.
+    """
+    rev = root / "proof" / "revitalization"
+    marker = rev / "CURRENT"
+    if not marker.is_file():
+        return 0, "no CURRENT marker; nothing to retire"
+    try:
+        current = json.loads(marker.read_text(encoding="utf-8"))
+    except ValueError:
+        return 1, "CURRENT is not valid JSON; refusing to guess (repair it by hand)"
+    cycle_id = str(current.get("cycle_id", ""))
+    d = rev / cycle_id
+    if not d.is_dir():
+        return 1, f"CURRENT names a missing cycle dir {cycle_id}; refusing to guess"
+
+    # Complete means every stage receipt is present. A cycle that reached S16 closed
+    # itself and is not stalled.
+    present = [sid for sid in STAGE_IDS if (d / stage_file(sid)).is_file()]
+    if len(present) == len(STAGE_IDS):
+        return 0, f"cycle {cycle_id} is complete ({len(present)}/{len(STAGE_IDS)}); nothing to retire"
+
+    # Pick the newest earlier cycle that DID complete, to point CURRENT back at.
+    closed = []
+    for cand in sorted(p for p in rev.iterdir() if p.is_dir() and p.name != cycle_id):
+        if all((cand / stage_file(sid)).is_file() for sid in STAGE_IDS):
+            closed.append(cand)
+    previous = closed[-1].name if closed else None
+
+    record = {
+        "cycle_id": cycle_id,
+        "retired": True,
+        "reason": "run disconnected before the cycle completed; receipts preserved as evidence",
+        "stages_present": present,
+        "stages_missing": [s for s in STAGE_IDS if s not in present],
+        "previous_closed_cycle": previous,
+        "written_at_utc": now_utc(),
+    }
+    (d / ABANDONED).write_text(canonical(record) + "\n", encoding="utf-8")
+
+    # Remove CURRENT. Restoring it to an earlier cycle was tried and is wrong: that cycle
+    # only CLAIMS closed while its own tasks are still open, so re-pointing CURRENT at it
+    # transferred the lie instead of ending it (1 honest failure became 40). With no CURRENT
+    # the gate reports SKIP (exit 3) - "no cycle is in progress" - which is the truth, and
+    # CI counts a skip as neither PASS nor FAIL (SPI-15). The next `run` starts a newborn
+    # chain. The retired cycle's partial receipts stay on disk as evidence.
+    marker.unlink()
+    if previous:
+        return 0, (f"retired stalled cycle {cycle_id} (had {len(present)}/{len(STAGE_IDS)} "
+                   f"stages); CURRENT removed so the gate reports SKIP until the next run. "
+                   f"Newest complete earlier cycle was {previous}.")
+    return 0, (f"retired stalled cycle {cycle_id} (had {len(present)}/{len(STAGE_IDS)} "
+               f"stages) and removed CURRENT; no earlier complete cycle exists, so the next "
+               f"run starts from a newborn chain")
+
+
+def command_abandon(root: pathlib.Path) -> int:
+    rc, msg = abandon_stalled_cycle(root)
+    print(f"revitalization abandon: {'PASS' if rc == 0 else 'REFUSED'} - {msg}")
+    return rc
+
+
 def command_write_board(root: pathlib.Path) -> int:
     """Read-only confirmation: S16 already writes and seals the board."""
     rc, failures = verify_chain(root)
@@ -2022,7 +2103,7 @@ def main(argv: list) -> int:
     ap = argparse.ArgumentParser(
         description="sixteen-stage serial corrective cycle (I1-I10)")
     ap.add_argument("command", nargs="?", default="gate",
-                    choices=("run", "gate", "selftest", "write-board"))
+                    choices=("run", "gate", "selftest", "write-board", "abandon"))
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--operator", default="agent")
     ap.add_argument("--check-gate-commands", action="store_true",
@@ -2038,6 +2119,8 @@ def main(argv: list) -> int:
         return command_gate(ROOT, as_json=args.json)
     if args.command == "write-board":
         return command_write_board(ROOT)
+    if args.command == "abandon":
+        return command_abandon(ROOT)
     return 2
 
 
