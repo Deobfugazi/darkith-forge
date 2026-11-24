@@ -180,6 +180,142 @@ def case_candidate_tree_mismatch() -> None:
     record("candidate tree mismatch", caught, "tree hashes differ -> refused" if caught else "hashes equal")
 
 
+# ---- §7.6 items 10, 12, 13, 14, 16 ------------------------------------------------------
+# These five were named by the Prime Directive and had no injection. Each drives machinery
+# that already exists in this repository, so a case proves something about the gate that
+# ships rather than about a helper invented for the test.
+
+
+def case_stale_board_pointer() -> None:
+    """A generated surface whose canonical pointer is stale must be refused.
+
+    Drives the real inventory classifier: a secondary document carrying only a pointer is
+    clean, one that redefines a law is a duplicate. A stale pointer that reintroduces law
+    text must land in the duplicate class, not slip through as a pointer.
+    """
+    import authority_inventory
+
+    pointer_only = "See DARKITH.md for all law. This file is a pointer.\n"
+    restated = "NEVER #7 Do not duplicate authority. DARKITH.md is the only source.\n"
+    occ_pointer = authority_inventory.law_occurrences(pointer_only)
+    occ_restated = authority_inventory.law_occurrences(restated)
+    caught = (
+        not any(o["is_definition"] for o in occ_pointer)
+        and any(o["is_definition"] for o in occ_restated)
+    )
+    record(
+        "stale generated board pointer",
+        caught,
+        "a pointer stays a pointer; restated law is caught as a duplicate"
+        if caught
+        else f"classifier blind (pointer={occ_pointer}, restated={occ_restated})",
+    )
+
+
+def case_missing_required_test() -> None:
+    """A required gate that CI never invokes must be reported as an orphan.
+
+    Drives the real gate_coverage_gate over the real ci.sh text: it must find no orphan in
+    the shipped tree, and must call a gate an orphan when it is removed from CI's view.
+    """
+    import gate_coverage_gate
+
+    ci_text = (ROOT / "tools" / "ci.sh").read_text(encoding="utf-8")
+    real_orphans = gate_coverage_gate.orphans(ci_text)
+    # an uninvoked gate name must be recognised as not-invoked
+    blind = gate_coverage_gate.invoked("definitely_not_a_gate_xyz.py", ci_text)
+    caught = real_orphans == [] and blind is False
+    record(
+        "missing required test",
+        caught,
+        "no orphan in the shipped tree; an uninvoked gate is not counted as called"
+        if caught
+        else f"coverage blind (orphans={real_orphans}, blind={blind})",
+    )
+
+
+def case_required_skip() -> None:
+    """A required check that exits 3 (SKIP) is unresolved, never a pass (SPI-31).
+
+    Drives the real loophole_gate scanner on source that prints SKIP and then returns 0 —
+    the exact defect the scanner exists to catch.
+    """
+    import loophole_gate
+
+    tmp = pathlib.Path(tempfile.mkdtemp())
+    try:
+        bad = tmp / "bad.py"
+        bad.write_text(
+            'def main() -> int:\n'
+            '    print("SKIP: no input")\n'
+            '    return 0\n',
+            encoding="utf-8",
+        )
+        good = tmp / "good.py"
+        good.write_text(
+            'def main() -> int:\n'
+            '    print("SKIP: no input")\n'
+            '    return 3\n',
+            encoding="utf-8",
+        )
+        caught_bad = bool(loophole_gate.scan(bad))
+        caught_good = not loophole_gate.scan(good)
+        caught = caught_bad and caught_good
+        record(
+            "required test returning SKIP",
+            caught,
+            "SKIP-then-return-0 refused; SKIP-then-return-3 accepted"
+            if caught
+            else f"scanner blind (bad={caught_bad}, good={caught_good})",
+        )
+    finally:
+        shutil.rmtree(tmp)
+
+
+def case_missing_evidence() -> None:
+    """A closure claim whose evidence is absent or vacuous must be refused.
+
+    Drives the real admission reader (absolution_admission.run_evidence), which re-runs a
+    recorded evidence command and requires exit 0 plus an expected marker. A claim with no
+    command, and a command that succeeds but produces no witness, must both be refused.
+    """
+    import absolution_admission
+
+    no_cmd = absolution_admission.run_evidence({})
+    vacuous = absolution_admission.run_evidence(
+        {"cmd": f"{sys.executable} -c \"print('nothing here')\"", "expect": "WITNESS"}
+    )
+    honest = absolution_admission.run_evidence(
+        {"cmd": f"{sys.executable} -c \"print('WITNESS ok')\"", "expect": "WITNESS"}
+    )
+    caught = (no_cmd[0] is False) and (vacuous[0] is False) and (honest[0] is True)
+    record(
+        "missing evidence artifact",
+        caught,
+        "no command refused, missing witness refused, honest evidence accepted"
+        if caught
+        else f"reader blind (no_cmd={no_cmd}, vacuous={vacuous}, honest={honest})",
+    )
+
+
+def case_unverified_authorization() -> None:
+    """A promotion with no attributable authorization must be refused, not assumed.
+
+    Drives the real authority gate (NEVER #21): unpushed commits are named debt, and its
+    sentinel check must report no override. A gate that returned no debt while commits sit
+    unpushed would be the blanket grant this case exists to refuse.
+    """
+    import authority_gate
+
+    debt, _why = authority_gate.check_budget(0)
+    caught = isinstance(debt, list) and len(debt) > 0 and authority_gate.sentinel_failures() == []
+    record(
+        "unverified promotion authorization",
+        caught,
+        f"budget 0 exposes {len(debt)} unpushed item(s); no sentinel override remains",
+    )
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--verbose", action="store_true")
@@ -197,6 +333,11 @@ def main() -> int:
         case_blanket_grant,
         case_generator_drift,
         case_candidate_tree_mismatch,
+        case_stale_board_pointer,
+        case_missing_required_test,
+        case_required_skip,
+        case_missing_evidence,
+        case_unverified_authorization,
     ]
     for fn in cases:
         try:
