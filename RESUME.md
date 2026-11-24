@@ -62,11 +62,11 @@ written:
 bash tools/converge.sh
 ```
 
-That is `tools/sync.sh` (integrate the other tab's commits, then publish ours —
-never forced) followed by `tools/ci.sh` (re-run the gate on the **merged** tree).
+That is `tools/sync.sh` (integrate the other tab's commits locally; it does not publish)
+followed by `tools/ci.sh` (re-run the gates on the **reconciled** tree).
 Both steps are required: git can merge two tabs' edits to different lines of one
 file into something logically broken without any conflict, and only the gate
-catches that. An uncommitted edit is invisible to the other tab, so commit often.
+catches that. An uncommitted edit is invisible to the other tab, so checkpoint locally when the change is verified. Do not infer permission to publish.
 
 ## 4. The rules that keep this survivable
 
@@ -78,16 +78,16 @@ catches that. An uncommitted edit is invisible to the other tab, so commit often
   the tree, not only inside an APK. (MUST #12.)
 - **Secrets never enter git.** The APK signing key (`release_key`/`release_cert`)
   lives only inside the built APK and in your offline backup. `.gitignore` blocks
-  it; `tools/continuity.sh` re-checks before every push.
+  it; `tools/continuity.sh` re-checks before every local checkpoint.
 - **Regenerable output stays out.** `delivery/`, `dl/`, `dist/`, `*.zip`
   (including `darkith_omega_source.zip`), screenshots are rebuilt by the
   `build/*.py` / `tools/pack_delivery.py` packagers — they are not committed.
 - **Publication is a separate approval boundary.** No automation or prior session grants
   blanket push permission. Follow DARKITH.md NEVER #21 for explicit, destination-scoped
   authorization. continuity.sh checkpoints locally unless publication is explicitly requested.
-- **Stall is measured as time.** `tools/stall_clock.py` fails CI when unpushed or
-  uncommitted work dwells past the Operator's budget in `STALL_BUDGET.json`. Do not
-  edit the budget to pass; push or commit. (DARKITH.md MUST #36, AGENTS.md §41.)
+- **Local work dwell is measured as time.** `tools/stall_clock.py` measures uncommitted
+  local edits only. Committed work awaiting review is not a stall and never triggers a push.
+  (DARKITH.md MUST #36.)
 
 ## 5. If a session is lost mid-work
 
@@ -123,7 +123,3 @@ curl -sL -o /tmp/apksig.jar \
 `tools/` is committed. `dist/` is **generated and ignored** — it holds built
 artifacts when a session produces one (`tools/pack_delivery.py` rebuilds it),
 so it is never tracked (see §4).
-
-## CNS-DIRECTIVE — canonical source
-
-The project-wide execution principles are defined once in DARKITH.md. This file does not reproduce or amend them.
