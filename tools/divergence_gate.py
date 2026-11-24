@@ -50,8 +50,8 @@ def measure(root=ROOT):
     return 'clean', ahead, behind, branch
 
 
-def repair(root=ROOT, publish=False):
-    """Park and rebase locally; publish refs only when explicitly requested."""
+def repair(root=ROOT):
+    """Park and rebase locally; never publish remote refs."""
     state, ahead, behind, branch = measure(root=root)
     if state == 'skip':
         return "skip", None
@@ -66,11 +66,6 @@ def repair(root=ROOT, publish=False):
         git(["rebase", "--abort"], root=root)
         return ("drift", f"park is safe on {park}; rebase onto {base} hit conflicts and"
                 " was aborted — needs an operator decision, never a force-push")
-    if publish:
-        if git(["push", "origin", park], root=root).returncode != 0:
-            return "drift", "local park exists but publication failed: " + park
-        if git(["push", "origin", "HEAD"], root=root).returncode != 0:
-            return "drift", "park published; rebased branch publication failed"
     st = measure(root=root)[0]
     if st != "clean":
         return "drift", "repair did not converge"
@@ -169,8 +164,11 @@ argv_sys = sys.argv[1:]
 if __name__ == "__main__":
     if "--selftest" in argv_sys:
         sys.exit(selftest())
+    if "--publish" in argv_sys:
+        print("divergence repair: REFUSED — this tool never publishes")
+        return 2
     if "--fix" in argv_sys:
-        state, detail = repair(publish="--publish" in argv_sys)
+        state, detail = repair()
         if state == "skip":
             print("divergence repair: SKIP (no git repository)")
             sys.exit(3)
