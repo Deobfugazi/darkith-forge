@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""praxis_propagate.py — propagate the current directive, and its coupled laws, to every board.
+"""praxis_propagate.py — propagate the current directive, and a pointer to the canonical law source, to every local board.
 
 The problem this closes: a directive is inscribed once (in TASKS.md), but the boards that
 actually steer work are plural — the durable core board, one ephemeral board per live agent
