@@ -18,15 +18,59 @@ This README is the public bridge into the work: a nested field guide to the purp
 
 ## 0.1 What is Darkith in one sentence?
 
-Darkith is a local-first Android and offline-software forge built to turn inspectable source into usable tools while making claims, corrections, and progress accountable to evidence.
+Darkith, for now, is a local-first Android and offline-software forge built to turn inspectable source into usable tools while making claims, corrections, and progress accountable to evidence.
 
 ## 0.2 What is it trying to accomplish?
 
-The immediate work is software: an Android host, offline interfaces, build machinery, audit tools, and repository gates.
+The immediate evolving work in progress is software: an Android host, offline interfaces, build machinery, audit tools, and repository gates.
 
-The deeper objective is sovereignty as an operational condition: people should be able to understand the tools shaping their work, run and inspect those tools locally, correct them without surrendering control, and retain meaningful control over the value they create.
+The forge is under active development toward **OS-agnostic interoperability**. The objective is not to pretend that Android, Linux, macOS, Windows, bare-metal systems, and WebAssembly share one kernel, one ABI, or one executable format. The objective is a portable, inspectable core whose semantics, knowledge, and verification contracts remain consistent while explicit host adapters translate the actual capabilities and constraints of each platform. Where a target requires a different compiler, runtime, system API, package format, permission model, or execution boundary, that difference is handled as a declared adapter—not hidden behind a false promise that one binary runs unchanged everywhere. The same source of truth and conformance tests should travel across supported hosts; platform-specific execution remains honest, bounded, and replaceable.
+
+The intended reader-facing system is not raw repository noise presented as a wall of text. It is **source-to-interface transformation**: structure and evidence are converted into a legible, navigable experience, with critical terms emphasized at the point of use; links and anchors opening their expanded context; inline definitions available as transient tooltips; and equivalent keyboard, touch, and persistent-expansion paths so context is never trapped behind hover. The presentation must adapt to the reader's device, accessibility needs, and chosen level of detail. A claim should lead directly to its definition, implementation, evidence, dependencies, current status, and remaining boundary.
+
+<details>
+<summary><strong>Open the ergonomic invariant and the computable benchmark</strong></summary>
+
+Darkith is graded against the strongest independently verifiable user-facing capability already achievable in the world—not against a deliberately weak baseline and not against the average of inconvenient tools. For each representative task, the reference is the best verified system that can perform that same task under comparable device, accessibility, privacy, and connectivity conditions. That reference is Darkith's minimum floor; it is not the ceiling.
+
+The benchmark records the task, completion criteria, reference system, raw measurements, environment, accessibility conditions, and reproducible test procedure. It measures the full user cost: setup, task completion, customization, troubleshooting, recovery, dependency on network or vendor services, and the labor required to reach the same outcome.
+
+For a declared task set, let Bᵢ be the measured user-cost minutes of the best verified reference for task i; Dᵢ be Darkith's measured user-cost minutes for that same task; and wᵢ be the published task weight. The task-weighted ergonomic score is:
+
+**E = 100 × (Σ wᵢBᵢ) / (Σ wᵢDᵢ)**
+
+A score of 100 means parity with the reference envelope; above 100 means lower measured user cost; below 100 means Darkith has not met its floor. The score is valid only when the task set, weights, raw measurements, and reference conditions are published and reproducible. Missing or incomparable measurements are marked **UNMEASURED**, never converted to zero or silently averaged away. Security, privacy, accessibility, and user-control requirements are non-compensable gates: a faster result cannot offset a failure in any of them.
+
+The fairest trade is two equivalent routes to the same verified result:
+
+- **DIY route:** the user spends their own time to inspect, customize, repair, or extend the tool.
+- **Delegated route:** the user may compensate another person to perform that same bounded work, with the task, deliverable, acceptance test, labor basis, and agreed rate disclosed in advance.
+
+The equivalence record is computable from verified task scope, accepted output, measured labor, and the disclosed rate. It must not invent a universal price for human time or force a user to surrender data, ownership, or control as hidden payment. A user who has time can do the work; a user who does not must have a transparent, reciprocal path to an equivalent outcome.
+
+</details>
+
+<details>
+<summary><strong>Open the security and mutation dispatch invariant</strong></summary>
+
+Any operation that can alter source, operating-system baselines, permissions, execution paths, installed infrastructure, security posture, or other protected state must pass through an explicit policy decision before mutation.
+
+The user-configurable dispatch modes are:
+
+- **Manual dispatch:** every covered mutation presents a decision-point dialog before execution. The dialog identifies the proposed change, affected objects, provenance, reason, privilege, expected effects, available rollback, and evidence record. Approval applies only to the displayed operation and scope.
+- **Automatic dispatch:** the system may execute only operations already authorized by a user-defined policy whose scope, provenance, conditions, expiration, and rollback requirements match the proposed action. The authorization and result are recorded for later inspection.
+
+Automatic dispatch is not a bypass. A halting security or safety condition always produces a blocking decision-point alert. Unknown provenance, scope drift, privilege escalation, irreversible change, attempted security disablement, policy modification, or failed verification must halt regardless of the selected mode. The system must not auto-authorize the very policy change that would remove its own gate.
+
+These controls are system requirements, not simulated README buttons. A rendered control is valid only when it is wired to the real policy engine and its authorization boundary is enforced by the execution layer—not merely by the interface.
+
+</details>
+
+The deepest end goal, as the outstanding core objective, is **sovereignty as an operational condition**: people should be able to understand the tools shaping their work, run and inspect those tools locally, correct them without surrendering control, and retain meaningful control over the value they create.
 
 The economic and civic destination is not claimed as completed by the current app. It is the direction that gives the engineering its purpose.
+
+**Demonstration rule:** this README must itself practice the standard it states. Its navigation, contextual expansion, source links, and evidence paths must work in the published interface. Where the host renderer cannot support a behavior, the README must provide a functional equivalent or link to the actual working interface—not counterfeit an interaction with decorative markup.
 
 ## 0.3 Who is this for?
 
