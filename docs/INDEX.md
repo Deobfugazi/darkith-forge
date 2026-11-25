@@ -9,16 +9,16 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**88 readable files across 8 registers.**
+**89 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 88,503 | `6efd99d9bfa8` | AGENTS.md — Darkith |
-| `DARKITH.md` | 169,112 | `a3cdb073cae3` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 169,107 | `0cb835b07dfd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 86,130 | `b180a7e57ef1` | DARKITH — README |
+| `README.md` | 86,130 | `b180a7e57ef1` | DARKITH — The Forge of Verifiable Sovereignty |
 | `RESUME.md` | 8,805 | `05b87b5f7ee0` | RESUME — read this first in any new session |
 | `TASKS.md` | 12,962 | `55124aa5be48` | TASKS — the durable board |
 
@@ -48,6 +48,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
 | `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
 | `docs/evidence/SECTOR-PAIN-LEDGER.md` | 5,077 | `9d6b452e87d8` | Sector pain ledger — primary-source observations |
+| `docs/index.html` | 19,891 | `8585e98e027b` | Darkith — Interactive README |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
 | `docs/nt/NT-INDEX.md` | 4,329 | `c244fba77d05` | NT INDEX — the noveltreatise corpus, carried and reconciled |
 | `docs/nt/NT-IX.txt` | 47,852 | `148373385f60` | NOVELTREATISE IX — OMEGA FINAL EDITION (REVISED: DEVICE-BOUND, ALIGNME |

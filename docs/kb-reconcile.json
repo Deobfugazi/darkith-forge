@@ -1,5 +1,5 @@
 {
-  "declared_count": 88,
+  "declared_count": 89,
   "drifted": [
     {
       "bytes_declared": 12962,
@@ -8,7 +8,7 @@
       "path": "TASKS.md"
     }
   ],
-  "entries": 88,
+  "entries": 89,
   "matched": [
     "AGENTS.md",
     "DARKITH.md",
@@ -37,6 +37,7 @@
     "docs/UPDATES.md",
     "docs/evidence/NODAL-ZIP-VS-OURS.md",
     "docs/evidence/SECTOR-PAIN-LEDGER.md",
+    "docs/index.html",
     "docs/nt/NT-I-IV-protocol.md",
     "docs/nt/NT-INDEX.md",
     "docs/nt/NT-IX.txt",
