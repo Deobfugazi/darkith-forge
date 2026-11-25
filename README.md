@@ -95,7 +95,7 @@ The companion reader implements these actual reading controls:
 - Receive glossary explanations through transient pop-ups triggered by pointer hover or keyboard focus.
 - Retain reading preferences locally and cache the reader shell and README for offline reopening after the cache has been populated.
 
-The reader loads [README.md](README.md) as its canonical content source. The Pages workflow copies that source into the published `docs/README.md`; the reader does not maintain a competing manuscript. Its interface is a rendering layer, not a second authority.
+The reader loads [README.md](README.md) as its canonical content source. The Pages workflow copies that source into the published the generated Pages copy; the reader does not maintain a competing manuscript. Its interface is a rendering layer, not a second authority.
 
 **Interaction and safety boundary:** navigation, search, disclosure, glossary explanations, and presentation controls are reader operations. They do not mutate source or operating-system infrastructure. A security-sensitive mutation requires a real execution-layer policy, a scoped authorization decision, and an auditable result. Neither a README control nor a browser dialog can substitute for that enforcement. Manual and automatic dispatch remain policy modes—not a UI toggle that grants unrestricted authority.
 
