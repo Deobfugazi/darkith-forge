@@ -129,6 +129,8 @@ jobs:
             git config user.email "darkith-testnet@users.noreply.github.com"
             git commit -m "testnet: carry prophylactic repairs to fixed point"
           fi
+          # Re-enable the ordinary pre-push admission hook for the one final publication.
+          unset DARKITH_DEFER_PUSH
           git push origin "HEAD:refs/heads/$BRANCH"
           git fetch origin "refs/heads/$BRANCH"
           local_sha="$(git rev-parse HEAD)"
