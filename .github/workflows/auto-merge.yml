@@ -122,7 +122,6 @@ jobs:
           python3 tools/absolution_phase.py
           python3 tools/secret_gate.py
           python3 tools/absolution_phase.py --check
-          python3 tools/admission.py
           git add -A
           if ! git diff --cached --quiet; then
             git config user.name "darkith-testnet"
@@ -138,6 +137,7 @@ jobs:
             exit 1
           }
           python3 tools/absolution_phase.py --check
+          python3 tools/admission.py
           if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
             git status --short
             echo "::error::Preflight left uncarrried residue after commit"
