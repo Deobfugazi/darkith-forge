@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate reader JavaScript
+        run: |
+          node -e 'const fs=require("fs");const html=fs.readFileSync("docs/index.html","utf8");const match=html.match(/<script>([\\s\\S]*?)<\\/script>/);if(!match)throw Error("reader script missing");new Function(match[1]);'
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
