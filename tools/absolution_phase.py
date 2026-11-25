@@ -145,8 +145,15 @@ def heal_once() -> None:
     for name, cmd in INGEST:
         code, out = run(cmd)
         print(f"  ingest  {name:<24} exit {code}")
+        if code not in (0, 3) and out:
+            for line in out.splitlines()[-16:]:
+                print(f"    {line}")
     print("  repair  autophagy --repair")
-    run(("python3", "tools/autophagy.py", "--repair"))
+    code, out = run(("python3", "tools/autophagy.py", "--repair"))
+    print(f"  autophagy --repair exit {code}")
+    if out:
+        for line in out.splitlines()[-60:]:
+            print(f"    {line}")
 
 
 def main(argv: list) -> int:
