@@ -33,7 +33,7 @@ def check(name, ok, detail=""):
         FAILS.append(name)
 
 
-def fixture(script_body: str) -> tuple:
+def fixture(script_body: str, skip_exit_codes: tuple = ()) -> tuple:
     """A throwaway repo with one producer, committed so HEAD is a real authority."""
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="absolution-test-"))
     (tmp / "proof").mkdir(parents=True)
@@ -44,11 +44,12 @@ def fixture(script_body: str) -> tuple:
     subprocess.run(env + ["add", "-A"], cwd=str(tmp), check=True)
     subprocess.run(env + ["commit", "-qm", "fixture"], cwd=str(tmp), check=True)
     return tmp, {"name": "fixture", "cmd": ("python3", "producer.py"),
-                 "owns": ("proof/out.json",), "why": "fixture"}
+                 "owns": ("proof/out.json",), "skip_exit_codes": skip_exit_codes,
+                 "why": "fixture"}
 
 
-def run_case(body: str) -> dict:
-    tmp, producer = fixture(body)
+def run_case(body: str, skip_exit_codes: tuple = ()) -> dict:
+    tmp, producer = fixture(body, skip_exit_codes)
     return a.witness(producer, tmp)
 
 
@@ -110,13 +111,19 @@ def main() -> int:
     r = run_case("import sys\nsys.exit(3)\n")
     check("non-zero producer is FAIL", r["verdict"] == "FAIL", r["why"])
 
-    # 7. The gate must actually fail the build on anything less than full absolution.
+    # 7. Exit 3 is an explicit, non-mutating environment skip only when declared.
+    r = run_case("import sys\nsys.exit(3)\n", skip_exit_codes=(3,))
+    check("declared unavailable producer is SKIPPED", r["verdict"] == "SKIPPED", r["why"])
+
+    # 8. The gate must pass only when every applicable producer is absolved.
     doc = a.compute()
-    check("live registry is fully absolved", doc["absolved"] == doc["producers"],
-          f"{doc['absolved']}/{doc['producers']}")
+    check("live registry's active producers are absolved",
+          doc["active"] > 0 and doc["absolved"] == doc["active"],
+          f"{doc['absolved']}/{doc['active']} active; {doc['skipped']} skipped")
     check("live E/W_in is 0", doc["ratio"] == 0.0, str(doc["ratio"]))
-    check("gate exit is 0 only when every producer is absolved",
-          a.main(["absolution.py"]) == (0 if doc["absolved"] == doc["producers"] else 1))
+    check("gate exit reflects active producer verdicts",
+          a.main(["absolution.py"]) == (0 if doc["active"] > 0
+                                      and doc["absolved"] == doc["active"] else 1))
 
     print()
     if FAILS:
