@@ -78,7 +78,7 @@ This section is an executable demonstration within the capabilities of the host 
 
 **Use the native document now:** the headings are direct navigation anchors; the links below are real repository paths; and the expandable sections in this README disclose deeper context without replacing the canonical text. Open a source link to inspect the mechanism, then return to the same section.
 
-**Use the interactive reader:** [Open the reader source](docs/index.html) · [Inspect its publication workflow](.github/workflows/pages.yml) · [Inspect its offline cache](docs/sw.js) · [Open the canonical README](README.md).
+**Use the interactive reader:** [Open the hosted reader](https://deobfugazi.github.io/darkith-forge/) (available after a successful Pages deployment) · [Inspect the reader source](docs/index.html) · [Inspect its publication workflow](.github/workflows/pages.yml) · [Inspect its offline cache](docs/sw.js) · [Open the canonical README](README.md).
 
 The companion reader implements these actual reading controls:
 
