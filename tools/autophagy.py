@@ -270,10 +270,15 @@ def dirty(c):
 def heal(c, dry):
     if dry:
         return "would repair"
-    sh(c.repair)
+    repair_result = sh(c.repair)
     state = probe(c)
     if state == "clean":
         return "repaired"
+    if repair_result.stdout.strip() or repair_result.stderr.strip():
+        print(f"    repair detail [{c.name}]:")
+        detail = (repair_result.stdout + repair_result.stderr).strip()
+        for line in detail.splitlines()[-24:]:
+            print(f"      {line}")
     if state == "skipped":
         return "skipped"
     return "REPAIR DID NOT CONVERGE"
