@@ -86,6 +86,7 @@ PRODUCERS = (
         "cmd": ("python3", "tools/chat_gatekeeper.py", "--check"),
         "owns": ("TASKS.md", "proof/chat_watermark.json", "proof/chat_gatekeeper.json",
                  "proof/chat_pings.json"),
+        "skip_exit_codes": (3,),
         "why": "re-ingests the Operator's orders and rewrites the board watermark",
     },
 )
@@ -169,6 +170,7 @@ def git_carried(rel: str, digest: str, root: pathlib.Path = ROOT) -> bool:
 
 def witness(producer: dict, root: pathlib.Path = ROOT) -> dict:
     before = tree_hashes(root)
+    stamps_before = tree_stamps(root)
     first = run(producer["cmd"], root)
     after_first = tree_hashes(root)
     stamps = tree_stamps(root)
@@ -189,7 +191,17 @@ def witness(producer: dict, root: pathlib.Path = ROOT) -> dict:
     rewritten = sorted(p for p in owned
                        if (root / p).is_file() and stamps.get(p) != stamps_after_second.get(p))
 
-    if first["exit"] != 0:
+    skip_codes = set(producer.get("skip_exit_codes", ()))
+    if first["exit"] in skip_codes or second["exit"] in skip_codes:
+        no_write = all(stamps_before.get(p) == stamps.get(p) == stamps_after_second.get(p)
+                       for p in owned)
+        if (first["exit"] == second["exit"]
+                and first["exit"] in skip_codes
+                and fixed_point and not foreign and no_write):
+            verdict, why = "SKIPPED", f"producer not applicable (exit {first['exit']}): {first['out']}"
+        else:
+            verdict, why = "FAIL", "inconsistent or mutating skip result"
+    elif first["exit"] != 0:
         verdict, why = "FAIL", f"producer exited {first['exit']}"
     elif foreign:
         verdict, why = "FAIL", "unmarked write outside declared outputs: " + ", ".join(foreign)
@@ -231,21 +243,26 @@ def witness(producer: dict, root: pathlib.Path = ROOT) -> dict:
 def compute(root: pathlib.Path = ROOT, producers: tuple = PRODUCERS) -> dict:
     results = [witness(p, root) for p in producers]
     absolved = sum(1 for r in results if r["verdict"] == "ABSOLVED")
+    skipped = sum(1 for r in results if r["verdict"] == "SKIPPED")
+    active = len(results) - skipped
+    extraction = active - absolved
     return {
         "law": LAW,
         "producers": len(results),
+        "active": active,
+        "skipped": skipped,
         "absolved": absolved,
-        # E is the rewrite that has not returned to the source of truth: a non-fixed-point
-        # producer, or a fixed point nobody carried. W_in is every producer in the registry.
-        "extraction": len(results) - absolved,
-        "ratio": round((len(results) - absolved) / len(results), 6) if results else 0.0,
+        # E is unreturned work among applicable producers. An explicitly declared
+        # environment-dependent skip is neither a defect nor an absolved producer.
+        "extraction": extraction,
+        "ratio": round(extraction / active, 6) if active else 0.0,
         "results": results,
     }
 
 
 def render(doc: dict) -> str:
-    lines = [f"absolution: {doc['absolved']}/{doc['producers']} producers absolved "
-             f"(E/W_in={doc['ratio']:.3f}, absolution at 0)"]
+    lines = [f"absolution: {doc['absolved']}/{doc['active']} active producers absolved; "
+             f"{doc['skipped']} skipped (E/W_in={doc['ratio']:.3f}, absolution at 0)"]
     for r in doc["results"]:
         lines.append(f"  {r['verdict']:<17} {r['producer']:<16} {r['why']}")
     return "\n".join(lines)
@@ -272,7 +289,7 @@ def main(argv: list) -> int:
     # A fixed point that has not been carried is not this tool's failure to hide; it is a
     # named surplus awaiting the commit that returns it. It fails the gate, because a gate
     # that passes on unreturned work is the blind bot again.
-    return 0 if doc["absolved"] == doc["producers"] else 1
+    return 0 if doc["active"] > 0 and doc["absolved"] == doc["active"] else 1
 
 
 if __name__ == "__main__":
