@@ -21,6 +21,7 @@ Exit contract (a gate must be exact about what it refuses to judge):
 """
 import subprocess
 import sys
+import os
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -58,7 +59,7 @@ def find_drift(root=ROOT):
 
 
 def repair(root=ROOT):
-    """One deterministic sweep: stage, commit, push. Never force, never rewrite."""
+    """One deterministic sweep: stage and commit; publish unless testnet repair defers it."""
     st = git(["status", "--porcelain"], root=root)
     if st.returncode != 0:
         return 'skip', [st.stderr.strip() or 'git unavailable']
@@ -72,6 +73,13 @@ def repair(root=ROOT):
              "Co-authored-by: openhands <openhands@all-hands.dev>"], root=root)
     if c.returncode != 0:
         return 'drift', [c.stderr.strip() or 'commit refused']
+    # Testnet repair converges locally first. Its caller carries the complete fixed point
+    # and performs one final guarded push; pushing from an intermediate repair can recursively
+    # invoke the pre-push rehearsal before sibling generators have finished.
+    if os.environ.get("DARKITH_DEFER_PUSH") == "1":
+        state, paths = find_drift(root=root)
+        return ("clean", []) if state == "clean" else ("drift", paths)
+
     # Push only where a remote exists. A local-only worktree (or a throwaway test repo)
     # converges on the commit itself; unpushed age is a separate measurement owned by
     # authority_gate (NEVER #21), so this gate must not fail what git cannot reach.
@@ -169,6 +177,29 @@ def selftest():
     heads = subprocess.run(["git", "rev-list", "HEAD"], cwd=remote_dir,
                            capture_output=True, text=True).stdout.splitlines()
     check("the push really landed", len(heads) == 1, str(len(heads)) + " head on the remote")
+
+    print("== testnet repair commits locally, then waits for the final guarded push ==")
+    deferred_remote = tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "--bare"], cwd=deferred_remote, check=True)
+    deferred = fresh_repo()
+    subprocess.run(["git", "remote", "add", "origin", deferred_remote], cwd=deferred, check=True)
+    (deferred / "HISTORY.md").write_text("deferred repair\n")
+    old_defer = os.environ.get("DARKITH_DEFER_PUSH")
+    os.environ["DARKITH_DEFER_PUSH"] = "1"
+    try:
+        d_state, d_paths = repair(deferred)
+    finally:
+        if old_defer is None:
+            os.environ.pop("DARKITH_DEFER_PUSH", None)
+        else:
+            os.environ["DARKITH_DEFER_PUSH"] = old_defer
+    check("deferred repair reaches a local fixed point", d_state == "clean", str(d_paths))
+    remote_heads = subprocess.run(["git", "for-each-ref", "--format=%(refname)", "refs/heads"],
+                                 cwd=deferred_remote, capture_output=True, text=True).stdout
+    check("deferred repair does not publish an intermediate commit", not remote_heads.strip())
+    push_deferred = subprocess.run(["git", "push", "origin", "HEAD"], cwd=deferred,
+                                   capture_output=True, text=True)
+    check("the final explicit push carries the repair", push_deferred.returncode == 0)
 
     print("== no git repo is a named SKIP, never a pass ==")
     with tempfile.TemporaryDirectory() as bare:

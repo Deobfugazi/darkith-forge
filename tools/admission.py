@@ -136,6 +136,66 @@ def cross_branch_collisions() -> list[str]:
     return problems
 
 
+def workflow_contract_errors(auto_text: str, workflow_texts: list[str],
+                               ci_text: str) -> list[str]:
+    """Prove the automation cannot admit a main-bound change after a single trial.
+
+    This gate intentionally checks the executable workflow contract, not its prose:
+    two fresh isolated rehearsals, exact candidate/base SHA checks, testnet-only repair,
+    and no scheduled dependency write directly to main.
+    """
+    errors: list[str] = []
+    required = (
+        ("testnet trial 1/2", "trial 1 job missing"),
+        ("testnet trial 2/2", "trial 2 job missing"),
+        ("  tests:\n    name: tests\n    needs: [trial_1, trial_2]", "required tests status does not gate both trials"),
+        ("  trial_1:\n    name: testnet trial 1/2\n    needs: prepare_testnet", "trial 1 does not depend on preflight"),
+        ("  trial_2:\n    name: testnet trial 2/2\n    needs: [prepare_testnet, trial_1]", "trial 2 does not depend on trial 1 and preflight"),
+        ("needs: [prepare_testnet, trial_1, trial_2, tests]", "main admission does not depend on both trials and the required tests status"),
+        ("TESTED_SHA", "candidate SHA is not revalidated before merge"),
+        ("TESTED_BASE", "main base SHA is not revalidated before merge"),
+        ("branch=\"testnet/darkbot-", "scheduled dependency proposal is not isolated on testnet"),
+        ('DARKITH_DEFER_PUSH: "1"', "repair does not defer internal pushes until fixed point"),
+        ("unset DARKITH_DEFER_PUSH", "final branch publication does not restore normal pre-push admission"),
+        ('run "drift gate selftest (deferred testnet publication)" python3 tools/drift_gate.py --selftest', "drift gate does not test deferred publication"),
+        ('run "tree invariant selftest (deferred testnet publication)" python3 tools/tree_invariant.py --selftest', "tree invariant does not test deferred publication"),
+        ("gh workflow run auto-merge.yml", "dependency proposal does not dispatch the admission workflow"),
+    )
+    for token, message in required:
+        if token not in auto_text:
+            errors.append(message)
+
+    if auto_text.count("python3 tools/admission.py rehearse") < 2:
+        errors.append("fewer than two full isolated admission rehearsals are configured")
+    if "python3 tools/absolution_phase.py" not in auto_text or "python3 tools/admission.py" not in auto_text:
+        errors.append("testnet preflight repair/admission preflight is missing")
+    if "gh pr merge" not in auto_text or "merge_testnet:" not in auto_text:
+        errors.append("automatic promotion is not gated through the testnet merge job")
+    if re.search(r"git\s+push\s+(?:origin\s+)?(?:main|master)(?:\s|$)", auto_text):
+        errors.append("automation contains a direct push to main/master")
+
+    trial2 = auto_text.split("  trial_2:", 1)[1].split("\n  tests:", 1)[0] if "  trial_2:" in auto_text else ""
+    if "needs.trial_1.result == 'success'" not in trial2:
+        errors.append("trial 2 can run without trial 1 passing")
+    merge = auto_text.split("  merge_testnet:", 1)[1].split("\n  merge_dependency:", 1)[0] if "  merge_testnet:" in auto_text else ""
+    if ("needs.trial_1.result == 'success'" not in merge
+            or "needs.trial_2.result == 'success'" not in merge):
+        errors.append("main merge does not require both trial verdicts")
+
+    if "python3 tools/absolution_phase.py --check" not in ci_text:
+        errors.append("CI does not enforce read-only absolution before hashing")
+    if re.search(r"run\s+[\"'][^\"\n]*absolution phase[^\"\n]*[\"']\s+python3 tools/absolution_phase.py\s*(?:\n|$)", ci_text):
+        errors.append("CI invokes the repair phase instead of checking the carried candidate")
+
+    for workflow in workflow_texts:
+        for line in workflow.splitlines():
+            if re.search(r"\buses\s*:", line):
+                if not re.search(r"\buses\s*:\s*[^@\s]+@[0-9a-f]{40}(?:\s|$)", line.strip()):
+                    errors.append("workflow action is not pinned to an immutable 40-character SHA")
+                    break
+    return errors
+
+
 def preflight() -> list[str]:
     problems: list[str] = []
 
@@ -177,6 +237,21 @@ def preflight() -> list[str]:
         problems.append(f"uncommitted drift in {len(drift)} file(s): " + ", ".join(drift[:5]))
 
     problems.extend(cross_branch_collisions())
+
+    workflow_dir = ROOT / ".github" / "workflows"
+    auto_path = workflow_dir / "auto-merge.yml"
+    ci_path = ROOT / "tools" / "ci.sh"
+    if auto_path.is_file() and ci_path.is_file():
+        workflow_texts = [p.read_text(encoding="utf-8") for p in sorted(workflow_dir.glob("*.yml"))]
+        problems.extend(workflow_contract_errors(
+            auto_path.read_text(encoding="utf-8"), workflow_texts,
+            ci_path.read_text(encoding="utf-8")))
+        if "testnet/*" not in HOOK or TESTNET_BYPASS_REASON not in HOOK:
+            problems.append("pre-push hook bypass is not restricted to the explicit testnet trial rule")
+        for repair_path in ("tools/drift_gate.py", "tools/tree_invariant.py"):
+            repair_file = ROOT / repair_path
+            if not repair_file.is_file() or "DARKITH_DEFER_PUSH" not in repair_file.read_text(encoding="utf-8"):
+                problems.append(f"{repair_path}: testnet repair cannot defer internal publication")
 
     return problems
 
@@ -274,13 +349,30 @@ def rehearse(keep: bool = False) -> int:
 # the hook: refuse to push a known-red change
 # --------------------------------------------------------------------------------------
 
+TESTNET_BYPASS_REASON = "two independent testnet trials gate main"
+
+
+def testnet_bypass_allowed(branch: str, enabled: str, reason: str) -> bool:
+    return enabled == "1" and branch.startswith("testnet/") and reason == TESTNET_BYPASS_REASON
+
+
 HOOK = """#!/bin/sh
-# Installed by tools/admission.py --install-hook. Refuses to push a change that the real
-# suite already rejects. Bypass once with ADMISSION_BYPASS=1 when you have a reason.
-[ "$ADMISSION_BYPASS" = "1" ] && exit 0
+# Installed by tools/admission.py --install-hook. Main/master and ordinary branches must
+# rehearse the real suite. A bypass is narrowly reserved for staging a candidate on testnet;
+# the admission workflow then runs two independent full trials before any main merge.
+if [ "$ADMISSION_BYPASS" = "1" ]; then
+  branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+  case "$branch" in
+    testnet/*)
+      [ "$ADMISSION_BYPASS_REASON" = "two independent testnet trials gate main" ] && exit 0
+      ;;
+  esac
+  echo "admission: bypass refused outside the explicit testnet staging rule." >&2
+  exit 1
+fi
 python3 tools/admission.py rehearse || {
   echo "admission: push refused -- the suite is red on these exact bytes." >&2
-  echo "admission: fix it, or re-run with ADMISSION_BYPASS=1 to override." >&2
+  echo "admission: repair it or stage on testnet for two independent trials." >&2
   exit 1
 }
 """
@@ -315,6 +407,32 @@ def selftest() -> int:
     check(law_ids("NEVER #11 in prose\nNEVER #11 again in prose\n", "NEVER") == {},
           "prose mentions are not counted as declarations")
     check(law_ids("─── MUST #42 (X) ───\n", "MUST") == {"42": 1}, "MUST declaration counted")
+    check(testnet_bypass_allowed("testnet/candidate", "1", TESTNET_BYPASS_REASON),
+          "explicit testnet staging bypass is permitted")
+    check(not testnet_bypass_allowed("main", "1", TESTNET_BYPASS_REASON),
+          "main bypass is forbidden even with the testnet reason")
+    check(not testnet_bypass_allowed("testnet/candidate", "1", "unspecified"),
+          "testnet bypass requires the exact recorded reason")
+
+    workflow_path = ROOT / ".github" / "workflows" / "auto-merge.yml"
+    workflow_text = workflow_path.read_text(encoding="utf-8") if workflow_path.is_file() else ""
+    workflow_texts = [p.read_text(encoding="utf-8") for p in
+                       sorted((ROOT / ".github" / "workflows").glob("*.yml"))]
+    ci_path = ROOT / "tools" / "ci.sh"
+    ci_text = ci_path.read_text(encoding="utf-8") if ci_path.is_file() else ""
+    errors = workflow_contract_errors(workflow_text, workflow_texts, ci_text)
+    check(not errors, "automation requires two isolated trials and immutable action pins",
+          "; ".join(errors))
+    deferred_tools = all((ROOT / p).is_file() and
+                         "DARKITH_DEFER_PUSH" in (ROOT / p).read_text(encoding="utf-8")
+                         for p in ("tools/drift_gate.py", "tools/tree_invariant.py"))
+    check(deferred_tools, "both repair classes defer internal pushes until fixed point")
+    broken = workflow_text.replace("testnet trial 2/2", "trial omitted") if workflow_text else ""
+    check(bool(workflow_contract_errors(broken, workflow_texts, ci_text)),
+          "workflow contract detects a missing second trial")
+    broken_status = workflow_text.replace("needs: [trial_1, trial_2]", "needs: [trial_1]", 1)
+    check(bool(workflow_contract_errors(broken_status, workflow_texts, ci_text)),
+          "workflow contract detects a weakened required tests status")
     labels = gate_labels('  run "chain gate" python3 x\n  run "chain gate" python3 y\n'
                          '  run "other" python3 z\n')
     check(labels == {"chain gate": 2, "other": 1}, "duplicate gate label is counted")

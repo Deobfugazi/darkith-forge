@@ -6,6 +6,8 @@ __pycache__/
 # diff, and the drift gate would then fail forever on its own audit trail. The chain is
 # verified locally (tools/ci_receipts.py --verify) and regenerates from a fresh run.
 proof/ci_receipts.db
+# Admission rehearsals are uploaded as per-trial CI artifacts, not source files.
+proof/admission/*.log
 .forge_work/
 # Both forms are required. `.tools/` matches only a real directory; tools/admission.py
 # symlinks .tools into its rehearsal worktree, and a trailing-slash pattern does NOT match a

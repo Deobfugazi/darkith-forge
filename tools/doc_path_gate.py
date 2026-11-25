@@ -36,6 +36,8 @@ ALLOWLIST = {
     # savf runtime state (contract lock + HMAC manifest written into the CWD, gitignored)
     ".savf/",
     "dist/SHA256SUMS.txt", "dist/Darkith-2.1.0-omega.apk", "dist/_meta.json", "dist/index.html",
+    # Generated only during Pages assembly from the canonical README; not a source path.
+    "docs/README.md",
     # generated/orphan artifacts cited in delivery records (regenerable, never committed)
     "delivery/c7_patched_sources.zip", "delivery/darkith-one-shot.sh", "tree_omega/", "lib/",
     # build output named in prose (produced inside the APK by the chain, never a repo path)

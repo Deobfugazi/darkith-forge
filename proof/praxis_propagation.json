@@ -45,15 +45,9 @@
   "targets": [
     {
       "target": "durable",
-      "path": "/workspace/project/darkith-forge/TASKS.md",
+      "path": "/home/runner/work/darkith-forge/darkith-forge/TASKS.md",
       "status": "current",
       "detail": ""
-    },
-    {
-      "target": "session:18393131094c4acfb45d943764549f23",
-      "path": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json",
-      "status": "current",
-      "detail": "mirror"
     }
   ],
   "mode": "apply",

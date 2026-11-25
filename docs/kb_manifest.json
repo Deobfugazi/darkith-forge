@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 88,
+  "count": 89,
   "files": [
     {
       "bytes": 88503,
@@ -9,10 +9,10 @@
       "sha256": "6efd99d9bfa856974569e180fee80b21c4674b7a5d8c2b9f5fc6e15c44618723"
     },
     {
-      "bytes": 169112,
+      "bytes": 169107,
       "path": "DARKITH.md",
       "register": "A-apparatus",
-      "sha256": "a3cdb073cae33ab075bdf47d188067d77751db36ff900dfa2833ef90ce14fb54"
+      "sha256": "0cb835b07dfd46a0189292453320c28201e128538a5efe0a9b99374fbf03708d"
     },
     {
       "bytes": 3356,
@@ -21,10 +21,10 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 71156,
+      "bytes": 86130,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "f6491446c4e78b8768c84d5443e7fa757771535bb004c7d6643c628d2034eba7"
+      "sha256": "b180a7e57ef1e7cb3ffedef179b7b8f864cfc15ea703202f36b05649cfbfb573"
     },
     {
       "bytes": 8805,
@@ -169,6 +169,12 @@
       "path": "docs/evidence/SECTOR-PAIN-LEDGER.md",
       "register": "B-knowledge",
       "sha256": "9d6b452e87d84d38eec53a3d6a5fbcaf3377aaec72291523dd3d299ffee9706e"
+    },
+    {
+      "bytes": 19891,
+      "path": "docs/index.html",
+      "register": "B-knowledge",
+      "sha256": "8585e98e027becc381bd113b8a1f423634f594fca9a19138ec32c6fcdf7f6f8c"
     },
     {
       "bytes": 146183,

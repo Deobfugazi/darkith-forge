@@ -72,21 +72,22 @@ run() {
 have() { command -v "$1" >/dev/null 2>&1; }
 
 if have python3; then
-  # ── ABSOLUTION IS A PRECONDITION OF HASHING, NOT A REPORT FILED AFTER IT ────────
-  # This ran wrong for months: the hashing gates ran first, and the defect registry ran
-  # last as a dry `--check` that repairs nothing. So CI sealed a tree that still held every
-  # residual inconsistency, then detected the inconsistency, then did nothing about it —
-  # detect-forever, heal-never. `--repair` was never called by CI at all.
-  #
-  # The order is the defect. You cannot attest bytes that are still moving. This phase
-  # ingests every producer that absorbs outside state, runs the registry to repair, and
-  # loops until residue is zero BEFORE any gate below hashes anything. If it cannot reach
-  # zero it REFUSES, and the hashing gates never run on an inconsistent tree — so a seal
-  # can never attest a lie. That refusal is the prophylaxis, and it is not destructive:
-  # the phase only produces a consistent working tree and proves it, then hands it on.
+  # ── ABSOLUTION IS A PRECONDITION OF HASHING, NOT A REPAIR RUN ────────────────
+  # CI is a trial, not a repair operator. It must test the exact submitted commit without
+  # mutating its checkout or manufacturing a local commit. The testnet author must run the
+  # ingest/repair cycle, carry every generated artifact, and re-run until the tree is clean.
+  # Here we only probe residue: nonzero means this exact commit is not ready to be hashed.
   if [ -f tools/absolution_phase.py ]; then
-    run "absolution phase (ingest+repair to zero before hashing)" python3 tools/absolution_phase.py
-    run "absolution phase selftest"                               python3 tools/absolution_phase.py --selftest
+    # Exercise refusal first, then enforce the phase as a hard precondition. Do not allow
+    # later hashing/sealing gates to run if this exact checkout is not already clean.
+    run "absolution phase selftest" python3 tools/absolution_phase.py --selftest
+    if python3 tools/absolution_phase.py --check; then
+      printf -- '--- absolution phase (read-only precondition): PASS\n'
+    else
+      rc=$?
+      printf -- '--- absolution phase (read-only precondition): FAIL (exit %s); downstream hashing stopped\n' "$rc"
+      exit 1
+    fi
   fi
   run "fresh-session boot formulary"      python3 tools/session_boot_gate.py
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
@@ -236,6 +237,9 @@ if have python3; then
     # NEVER #22 / MUST #42: the general drift gate is a CLASS fix. The suite drives REAL
     # temporary git repos: detector fires on dirt, stays silent on a newborn tree, and
     # the deterministic repair provably converges.
+    if [ -f tools/drift_gate.py ]; then
+      run "drift gate selftest (deferred testnet publication)" python3 tools/drift_gate.py --selftest
+    fi
     if [ -f tools/tests/drift_gate_test.py ]; then
       run "drift gate test (NEVER #22)"   python3 tools/tests/drift_gate_test.py
     fi
@@ -296,6 +300,7 @@ if have python3; then
     # uncommitted and three gates went red on that one fact; none of them may repair it.
     # This gate names the drift as its own defect instead of leaving it to be misattributed.
     if [ -f tools/tree_invariant.py ]; then
+      run "tree invariant selftest (deferred testnet publication)" python3 tools/tree_invariant.py --selftest
       run "tree invariant (NEVER #22: derived tree is landed)" python3 tools/tree_invariant.py --check
     fi
     # NEVER #23 / MUST #41: every gate above runs on the far side of the push, so it can only

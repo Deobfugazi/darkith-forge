@@ -137,6 +137,11 @@ def check() -> int:
     return 1
 
 
+def push_deferred() -> bool:
+    """Testnet repair commits locally; the workflow publishes only the settled tree."""
+    return os.environ.get("DARKITH_DEFER_PUSH") == "1"
+
+
 def repair() -> int:
     if cycle_open():
         print("tree_invariant: SKIP — a revitalization cycle is open; S16 lands the cycle, so "
@@ -183,6 +188,13 @@ def repair() -> int:
         print("tree_invariant: PASS — repaired and committed (detached HEAD; not pushing)")
         return 0
 
+    if push_deferred():
+        if drifted():
+            print(f"tree_invariant: FAIL — {len(drifted())} path(s) remain dirty before deferred push")
+            return 1
+        print("tree_invariant: PASS — repaired and committed locally; final testnet push deferred")
+        return 0
+
     p = sh(("git", "push", "-q", "origin", "HEAD"))
     if p.returncode != 0:
         print("tree_invariant: WARN — committed locally; push failed (offline or no remote)")
@@ -197,49 +209,61 @@ def repair() -> int:
 
 
 def selftest() -> int:
-    """Prove the detector fires on a dirty tree and stays silent on a clean one.
-
-    Run in a throwaway repository: a selftest that dirties the real tree to watch a gate
-    catch it is itself the defect class it is testing.
-    """
+    """Test detection, commit landing, deferred publication, and exact rollback in a throwaway repo."""
     import tempfile
-
     ok = True
 
-    def check_(name: str, cond: bool) -> None:
+    def check_(name: str, cond: bool, detail: str = "") -> None:
         nonlocal ok
-        print(f"  {'ok  ' if cond else 'FAIL'} {name}")
+        print(f"  {'ok  ' if cond else 'FAIL'} {name}" + (f" — {detail}" if detail else ""))
         ok = ok and cond
 
-    with tempfile.TemporaryDirectory() as td:
-        tmp = pathlib.Path(td)
-        sh(("git", "init", "-q", "-b", "main"), tmp)
-        (tmp / "a.txt").write_text("one\n")
-        sh(("git", "add", "-A"), tmp)
-        sh(("git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "seed"), tmp)
+    old_defer = os.environ.get("DARKITH_DEFER_PUSH")
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            tmp = pathlib.Path(td)
+            sh(("git", "init", "-q", "-b", "main"), tmp)
+            (tmp / "a.txt").write_text("one\n", encoding="utf-8")
+            sh(("git", "add", "-A"), tmp)
+            seed = sh(("git", "-c", "user.name=t", "-c", "user.email=t@t",
+                       "commit", "-qm", "seed"), tmp)
+            check_("seed commit created", seed.returncode == 0, seed.stderr.strip())
 
-        def drift_in(repo: pathlib.Path) -> list[str]:
-            out = sh(("git", "status", "--porcelain", "--untracked-files=no"), repo).stdout
-            return [line[3:] for line in out.splitlines() if line.strip()]
+            def drift_in(repo: pathlib.Path) -> list[str]:
+                out = sh(("git", "status", "--porcelain", "--untracked-files=no"), repo).stdout
+                return [line[3:] for line in out.splitlines() if line.strip()]
 
-        check_("clean tree yields no drift", drift_in(tmp) == [])
-        (tmp / "a.txt").write_text("two\n")
-        check_("edited file is detected as drift", drift_in(tmp) == ["a.txt"])
-        sh(("git", "add", "-A"), tmp)
-        check_("staged-but-uncommitted is still drift", drift_in(tmp) == ["a.txt"])
-        sh(("git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "land"), tmp)
-        check_("committed tree is clean again", drift_in(tmp) == [])
-        # A rollback must return the tree exactly, not approximately.
-        (tmp / "a.txt").write_text("three\n")
-        before = sh(("git", "rev-parse", "HEAD"), tmp).stdout.strip()
-        sh(("git", "add", "-A"), tmp)
-        sh(("git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x"), tmp)
-        sh(("git", "reset", "-q", "--hard", before), tmp)
-        check_("rollback restores the exact prior bytes", (tmp / "a.txt").read_text() == "two\n")
+            check_("testnet repair mode defers publication by default", not push_deferred())
+            os.environ["DARKITH_DEFER_PUSH"] = "1"
+            check_("deferred-push mode is explicit and detectable", push_deferred())
+            os.environ.pop("DARKITH_DEFER_PUSH", None)
+
+            check_("clean tree yields no drift", drift_in(tmp) == [])
+            (tmp / "a.txt").write_text("two\n", encoding="utf-8")
+            check_("edited file is detected as drift", drift_in(tmp) == ["a.txt"])
+            sh(("git", "add", "-A"), tmp)
+            check_("staged-but-uncommitted is still drift", drift_in(tmp) == ["a.txt"])
+            landed = sh(("git", "-c", "user.name=t", "-c", "user.email=t@t",
+                         "commit", "-qm", "land"), tmp)
+            check_("commit lands the repaired file", landed.returncode == 0, landed.stderr.strip())
+            check_("committed tree is clean again", drift_in(tmp) == [])
+
+            (tmp / "a.txt").write_text("three\n", encoding="utf-8")
+            before = sh(("git", "rev-parse", "HEAD"), tmp).stdout.strip()
+            sh(("git", "add", "-A"), tmp)
+            sh(("git", "-c", "user.name=t", "-c", "user.email=t@t",
+                "commit", "-qm", "rollback target"), tmp)
+            sh(("git", "reset", "-q", "--hard", before), tmp)
+            check_("rollback restores exact prior bytes",
+                   (tmp / "a.txt").read_text(encoding="utf-8") == "two\n")
+    finally:
+        if old_defer is None:
+            os.environ.pop("DARKITH_DEFER_PUSH", None)
+        else:
+            os.environ["DARKITH_DEFER_PUSH"] = old_defer
 
     print(f"tree_invariant selftest: {'PASS' if ok else 'FAIL'}")
     return 0 if ok else 1
-
 
 def main() -> int:
     if "--selftest" in sys.argv:
