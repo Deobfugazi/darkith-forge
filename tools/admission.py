@@ -179,7 +179,7 @@ def workflow_contract_errors(auto_text: str, workflow_texts: list[str],
 
     if "python3 tools/absolution_phase.py --check" not in ci_text:
         errors.append("CI does not enforce read-only absolution before hashing")
-    if re.search(r"run\s+[\"'][^\n]*absolution phase[^\n]*[\"']\s+python3 tools/absolution_phase.py(?:\s|$)", ci_text):
+    if re.search(r"run\s+[\"'][^\"\n]*absolution phase[^\"\n]*[\"']\s+python3 tools/absolution_phase.py\s*(?:\n|$)", ci_text):
         errors.append("CI invokes the repair phase instead of checking the carried candidate")
 
     for workflow in workflow_texts:
