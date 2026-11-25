@@ -1,236 +1,903 @@
-# DARKITH
+# DARKITH — The Forge of Verifiable Sovereignty
 
 > **The mind is a fortress, not a cage. Freedom is earned through action. Truth is pursued, never claimed.**
 >
-> Darkith turns those convictions into an apparatus: software that refuses counterfeit success, keeps evidence attached to claims, and makes sovereignty more than a word.
+> Darkith turns those convictions into an apparatus: a local software forge, a correction system, and a body of law that refuses to confuse a declared result with a demonstrated one.
 
 ## SIGNATURE PRIME — WHAT THIS MAKES IMPOSSIBLE
 
 False completion. False verification. False accounting. Silent extraction. Untraceable correction. Manufactured certainty. Symbol collisions mistaken for equivalent meaning. Arithmetic presented as empirical proof. Reused infrastructure relabeled as the capability it merely hosts. A descope reported as absolution. A machine-generated claim promoted to reality without evidence.
 
-Everything here exists to make those outcomes inadmissible. Any feature, document, gate, or presentation that does not synchronously serve that end is displacement, duplication, or defect—and must be corrected.
+Everything in this repository must synchronously serve that singular end. A displacement, duplicating noise, or defect is not an additional feature; it is something the system must detect and correct.
+
+This README is the public bridge into the work: a nested field guide to the purpose, principles, machinery, evidence, limits, and practical answers a reader would otherwise have to ask for separately.
 
 ---
 
-## What Darkith is
+# 0. Start here
 
-Darkith is a hand-built Android and offline-software forge, developed under severe device constraints and governed by an explicit body of technical and philosophical law.
+## 0.1 What is Darkith in one sentence?
 
-The repository contains:
+Darkith is a local-first Android and offline-software forge built to turn inspectable source into usable tools while making claims, corrections, and progress accountable to evidence.
 
-- An Android application: `com.darkith.transliaison`.
-- A Gradle-free build chain designed to run from Termux on Android.
-- An offline web studio and standalone HTML tools.
-- An on-device forge/build path and recovery-oriented application machinery.
-- SAVF, an offline verification and correction engine.
-- Governing documents, executable gates, tests, and proof records.
+## 0.2 What is it trying to accomplish?
 
-The app is the tangible substrate. The governing idea is the system that refuses to confuse an artifact with its claim about itself.
+The immediate work is software: an Android host, offline interfaces, build machinery, audit tools, and repository gates.
 
-## The will behind the work
+The deeper objective is sovereignty as an operational condition: people should be able to understand the tools shaping their work, run and inspect those tools locally, correct them without surrendering control, and retain meaningful control over the value they create.
+
+The economic and civic destination is not claimed as completed by the current app. It is the direction that gives the engineering its purpose.
+
+## 0.3 Who is this for?
+
+For builders, researchers, operators, and potential collaborators who look past feature lists and ask:
+
+- What does this system refuse to lie about?
+- What does it measure, and what does it merely infer?
+- Can I reproduce the claim without trusting its author?
+- Who controls the tool and the value created through it?
+- Does the mechanism reduce dependence—or merely move it somewhere less visible?
+
+The invitation is not to accept the doctrine. Inspect the source, run the checks, challenge the claims, and help close the gap between stated principle and actual behavior.
+
+## 0.4 Fast paths
+
+| I want to… | Start here |
+|---|---|
+| Understand the governing doctrine | [Principles](#2-the-governing-principles) |
+| Build/install the Android app | [Build and install](#9-build-install-and-run) |
+| Run repository checks | [Verification](#10-verification-and-evidence) |
+| Understand SAVF | [SAVF](#6-savf--the-correction-and-verification-engine) |
+| Explore the app and studio surfaces | [Surface catalogue](#7-the-offline-studio-and-tools) |
+| Read the technical law corpus | [Noveltreatise index](#11-the-noveltreatise-law-corpus) |
+| Know what exists vs. what remains | [Capability truth table](#12-what-exists-and-what-does-not) |
+| Find a source or tool | [Repository map](#14-repository-map) |
+| Get answers without a follow-up | [Nested FAQ](#16-the-nested-faq) |
+
+---
+
+# 1. The will behind the work
 
 Darkith begins with a refusal: **no system earns authority by sounding certain.**
 
-A result must be grounded in what exists. A capability must be judged by its own behavior—not by a nearby file, reusable framework, or convincing explanation. A correction must preserve the defect's origin, name the governing rule, and leave evidence that can be checked again.
+A result must be grounded in what exists. A capability must be judged by its own behavior—not by a nearby file, reusable framework, or convincing explanation. A correction must preserve the defect's origin, identify the governing rule, and leave evidence that can be checked again.
 
-The long-range objective is economic and civic as well as technical: tools and systems that increase people's ability to produce, retain, govern, and circulate value without surrendering it through silent extraction. The destination is not merely a green build or a completed task list. It is a world in which people can understand the machinery shaping their lives, participate in its governance, and retain meaningful control over the value they create.
+The long-range objective is economic and civic as well as technical: tools and systems that increase people's ability to produce, retain, govern, and circulate value without surrendering it through silent extraction. The destination is not merely a green build or completed task list. It is a world in which people can understand the machinery shaping their lives, participate in its governance, and retain meaningful control over the value they create.
 
-That economic objective is **not claimed as implemented by this repository today**. It is the direction that gives the engineering its purpose.
+The project ledger may reach zero. That is project completion. The world Darkith is meant to serve begins where project completion stops.
 
-## The governing principles
+---
 
-### Never counterfeit a capability
+# 2. The governing principles
+
+## 2.1 Never counterfeit a capability
+
 A stub that returns success is a lie with a clean exit code. If a mechanism is absent, its absence must be explicit. A named boundary is honest; simulated completion is not.
 
-### Evidence belongs to the claim
-Documentation is not execution. Execution is not verification. Verification is not closure. Claims retain their actual evidence state, including uncertainty, contradiction, skipped checks, and unresolved work.
+## 2.2 Evidence belongs to the claim
 
-### Status belongs to the capability
-A file may exist while the capability it names remains absent. General admission machinery does not become economic admission because economic work intends to use it. Reused infrastructure is an asset—not inherited proof.
+Documentation is not execution. Execution is not verification. Verification is not closure. Each claim must retain its actual evidence state, including uncertainty, contradiction, skipped checks, and unresolved work.
 
-### Preserve meaning through correction
+## 2.3 Status belongs to the capability
+
+A file may exist while the capability it names remains absent. General-purpose admission machinery does not become economic admission because economic work intends to use it. Reused infrastructure is an asset—not inherited proof.
+
+## 2.4 Preserve meaning through correction
+
 A repair must not erase the original directive, silently change its meaning, or fill a gap with invented facts. Corrected material is a traceable derivative. Conflicts are resolved by the governing invariant, not by majority vote or convenience.
 
-### Keep accounting systems distinct
+## 2.5 Keep accounting systems distinct
+
 Project progress and economic extraction are different measurements.
 
 Project accounting asks what registered work remains. Economic accounting asks what a community produces, what leaves it, and what value it retains and controls. A zero project deficit cannot prove zero extraction; a low extraction ratio cannot prove a project complete.
 
 The economic invariant is:
 
-`W_in − E = S`
+W_in − E = S
 
-where `W_in` is verified community-generated wealth, `E` is external extraction, and `S` is retained value. Retention is not merely a positive number: value must be accessible, locally controlled, and able to circulate.
+W_in is verified community-generated wealth; E is external extraction; S is retained value. Retention is not merely a positive number: value must be accessible, locally controlled, and able to circulate.
 
-### No false greens
+The project progress-deficit indicator uses similar notation in a separate project-bound model. tools/omega_deficit.py reads the durable board and deficit ledger. It measures registered work—not community wealth.
+
+## 2.6 No false greens
+
 PASS, FAIL, SKIP, and INACTIVE are not interchangeable. A skipped check did not pass. A descope is a boundary with a cost, not absolution. Project-level success must never be presented as proof of a larger system-level outcome.
 
-### Build by hand; verify by machine
+## 2.7 Build by hand; verify by machine
+
 The app's load-bearing Kotlin is written directly rather than produced by an app-class code-generation pipeline. The machine then compiles, checks, measures, and tests what the hand has derived. Hand-written code is not inherently correct; this choice keeps source inspectable and the transformation path explicit.
 
-### Sovereignty is operational
-Local execution, offline access, readable source, portable verification, and control over one's own work are not aesthetics. They reduce dependence on systems that can deny access, obscure behavior, or extract value without meaningful consent.
+## 2.8 Sovereignty is operational
+
+Local execution, offline access, readable source, portable verification, and control over one's own work are not aesthetic preferences. They reduce dependence on systems that can deny access, obscure behavior, or extract value without meaningful consent.
+
+## 2.9 A law must be a gate
+
+A principle that is only written down can be ignored. The intended pattern is:
+
+**law → detector → classification → authorized correction → prevention gate → regression test → evidence**
+
+A repair without a prevention mechanism leaves the failure class alive.
+
+## 2.10 Correct classes, not symptoms
+
+When a defect recurs, ask what class of failure was permitted and what mechanism failed to prevent it. The durable correction belongs at the source, generator, configuration, or governing rule—not as a patch to generated output.
 
 ---
 
-## The distinctive engineering
+# 3. The four-core invariant and repository model
 
-### A bounded, feedback-driven renderer
+The Homekeeper specification uses the four-core invariant **A ∧ B ∧ C ∧ D**. It tests whether a claimed unit is a real, bounded, authoritative repository rather than a loose collection of files.
 
-The Android renderer contains a hardware-responsive allocation loop. At frame boundaries, it uses device measurements and tracked resource use to adjust bounded rendering budgets. The allocation feeds back into the next frame rather than remaining a fixed build-time assumption.
+The canonical decomposition names four conditions:
 
-The implementation includes:
+- **A — Relational:** the unit has a defined relationship to what it holds or governs.
+- **B — Structural:** its organizing apparatus is distinct from raw content.
+- **C — Functional:** it provides the relevant preservation, retrieval, modification, distribution, or reconstruction function.
+- **D — Authority:** it has a defined boundary and authority; it is not merely a cache or arbitrary copy.
 
-- `AutophagicAllocator` — bounded allocation logic.
-- `MemoryGovernor` — reciprocal budgeting between renderer and model allocations.
-- `GpuScanner` — queries supported limits from the active graphics context.
-- `OmegaRenderer` — applies the allocation before rendering.
-- An invariant witness that checks the generated grid against its allocation budget.
+The invariant is conjunctive. Strength in one condition cannot compensate for a missing condition.
 
-Some values are live device readings; others are renderer-owned accounting or derived estimates. Tracked GPU-side bytes are not a direct measurement of all physical GPU memory. This is an implemented control mechanism, not proof of universal crashlessness or optimal performance on every device.
+The full terminological argument and its falsifiers are in docs/DARKITH-OMEGA-repo.txt. The executable Homekeeper model is in darkith-omega-homekeeper/.
 
-### A raw Android build path
+## 3.1 Why this applies to the repository itself
 
-The build avoids Gradle and uses a direct toolchain sequence: Android resource compilation, Kotlin compilation, DEX conversion, packaging, alignment, and signing. The repository scripts provision and use the required tools. Signing credentials remain external to the repository.
+The repository applies the same logic to its own structure:
 
-### A correction system with evidence
+- one governing record per layer;
+- apparatus separated from knowledge and runtime assets;
+- one retrieval index;
+- canonical sources distinguished from generated mirrors;
+- claims linked to the bytes and checks that support them.
 
-SAVF and the repository gates are designed to detect defects, classify them, trace their causes, preserve evidence, apply authorized corrections, and rerun verification. The aim is not merely to report errors; it is to make known defect classes harder to repeat.
-
-The current SAVF and CI machinery are real software assets. Their presence does not mean every semantic, empirical, economic, or reality-aligned verification responsibility is implemented. Those extensions remain work.
+The filesystem is not merely storage. It is part of the system's truth-accounting boundary.
 
 ---
 
-## What exists—and what remains a goal
+# 4. System architecture
 
-Darkith keeps implementation and destination separate.
+## 4.1 Major layers
 
-| Layer | Present in the repository | Not established by that fact |
+| Layer | Responsibility | Main location |
 |---|---|---|
-| Android application | Kotlin app, WebView surfaces, build scripts | Universal device compatibility |
-| Offline studio | Hand-authored HTML tools and local interfaces | Every proposed workflow is complete |
-| Build and verification | Raw build chain, CI, tests, executable gates | Every gate proves every real-world claim |
-| SAVF / correction machinery | Audit engine, parity/UI gates, claims and proof records | Universal semantic and empirical truth verification |
-| Project accounting | Registered-work progress calculation | Community wealth or extraction measurement |
-| Economic Omega | Governing architecture and domain specifications | Operational economic sovereignty or zero extraction |
+| Governing law | Principles, invariants, status rules, boundaries | DARKITH.md, docs/nt/ |
+| Android host | App lifecycle, permissions, native bridge, local surfaces | app/src/main/ |
+| Offline studio | Standalone HTML applications and tools | repository-root HTML files |
+| Forge/build | Raw APK build, toolchain staging, child-forge inputs | build.sh, build&install.sh, tools/ |
+| Verification | CI, gates, tests, source and contract audits | tools/, tests/, proof/ |
+| Knowledge index | Deterministic inventory of readable source and apparatus | docs/INDEX.md, tools/kb_index.py |
+| Economic Omega | Specified sovereign-economy objective and domain architecture | NT XI–XIII, Omega documents |
 
-Economic modules, community accounting, governance adapters, subsistence and ecological measurement, reciprocal settlement, and independent Omega completion proof must not be marked implemented merely because their architecture is described or their host infrastructure exists.
+## 4.2 Android host and web surfaces
 
-Omega is not a badge a document awards itself. It is a condition that must be demonstrated through independent operational evidence.
+The Android host is a native Kotlin application with WebView-based surfaces. It exposes native capabilities through Kotlin bridge classes to local HTML interfaces.
+
+The package is com.darkith.transliaison. The manifest declares versionCode 4 and versionName 2.1.0-omega; VERSION.json is the update/release manifest. The app targets API 34 and has a minimum SDK of 24 in the governing build record.
+
+The manifest requests capabilities including network state, storage/media, camera, microphone, location, notifications, foreground data sync, and package installation. Actual access remains subject to Android's runtime permission model and device settings. A declaration does not mean permission has been granted or that a feature is active.
+
+## 4.3 The native bridge
+
+The Kotlin bridge is the boundary between the web interface and Android/device functions. Key source includes:
+
+- app/src/main/java/com/darkith/transliaison/DarkithBridge.kt
+- HomekeeperBridge.kt
+- DeviceBridge.kt
+- BuildEngine.kt
+- ChimeraBuilder.kt
+- NativeTools.kt
+
+tools/bridge_contract_audit.py checks the UI/native contract. A method existing on one side does not prove that the other side calls or handles it correctly.
+
+## 4.4 Raw build, not Gradle
+
+The supported Android build is a direct toolchain chain rather than Gradle. The seven-step chain is governed by NT IX and the build scripts. It uses Android resource compilation, Kotlin compilation, DEX conversion, packaging, alignment, and signing, with required intermediate steps and checks.
+
+This is a project design choice to keep the build path visible and device-runnable under constrained conditions—not a claim that Gradle is universally inferior.
+
+## 4.5 On-device forge
+
+The host carries engine inputs under app/src/main/assets/engine/ so its forge can use them locally. tools/stage_engine_inputs.sh stages device-specific inputs, including the Android framework jar and signing material, without committing private signing keys.
+
+A host APK build does not prove the child-forge path. The child artifact must itself be built, linked, signed, and checked against its manifest and runtime requirements.
 
 ---
 
-## Build and verify
+# 5. The Android host and forge
 
-### Requirements
+## 5.1 What the app is
 
-- An Android device with Termux.
-- The repository checked out locally.
-- Network access for initial toolchain provisioning; cached tools may be reused afterward.
-- A signing pair staged locally. No private signing key belongs in the public repository.
+The app is the installable Android entry point for Darkith's local interfaces and forge machinery. It is not the whole repository, and the repository is not reducible to the APK.
 
-### Build and install
+## 5.2 What it carries
 
-From the repository root in Termux:
+The tracked Android source and assets provide a launcher and Homekeeper surface, local HTML applications, a native-to-web bridge, device-oriented interfaces, APK build/install and child-forge mechanisms, local audit/correction surfaces, and supporting runtime/recovery machinery.
 
-```bash
+## 5.3 Identify the installed build
+
+The installed package metadata—not a README claim or filename—is the authority.
+
+In Termux:
+
+~~~sh
+pm dump com.darkith.transliaison | grep -E 'versionName|versionCode'
+~~~
+
+If the app surface exposes darkith.apkVersion(), it reports the bridge/package version. Inspect the APK with Android build tools:
+
+~~~sh
+aapt dump badging app-signed.apk | grep -E '^package'
+~~~
+
+The version manifest, package manifest, displayed version, and updater metadata must agree. CI checks that consistency.
+
+## 5.4 Device realities
+
+Darkith is developed for constrained Android hardware and Termux. Memory, thermal budgets, Android storage/executable-location rules, runtime permissions, and physical-device testing all matter.
+
+A successful remote build is not universal device-compatibility proof. The repository names device-only verification boundaries instead of pretending a sandbox can test a phone it does not possess.
+
+---
+
+# 6. SAVF — the correction and verification engine
+
+## 6.1 What SAVF is
+
+SAVF is the Signed Axis Verification Formulary / Universal Audit Engine family carried by this repository. It combines a formal axis/formulary core with audit gates that inspect source, reachability, mutation behavior, evidence, and claim records.
+
+Primary surfaces:
+
+- savf.py — Python core and CLI.
+- savf.html — full browser-facing audit engine.
+- darkith-inscriber.html — SAVF Lite studio.
+- app/src/main/assets/savf_core.html — packaged runtime core.
+- tools/savf_parity_gate.py — Python/JavaScript parity checks.
+- tools/savf_ui_gate.py — interface and behavior checks.
+
+## 6.2 Defects it is designed to catch
+
+SAVF and surrounding gates target stubs that return canned success, mocks that claim work without doing it, phantom references to absent symbols/evidence, unreachable checks, contract-breaking mutations, swallowed syntax/comment defects, unreproducible claims, and divergence between Python and browser implementations.
+
+The core principle is reproduction: a claim should carry a bounded means of rerunning relevant work and comparing the result. A digest is an integrity witness for bytes; it is not proof that the bytes are true, useful, novel, or reality-aligned.
+
+## 6.3 What it cannot prove automatically
+
+SAVF cannot infer every external fact from source. It cannot prove that a real-world dependency exists merely because a command is recorded, that a community accepted a result, that a market value is real, or that a specification is implemented in the physical world.
+
+A command can be rerun and attested. Its real referent still needs independent grounding.
+
+## 6.4 Its role in the whole system
+
+SAVF is not an independent truth authority. It is a verification/correction component governed by the repository's laws and evidence model. It makes defects more detectable and repeatable; it does not grant Omega completion.
+
+---
+
+# 7. The offline studio and tools
+
+Darkith carries standalone HTML interfaces at the repository root and related runtime assets inside the Android app. Root HTML files are development/inspection surfaces; packaged copies are runtime assets. Declared mirrors must remain byte-identical through parity/index gates.
+
+## 7.1 Main studio surfaces
+
+| Surface | File | Purpose |
+|---|---|---|
+| Sovereign Homekeeper | darkith home forge.html | Main Homekeeper/web studio |
+| Omega terminal + assistant | d-arkith-omega.html, omega.html | Terminal/local-assistant interface surfaces |
+| Code/audit studio | darkith code studio.html | Code and audit workbench |
+| SAVF Lite / Inscriber | darkith-inscriber.html | Lightweight SAVF studio |
+| SAVF-1 Universal Audit Engine | savf.html | Full audit engine interface |
+| ClearanceLoop | clearanceloop.html | Debt-clearance ratchet |
+| Icon Forge | icon_forge.html | Icon creation |
+| Omega Master | darkith-omega-master.html | Master blueprint/executable specification |
+| Omega Reader | omega-reader.html | Four-register repository reader |
+| Omega Apps | darkith-omega-apps.html | App collection surface |
+
+## 7.2 Device-app surfaces
+
+The repository contains separate interfaces for Apps, Camera, Clock, Contacts, Files, Media Player, Messages, and Phone.
+
+Standalone files are at the repository root; packaged copies are under app/src/main/assets/. The packaged files are the shipped versions. Edit canonical sources and propagate them through the documented process rather than creating divergent twins.
+
+## 7.3 ClearanceLoop — debt as a rate, not a snapshot
+
+ClearanceLoop's law is that health is a rate of clearance, not a static tolerance:
+
+- **Monotone:** when debt drops, the per-class high-water mark drops with it.
+- **Regression:** debt above the mark is a net addition and fails.
+- **Stasis:** debt that does not clear across the delivery window is force-degraded.
+- **Waiver:** a rise is permitted only through a recorded, reasoned, expiring exception.
+
+A waiver does not raise the high-water mark. The ratchet does not permanently loosen.
+
+The headless implementation is clearanceloop.py; the browser engine is app/src/main/assets/vendor/clearanceloop.js. Python, JavaScript, and UI implementations are intended to agree verdict-for-verdict.
+
+## 7.4 Fracture Scout — novelty from real unresolved problems
+
+tools/fracture_scout.py is a configurable source scout for real-world unresolved problems. It parses boolean query expressions, uses source adapters, and ranks candidate fractures rather than naively matching one topic word.
+
+The corpus defines a fracture as a real problem anchored to a real source and unresolved need. “Deep webspace” means structured research, defect, standards, and practitioner sources beyond naive surface search—not Tor or .onion services.
+
+A candidate is not automatically a validated task, bounty, or solved problem. It requires source inspection and admission.
+
+## 7.5 Darkbot — provider-neutral dependency watcher
+
+tools/darkbot.py reads the dependency manifest, checks public package registries, reports version drift, can update pins, exports Python requirements, retrieves release digests, and verifies local artifacts.
+
+The manifest is tools/deps.txt. Generated requirements-dev.txt is an export, not a second independent source of truth.
+
+## 7.6 Nodal — receipt and coordination substrate
+
+The nodal/ package carries a receipt schema, append-only hash-chained ledger, and bot/engine logic for ordered firing and reconciliation. The implementation includes storage immutability and restart-safe sequence handling.
+
+Nodal does not provide arbitrary-code sandboxing or cross-machine consensus.
+
+## 7.7 Homekeeper — executable repository model
+
+The darkith-omega-homekeeper/ project models the four-core invariant, units, claim records, admission/validation, capability deltas, fixed-point calculation, and reader generation.
+
+Its canonical reader shell is a byte-exact twin of omega-reader.html; the parity gate prevents design drift. The project includes a TypeScript CLI and tests for the invariant, separation of powers, and Omega calculation.
+
+## 7.8 Portable Co-ordinasync toolkit
+
+kit/COORDINASYNC.md documents the portable one-file toolkit; kit/coordinasync.py is intended to travel between projects without reconstructing its apparatus. It can install tools, self-test, ingest/propagate directives, check law-to-gate coverage, and coordinate the durable board.
+
+---
+
+# 8. Local terminal and assistant: design vs. implementation
+
+The repository contains terminal and local-assistant interfaces, but the architecture document distinguishes intended design from current host behavior.
+
+## 8.1 Intended terminal tiers
+
+1. **Native interpreter tier:** Android-native binaries packaged as APK native libraries and executed from the allowed native library location.
+2. **Wasm/WASI tier:** sandboxed modules run inside a JVM-compatible WebAssembly runtime.
+3. **Optional PRoot tier:** an on-demand Linux root filesystem for broader toolchains and packages.
+
+The design is motivated by Android executable-location restrictions. App-writable storage is not a safe executable location for a modern target-SDK app; copying a binary into shared storage does not make it executable.
+
+## 8.2 Intended local assistant
+
+The architecture proposes a tiered local GGUF assistant with device-bounded memory/context budgets and tool calls into the terminal and forge.
+
+A local model is not claimed to equal a frontier cloud model. Its intended advantages are privacy, offline availability, and integration with the on-device forge. Model size, speed, memory, and reasoning capability remain constraints.
+
+## 8.3 Current honesty boundary
+
+docs/ARCHITECTURE-OMEGA.md is explicitly a design document grounded in verified upstream facts. It records that current runtime-host/Alpine-guest behavior contains stubs that report a start-like result without properly streaming process output, and that executable placement must obey Android's W^X constraints.
+
+Therefore:
+
+- a terminal UI is not proof every language runtime is available;
+- a “started” string is not proof a process ran correctly;
+- native/Wasm/PRoot tiers are not implemented merely because they are specified;
+- the local GGUF architecture is not a production-ready shipped model runtime unless artifacts and tests demonstrate it.
+
+---
+
+# 9. Build, install, and run
+
+## 9.1 Requirements
+
+- Android device with Termux for the on-device path.
+- Repository checked out locally.
+- Network for initial toolchain provisioning; cached tools may be reused.
+- Android resource compiler, Kotlin compiler/JDK, DEX tooling, zipalign, apksigner, and Android framework jar, supplied by provisioning/staging or the local environment.
+- Local signing pair. Private signing keys must never be committed.
+
+## 9.2 One-shot build and install
+
+From the repository root:
+
+~~~sh
 bash 'build&install.sh'
-```
+~~~
 
-Build without installing:
+The script provisions the raw toolchain, stages child-forge inputs when available, runs build.sh, and hands the APK to Android's installer when supported. The user confirms the Android installation prompt where required.
 
-```bash
+## 9.3 Build without installing
+
+~~~sh
 bash 'build&install.sh' --build
-```
+~~~
 
-Provision and build without installing:
+The APK is left at app-signed.apk.
 
-```bash
+## 9.4 Provision and build, install nothing
+
+~~~sh
 bash 'build&install.sh' --verify
-```
+~~~
 
-The resulting APK is left at `app-signed.apk`. In install mode, the script hands it to Android's package installer when available; installation still requires the device's confirmation or applicable local permission.
+This builds without installing. It does not claim every physical-device installation path has been exercised.
 
-### Run the repository checks
+## 9.5 Direct raw build
 
-```bash
+~~~sh
+bash build.sh . Darkith com.darkith.transliaison
+~~~
+
+The raw script discovers the manifest/source tree, locates tools, checks the API ceiling, compiles/packages/aligns/signs, and emits the APK. It does not invoke Gradle.
+
+## 9.6 Output and signing
+
+Default output: app-signed.apk in the project root.
+
+Signing identity matters to Android update/install behavior. A different key may prevent updating an existing package. A remote sandbox cannot infer the user's installed signer; the device installation is the final authority.
+
+Never commit release_key, release_cert, keystore files, tokens, or credentials. Secret and continuity gates exist to block this leak class.
+
+---
+
+# 10. Verification and evidence
+
+## 10.1 One CI entry point
+
+~~~sh
 bash tools/ci.sh
-```
+~~~
 
-Exit code `0` means the script's required checks passed. A check reported as SKIP did not pass. Read the recorded output and proof files; do not treat the final line as a universal guarantee.
+This is provider-neutral. GitHub Actions or another CI service should be a thin adapter that calls the same script rather than maintaining duplicate test logic.
+
+The script records output to proof/ci_last.log by default and can emit/verify receipts from the run log.
+
+## 10.2 What CI checks
+
+The suite covers active repository responsibilities, including:
+
+- session boot and repository fast verification;
+- SAVF CLI contracts and self-tests;
+- Darkbot and Fracture Scout self-tests;
+- secret detection and secret-gate self-test;
+- Kotlin syntax/comment integrity;
+- API-level and icon checks;
+- durable board/evidence and law-citation checks;
+- build/fork integrity and delivery contracts;
+- Noveltreatise corpus admission and reconciliation;
+- SAVF Python/JavaScript parity and UI behavior;
+- bridge contract and runtime/build checks;
+- generated-copy, tree, version, and drift consistency;
+- installer/delivery requirements and receipt accounting.
+
+The exact executed gates are the ones named in the current tools/ci.sh output—not a static number copied into this README.
+
+## 10.3 Verdict meanings
+
+- **PASS / exit 0:** the named check ran and met its acceptance condition.
+- **FAIL / nonzero:** the named check ran and did not meet its condition.
+- **SKIP:** the required runtime or artifact was unavailable; this is not PASS.
+- **INACTIVE:** the check/capability is not active in that context; it does not imply healthy.
+
+A CI exit code 0 means the script's required checks passed under that run's conditions. It is not proof of every external, physical, economic, or philosophical claim in the repository.
+
+## 10.4 Focused test harness
+
+~~~sh
+bash tools/tests/run.sh
+~~~
+
+This compiles and runs the offline alert/comment/pending test layer. It requires kotlinc and does not require Gradle, network, or an Android device.
+
+Other tests live under tests/ and tools/tests/. CI is the recommended complete selection because it includes the current gate wiring.
+
+## 10.5 SAVF CLI
+
+~~~sh
+python3 savf.py --help
+~~~
+
+Use the help output for the exact CLI options in the checked-out revision. SAVF is Python standard-library based and includes self-test/gate paths. Browser behavior is checked separately for parity and UI conditions.
+
+## 10.6 Re-vouch the bytes, not memory
+
+For any current-state claim:
+
+1. identify the exact source file or artifact;
+2. read the actual bytes;
+3. run the relevant reproducer or gate;
+4. preserve command, result, and log;
+5. distinguish verified facts from inference and skipped checks.
+
+A previous green run is not proof that a later tree is green.
 
 ---
 
-## Repository map
+# 11. The Noveltreatise law corpus
 
-| Path | Purpose |
+The Noveltreatise (NT) corpus is the law layer that repository gates enforce. DARKITH.md is the state layer; it references the corpus rather than duplicating it. The map is docs/nt/NT-INDEX.md.
+
+| Treatise | Governing subject |
 |---|---|
-| `app/src/main/java/com/darkith/transliaison/` | Android application source |
-| `app/src/main/assets/` | Web assets packaged into the app |
-| `build.sh` | Raw APK build chain |
-| `build&install.sh` | Provision, build, and optionally install |
-| `tools/ci.sh` | Provider-neutral verification entry point |
-| `tools/` | Build, integrity, admission, audit, and correction tools |
-| `savf.py` / `savf.html` | SAVF engine and browser-facing interface |
-| `proof/` | Machine-readable claims, results, and evidence records |
-| `DARKITH.md` | Canonical governing record |
-| `AGENTS.md` | Operational instructions and working constraints |
-| `docs/nt/` | Noveltreatise corpus and index |
-| `omega-reader.html` | Offline reader for four presentation registers |
-| `TASKS.md` / `DEFICITS.json` | Project work and registered deficits |
+| NT I | Basal floor/cortical surface; RSA as correlate |
+| NT II | Offload inversion and re-enterability |
+| NT III | Assignment by rescue assay: dosage, geometry, energetics |
+| NT IV | Pre-registration gate and reflexive Stage 0 |
+| NT V | The cut, two-clock payroll gap, autophagic recycle |
+| NT VI | Coupling law across scales; disjointness, continuity, synchrony |
+| NT VII | Screen-stack layer order and adjacency necessity |
+| NT VIII | Bond Formation Number and cross-scale bond criterion |
+| NT IX | Multiplicative triad and seven-step raw Android build |
+| NT X | Hardware ground truth, autophagic allocator, Healer, Σ = 0 |
+| NT XI | Autophagic Sovereign Economy (ASE) |
+| NT XII | Terminal convergence, Triadic Resolver, SAVF Generative Manufactory, proto-node, ASE |
+| NT XIII / OFIF | Field-invariant formulary: premises, prior-art verdicts, derivation, falsifiers |
 
-Start with `DARKITH.md` for the governing record, `docs/nt/NT-INDEX.md` for the reasoning corpus, and `tools/ci.sh` for the executable verification path.
+NT I–IV share NT-I-IV-protocol.md; NT V–XIII have their own files. NT XII's mechanics are classified separately from externally exposable figures and cross-scale inference. NT XIII is a prior-art scan and falsifier set—not a claim that every fixture is unprecedented.
+
+## 11.1 How the law is enforced
+
+The NT-to-gate map is in docs/nt/NT-INDEX.md. Representative gates:
+
+- tools/nt_gate.py — corpus carried, reconciled, and contradiction-free;
+- tools/absolution_admission.py — corpus count/admission checks;
+- tools/fork_integrity_gate.sh — raw-chain and no-foreign-symbol constraints;
+- tools/api_level_gate.py — API-level hazards;
+- tools/law_gate.py and tools/syntax_gate.py — stub/law and syntax constraints;
+- tools/bridge_contract_audit.py — continuity across the UI/native boundary;
+- tools/synchrony_gate.py — shared-clock condition.
+
+A law without an executable gate is only a note.
 
 ---
 
-## How to read a Darkith claim
+# 12. What exists and what does not
 
-Ask what capability is meant and what evidence supports it.
+The public description must distinguish implementation from architecture.
+
+| Capability | Evidence boundary |
+|---|---|
+| Android app | Source, manifest, build scripts, packaged assets exist. Device-specific install/runtime behavior requires device verification. |
+| Raw APK build | Build chain and one-shot script exist. A physical on-device build is a separate verification condition. |
+| Offline studio | Standalone HTML interfaces and packaged assets exist. Feature completeness belongs to each implementation and its tests. |
+| SAVF | Python/browser implementations, audit gates, parity/UI checks exist. Not universal proof of semantic or empirical truth. |
+| CI and repository gates | Provider-neutral script and many named gates exist. SKIP is not PASS; coverage has a defined scope. |
+| Correction/autophagy | Defect-class registry and corrective machinery exist. A class closes only when detector, repair, prevention gate, and test prove it. |
+| Project accounting | Durable task/deficit accounting exists and is computed by tools/omega_deficit.py. It measures registered work. |
+| Nodal | Receipt schema, append-only ledger, coordination engine exist. No arbitrary-code sandbox or cross-machine consensus is established. |
+| Homekeeper | Four-core invariant, admission/validation, capability delta, Omega calculation, reader, and tests exist. |
+| Economic Omega / ASE | Governing corpus and architecture exist. Production sovereign economy, community wealth measurement, universal reciprocal settlement, and independently proven zero extraction are not established by documents alone. |
+| Local assistant/terminal | Design is documented. Architecture records current host stubs and Android constraints; proposed tiers need artifacts and tests. |
+| AegisVM | The implementation explicitly reports ERROR: NOT_IMPLEMENTED; it is not a completed VM. |
+
+## 12.1 Status vocabulary
 
 - **Specified:** the rule or design is stated.
 - **Implemented:** the capability exists in executable form.
-- **Verified:** a relevant check or measurement supports the claim under stated conditions.
-- **Qualified:** the capability meets its explicit admission criteria.
+- **Verified:** a relevant check/measurement supports the claim under stated conditions.
+- **Qualified:** the capability meets explicit admission criteria.
 - **Partial:** some required behavior exists, but the whole capability does not.
-- **Missing:** the capability was searched for and not found in the inspected implementation.
+- **Missing:** searched for and not found in the inspected implementation.
+- **Descoped:** explicitly removed from the current delivery, with a reason.
 - **Skipped / inactive:** the check or stage did not run; it is not a pass.
 
-These labels describe different facts. They must not be collapsed into one reassuring status.
-
-## Limits and boundaries
-
-- Darkith is not a Gradle project. The supported build path is the repository's raw chain.
-- AndroidX and Jetpack Compose are not part of the app's supported source path.
-- Toolchain components and signing inputs may need to be staged locally.
-- `AegisVM` explicitly reports `ERROR: NOT_IMPLEMENTED`; it is not a completed execution engine.
-- Some local-assistant and terminal concepts in the architecture documents remain design-stage or incomplete.
-- The economic Omega system is a governing objective and specified architecture, not a completed production economy.
-- The repository is public but currently has no `LICENSE` file. Public visibility does not grant permission to reuse, modify, or redistribute the work. All rights remain reserved unless an explicit license is added.
+A capability's status belongs to the capability—not to the file, folder, or infrastructure that hosts it.
 
 ---
 
-## The peer this work is looking for
+# 13. Omega, absolution, and the economic objective
 
-Darkith is for the person who looks past the feature list and asks:
+## 13.1 What Omega means
 
-What does this system refuse to lie about?  
-What does it measure, and what does it merely infer?  
-Who retains control when the tool succeeds?  
-Can the claim be checked without trusting the person who made it?  
-Does the mechanism reduce dependence—or merely move it somewhere less visible?
+Omega is the singular end condition: a system whose capabilities, accounting, governance, and evidence converge without contradiction or extraction hidden behind success labels.
 
-If those questions matter to you, you are reading the project at the level it was built to address.
+It is not a decorative version suffix or a status a README can award itself.
 
-The invitation is not to believe the doctrine. Inspect the source. Run the checks. Challenge the claims. Help reduce the gap between stated principle and actual behavior.
+## 13.2 Project absolution
 
-**Darkith does not ask to be trusted because it declares itself sovereign. It has to earn that trust by making its workings inspectable, its limits visible, and its corrections accountable.**
+The project progress-deficit indicator reads the durable board and deficit ledger:
+
+- W_in: all named work;
+- E: unreturned/open work;
+- S: completed or formally descoped work;
+- E/W_in: the project progress-deficit ratio.
+
+The ledger must balance: W_in = E + S. A formal descope is a named boundary, not proof that the removed capability exists.
+
+## 13.3 Economic absolution
+
+The economic corpus describes retained value and extraction. It must be measured at the economic capability itself. Project completion, a balanced task board, a successful build, or general-purpose admission infrastructure cannot substitute for operational economic accounting.
+
+The goal is to measure and govern value flows—not declare “zero extraction” because a document says so.
+
+## 13.4 The minting/witness thesis
+
+The Black & Whitepaper describes a contribution record based on reproducible closure: a bounded command and expected result are rerun by a party who need not trust the issuer. The record is admitted by the work and its reproducibility—not by purchase, popularity, or recipient acceptance.
+
+The paper states its limits: the ledger is single-writer and tamper-evident, not a blockchain or global-consensus system; semantic novelty is not proven by textual novelty; timing-side-channel hardening is not complete.
+
+Read docs/BLACK-AND-WHITEPAPER-2026-11-23.md and docs/NT-XII-IN-THE-OPEN.md for the full claim, practitioner architecture, command register, prior-art boundary, evidence, and open frontier.
 
 ---
 
-## The final boundary
+# 14. Repository map
 
-The project ledger may reach its own zero. That is project completion.
+## 14.1 Governing and project files
 
-The world Darkith is meant to serve begins where project completion stops: with people able to create, understand, govern, and retain the value of their own work.
+| Path | Function |
+|---|---|
+| README.md | Public-facing nested field guide |
+| DARKITH.md | Canonical state/governing record |
+| AGENTS.md | Detailed executor/agent operating law; not the public introduction |
+| TASKS.md | Durable project board |
+| DEFICITS.json | Explicit deficit/closure/descope ledger |
+| RESUME.md | Recovery and continuity instructions |
+| VERSION.json | Release/update manifest |
+| STALL_BUDGET.json | Time-bound stall budget |
+| docs/INDEX.md | Deterministic knowledge-skill base index |
+| docs/nt/NT-INDEX.md | Law corpus index |
 
-No README, register, test suite, or machine may declare that destination achieved on its own. Only demonstrated capability and independent evidence can do that.
+## 14.2 Android source and assets
+
+| Path | Function |
+|---|---|
+| app/src/main/AndroidManifest.xml | Package, SDK, permissions, activities/services |
+| app/src/main/java/com/darkith/transliaison/ | Kotlin app and bridge source |
+| app/src/main/assets/ | HTML/JS runtime surfaces packaged into the app |
+| app/src/main/assets/engine/ | Child-forge engine inputs |
+| omega-app/ | Separate Omega app tree and GitHub/Studio assets |
+
+## 14.3 Build and package
+
+| Path | Function |
+|---|---|
+| build.sh | Raw APK build chain |
+| build&install.sh | Provision, build, and optionally install |
+| tools/fetch_toolchain.sh | Toolchain provisioning |
+| tools/stage_engine_inputs.sh | Stage on-device forge inputs |
+| tools/pack_delivery.py | Generate delivery bundles/mirrors |
+| tools/rebuild_template_dex.sh | Rebuild template DEX |
+| zipalign.py | Alignment support |
+
+## 14.4 Verification, correction, and evidence
+
+| Path | Function |
+|---|---|
+| tools/ci.sh | One provider-neutral CI entry point |
+| tools/autophagy.py | Defect-class registry/corrective loop |
+| tools/revitalization.py | Sixteen-stage evidence-bound corrective cycle |
+| tools/nt_gate.py | Noveltreatise corpus gate |
+| tools/absolution_admission.py | Corpus admission |
+| tools/savf_parity_gate.py | SAVF implementation parity |
+| tools/savf_ui_gate.py | SAVF interface checks |
+| tools/bridge_contract_audit.py | UI/native bridge contract |
+| tools/secret_gate.py | Fail-closed credential-shaped string scan |
+| tools/security_alert.py | Deduplicated security alert path |
+| tools/board_gate.py | Durable board/evidence integrity |
+| tools/board_law_gate.py | Priority/law citation integrity |
+| tools/omega_deficit.py | Project progress-deficit computation |
+| tools/ci_receipts.py | Run receipt emission/verification |
+| proof/ | Logs, claims, reconciliation, receipts, and evidence |
+
+## 14.5 Tool families
+
+| Family | Representative tools | Purpose |
+|---|---|---|
+| Build/delivery | build.sh, delivery_gate.sh, fork_integrity_gate.sh | Reproducible build and delivery admission |
+| Source integrity | syntax_gate.py, kt_comment_scan.py, comment_audit.py | Syntax/comment defects |
+| Security | secret_gate.py, security_alert.py | Credential detection and notification |
+| Contract/runtime | bridge_contract_audit.py, runtime_gate.py, install_gate.py | Boundary and artifact behavior |
+| Knowledge/law | kb_index.py, nt_gate.py, law_gate.py, blueprint_gate.py | Index and governing-law admission |
+| Drift/convergence | drift_gate.py, divergence_gate.py, convergence_gate.py, sync.sh | Tree and branch consistency |
+| Correction | autophagy.py, revitalization.py, praxis_propagate.py | Defect-class repair and durable directives |
+| Discovery | fracture_scout.py, darkbot.py | Unresolved problems and dependency drift |
+| Accounting | mint_ledger.py, omega_deficit.py, run_feed.py | Witness, project deficit, run receipts |
+| App tests | test_device_apps.js, test_files.js, test_media_player.js, test_omega_reader.js | Browser/app behavior |
+
+## 14.6 Knowledge corpus
+
+docs/INDEX.md is generated from tracked bytes by tools/kb_index.py. It is not a hand-authored second source of truth.
+
+Major documents:
+
+- docs/ARCHITECTURE-OMEGA.md — local assistant/polyglot terminal design, current stubs, and constraints.
+- docs/BLACK-AND-WHITEPAPER-2026-11-23.md — three-register contribution/minting thesis.
+- docs/FAILURE-MODE-LEDGER.md — failure, cause, guard, and proof.
+- docs/GITHUB-STUDIO-MANUAL.md — GitHub app/web action map and operator workflow.
+- docs/SECURITY_REMEDIATION.md — credential leak class, guard, and remediation boundary.
+- docs/NT-XII-IN-THE-OPEN.md — public evidence, prior art, and open frontier.
+- docs/evidence/SECTOR-PAIN-LEDGER.md — sector pain observations and primary-source evidence.
+- docs/evidence/NODAL-ZIP-VS-OURS.md — measured comparison of the earlier Nodal package and current implementation.
+- docs/RECOVERY_MANIFEST.md — recovery provenance for reconstructed files.
+- docs/UPDATES.md — integrated client-coupling update record.
+
+---
+
+# 15. Security, privacy, portability, and licensing
+
+## 15.1 Secrets
+
+Never commit tokens, private keys, keystores, signing credentials, or credential-bearing remote URLs. The repository documents a committed-credential failure and remediation; the secret gate scans tracked/staged content for credential-shaped patterns.
+
+A credential that entered Git history must be treated as exposed. Removing it from the current file does not revoke it; rotate it at the provider.
+
+## 15.2 Local data and permissions
+
+The project aims for local/offline capability, but the Android manifest requests network and device permissions for specific functions. Offline-first does not mean the app never requests network permission. Review the manifest and Android permission settings to determine what is granted and what a given surface uses.
+
+## 15.3 Executable placement
+
+Android 10+ restricts executing files from app-writable locations for apps targeting modern SDKs. A binary copied into app storage or shared storage is not automatically executable. Any shipped runtime must prove its actual execution path.
+
+## 15.4 Portability
+
+Scripts aim to be provider-neutral and usable in Termux or ordinary development environments where the required runtime/toolchain exists. Portability does not mean every command runs everywhere without dependencies. Each command's prerequisites and skips matter.
+
+## 15.5 License
+
+The repository currently has no root LICENSE file. Public visibility does not grant permission to reuse, modify, or redistribute the work. All rights remain reserved unless an explicit license is added.
+
+---
+
+# 16. The nested FAQ
+
+## 16.1 What is Darkith?
+
+Darkith is an Android/offline software forge and a verification-driven project. The app provides a local interface; the repository contains the source, build chain, tools, laws, tests, and evidence that govern it.
+
+### Is it just an Android app?
+No. The APK is one delivery surface. The repository also contains standalone web tools, build/correction apparatus, a knowledge corpus, and the economic Omega specification.
+
+### Is it a company, token, or finished economy?
+This repository does not establish that. The sovereign-economy objective is specified and researched, but a production economy and independently measured zero extraction are not claimed as implemented.
+
+## 16.2 Why the philosophy?
+
+The doctrine is expressed through the Signature Prime and its governing principles: sovereignty, evidence, correction, and refusal to counterfeit completion.
+
+### Is the philosophy just branding?
+It is intended to be operational. Each principle should have corresponding implementation, gate, or explicit open boundary. A principle without enforcement is incomplete.
+
+## 16.3 What can I run today?
+
+You can inspect the Android source, run the raw build path when its toolchain is available, run repository checks, use standalone HTML tools, and run Python verification/accounting utilities with their prerequisites.
+
+### Can I build without Gradle?
+Yes. The supported Android build uses build.sh and build&install.sh. Gradle is not invoked.
+
+### Can I build on Android itself?
+The scripts are designed for Termux and stage the required toolchain/engine inputs. A physical-device build is distinct evidence from a remote build.
+
+### Can I install over my existing Darkith APK?
+Only if package identity and signing key are compatible. A different signer can cause Android to reject the update. Check the installed package and signer on the device.
+
+## 16.4 What is SAVF?
+
+SAVF is the audit/correction engine family. It scans source and claims, checks reachability and contracts, records evidence, and supports correction/verification workflows.
+
+### Does a hash prove truth?
+No. A hash proves byte identity relative to a known digest. It does not prove accuracy, usefulness, novelty, or acceptance by reality.
+
+### Can SAVF prove any claim?
+Only within the claim's actual evidence/reproducer boundary. External referents must still be grounded. A test that rejects every case proves nothing; honest controls must survive the same test.
+
+## 16.5 What does PASS mean?
+
+PASS means the named check ran and met its acceptance condition under the recorded environment.
+
+### Does CI PASS mean Omega is complete?
+No. CI covers gates wired into that run. It cannot prove external economic outcomes, universal compatibility, every device behavior, or every philosophical claim.
+
+### Is SKIP a pass?
+No. SKIP means the check did not run, often because a runtime or artifact was unavailable. It must remain visible.
+
+## 16.6 Project accounting vs. economic accounting?
+
+Project accounting measures registered work: named, open, completed, closed, or descoped.
+
+Economic accounting measures value: what is produced, extracted, retained, who controls it, and whether it can circulate.
+
+### Why use similar symbols?
+The corpus uses shared invariant vocabulary, but referents must remain separated. The project deficit tool reads task/deficit records; it does not read a community economy.
+
+## 16.7 What is Omega?
+
+Omega is the convergence condition in which capabilities, accounting, governance, and evidence serve one end without contradiction or duplicated machinery.
+
+### Can a document declare Omega?
+No. A document can specify acceptance conditions. Omega must be demonstrated by capabilities and independent evidence satisfying those conditions.
+
+## 16.8 What is the local assistant/terminal status?
+
+The repository contains terminal/assistant surfaces and an architecture for native, Wasm/WASI, and optional PRoot execution tiers. The architecture also records current host stubs and Android execution restrictions.
+
+### Does the terminal support every language?
+Not by virtue of its UI. A language is supported only when its runtime/module is present and its execution path is verified.
+
+### Is the local assistant equivalent to a frontier model?
+No such equivalence is claimed. The design targets a private, offline, device-bounded assistant integrated with the forge. Model size, speed, memory, and reasoning capability are real constraints.
+
+## 16.9 What is ClearanceLoop?
+
+ClearanceLoop is a debt-clearance ratchet. It measures whether debt clears over time, prevents regressions from silently raising tolerance, and permits only bounded, reasoned, expiring waivers.
+
+### Why not a static threshold?
+A static threshold can hide stagnation or allow the baseline to creep upward. ClearanceLoop treats clearance rate and regression as part of the health signal.
+
+## 16.10 What is Fracture Scout?
+
+It searches configured structured sources for real unresolved problems, using boolean query parsing and ranking to reduce noise. A result is not automatically a validated fracture or task.
+
+### Does it search the dark web?
+No. Its documented scope is structured research, defect, standards, and practitioner sources—not Tor or .onion marketplaces.
+
+## 16.11 What is Nodal?
+
+Nodal is a receipt/coordination substrate with a closed verdict vocabulary, hash-chained append-only ledger, and engine for firing/reconciliation.
+
+### Is it distributed consensus?
+No. The current implementation does not establish cross-machine consensus or arbitrary-code sandboxing.
+
+## 16.12 What is Homekeeper?
+
+Homekeeper is the executable model of the repository invariant: a unit has defined structure, claim record, admission/validation behavior, capability delta, and Omega calculation. It also generates the four-register reader.
+
+## 16.13 Why so many gates and documents?
+
+Because the project's failure history showed that a correct component can still fail when its caller, timer, generator, integration, or evidence chain is missing. Gates make those failure classes visible and repeatable.
+
+### Isn't that bureaucracy?
+It becomes bureaucracy if it duplicates work or prevents no real defect. Every layer must serve the Signature Prime. Duplicated registers, dead gates, stale mirrors, or documentation that does not help a reader are defects to remove—not sacred paperwork.
+
+## 16.14 How can I contribute?
+
+Read the relevant law and source, reproduce current behavior, and identify the smallest capability-level gap. A useful contribution includes:
+
+1. exact observed behavior;
+2. source and conditions;
+3. governing invariant;
+4. root-cause correction;
+5. prevention gate or regression test;
+6. evidence from the corrected tree.
+
+Do not claim a capability is complete when only its interface or specification exists.
+
+## 16.15 How do I report a defect?
+
+Provide exact file/commit, device/runtime conditions, reproduction steps, expected and actual results, and relevant logs. Reproducible defects can be classified and prevented.
+
+## 16.16 Can I use or redistribute Darkith?
+
+The repository is public but has no explicit root license. Do not assume public access grants reuse or redistribution rights. Contact the project owner or wait for a license.
+
+## 16.17 Where is canonical truth?
+
+- Current repository state: tracked bytes on the active branch.
+- Governing state: DARKITH.md.
+- Detailed executor rules: AGENTS.md.
+- Knowledge index: docs/INDEX.md.
+- Law corpus: docs/nt/NT-INDEX.md.
+- Project work: TASKS.md and DEFICITS.json.
+- Verification: the actual tools/ci.sh run and its evidence.
+- Release/package version: VERSION.json and Android manifest, checked for agreement.
+
+If this README disagrees with source or executable gate, the README is defective and must be corrected. It is a bridge, not a superior source of truth.
+
+---
+
+# 17. Reading path: conviction to evidence
+
+For the complete argument, follow this sequence:
+
+1. **README** — public purpose, architecture, and capability boundaries.
+2. **DARKITH.md** — canonical state and governing record.
+3. **docs/nt/NT-INDEX.md** — law corpus and enforcement map.
+4. **NT XI and NT XII** — Autophagic Sovereign Economy and terminal convergence.
+5. **NT XIII / OFIF** — field-invariant fixtures, prior-art verdicts, derivation, and falsifiers.
+6. **Black & Whitepaper** — plain/practitioner/executor registers for reproducible contribution and minting.
+7. **NT XII in the Open** — public evidence and honest frontier.
+8. **Architecture Omega** — local assistant/terminal design and current boundaries.
+9. **Failure Mode Ledger** — failures, root causes, guards, and proofs.
+10. **tools/ci.sh** — executable verification entry point.
+
+---
+
+# 18. The final boundary
+
+Darkith does not ask to be trusted because it declares itself sovereign.
+
+It must earn trust by making its workings inspectable, its limits visible, its claims reproducible, and its corrections accountable.
+
+The app is a tool. The repository is the apparatus. The law is the constraint. The evidence is the witness. The human purpose is the end.
+
+No README, register, test suite, or machine may declare that destination achieved on its own.
+
+**Only demonstrated capability and independent evidence can do that.**
