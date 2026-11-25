@@ -78,8 +78,16 @@ if have python3; then
   # ingest/repair cycle, carry every generated artifact, and re-run until the tree is clean.
   # Here we only probe residue: nonzero means this exact commit is not ready to be hashed.
   if [ -f tools/absolution_phase.py ]; then
-    run "absolution phase (read-only: require zero residue before hashing)" python3 tools/absolution_phase.py --check
-    run "absolution phase selftest"                               python3 tools/absolution_phase.py --selftest
+    # Exercise refusal first, then enforce the phase as a hard precondition. Do not allow
+    # later hashing/sealing gates to run if this exact checkout is not already clean.
+    run "absolution phase selftest" python3 tools/absolution_phase.py --selftest
+    if python3 tools/absolution_phase.py --check; then
+      printf -- '--- absolution phase (read-only precondition): PASS\\n'
+    else
+      rc=$?
+      printf -- '--- absolution phase (read-only precondition): FAIL (exit %s); downstream hashing stopped\\n' "$rc"
+      exit 1
+    fi
   fi
   run "fresh-session boot formulary"      python3 tools/session_boot_gate.py
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
