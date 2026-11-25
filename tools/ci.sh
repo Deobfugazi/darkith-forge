@@ -85,7 +85,7 @@ if have python3; then
   # can never attest a lie. That refusal is the prophylaxis, and it is not destructive:
   # the phase only produces a consistent working tree and proves it, then hands it on.
   if [ -f tools/absolution_phase.py ]; then
-    run "absolution phase (ingest+repair to zero before hashing)" python3 tools/absolution_phase.py
+    run "absolution phase (read-only: require zero residue before hashing)" python3 tools/absolution_phase.py --check
     run "absolution phase selftest"                               python3 tools/absolution_phase.py --selftest
   fi
   run "fresh-session boot formulary"      python3 tools/session_boot_gate.py
