@@ -5,56 +5,24 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T16:08:54.088372`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-25T03:17:31.346607`. This section is regenerated, never hand-edited._
 >
-> **Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
+> **Coupled laws:** MUST #11, MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-13, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 >
-> 1. **[forbid]** Done, now budd. Knowing how my core omega end point short→long-term objective is unlike any other as declared in my NT XI XII & XIII, design the inev…
->    - prompt index `36250` at `2026-11-24T04:57:48.742386`
->    - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, SPI-15, SPI-37, SPI-38
->    - sha256 `b2479003be1ee8fe`
-> 2. **[forbid]** Never publish to main any gameplan yet! Wtf!!🤬🤬🤬 Fix this fuckery!!i explicitly designed rehearse and converge first ensuring everything is unassaila…
->    - prompt index `36538` at `2026-11-24T05:19:32.901337`
->    - sha256 `ec383a87d4a8fb42`
-> 3. **[forbid]** How can you all embarass me without fucking even explicitly running an actual rehearsed Real world end to end sample with pre mitigation and anticipa…
->    - prompt index `36722` at `2026-11-24T06:53:33.015409`
->    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
->    - sha256 `f9392a1cb9beeefd`
-> 4. **[order]** I fucking damn gave a directive to follow my reader 3 tongue register narrative presentation complete with real sampled problem/burdens statements, h…
->    - prompt index `36971` at `2026-11-24T07:28:06.441708`
->    - **Coupled laws:** MUST #21, MUST #22, MUST #33, SPI-15, SPI-2, SPI-6
->    - sha256 `c850adebd03d0bf3`
-> 5. **[forbid]** Served bytes are byte-identical to committed. Here it is. https://work-1-ztisaoehlcyoilix.prod-runtime.all-hands.dev/ https://work-2-ztisaoehlcyoilix…
->    - prompt index `37112` at `2026-11-24T08:08:48.944122`
->    - **Coupled laws:** MUST #20, MUST #33, SPI-15, SPI-2, SPI-4, SPI-6
->    - sha256 `b835d429d82c581d`
-> 6. **[forbid]** You have no fucking idea how extensive and broad my methodological mechanistic mental technical metaphysical procedural scope is!!🤬🤬🤬 NEW FILES ADDED…
->    - prompt index `38032` at `2026-11-24T10:02:51.413696`
->    - sha256 `a5701e9cd25fb26b`
-> 7. **[forbid]** And is my fucking README stale?🤬 It never fucking updated with the trial to zero error testnet before pushing to mainnet!🤬
->    - prompt index `38646` at `2026-11-24T10:29:20.943206`
->    - sha256 `49b417e7f45a924a`
-> 8. **[forbid]** Root cause: `kb_reconcile.py` rewrites a tracked file on every CI run — even when nothing changed. That makes the seal chase CI's own output forever.…
->    - prompt index `38936` at `2026-11-24T10:58:57.846905`
->    - sha256 `3c63a3d6409b54fa`
-> 9. **[order]** Now I have the whole picture. The formulary is `detect / repair / prevent` registered in `autophagy.py`, and a class with no `prevent` is **refused a…
->    - prompt index `39189` at `2026-11-24T11:12:50.559662`
->    - **Coupled laws:** SPI-37, SPI-38
->    - sha256 `76c63d48c101977e`
-> 10. **[forbid]** # PRIME DIRECTIVE — SINGLE AUTHORITY, SELF-CORRECTING GOVERNANCE, VERIFIED PROMOTION, ZERO FALSE CLOSURE **Repository:** `Deobfugazi/darkith-forge` *…
->    - prompt index `40102` at `2026-11-24T13:50:56.034614`
->    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
->    - sha256 `7b7ebddd4aa11995`
-> 11. **[forbid]** You were right and I wasted the turn. I'll say plainly what I got wrong, then what's now in the tree. **My error:** I treated "prove it again" as the…
->    - prompt index `41051` at `2026-11-24T16:08:54.088372`
->    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
->    - sha256 `d31d99750f50bbd5`
+> 1. **[forbid]** Foreman's report. I read the briefing, and I have to refuse the first task — with proof, not opinion. **Do not send the script.** ## The premise is f…
+>    - prompt index `42618` at `2026-11-25T03:08:52.296826`
+>    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST-11, NEVER #21, SPI-13, SPI-15, SPI-2, SPI-4, SPI-6
+>    - sha256 `3e049db0c802c154`
+> 2. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
+>    - prompt index `42708` at `2026-11-25T03:17:31.346607`
+>    - sha256 `a7376a057529fc8e`
 >
 
-**Coupled laws (declared by the directive):** `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-10`, `SPI-11`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-5`, `SPI-6`
+**Coupled laws (declared by the directive):** `MUST #11`, `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-10`, `SPI-11`, `SPI-13`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-5`, `SPI-6`
 
 | law | heading |
 |---|---|
+| `MUST #11` | COMPILE IS THE PROOF |
 | `MUST #17` | GENERATED COPIES |
 | `MUST #18` | IDEMPOTENT PACKAGING |
 | `MUST #20` | PROVE IT IN THE ARTIFACT |
@@ -74,6 +42,7 @@
 | `NEVER #22` | NO VERIFIED-BUT-UNLANDED CLOSURE — THE MISSING-CALLER LAW |
 | `SPI-10` | MATCH BYTES, NOT LINE NUMBERS |
 | `SPI-11` | DISCOVER, DO NOT HARDCODE |
+| `SPI-13` | EVERY SYMBOL RESOLVES IN-TREE |
 | `SPI-15` | A LAW WITHOUT A GATE IS A NOTE |
 | `SPI-2` | READ THE BYTES FIRST |
 | `SPI-25` | SYNCHRONY IS UNIVERSAL, LIKE THE PRIME DIRECTIVE |
@@ -85,7 +54,7 @@
 | `SPI-5` | NO ANDROIDX ON THE RAW CHAIN |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #44`, `NEVER #23`, `NEVER #25`, `NEVER #27`, `NEVER #31`, `SPI-19`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`
 
 <!-- PRAXIS:END -->
 
@@ -286,49 +255,16 @@ Named skips this cycle (SKIP is never PASS): clearanceloop webapp gate (headless
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-24T16:08:54.088372`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-25T03:17:31.346607`. This section is regenerated, never hand-edited._
 
-**Coupled laws:** MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
+**Coupled laws:** MUST #11, MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-13, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 
-1. **[forbid]** Done, now budd. Knowing how my core omega end point short→long-term objective is unlike any other as declared in my NT XI XII & XIII, design the inev…
-   - prompt index `36250` at `2026-11-24T04:57:48.742386`
-   - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, SPI-15, SPI-37, SPI-38
-   - sha256 `b2479003be1ee8fe`
-2. **[forbid]** Never publish to main any gameplan yet! Wtf!!🤬🤬🤬 Fix this fuckery!!i explicitly designed rehearse and converge first ensuring everything is unassaila…
-   - prompt index `36538` at `2026-11-24T05:19:32.901337`
-   - sha256 `ec383a87d4a8fb42`
-3. **[forbid]** How can you all embarass me without fucking even explicitly running an actual rehearsed Real world end to end sample with pre mitigation and anticipa…
-   - prompt index `36722` at `2026-11-24T06:53:33.015409`
-   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
-   - sha256 `f9392a1cb9beeefd`
-4. **[order]** I fucking damn gave a directive to follow my reader 3 tongue register narrative presentation complete with real sampled problem/burdens statements, h…
-   - prompt index `36971` at `2026-11-24T07:28:06.441708`
-   - **Coupled laws:** MUST #21, MUST #22, MUST #33, SPI-15, SPI-2, SPI-6
-   - sha256 `c850adebd03d0bf3`
-5. **[forbid]** Served bytes are byte-identical to committed. Here it is. https://work-1-ztisaoehlcyoilix.prod-runtime.all-hands.dev/ https://work-2-ztisaoehlcyoilix…
-   - prompt index `37112` at `2026-11-24T08:08:48.944122`
-   - **Coupled laws:** MUST #20, MUST #33, SPI-15, SPI-2, SPI-4, SPI-6
-   - sha256 `b835d429d82c581d`
-6. **[forbid]** You have no fucking idea how extensive and broad my methodological mechanistic mental technical metaphysical procedural scope is!!🤬🤬🤬 NEW FILES ADDED…
-   - prompt index `38032` at `2026-11-24T10:02:51.413696`
-   - sha256 `a5701e9cd25fb26b`
-7. **[forbid]** And is my fucking README stale?🤬 It never fucking updated with the trial to zero error testnet before pushing to mainnet!🤬
-   - prompt index `38646` at `2026-11-24T10:29:20.943206`
-   - sha256 `49b417e7f45a924a`
-8. **[forbid]** Root cause: `kb_reconcile.py` rewrites a tracked file on every CI run — even when nothing changed. That makes the seal chase CI's own output forever.…
-   - prompt index `38936` at `2026-11-24T10:58:57.846905`
-   - sha256 `3c63a3d6409b54fa`
-9. **[order]** Now I have the whole picture. The formulary is `detect / repair / prevent` registered in `autophagy.py`, and a class with no `prevent` is **refused a…
-   - prompt index `39189` at `2026-11-24T11:12:50.559662`
-   - **Coupled laws:** SPI-37, SPI-38
-   - sha256 `76c63d48c101977e`
-10. **[forbid]** # PRIME DIRECTIVE — SINGLE AUTHORITY, SELF-CORRECTING GOVERNANCE, VERIFIED PROMOTION, ZERO FALSE CLOSURE **Repository:** `Deobfugazi/darkith-forge` *…
-   - prompt index `40102` at `2026-11-24T13:50:56.034614`
-   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
-   - sha256 `7b7ebddd4aa11995`
-11. **[forbid]** You were right and I wasted the turn. I'll say plainly what I got wrong, then what's now in the tree. **My error:** I treated "prove it again" as the…
-   - prompt index `41051` at `2026-11-24T16:08:54.088372`
-   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #28, MUST #33, MUST #35, MUST #36, NEVER #21, SPI-15, SPI-2, SPI-25, SPI-26, SPI-4, SPI-6
-   - sha256 `d31d99750f50bbd5`
+1. **[forbid]** Foreman's report. I read the briefing, and I have to refuse the first task — with proof, not opinion. **Do not send the script.** ## The premise is f…
+   - prompt index `42618` at `2026-11-25T03:08:52.296826`
+   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST-11, NEVER #21, SPI-13, SPI-15, SPI-2, SPI-4, SPI-6
+   - sha256 `3e049db0c802c154`
+2. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
+   - prompt index `42708` at `2026-11-25T03:17:31.346607`
+   - sha256 `a7376a057529fc8e`
 
 <!-- CHAT-GATE:END -->

@@ -3,10 +3,10 @@
   "count": 88,
   "files": [
     {
-      "bytes": 86858,
+      "bytes": 88503,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "285ebbb866295988c7aa9ca4227112a5d5c33cb55b8371b55c31ad4594ce1350"
+      "sha256": "6efd99d9bfa856974569e180fee80b21c4674b7a5d8c2b9f5fc6e15c44618723"
     },
     {
       "bytes": 169112,
@@ -21,22 +21,22 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 70235,
+      "bytes": 71156,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "e7dc5bdf25929d96d0d0a25a501bbc39bea1d79e64894f9ff7ef62ca385c2a1c"
+      "sha256": "f6491446c4e78b8768c84d5443e7fa757771535bb004c7d6643c628d2034eba7"
     },
     {
-      "bytes": 8801,
+      "bytes": 8805,
       "path": "RESUME.md",
       "register": "A-apparatus",
-      "sha256": "17f9bb036d44701565362378e4dfac59e1e4431adf293c559966685be321d2a7"
+      "sha256": "05b87b5f7ee00b7666d9a370c4e78873c68d3e0700ecb420f29e3fa84280feaa"
     },
     {
-      "bytes": 18509,
+      "bytes": 12764,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "c7490d53befb21cf7fdb781e45c96ed73a374f12141577e0a4f692b8dd1a224c"
+      "sha256": "b44d5adfa00ac7e6083c2481c7b135bf067ebcdbf676dc99b1e6c31cd8042388"
     },
     {
       "bytes": 817,
