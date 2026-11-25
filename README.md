@@ -10,7 +10,7 @@ False completion. False verification. False accounting. Silent extraction. Untra
 
 Everything in this repository must synchronously serve that singular end. A displacement, duplicating noise, or defect is not an additional feature; it is something the system must detect and correct.
 
-This README is the public bridge into the work—and must practice the ergonomic invariant it sets. Its native GitHub presentation uses real anchors, source links, and expandable context rather than decorative controls. The companion reader in [docs/index.html](docs/index.html) renders this same canonical README into an adjustable, searchable interface with persistent text/theme/contrast/width settings, contextual hover-toasts, keyboard navigation, and an offline cache. The reader is published through [.github/workflows/pages.yml](.github/workflows/pages.yml); its repository-level GitHub Pages enablement is still required before the hosted experience becomes live. No control in this document claims to authorize or execute a system mutation.
+This README is the public bridge into the work—and must practice the ergonomic invariant it sets. Its native GitHub presentation uses real anchors, source links, and expandable context rather than decorative controls. The companion reader in [docs/index.html](docs/index.html) renders this same canonical README into an adjustable, searchable interface with persistent text/theme/contrast/width settings, contextual glossary toasts, keyboard navigation, expandable context, and an offline cache. The [Pages workflow](.github/workflows/pages.yml) validates the reader script, copies this canonical README into the deployment, and attempts to configure and publish GitHub Pages; hosted availability is established by a successful deployment, not by this statement. The reader's [offline cache](docs/sw.js) preserves the reader shell and README for subsequent access. No control in this document claims to authorize or execute a system mutation.
 
 ---
 
@@ -71,6 +71,29 @@ The deepest end goal, as the outstanding core objective, is **sovereignty as an 
 The economic and civic destination is not claimed as completed by the current app. It is the direction that gives the engineering its purpose.
 
 **Demonstration rule:** this README must itself practice the standard it states. Its navigation, contextual expansion, source links, and evidence paths must work in the published interface. Where the host renderer cannot support a behavior, the README must provide a functional equivalent or link to the actual working interface—not counterfeit an interaction with decorative markup.
+
+## 0.2.1 Read this README as an interface
+
+This section is an executable demonstration within the capabilities of the host renderer—not a mock application and not a claim that GitHub Markdown can run arbitrary JavaScript.
+
+**Use the native document now:** the headings are direct navigation anchors; the links below are real repository paths; and the expandable sections in this README disclose deeper context without replacing the canonical text. Open a source link to inspect the mechanism, then return to the same section.
+
+**Use the interactive reader:** [Open the reader source](docs/index.html) · [Inspect its publication workflow](.github/workflows/pages.yml) · [Inspect its offline cache](docs/sw.js) · [Open the canonical README](README.md).
+
+The companion reader implements these actual reading controls:
+
+- Search across the loaded README; press `/` to focus search, Enter to jump to the first matching block, and Escape to clear.
+- Navigate through a generated table of contents linked to the document's headings.
+- Adjust text size, dark/light theme, contrast, and reading width.
+- Expand or collapse contextual sections in one action.
+- Receive glossary explanations through transient pop-ups triggered by pointer hover or keyboard focus.
+- Retain reading preferences locally and cache the reader shell and README for offline reopening after the cache has been populated.
+
+The reader loads [README.md](README.md) as its canonical content source. The Pages workflow copies that source into the published `docs/README.md`; the reader does not maintain a competing manuscript. Its interface is a rendering layer, not a second authority.
+
+**Interaction and safety boundary:** navigation, search, disclosure, glossary explanations, and presentation controls are reader operations. They do not mutate source or operating-system infrastructure. A security-sensitive mutation requires a real execution-layer policy, a scoped authorization decision, and an auditable result. Neither a README control nor a browser dialog can substitute for that enforcement. Manual and automatic dispatch remain policy modes—not a UI toggle that grants unrestricted authority.
+
+GitHub's native README renderer cannot provide custom JavaScript, persistent preference controls, or application-owned toast behavior. The native document therefore uses supported anchors and expandable context, while the companion reader supplies the working adaptive interface. Where the renderer lacks a capability, Darkith links to the actual implementation instead of pretending the capability exists.
 
 ## 0.3 Who is this for?
 
