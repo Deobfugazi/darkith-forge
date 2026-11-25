@@ -157,6 +157,8 @@ def workflow_contract_errors(auto_text: str, workflow_texts: list[str],
         ("branch=\"testnet/darkbot-", "scheduled dependency proposal is not isolated on testnet"),
         ('DARKITH_DEFER_PUSH: "1"', "repair does not defer internal pushes until fixed point"),
         ("unset DARKITH_DEFER_PUSH", "final branch publication does not restore normal pre-push admission"),
+        ('run "drift gate selftest (deferred testnet publication)" python3 tools/drift_gate.py --selftest', "drift gate does not test deferred publication"),
+        ('run "tree invariant selftest (deferred testnet publication)" python3 tools/tree_invariant.py --selftest', "tree invariant does not test deferred publication"),
         ("gh workflow run auto-merge.yml", "dependency proposal does not dispatch the admission workflow"),
     )
     for token, message in required:
@@ -244,6 +246,10 @@ def preflight() -> list[str]:
         problems.extend(workflow_contract_errors(
             auto_path.read_text(encoding="utf-8"), workflow_texts,
             ci_path.read_text(encoding="utf-8")))
+        for repair_path in ("tools/drift_gate.py", "tools/tree_invariant.py"):
+            repair_file = ROOT / repair_path
+            if not repair_file.is_file() or "DARKITH_DEFER_PUSH" not in repair_file.read_text(encoding="utf-8"):
+                problems.append(f"{repair_path}: testnet repair cannot defer internal publication")
 
     return problems
 
@@ -392,6 +398,10 @@ def selftest() -> int:
     errors = workflow_contract_errors(workflow_text, workflow_texts, ci_text)
     check(not errors, "automation requires two isolated trials and immutable action pins",
           "; ".join(errors))
+    deferred_tools = all((ROOT / p).is_file() and
+                         "DARKITH_DEFER_PUSH" in (ROOT / p).read_text(encoding="utf-8")
+                         for p in ("tools/drift_gate.py", "tools/tree_invariant.py"))
+    check(deferred_tools, "both repair classes defer internal pushes until fixed point")
     broken = workflow_text.replace("testnet trial 2/2", "trial omitted") if workflow_text else ""
     check(bool(workflow_contract_errors(broken, workflow_texts, ci_text)),
           "workflow contract detects a missing second trial")
