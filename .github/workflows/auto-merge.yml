@@ -257,10 +257,25 @@ jobs:
           if-no-files-found: error
 
   tests:
-    name: post-push / scheduled CI
+    name: tests
+    needs: [trial_1, trial_2]
+    if: >
+      always() &&
+      needs.trial_1.result == 'success' &&
+      needs.trial_2.result == 'success' &&
+      (github.event_name == 'pull_request' ||
+       (github.event_name == 'workflow_dispatch' && inputs.testnet_pr != ''))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm both independent trial jobs passed
+        run: echo "Both isolated admission trials passed on the same candidate SHA."
+
+  post_push:
+    name: post-push CI
     if: github.event_name != 'pull_request' &&
         !(github.event_name == 'workflow_dispatch' && inputs.testnet_pr != '')
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -287,9 +302,10 @@ jobs:
 
   merge_testnet:
     name: auto-admit verified testnet PR
-    needs: [prepare_testnet, trial_1, trial_2]
+    needs: [prepare_testnet, trial_1, trial_2, tests]
     if: >
       needs.prepare_testnet.result == 'success' &&
+      needs.tests.result == 'success' &&
       needs.trial_1.result == 'success' &&
       needs.trial_2.result == 'success' &&
       ((github.event_name == 'pull_request' &&
@@ -334,11 +350,12 @@ jobs:
 
   merge_dependency:
     name: auto-merge tested dependency PR
-    needs: [trial_1, trial_2]
+    needs: [trial_1, trial_2, tests]
     if: >
       github.event_name == 'pull_request' &&
       needs.trial_1.result == 'success' &&
       needs.trial_2.result == 'success' &&
+      needs.tests.result == 'success' &&
       (github.event.pull_request.user.login == 'dependabot[bot]' ||
        github.event.pull_request.user.login == 'github-actions[bot]')
     runs-on: ubuntu-latest
