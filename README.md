@@ -10,7 +10,7 @@ False completion. False verification. False accounting. Silent extraction. Untra
 
 Everything in this repository must synchronously serve that singular end. A displacement, duplicating noise, or defect is not an additional feature; it is something the system must detect and correct.
 
-This README is the public bridge into the work—and must practice the ergonomic invariant it sets. Its native GitHub presentation uses real anchors, source links, and expandable context rather than decorative controls. The companion reader in [docs/index.html](docs/index.html) renders this same canonical README into an adjustable, searchable interface with persistent text/theme/contrast/width settings, contextual glossary toasts, keyboard navigation, expandable context, and an offline cache. The [Pages workflow](.github/workflows/pages.yml) validates its inputs, copies this canonical README into the deployment, and publishes it after the repository's Pages site has been initialized. GitHub Pages must be enabled once by a repository administrator: open [Pages settings](https://github.com/Deobfugazi/darkith-forge/settings/pages), set **Build and deployment → Source** to **GitHub Actions**, and save. The workflow token cannot create or enable the site because GitHub requires repository-administration permission. After that one-time setting, rerun the [Pages workflow](https://github.com/Deobfugazi/darkith-forge/actions/workflows/pages.yml); the hosted reader is [deobfugazi.github.io/darkith-forge](https://deobfugazi.github.io/darkith-forge/). The reader's [offline cache](docs/sw.js) preserves the reader shell and README for subsequent access. No control in this document claims to authorize or execute a system mutation.
+This README is the public bridge into the work—and must practice the ergonomic invariant it sets. Its native GitHub presentation uses real anchors, source links, and expandable context rather than decorative controls. The companion reader in [docs/index.html](docs/index.html) renders this same canonical README into an adjustable, searchable interface with persistent text/theme/contrast/width settings, contextual glossary toasts, keyboard navigation, expandable context, and an offline cache. The [Pages workflow](.github/workflows/pages.yml) validates its inputs, copies this canonical README into the deployment, and publishes the reader through GitHub Actions. GitHub Pages is configured for Actions deployment; the published reader is [deobfugazi.github.io/darkith-forge](https://deobfugazi.github.io/darkith-forge/). The latest verified deployment completed successfully on 2026-11-25 after the reader and offline-cache corrections. The workflow token cannot change Pages administration settings; if a future deployment reports that Pages is not initialized, a repository administrator must open [Pages settings](https://github.com/Deobfugazi/darkith-forge/settings/pages), select **GitHub Actions** under **Build and deployment → Source**, save, and rerun the [Pages workflow](https://github.com/Deobfugazi/darkith-forge/actions/workflows/pages.yml). The reader's [offline cache](docs/sw.js) preserves the reader shell and README for subsequent access. No control in this document claims to authorize or execute a system mutation.
 
 ---
 
@@ -72,18 +72,11 @@ The economic and civic destination is not claimed as completed by the current ap
 
 **Demonstration rule:** this README must itself practice the standard it states. Its navigation, contextual expansion, source links, and evidence paths must work in the published interface. Where the host renderer cannot support a behavior, the README must provide a functional equivalent or link to the actual working interface—not counterfeit an interaction with decorative markup.
 
-## 0.2.0.1 Initialize the hosted reader (one-time repository setting)
+## 0.2.0.1 Publishing and deployment status
 
-The reader's source and deployment workflow are committed. The hosted site was not created because GitHub rejected the workflow token's attempt to enable Pages; that operation requires repository administration permission.
+The hosted reader is published at [https://deobfugazi.github.io/darkith-forge/](https://deobfugazi.github.io/darkith-forge/). On 2026-11-25, the [Publish interactive README workflow](https://github.com/Deobfugazi/darkith-forge/actions/workflows/pages.yml) completed its validation, artifact assembly, and Pages deployment successfully for commit `58511b33773535a0134e3e65754038c1bc7ecd4a`. The source files being present is not sufficient evidence by itself; the completed deployment run is the proof that the workflow published them.
 
-A repository owner or administrator must complete this one-time setup:
-
-1. Open [Darkith Forge → Settings → Pages](https://github.com/Deobfugazi/darkith-forge/settings/pages).
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. Save the setting.
-4. Open the [Publish interactive README workflow](https://github.com/Deobfugazi/darkith-forge/actions/workflows/pages.yml) and choose **Run workflow** on `main`.
-
-The workflow then validates the reader, assembles the site from the root canonical README, and deploys it. The expected project-site address is [https://deobfugazi.github.io/darkith-forge/](https://deobfugazi.github.io/darkith-forge/). A successful deployment run—not the presence of a source file or link—is the completion evidence.
+If a future run reports that Pages is not initialized, a repository administrator must open [Darkith Forge → Settings → Pages](https://github.com/Deobfugazi/darkith-forge/settings/pages), select **GitHub Actions** under **Build and deployment → Source**, save, and rerun the workflow. The workflow token cannot alter repository-administration settings.
 
 ## 0.2.1 Read this README as an interface
 
@@ -91,7 +84,7 @@ This section is an executable demonstration within the capabilities of the host 
 
 **Use the native document now:** the headings are direct navigation anchors; the links below are real repository paths; and the expandable sections in this README disclose deeper context without replacing the canonical text. Open a source link to inspect the mechanism, then return to the same section.
 
-**Use the interactive reader:** [Open the hosted reader](https://deobfugazi.github.io/darkith-forge/) (available after a successful Pages deployment) · [Inspect the reader source](docs/index.html) · [Inspect its publication workflow](.github/workflows/pages.yml) · [Inspect its offline cache](docs/sw.js) · [Open the canonical README](README.md).
+**Use the interactive reader:** [Open the hosted reader](https://deobfugazi.github.io/darkith-forge/) · [Inspect the reader source](docs/index.html) · [Inspect its publication workflow](.github/workflows/pages.yml) · [Inspect its offline cache](docs/sw.js) · [Open the canonical README](README.md).
 
 The companion reader implements these actual reading controls:
 
