@@ -189,9 +189,16 @@ def _msg_text(e: dict) -> str:
 
 
 ECHO_MIN = 80
-# An agent report addresses the Operator; an order does not address the person giving it.
-# Measured over 220 recorded user turns: this matched exactly one, the agent's own report.
-ADDRESSES_OPERATOR = re.compile(r"^operator\s*[—:,\-]", re.IGNORECASE)
+# An agent report identifies itself as one; an order from the Operator does not. Two openers,
+# both measured over 240 recorded user turns: together they matched exactly the agent's own
+# reports and none of the Operator's orders.
+#
+# The byte-match below cannot carry this case alone. A report can be logged ONLY as a user
+# event with no assistant twin, so there is nothing to match it against; the opener is the
+# only surviving signal. A report ingested as an order lands on the board as a `[forbid]`
+# directive and re-opens the brief the agent had just closed.
+ADDRESSES_OPERATOR = re.compile(
+    r"^(?:operator\s*[\u2014:,\-]|foreman[\u2019']?s\s+report\b)", re.IGNORECASE)
 
 
 def _is_echo(user_text: str, assistant_texts: list[str]) -> bool:

@@ -9,14 +9,10 @@
 >
 > **Coupled laws:** MUST #11, MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-13, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 >
-> 1. **[forbid]** Foreman's report. I read the briefing, and I have to refuse the first task — with proof, not opinion. **Do not send the script.** ## The premise is f…
->    - prompt index `42618` at `2026-11-25T03:08:52.296826`
->    - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST-11, NEVER #21, SPI-13, SPI-15, SPI-2, SPI-4, SPI-6
->    - sha256 `3e049db0c802c154`
-> 2. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
+> 1. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
 >    - prompt index `42708` at `2026-11-25T03:17:31.346607`
 >    - sha256 `a7376a057529fc8e`
-> 3. **[order]** Pisti k!! If youre fucking seeing the previous agents' worka already green on your trial branch fucking push it to main already yawaaaaaa!!!🤬🤬🤬🤬🤬🤬🤬🤬 …
+> 2. **[order]** Pisti k!! If youre fucking seeing the previous agents' worka already green on your trial branch fucking push it to main already yawaaaaaa!!!🤬🤬🤬🤬🤬🤬🤬🤬 …
 >    - prompt index `42828` at `2026-11-25T03:35:07.255856`
 >    - sha256 `805a93b7a75d67ee`
 >
@@ -262,14 +258,10 @@ _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/cha
 
 **Coupled laws:** MUST #11, MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-13, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 
-1. **[forbid]** Foreman's report. I read the briefing, and I have to refuse the first task — with proof, not opinion. **Do not send the script.** ## The premise is f…
-   - prompt index `42618` at `2026-11-25T03:08:52.296826`
-   - **Coupled laws:** MUST #20, MUST #26, MUST #27, MUST #33, MUST #35, MUST #36, MUST-11, NEVER #21, SPI-13, SPI-15, SPI-2, SPI-4, SPI-6
-   - sha256 `3e049db0c802c154`
-2. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
+1. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
    - prompt index `42708` at `2026-11-25T03:17:31.346607`
    - sha256 `a7376a057529fc8e`
-3. **[order]** Pisti k!! If youre fucking seeing the previous agents' worka already green on your trial branch fucking push it to main already yawaaaaaa!!!🤬🤬🤬🤬🤬🤬🤬🤬 …
+2. **[order]** Pisti k!! If youre fucking seeing the previous agents' worka already green on your trial branch fucking push it to main already yawaaaaaa!!!🤬🤬🤬🤬🤬🤬🤬🤬 …
    - prompt index `42828` at `2026-11-25T03:35:07.255856`
    - sha256 `805a93b7a75d67ee`
 

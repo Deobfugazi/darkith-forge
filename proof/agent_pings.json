@@ -5,15 +5,15 @@
     "phase": "wake/active",
     "state": "engaged"
   },
-  "orders": 3,
+  "orders": 2,
   "targets": [
     {
-      "orders": 3,
+      "orders": 2,
       "status": "pinged",
       "target": "/workspace/project/darkith-forge/TASKS.md"
     },
     {
-      "orders": 3,
+      "orders": 2,
       "status": "pinged",
       "target": "/workspace/conversations/18393131094c4acfb45d943764549f23/TASKS.json"
     }
