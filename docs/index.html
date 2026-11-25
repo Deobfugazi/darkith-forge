@@ -20,7 +20,8 @@ while(i<L.length){let x=L[i];
 if(x.charCodeAt(0)===96||x.startsWith('~~~')){close();let f=x.charCodeAt(0)===96?String.fromCharCode(96).repeat(3):'~~~';i++;let c=[];while(i<L.length&&L[i].charCodeAt(0)!==96&&!L[i].startsWith(f))c.push(L[i++]);i++;o+='<pre><code>'+esc(c.join('\n'))+'</code></pre>';continue}
 if(/^\s*\|/.test(x)&&i+1<L.length&&/^\s*\|?\s*:?-{3,}/.test(L[i+1])){close();let rows=[x];i+=2;while(i<L.length&&/^\s*\|/.test(L[i]))rows.push(L[i++]);function cells(z){return z.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(v=>v.trim())}o+='<table><thead><tr>'+cells(rows[0]).map(v=>'<th>'+inline(v)+'</th>').join('')+'</tr></thead><tbody>'+rows.slice(1).map(r=>'<tr>'+cells(r).map(v=>'<td>'+inline(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';continue}
 if(/^#{1,6}\s/.test(x)){close();let n=x.match(/^#+/)[0].length,t=x.replace(/^#+\s*/,'').replace(/\s+#+\s*$/,'');o+='<h'+n+' id="'+slug(t)+'">'+inline(t)+'</h'+n+'>';i++;continue}
-if(/^<details>|^<\/details>|^<summary>|^<\/summary>/.test(x)){close();o+=x;i++;continue}
+if(x.trim()==='<details>'||x.trim()==='</details>'){close();o+=x.trim();i++;continue}
+if(/^<summary>.*<\/summary>$/.test(x.trim())){close();let t=x.trim().replace(/^<summary>/,'').replace(/<\/summary>$/,'').replace(/<strong>/g,'**').replace(/<\/strong>/g,'**');o+='<summary>'+inline(t)+'</summary>';i++;continue}
 if(/^\s*[-*+]\s+/.test(x)||/^\s*\d+\.\s+/.test(x)){let ordered=/^\s*\d+\.\s+/.test(x),tag=ordered?'ol':'ul';if(list!==tag){close();list=tag;o+='<'+tag+'>'}o+='<li>'+inline(x.replace(/^\s*(?:[-*+]|\d+\.)\s+/,''))+'</li>';i++;continue}
 if(/^>\s?/.test(x)){close();o+='<blockquote><p>'+inline(x.replace(/^>\s?/,''))+'</p></blockquote>';i++;continue}
 if(/^---+$/.test(x.trim())){close();o+='<hr>';i++;continue}
