@@ -178,6 +178,29 @@ def selftest():
                            capture_output=True, text=True).stdout.splitlines()
     check("the push really landed", len(heads) == 1, str(len(heads)) + " head on the remote")
 
+    print("== testnet repair commits locally, then waits for the final guarded push ==")
+    deferred_remote = tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "--bare"], cwd=deferred_remote, check=True)
+    deferred = fresh_repo()
+    subprocess.run(["git", "remote", "add", "origin", deferred_remote], cwd=deferred, check=True)
+    (deferred / "HISTORY.md").write_text("deferred repair\n")
+    old_defer = os.environ.get("DARKITH_DEFER_PUSH")
+    os.environ["DARKITH_DEFER_PUSH"] = "1"
+    try:
+        d_state, d_paths = repair(deferred)
+    finally:
+        if old_defer is None:
+            os.environ.pop("DARKITH_DEFER_PUSH", None)
+        else:
+            os.environ["DARKITH_DEFER_PUSH"] = old_defer
+    check("deferred repair reaches a local fixed point", d_state == "clean", str(d_paths))
+    remote_heads = subprocess.run(["git", "for-each-ref", "--format=%(refname)", "refs/heads"],
+                                 cwd=deferred_remote, capture_output=True, text=True).stdout
+    check("deferred repair does not publish an intermediate commit", not remote_heads.strip())
+    push_deferred = subprocess.run(["git", "push", "origin", "HEAD"], cwd=deferred,
+                                   capture_output=True, text=True)
+    check("the final explicit push carries the repair", push_deferred.returncode == 0)
+
     print("== no git repo is a named SKIP, never a pass ==")
     with tempfile.TemporaryDirectory() as bare:
         state, _ = find_drift(bare)
