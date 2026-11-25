@@ -72,18 +72,11 @@ run() {
 have() { command -v "$1" >/dev/null 2>&1; }
 
 if have python3; then
-  # ── ABSOLUTION IS A PRECONDITION OF HASHING, NOT A REPORT FILED AFTER IT ────────
-  # This ran wrong for months: the hashing gates ran first, and the defect registry ran
-  # last as a dry `--check` that repairs nothing. So CI sealed a tree that still held every
-  # residual inconsistency, then detected the inconsistency, then did nothing about it —
-  # detect-forever, heal-never. `--repair` was never called by CI at all.
-  #
-  # The order is the defect. You cannot attest bytes that are still moving. This phase
-  # ingests every producer that absorbs outside state, runs the registry to repair, and
-  # loops until residue is zero BEFORE any gate below hashes anything. If it cannot reach
-  # zero it REFUSES, and the hashing gates never run on an inconsistent tree — so a seal
-  # can never attest a lie. That refusal is the prophylaxis, and it is not destructive:
-  # the phase only produces a consistent working tree and proves it, then hands it on.
+  # ── ABSOLUTION IS A PRECONDITION OF HASHING, NOT A REPAIR RUN ────────────────
+  # CI is a trial, not a repair operator. It must test the exact submitted commit without
+  # mutating its checkout or manufacturing a local commit. The testnet author must run the
+  # ingest/repair cycle, carry every generated artifact, and re-run until the tree is clean.
+  # Here we only probe residue: nonzero means this exact commit is not ready to be hashed.
   if [ -f tools/absolution_phase.py ]; then
     run "absolution phase (read-only: require zero residue before hashing)" python3 tools/absolution_phase.py --check
     run "absolution phase selftest"                               python3 tools/absolution_phase.py --selftest
