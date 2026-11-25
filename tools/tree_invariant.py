@@ -179,20 +179,12 @@ def repair() -> int:
         return 1
     print(f"  landed {len(to_land)} path(s); the sealed chain accepted these bytes")
 
-    if detached():
-        print("tree_invariant: PASS — repaired and committed (detached HEAD; not pushing)")
-        return 0
-
-    p = sh(("git", "push", "-q", "origin", "HEAD"))
-    if p.returncode != 0:
-        print("tree_invariant: WARN — committed locally; push failed (offline or no remote)")
-        print(f"  {(p.stderr or p.stdout).strip()[:200]}")
-        return 0
-
+    # This repair may create a local commit, but it never publishes. Remote publication
+    # is a separate authorization boundary; a repair must not grant itself that authority.
     if drifted():
         print(f"tree_invariant: FAIL — {len(drifted())} path(s) still dirty after repair")
         return 1
-    print("tree_invariant: PASS — drift landed, verified, and pushed")
+    print(f"tree_invariant: PASS — repaired and committed locally ({len(to_land)} path(s)); NOT pushed")
     return 0
 
 
