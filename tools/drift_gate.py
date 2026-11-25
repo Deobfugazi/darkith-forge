@@ -21,6 +21,7 @@ Exit contract (a gate must be exact about what it refuses to judge):
 """
 import subprocess
 import sys
+import os
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -58,7 +59,7 @@ def find_drift(root=ROOT):
 
 
 def repair(root=ROOT):
-    """One deterministic sweep: stage, commit, push. Never force, never rewrite."""
+    """One deterministic sweep: stage and commit; publish unless testnet repair defers it."""
     st = git(["status", "--porcelain"], root=root)
     if st.returncode != 0:
         return 'skip', [st.stderr.strip() or 'git unavailable']
@@ -72,6 +73,13 @@ def repair(root=ROOT):
              "Co-authored-by: openhands <openhands@all-hands.dev>"], root=root)
     if c.returncode != 0:
         return 'drift', [c.stderr.strip() or 'commit refused']
+    # Testnet repair converges locally first. Its caller carries the complete fixed point
+    # and performs one final guarded push; pushing from an intermediate repair can recursively
+    # invoke the pre-push rehearsal before sibling generators have finished.
+    if os.environ.get("DARKITH_DEFER_PUSH") == "1":
+        state, paths = find_drift(root=root)
+        return ("clean", []) if state == "clean" else ("drift", paths)
+
     # Push only where a remote exists. A local-only worktree (or a throwaway test repo)
     # converges on the commit itself; unpushed age is a separate measurement owned by
     # authority_gate (NEVER #21), so this gate must not fail what git cannot reach.
