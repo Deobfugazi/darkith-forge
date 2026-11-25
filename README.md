@@ -1,994 +1,236 @@
-# DARKITH — README
+# DARKITH
 
-> The one file that assumes you know **nothing**, states what makes this repo
-> **different in principle from every other**, explains **every hand-made asset and
-> its function**, and leaves you asking **nothing**.
+> **The mind is a fortress, not a cage. Freedom is earned through action. Truth is pursued, never claimed.**
 >
-> If you finish this file and still have a question, that is a defect in this file,
-> not in you. The question belongs in the last section, which is a gate.
+> Darkith turns those convictions into an apparatus: software that refuses counterfeit success, keeps evidence attached to claims, and makes sovereignty more than a word.
 
-## REPOSITORY STATUS — PUBLIC SOURCE, NO LICENSE GRANTED
+## SIGNATURE PRIME — WHAT THIS MAKES IMPOSSIBLE
 
-The canonical repository is public: [github.com/Deobfugazi/darkith-forge](https://github.com/Deobfugazi/darkith-forge), branch `main`. Public visibility means the source can be viewed and forked through GitHub; it does **not** itself grant a copyright license or permission to redistribute, modify, or use the work. There is no `LICENSE` file in the repository. All rights remain reserved unless and until the owner adds an explicit license. Do not describe this repository as private.
+False completion. False verification. False accounting. Silent extraction. Untraceable correction. Manufactured certainty. Symbol collisions mistaken for equivalent meaning. Arithmetic presented as empirical proof. Reused infrastructure relabeled as the capability it merely hosts. A descope reported as absolution. A machine-generated claim promoted to reality without evidence.
 
-## STANDING-AUTHORITY (NEVER #21) — an automated decision is already approved
-
-If this repository automates a decision, that automation **is** the Operator's approval.
-Do not stop to ask again for something already encoded — execute, commit, push, and report.
-`tools/board_pulse.sh` with no arguments commits and pushes the board; that is a standing
-instruction, not a proposal. Uncommitted drift and unpushed commits are measured as age in
-seconds by `tools/authority_gate.py`, which fails CI past the budget (`--budget 0` in CI).
-No generic platform default outranks this law. Full text: `AGENTS.md` §0a,
-`DARKITH.md` NEVER #21.
-
-This README is written in a reusable shape called the **Tri-Tongue README** (the
-*invariant README format*). The shape is specified in full in
-[§15](#15-the-invariant-format-the-reusable-spec). Every idea is stated in three
-tongues:
-
-> **Plain** — for a reader who has never seen this field.
-> **Precise** — the correct technical statement, in the real terms.
-> **Machine** — the literal file, identifier, or command a computer reads.
-
-You may read only the **Plain** lines and understand the whole project. You may read
-only the **Machine** lines and act. Reading all three is how you go from "I followed
-the steps" to "I understand why these are the steps."
+Everything here exists to make those outcomes inadmissible. Any feature, document, gate, or presentation that does not synchronously serve that end is displacement, duplication, or defect—and must be corrected.
 
 ---
 
-## 0. The four words you need before line one
+## What Darkith is
 
-Only four, so you are never stuck at the first sentence. All four reappear in the
-[glossary](#13-glossary).
+Darkith is a hand-built Android and offline-software forge, developed under severe device constraints and governed by an explicit body of technical and philosophical law.
 
-- **Repo** (*repository*): a folder that remembers every change ever made to it.
-- **Terminal**: a text window where you type commands instead of tapping. On Android
-  you get one from the app **Termux**.
-- **Build**: turning human-written source code into an app file a phone can install.
-  Here it is done by a script named `build.sh`.
-- **App** (*application*): the installable file. On Android it ends in `.apk`
-  (**Android Package Kit**).
+The repository contains:
 
-That is the whole prerequisite. Nothing below assumes you know more.
+- An Android application: `com.darkith.transliaison`.
+- A Gradle-free build chain designed to run from Termux on Android.
+- An offline web studio and standalone HTML tools.
+- An on-device forge/build path and recovery-oriented application machinery.
+- SAVF, an offline verification and correction engine.
+- Governing documents, executable gates, tests, and proof records.
 
----
+The app is the tangible substrate. The governing idea is the system that refuses to confuse an artifact with its claim about itself.
 
-## 1. What Darkith is (the 60-second answer)
+## The will behind the work
 
-> **Plain.** Darkith is an Android app that builds **on the phone itself** — no
-> computer, no internet, no Google tooling. It is also a set of offline web pages (a
-> "studio") that run in any browser. It is written by hand, on purpose, so that
-> nothing in it is generated code you cannot read or trust.
->
-> **Precise.** Darkith is an Android application (`com.darkith.transliaison`) plus an
-> offline web studio. It is compiled from hand-written Kotlin by a **Gradle-free**
-> seven-step toolchain (the "raw chain") that runs inside Termux on an arm64 Android
-> device, targeting `minSdk 24` / `targetSdk 34`. It carries an in-app forge (a build
-> engine), an absolution/crash-recovery system, and a rule set enforced by executable
-> gates that run in one command: `bash tools/ci.sh`.
->
-> **Machine.** Package `com.darkith.transliaison`; version `2.1.0-omega`
-> (`versionCode 4`; surface `v5.3.1`); source in `app/src/main/java/com/darkith/transliaison/`; entry
-> points `MainActivity` and `HomekeeperActivity`; build with `bash build&install.sh`;
-> verify with `bash tools/ci.sh`.
+Darkith begins with a refusal: **no system earns authority by sounding certain.**
 
----
+A result must be grounded in what exists. A capability must be judged by its own behavior—not by a nearby file, reusable framework, or convincing explanation. A correction must preserve the defect's origin, name the governing rule, and leave evidence that can be checked again.
 
-## 2. What makes this repo unique in principle
+The long-range objective is economic and civic as well as technical: tools and systems that increase people's ability to produce, retain, govern, and circulate value without surrendering it through silent extraction. The destination is not merely a green build or a completed task list. It is a world in which people can understand the machinery shaping their lives, participate in its governance, and retain meaningful control over the value they create.
 
-This is the part most READMEs omit. Every repo has a stack; almost none has a
-**principle** that dictates the stack. Here it is, in one sentence:
+That economic objective is **not claimed as implemented by this repository today**. It is the direction that gives the engineering its purpose.
 
-> **Nothing load-bearing is "stamped" (generated by a tool or a template). Every
-> load-bearing artifact is hand-derived from source, so the shipped app is *pristine*
-> — free of the mechanical failure modes that stamped code carries — and each
-> hand-made asset is then post-hoc stress-tested in exact coupling relation to every
-> other asset until the residual closes at zero, with no stubs.**
+## The governing principles
 
-The seven ideas below carry that sentence. But the sentence has one **living
-embodiment** — a loop that reads the phone's real hardware every frame and re-derives
-its own allocation from the residual. That is the **sui generis core**, and it has its
-own section: **[§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)**. Read it
-first if you read nothing else.
+### Never counterfeit a capability
+A stub that returns success is a lie with a clean exit code. If a mechanism is absent, its absence must be explicit. A named boundary is honest; simulated completion is not.
 
-### 2.1 The Prime Directive: never a stub
+### Evidence belongs to the claim
+Documentation is not execution. Execution is not verification. Verification is not closure. Claims retain their actual evidence state, including uncertainty, contradiction, skipped checks, and unresolved work.
 
-> **Plain.** A "stub" is fake code that returns a fake success so the build looks
-> green. This project forbids stubs absolutely. If a mechanism is not real, the code
-> must say so plainly instead of pretending.
-> **Precise.** NEVER #1, the Prime Directive, forbids any fake return value that makes
-> the build pass. A mechanism that genuinely requires an artifact not present must be
-> declared as a **named boundary** (`EXPOSABLE`), never faked. A stub lies about
-> having a mechanism; a named boundary states honestly that the mechanism needs an
-> external artifact.
-> **Machine.** You can see it in the source: `AegisVM.executeAbsolution` returns
-> `"ERROR: NOT_IMPLEMENTED"` rather than a fabricated `"OK: ABSOLVED"`. The rule text
-> is in `docs/nt/NT-X.txt` (Part Zero) and `docs/nt/NT-XII.txt`.
+### Status belongs to the capability
+A file may exist while the capability it names remains absent. General admission machinery does not become economic admission because economic work intends to use it. Reused infrastructure is an asset—not inherited proof.
 
-The ninth corruption mode is the *deliberate lie*. The Prime Directive is the refusal
-to add it. Everything else in this repo follows from that refusal.
+### Preserve meaning through correction
+A repair must not erase the original directive, silently change its meaning, or fill a gap with invented facts. Corrected material is a traceable derivative. Conflicts are resolved by the governing invariant, not by majority vote or convenience.
 
-### 2.2 The stamp versus the hand
+### Keep accounting systems distinct
+Project progress and economic extraction are different measurements.
 
-> **Plain.** A "stamp" is a template you press onto new material: the same words
-> appear every time because the carving is identical. Stamping is fast and it
-> reproduces the carving's errors with every press. This project prefers the **hand**:
-> a human derives each part from first principles, and the machine executes it.
-> **Precise.** A stamped artifact is generated by a tool/template (an annotation
-> processor, a code generator, a build plugin, a scaffolding CLI). The hand derives
-> the invariant; the machine executes it. The project's word for the joined
-> hand-and-machine place is the **manufactory** — from Latin *manufactorium*, "a place
-> where something is made by hand" (*manus* + *facere*).
-> **Machine.** Concretely: no annotation processor, no code generator, no template
-> engine produces the app's classes. The 69 Kotlin source files are written out in full. The
-> doctrine is in `docs/nt/NT-XII.txt` (Part Fifteen).
+Project accounting asks what registered work remains. Economic accounting asks what a community produces, what leaves it, and what value it retains and controls. A zero project deficit cannot prove zero extraction; a low extraction ratio cannot prove a project complete.
 
-### 2.3 The nine corruption modes (why hand-coding makes the app pristine)
+The economic invariant is:
 
-> **Plain.** Stamped code fails in nine predictable ways. Because this project
-> hand-writes its parts, it can *choose* not to have those failures. That is what
-> "pristine" means here: the shipped app is free of the nine ways generated code
-> rots.
-> **Precise.** The **corruption taxonomy** names nine mechanical failure modes of any
-> stamped artifact. Each gate in this repo is a falsifier aimed at one of them. The
-> modes are listed below, with the concrete thing this repo does instead.
-> **Machine.** Source of the taxonomy: `docs/nt/NT-X.txt` §1.6.
+`W_in − E = S`
 
-| # | Mode | What it is | How hand-coding removes it here |
-|---|---|---|---|
-| 1 | **Silent omission** | Content that should be present is dropped; the build still succeeds. | Every input the chain reads is versioned in the tree (SPI-14); a gate fails if one is missing. |
-| 2 | **Semantic drift** | Text survives after its meaning changed. | The canonical record is one file (`DARKITH.md`); copies are generated, never hand-edited (NEVER #16). |
-| 3 | **Indentation corruption** | An invisible shift changes the structure. | The Kotlin is compiled by `kotlinc`; a structure error is a compile error, not a silent shift. |
-| 4 | **Abstraction opacity** | The mechanism is hidden in compiled output, so a crash points at code you cannot find. | No annotation processors. Every method you call exists in a `.kt` file you can open. |
-| 5 | **Ritualistic retention** | Code is kept because the template had it, not because it is load-bearing. | Every law must name an executable gate or be marked `[NOTE: not yet gated]` (`tools/law_gate.py`). |
-| 6 | **Template-logic error** | The templating layer adds its own bug. | There is no templating layer in the app path; the manifest template is a byte-level splice, not a re-render. |
-| 7 | **Context-adaptation bug** | Code carved for one context is pressed onto another. | The ceiling is empirically locked to API 34; no speculative fallback branch is added (`tools/api_level_gate.py`). |
-| 8 | **Speciation** | One ancestor diverges into unrecognizable dialects. | One authoritative tree (NEVER #11); a gate fails on a second live copy. |
-| 9 | **Black hole** | Repeated mutation loses the original shared meaning. | The NT corpus is carried and every claim is graded; `tools/nt_gate.py` fails on an unresolved contradiction. |
+where `W_in` is verified community-generated wealth, `E` is external extraction, and `S` is retained value. Retention is not merely a positive number: value must be accessible, locally controlled, and able to circulate.
 
-The tenth mode — the deliberate lie — is forbidden by the Prime Directive
-([§2.1](#21-the-prime-directive-never-a-stub)).
+### No false greens
+PASS, FAIL, SKIP, and INACTIVE are not interchangeable. A skipped check did not pass. A descope is a boundary with a cost, not absolution. Project-level success must never be presented as proof of a larger system-level outcome.
 
-### 2.4 The mint, and the coupling that must hold
+### Build by hand; verify by machine
+The app's load-bearing Kotlin is written directly rather than produced by an app-class code-generation pipeline. The machine then compiles, checks, measures, and tests what the hand has derived. Hand-written code is not inherently correct; this choice keeps source inspectable and the transformation path explicit.
 
-> **Plain.** Every defect resolved here is not just "fixed" — it is *minted*: recorded
-> as a real, measured, byte-accurate unit of value, backed by a re-runnable command.
-> And each minted asset must *couple* to every other one exactly: no name collisions,
-> a real interface between them, and one shared clock.
-> **Precise.** A **mint** is the codified closure of a residual: the residual is
-> measured, the correction is written down, and the closure is re-runnable. **The
-> coupling law** (NT VI) states a graft holds iff three conditions hold at once:
-> *disjointness* (the payload's symbol space and the donor's share no colliding name,
-> `D ∩ P = ∅`), *continuity* (the interface is load-bearing, not decorative), and
-> *synchrony* (both sides are held to one clock). If all three hold, the coupling
-> residual is zero.
-> **Machine.** Disjointness is enforced by `tools/fork_integrity_gate.sh` (no foreign
-> symbol, zero `import androidx`); continuity by `tools/bridge_contract_audit.py` (the
-> HTML ↔ Kotlin contract); synchrony by `tools/synchrony_gate.py` (one clock,
-> UTC+8). Source: `docs/nt/NT-VI.txt`.
-
-### 2.5 The closure criterion (Sigma equals zero)
-
-> **Plain.** The build is finished only when the residual is exactly zero: nothing the
-> tools verified is missing from the source, and nothing in the source fails to
-> compile. Not "close enough" — zero.
-> **Precise.** The closure criterion is `Σ = Σ_S + Σ_B = 0`, where `Σ_S` is the
-> *substrate residual* (a mechanism the Ingestor verified but the source does not use
-> — semantic drift) and `Σ_B` is the *bytecode residual* (a compile failure). `Σ_B > 0`
-> is impossible to ship because the compiler refuses to emit; the Healer loop runs
-> until `Σ_S = 0`.
-> **Machine.** The loop is the **Autophagic Healer** (`AutofillCorrector.kt` plus
-> `SubstrateIngestor.kt`); the proof of a clean close is `kotlinc` exit 0, recorded in
-> `proof/`. Source: `docs/nt/NT-X.txt` §5.
-
-### 2.6 The three registers (one artifact, three readers)
-
-> **Plain.** Anything that must serve both the expert who builds it and the novice who
-> checks it is written in three layers: the dense source, the plain-language proof log,
-> and the audit that lists what could not be proven.
-> **Precise.** **Register 1** is pre-runtime source (dense, machine + expert).
-> **Register 2** is the runtime proof log (verbose, plain-language, novice-verifiable).
-> **Register 3** is the audit register (the falsifier set plus the Healer's
-> plain-language surfacing of deficits). The **two-register law** says such an artifact
-> must be split into registers, coupled by a deterministic invariant, indexed for
-> traversal, and verified by falsifiers.
-> **Machine.** Register 2 in practice: `proof/` holds the machine-generated logs;
-> `AutofillCorrector` emits Register 3 deficits in words an Operator can act on.
-> Source: `docs/nt/NT-X.txt` §1.3–1.4.
-
-> **Not to be confused with.** The reader shell ([§5.7](#57-the-hand-written-web-studio))
-> also speaks of "registers", but those are the blueprint's **four presentation volumes**
-> — Plain, Paper, Machine, Provenance — one *unit* projected for four reader types. The
-> three registers above are the proof registers of the NT-X law. Same word, two levels:
-> the proof registers live inside the source; the presentation registers live in the
-> reader. Both are enumerated and closed.
-
-### 2.7 The repository invariant: A∧B∧C∧D
-
-> **Plain.** A repository is not "a pile of files." It is a set of holdings that must
-> satisfy four conditions at once. This project treats those four as a law and applies
-> them to its own file layout.
-> **Precise.** The invariant is the conjunction **A ∧ B ∧ C ∧ D**: **A** an
-> authoritative, organized holding environment; **B** apparatus separated from raw
-> content; **C** a preservation contract, a retrieval mechanism, and a purpose
-> boundary; **D** server-of-record, not a derived copy. The repo's knowledge base is
-> filed in registers that *are* this invariant applied to the filesystem.
-> **Machine.** `tools/kb_index.py` files every readable file into A-apparatus,
-> B-knowledge, C-skillbase, D-asset, E-evidence, or F-config, and fails if a file is
-> unfiled, duplicated, or drifted. Source: `docs/DARKITH-OMEGA-repo.txt`.
+### Sovereignty is operational
+Local execution, offline access, readable source, portable verification, and control over one's own work are not aesthetics. They reduce dependence on systems that can deny access, obscure behavior, or extract value without meaningful consent.
 
 ---
 
-## 3. THE SUI GENERIS CORE: direct hardware auto-coupling
+## The distinctive engineering
 
-This is the heart of the project. If you read only one section, read this one. It is
-the reason the app is written the way it is, and it has no equivalent in any other
-Android app.
+### A bounded, feedback-driven renderer
 
-> **Plain.** Most apps decide how much memory and how much graphics work to use when
-> they are built, or they ask the operating system for a number once. This app does not.
-> **Every single frame**, while it is drawing, it *measures the phone's real hardware* —
-> how much free memory is left, how much the GPU is using, how busy the CPU is, how long
-> the last frame took — and from those four live measurements it *computes* how many
-> vertices to draw, how much to run the GPU in parallel, and what resolution to render
-> at. Then it applies the new answer to the very next frame. The app feeds on its own
-> past decision and re-derives the next one from the residual. That is what "autophagic"
-> means here: it eats its own previous allocation. The software and the hardware are
-> wired into one closed loop. Nothing is guessed; nothing is hardcoded; the numbers come
-> from the phone itself, every frame.
->
-> **Precise.** `AutophagicAllocator` is a **bounded discrete PID controller** running at
-> the frame boundary. Its measured state is free RAM (`/proc/meminfo` `MemTotal` at
-> construction; live free bytes each tick), GPU-side bytes the renderer owns, CPU load,
-> and frame time. Its control vector is three coupled scalars — `vertexBudget`,
-> `gpuConcurrency`, `resolutionScale`. The control law is
-> `V_{k+1} = clamp(V_k + K_p·e_k + K_i·Σe_j·Δt + K_d·(e_k−e_{k−1})/Δt, V_min, V_max)`
-> with `K_p=0.12`, `K_i=0.004`, `K_d=0.08`, `V_min=65,536`, `V_max=524,288`, and
-> **anti-windup** (the integral is frozen whenever a step would leave the bounds). It is
-> paired with a second controller, `MemoryGovernor`, that keeps the app's own heap under
-> a safety fraction of `Runtime.maxMemory()` and hands the renderer a byte ceiling; and
-> with `GpuScanner`, which queries the live GL context for its real
-> `GL_MAX_TEXTURE_SIZE` and derives a conservative cap that **never returns zero**. The
-> renderer `OmegaRenderer` runs the whole law **first, every frame**, in
-> `onDrawFrame → tickFrameBoundary()`, then renders to an FBO and blits it.
->
-> **Machine.** `AutophagicAllocator.tick(freeRamBytes, gpuMemBytes, cpuLoad, frameMs) ->
-> Allocation(vertexBudget, gpuConcurrency, resolutionScale, memoryResidual,
-> budgetCeiling)`; `MemoryGovernor.reciprocate(rendererAllocatedBytes,
-> modelAllocatedBytes) -> CouplingAllocation(rendererMaxBytes, modelMaxBytes,
-> systemPressure, selfOomSafe)`; `GpuScanner.safetyCap(freeRamBytes)`;
-> `OmegaRenderer.tickFrameBoundary()` → `allocator.tick` → `governor.reciprocate` →
-> `GpuScanner.safetyCap` → `apply`. Files:
-> `app/src/main/java/com/darkith/transliaison/core/AutophagicAllocator.kt`,
-> `MemoryGovernor.kt`, `GpuScanner.kt`, `Allocation.kt`, `OmegaRenderer.kt`. Doctrine:
-> `docs/nt/NT-X.txt` Part Three (§3.1–3.8).
+The Android renderer contains a hardware-responsive allocation loop. At frame boundaries, it uses device measurements and tracked resource use to adjust bounded rendering budgets. The allocation feeds back into the next frame rather than remaining a fixed build-time assumption.
 
-### 3.1 Why this is sui generis (why no other app does it)
+The implementation includes:
 
-> **Plain.** An ordinary app treats the phone as a fixed box: it assumes a screen size,
-> assumes a memory limit, and hopes it fits. This app treats the phone as a *sensor and
-> an actuator at once*. It reads the hardware and writes back to it, in a loop, sixty
-> times a second. That is the whole idea, and it is the reason the source is hand-written
-> from scratch: a loop this tight, with anti-windup and bounded outputs, cannot be
-> delegated to a framework without losing the guarantee that it can never crash, never
-> divide by zero, and never leave its bounds.
-> **Precise.** The loop is **total**: for any finite, non-negative input, `tick()` cannot
-> divide by zero, cannot emit NaN, and cannot return a value outside `[V_min, V_max]`.
-> The integral term is reset at the bounds (anti-windup), `dt` is floored at 1 ms so a
-> stalled clock cannot blow up the derivative, and every pressure term is clamped. The
-> renderer asserts the coupling as an **invariant witness** each frame: the grid's vertex
-> count must not exceed the allocator's budget, or it throws with the two numbers named.
-> **Machine.** `AutophagicAllocator.kt` — `dt = ((now-lastTs)/1e9).coerceAtLeast(1e-3)`,
-> `memPressure.coerceIn(-10.0, 10.0)`, `sK.coerceIn(0.5, 1.0)`,
-> `vNext.coerceIn(vMin, vMax)`; `OmegaRenderer.kt` —
-> `check((subdiv+1)*(subdiv+1) <= lastAllocatorVertexBudget) { "INVARIANT VIOLATED…" }`.
+- `AutophagicAllocator` — bounded allocation logic.
+- `MemoryGovernor` — reciprocal budgeting between renderer and model allocations.
+- `GpuScanner` — queries supported limits from the active graphics context.
+- `OmegaRenderer` — applies the allocation before rendering.
+- An invariant witness that checks the generated grid against its allocation budget.
 
-### 3.2 The two poles of the coupling (why it is a *pair*, not one loop)
+Some values are live device readings; others are renderer-owned accounting or derived estimates. Tracked GPU-side bytes are not a direct measurement of all physical GPU memory. This is an implemented control mechanism, not proof of universal crashlessness or optimal performance on every device.
 
-> **Plain.** There are two budgets that fight over the same memory: the graphics budget
-> and the model budget. A single controller would starve one to feed the other. So there
-> are two, and they *reciprocate*: when total pressure rises, the side using more than its
-> share gives memory back; when pressure is low, both grow toward a ceiling.
-> **Precise.** **Pole A** is the renderer (`AutophagicAllocator` + `MemoryGovernor`'s
-> `rendererBudget`): it owns the FBO texture, the depth buffer, the grid VBO/IBO, and the
-> IR VBO, tracked in `trackedBytes`. **Pole B** is the model (`modelBudget`): whatever
-> native model memory exists. `MemoryGovernor.reciprocate` compares the renderer's share
-> against `couplingRatio = 0.40`; above the warn line (`selfOomThreshold − warnMargin =
-> 0.75`) the majority side is debited the overshoot; below `relaxBelow = 0.50` both grow
-> by a quarter of the headroom toward `relaxCeiling = 0.60`. The governor keeps budgets
-> in `AtomicLong`s so the GL thread and any other thread read a consistent number.
-> **Machine.** `MemoryGovernor.kt` — `AtomicLong` `rendererBudget`/`modelBudget`,
-> `rendererShare = r/totalAllocated`, `overshoot` debited to the majority pole,
-> `grow = headroom/4`, `selfOomSafe = currentPressure < selfOomThreshold`.
+### A raw Android build path
 
-### 3.3 The renderer that carries the law (hand-written GLES 2.0)
+The build avoids Gradle and uses a direct toolchain sequence: Android resource compilation, Kotlin compilation, DEX conversion, packaging, alignment, and signing. The repository scripts provision and use the required tools. Signing credentials remain external to the repository.
 
-> **Plain.** The drawing is not done by a game engine. It is a hand-written OpenGL ES
-> program: it compiles its own shaders, builds its own geometry buffers, renders into an
-> off-screen texture at a resolution the controller chose, and then copies that texture to
-> the screen. It draws two layers: a rotating grid (the ambient GPU layer) and the actual
-> interface built from the layout tree.
-> **Precise.** `OmegaRenderer` implements `GLSurfaceView.Renderer`. `onSurfaceCreated`
-> builds three GLSL programs (`GRID`, `BLIT`, `IR`), a fullscreen quad, the grid, and
-> scans the GPU; **a new GL context invalidates every id, so it forgets them rather than
-> deleting them** (deleting on a dead context is undefined). `onSurfaceChanged` sets the
-> projection and resizes the FBO. `onDrawFrame` runs `tickFrameBoundary()` first, then
-> builds IR geometry within `lastSafeVertexBudget` (via `IRBuilder`), uploads it, draws
-> grid + IR into the FBO, and blits. The FBO uses `CLAMP_TO_EDGE` because a scaled FBO is
-> non-power-of-two and GLES2 requires it or the texture is incomplete. It is a singleton
-> (`liveInstance`) so the forge routes into the *live* renderer, never a phantom one.
-> **Machine.** `OmegaRenderer.kt` — `buildProgram`/`compileShader`, `makeFullscreenQuad`,
-> `buildGrid`, `uploadIr`, `drawGrid`, `drawIr`, `blitFbo`, `resizeFbo`;
-> `IR_VS`/`IR_FS`/`GRID_VS`/`GRID_FS`/`BLIT_VS`/`BLIT_FS`; `FBO_BYTES_PER_PX = 6`
-> (RGBA8 4 + DEPTH16 2); `companion object { @Volatile var liveInstance }`.
+### A correction system with evidence
 
-### 3.4 The evidence the loop leaves behind (why you can trust it ran)
+SAVF and the repository gates are designed to detect defects, classify them, trace their causes, preserve evidence, apply authorized corrections, and rerun verification. The aim is not merely to report errors; it is to make known defect classes harder to repeat.
 
-> **Plain.** This phone has no debugging cable. So the loop writes its own evidence to a
-> file on the SD card — the free memory, the tracked bytes, the raw budget, the safe
-> budget — about once a second, and the IR lines every time. The trace *is* the debugger.
-> **Precise.** `trace()` writes to logcat **and** to
-> `/sdcard/Darkith/logs/omega_trace.txt`, throttling the per-frame tick line to ~1 s so
-> the file stays small while never throttling the IR lines. A missing log file must never
-> break rendering, so the write is wrapped and swallowed.
-> **Machine.** `OmegaRenderer.trace()`; `TRACE_FILE =
-> "/sdcard/Darkith/logs/omega_trace.txt"`; `TRACE_THROTTLE_MS = 1000`.
-
-### 3.5 The hardware this loop is bound to (the ground truth)
-
-> **Plain.** The numbers are not chosen in the abstract. They are derived from the exact
-> phone: a TECNO KM4k with a MediaTek MT6768 and a Mali-G52 MC2 GPU. On that device Vulkan
-> is the crash path and GLES is the stable path, so the renderer touches GLES only. The
-> `V_min`/`V_max` bounds, the 16.6 ms deadline, and the 0.5–1.0 resolution range all come
-> from that hardware's measured limits.
-> **Precise.** The doctrine derives `V_max = 524,288` from Mali-G52 MC2 ALU throughput and
-> `V_min = 65,536` from the minimum viable set at 1600×720; the deadline is 16.6 ms
-> (60 FPS); the heap clamp is `p_k ∈ [64 MB, 307 MB]` from a 512 MB Dalvik heap limit and
-> the `H ≤ 0.75` rule (lmkd kills at 0.8). This device's facts are the reason the loop is
-> GLES-only and the reason the caps are where they are.
-> **Machine.** `GpuScanner.kt` header (TECNO KM4k / MT6768 / Mali-G52 MC2; Vulkan =
-> crash path); `AutophagicAllocator` defaults `vMin = 65_536.0`, `vMax = 524_288.0`;
-> `OmegaRenderer.targetFrameMs = 16.6f`. Doctrine: `docs/nt/NT-X.txt` Part Two (hardware
-> ground truth) and Part Three.
+The current SAVF and CI machinery are real software assets. Their presence does not mean every semantic, empirical, economic, or reality-aligned verification responsibility is implemented. Those extensions remain work.
 
 ---
 
-## 4. The chronicle (the story, in order)
+## What exists—and what remains a goal
 
-A **chronicle** narrates the facts so each idea arrives after what it depends on.
+Darkith keeps implementation and destination separate.
 
-**Chapter 1 — A phone, not a computer.** The project began with a constraint: build
-entirely on a 4 GB Android phone in Termux, no PC. Every decision below is downstream
-of that constraint.
+| Layer | Present in the repository | Not established by that fact |
+|---|---|---|
+| Android application | Kotlin app, WebView surfaces, build scripts | Universal device compatibility |
+| Offline studio | Hand-authored HTML tools and local interfaces | Every proposed workflow is complete |
+| Build and verification | Raw build chain, CI, tests, executable gates | Every gate proves every real-world claim |
+| SAVF / correction machinery | Audit engine, parity/UI gates, claims and proof records | Universal semantic and empirical truth verification |
+| Project accounting | Registered-work progress calculation | Community wealth or extraction measurement |
+| Economic Omega | Governing architecture and domain specifications | Operational economic sovereignty or zero extraction |
 
-**Chapter 2 — The forbidden tool.** The obvious Android build tool is **Gradle**. On
-this phone it exhausts memory and the device freezes. Gradle is therefore *banned*
-(**SPI-1**), and the ban is enforced.
+Economic modules, community accounting, governance adapters, subsistence and ecological measurement, reciprocal settlement, and independent Omega completion proof must not be marked implemented merely because their architecture is described or their host infrastructure exists.
 
-**Chapter 3 — The hand.** With Gradle gone, and with the Prime Directive forbidding
-stubs, the project was written by hand: every class derived from first principles,
-every binary accounted for. This is the "manufactory" — hand and machine joined.
-
-**Chapter 4 — The raw chain.** The build was re-expressed as seven explicit steps:
-`aapt2 → kotlinc → d8 → zip → zipalign → apksigner`. Each does one thing and can be
-checked alone.
-
-**Chapter 5 — The fork disease.** The source once existed in six divergent copies.
-Files drifted; some referenced code that existed nowhere. The compiler could not build
-any copy. The cure became a law: **one authoritative tree** (NEVER #11).
-
-**Chapter 6 — The compiler as the only judge.** A text-search "check" once reported
-success while the real compiler reported an error. The lesson became a law: only the
-compiler decides validity (**W-023**).
-
-**Chapter 7 — The mint.** Every defect fixed since then was *minted*: measured, closed,
-and recorded as a re-runnable proof, so it cannot silently return.
-
-**Chapter 8 — The coupling.** Each asset was then stress-tested against every other in
-exact relation: names disjoint, interfaces load-bearing, one clock. The closure is
-`Σ = 0`.
-
-**Chapter 9 — The coupling made live.** The coupling law was then given a body: a loop
-that reads the phone's real hardware every frame and re-derives its own allocation from
-the residual, with a hand-written GLES renderer as its actuator. This is the **sui generis
-core** — the reason the app exists in this form
-([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
-
-**Chapter 10 — The corpus and the studio.** A written body of reasoning (the NT corpus)
-argues *why*; an offline web studio lets the work happen in a browser.
-
-**Chapter 11 — This file.** The entry point that makes a newcomer's first question
-unnecessary.
+Omega is not a badge a document awards itself. It is a condition that must be demonstrated through independent operational evidence.
 
 ---
 
-## 5. Every hand-made asset and its function
+## Build and verify
 
-This is the exhaustive inventory. Each entry gives the file, what it is, its function,
-and — where the file is generated rather than hand-written — that fact is stated. Grouped
-by role.
+### Requirements
 
-> **Reading note.** "Hand-written" means a human derived it and it is stored in full.
-> "Generated" means a tool writes it and it must not be hand-edited. A few assets are
-> **binary** (a `.so`, a `.dex`); those are built from source and their provenance is
-> named.
+- An Android device with Termux.
+- The repository checked out locally.
+- Network access for initial toolchain provisioning; cached tools may be reused afterward.
+- A signing pair staged locally. No private signing key belongs in the public repository.
 
-### 5.1 The app shell (the two screens and their bridges)
+### Build and install
 
-| Asset | What it is | Function |
-|---|---|---|
-| `MainActivity.kt` | Hand-written Kotlin `Activity`. | The launcher screen. Hosts a hardened `WebView` (file chooser, SSL handling, URL policy). |
-| `HomekeeperActivity.kt` | Hand-written Kotlin `Activity`. | The dashboard screen. Hosts the `WebView`, an overlay browser layer, and the file chooser; requests storage permission. |
-| `HomekeeperBridge.kt` | Hand-written Kotlin class, annotated `@JavascriptInterface`. | The dashboard's API surface (`VERSION = hk-bridge-52`): version, `apkVersion()`, storage, file list/read/write, and the forge calls the web page makes. |
-| `DarkithBridge.kt` | Hand-written Kotlin class, annotated `@JavascriptInterface`. | The second bridge: donor shipping (`donorShip`), a content-addressed repo (`repoPut`/`repoGet`), file writes, `forgeDonors`, `executeAbsolutionVM`, `aegisSplitFile`. |
-| `WifiDirectBroadcastReceiver.kt` | Hand-written `BroadcastReceiver`. | Receives Wi-Fi Direct state/peer/connection broadcasts and logs them. |
-| `ApkInstaller.kt` | Hand-written Kotlin class. | Installs an APK through the framework-native `PackageInstaller` session (this replaced a `FileProvider`, which the raw chain does not ship). |
-| `ApkSignerRunner.kt` | Hand-written Kotlin class. | Signs forged child APKs using the key material in `app/src/main/assets/engine/`. |
-
-### 5.2 The forge (the in-app build engine)
-
-The forge lets the app build APKs from inside itself. It is the "master primitive"
-(*fabrica*): it fits a donor (raw material), a graft (payload), and a seal (signature)
-into a signed artifact.
-
-| Asset | What it is | Function |
-|---|---|---|
-| `BuildEngine.kt` | Hand-written Kotlin class. | Builds an APK from HTML intent by driving the native tools; merges the result into a base APK. |
-| `ChimeraBuilder.kt` | Hand-written Kotlin class. | `forgeChimera(...)`: grafts donor APK(s) plus a payload into one signed child. |
-| `DonorBuilder.kt` | Hand-written Kotlin class. | Reads and writes entries inside donor APKs (the donor substrate); locates the host's own APK. |
-| `DonorUiConcat.kt` | Hand-written Kotlin class. | Concatenates a donor's UI assets (html/css/js/media) into the graft. |
-| `EntryPointRewriter.kt` | Hand-written Kotlin class. | **The mint.** Donor in, receptacle out: injects the payload and splices the launcher entry point. |
-| `Axml.kt` | Hand-written Kotlin object. | Parses a **binary** `AndroidManifest.xml` (the compiled form Android actually ships). |
-| `AxmlWriter.kt` | Hand-written Kotlin class. | Splices a self-contained `<activity>` block into a binary manifest as a byte-level append — never re-sorting the string pool, never remapping an index. |
-| `NativeTools.kt` | Hand-written Kotlin object. | Runs the hand-coded native binaries from the library directory; aligns the APK (native, with a pure-Kotlin fallback). |
-| `KotlinZip.kt` | Hand-written Kotlin object. | Writes ZIP archives in pure Kotlin. |
-| `KotlinUnzip.kt` | Hand-written Kotlin object. | Lists and extracts ZIP archives in pure Kotlin. |
-| `ShellBridge.kt` | Hand-written Kotlin object. | Reads an APK's real metadata: `apkVerify`, `apkSignature`, `apkManifest`, `apkInfo`; runs shell steps. |
-
-### 5.3 The absolution system (crash recovery and integrity)
-
-"Absolution" is the project's word for returning a build or a session to a clean,
-provable state. These files are hand-written and several are deliberately *honest about
-not being finished* rather than faking success.
-
-| Asset | What it is | Function |
-|---|---|---|
-| `AegisCircuitBreaker.kt` | Hand-written Kotlin object. | Detects a prior crash and rolls back, guarding API-30+ calls so old phones do not die before the UI paints. |
-| `AegisDatalog.kt` | Hand-written Kotlin object. | A **negative datalog**: records failed classes so a known-bad one is never retried blindly. |
-| `AegisEnvelope.kt` | Hand-written Kotlin object. | Computes a SHA-256 **envelope** binding donor hash, payload hash, allowed fates, and allowed classes. |
-| `AegisOracle.kt` | Hand-written Kotlin object. | Predicts class collisions between donor and payload, classified `fatal` / `resolvable` / `benign`. |
-| `AegisReaper.kt` | Hand-written Android `Service`. | A foreground service that reaps abandoned work. |
-| `AegisShadowWorktree.kt` | Hand-written Kotlin object. | Creates a shadow copy of donor + payload so an experiment can be run and destroyed safely. |
-| `AegisVM.kt` | Hand-written Kotlin object. | The absolution VM. **Returns `"ERROR: NOT_IMPLEMENTED"` honestly** rather than fabricating success (the Prime Directive in code). |
-| `AegisWAEL.kt` | Hand-written Kotlin object. | A write-ahead event log, hash-chained (each record seals the previous), so tampering is detectable. |
-| `SynchronicityScheduler.kt` | Hand-written Kotlin object. | Couples a build to a two-party nonce within a bounded time window; mints a token only when the nonce verifies. |
-
-### 5.4 The engine core (HTML intent → pixels)
-
-This is the pure-Kotlin half: it turns web intent into a structural model, heals it, and
-renders it. None of it uses an external parser.
-
-| Asset | What it is | Function |
-|---|---|---|
-| `TransliaisonEngine.kt` | Hand-written Kotlin class. | The architect: HTML intent in, `List<LayoutNode>` out. Pure Kotlin, runs on device and in plain JVM tests. |
-| `LayoutNode.kt` | Hand-written Kotlin data types. | The IR: structural intent with no Android types; lengths in CSS px, colors as ARGB. |
-| `IRBuilder.kt` | Hand-written Kotlin class. | Turns IR into flat, world-space quads that fit a fixed vertex budget; reports the budget limit instead of hiding it. |
-| `IRAuditor.kt` | Hand-written Kotlin object. | Prunes malformed IR in place (empty containers, empty leaves, dead interactives) and reports each change. |
-| `CssLite.kt` | Hand-written Kotlin class. | A small CSS cascade (tag, `.class`, `#id`, compounds, `:root` custom properties, specificity). Unsupported selectors are *recorded*, never silently dropped. |
-| `HtmlDom.kt` | Hand-written Kotlin class. | A minimal DOM node and parser; keeps raw text for `script`/`style`. |
-| `SubstrateIngestor.kt` | Hand-written Kotlin class. | Fetches and verifies the **substrate** — the verified mechanism the Healer inserts. States its boundary honestly. |
-| `AutofillCorrector.kt` | Hand-written Kotlin objects (`HealerDictionary`, `AutofillCorrector`) and data types. | **The Healer.** Intercepts a compiler failure, patches the surgical chunk with a verified mechanism (never a stub), and surfaces any unsynthesizable deficit in plain words. |
-| `AutophagicAllocator.kt` | ★ **CORE** — hand-written Kotlin class. | The bounded PID controller that maps live free RAM, GPU memory, CPU load, and frame time to vertex budget / GPU concurrency / resolution scale. Reads real RAM from `/proc/meminfo`. **Full treatment: [§3](#3-the-sui-generis-core-direct-hardware-auto-coupling).** |
-| `MemoryGovernor.kt` | ★ **CORE** — hand-written Kotlin class. | The two-pole budget: keeps the app's own heap under a safety fraction of `Runtime.maxMemory()` and reciprocates memory between renderer and model. **Full treatment: [§3.2](#32-the-two-poles-of-the-coupling-why-it-is-a-pair-not-one-loop).** |
-| `GpuScanner.kt` | ★ **CORE** — hand-written Kotlin object. | Queries the live GLES context for real limits and derives a conservative byte ceiling that never returns zero. **Full treatment: [§3.5](#35-the-hardware-this-loop-is-bound-to-the-ground-truth).** |
-| `OmegaRenderer.kt` | ★ **CORE** — hand-written Kotlin `GLSurfaceView.Renderer`. | The hand-written GLES 2.0 renderer: compiles its own shaders, builds its own buffers, renders to an FBO, blits. Runs the control law first, every frame, in `tickFrameBoundary`. **Full treatment: [§3.3](#33-the-renderer-that-carries-the-law-hand-written-gles-20).** |
-| `Allocation.kt` | ★ **CORE** — hand-written Kotlin data class. | The control vector the allocator emits: `vertexBudget`, `gpuConcurrency`, `resolutionScale`, `memoryResidual`, `budgetCeiling`. |
-| `NativeForgeBuilder.kt` | Hand-written Kotlin class. | The IR handoff: heals HTML intent and queues IR into the **live** renderer; refuses with a named deficit if no live renderer is attached. |
-| `NativeOmegaBuilder.kt` | Hand-written Kotlin class. | Drives the allocator and governor at the frame boundary on the main thread (the core's main-thread driver). |
-| `OmegaActivity.kt` | Hand-written Kotlin `Activity`. | The Omega screen: hosts the `GLSurfaceView` and the core's renderer. |
-| `SelfTest.kt` | Hand-written Kotlin object. | The Forge as a testable hypothesis: checks the pure-Kotlin half (IR, emitter, Healer) in-app and as a JVM unit test. |
-
-### 5.5 Observability (time, labor, and proof on disk)
-
-| Asset | What it is | Function |
-|---|---|---|
-| `Timestamp.kt` | Hand-written Kotlin object. | ISO-8601 UTC timestamps; `ok`/`err` helpers. |
-| `LaborClock.kt` | Hand-written Kotlin object. | Active-window labor accounting (5-minute active window), per-day and cumulative hours. |
-| `ProgressDirectory.kt` | Hand-written Kotlin object. | Creates the progress directory, hashes files, writes metadata. |
-| `ProgressLedger.kt` | Hand-written Kotlin object. | The progress ledger: records build events over time. |
-| `AuditWriter.kt` | Hand-written Kotlin object. | Writes an audit of the packaged source to disk. |
-
-### 5.6 The hand-coded native binaries
-
-| Asset | What it is | Function |
-|---|---|---|
-| `app/src/main/jniLibs/arm64-v8a/libaapt2.so` | A **statically linked AArch64 executable** (`ET_EXEC`) — a hand-packaged build of the resource packager. | Runs the resource steps of the chain on-device. It carries no interpreter and no dynamic dependencies, so it runs directly with no `LD_LIBRARY_PATH`. |
-| `app/src/main/jniLibs/arm64-v8a/libzipalign.so` | A **statically linked AArch64 executable**. | Aligns the APK on-device before signing. |
-| `zipalign.py` | Hand-written pure-Python program. | A zipalign fallback for Termux, where no `zipalign` package exists; aligns STORED entries by extending the local header, exactly as the reference tool does. |
-
-> **Why they are `.so` files.** Android forbids executing files in the app's writable
-> data directory (a `W^X` rule). The only executable location a normal app has is the
-> native library directory. Shipping a static executable *as* a `lib*.so` inside the
-> APK is what makes a root-free, in-app toolchain possible.
-
-### 5.7 The hand-written web studio
-
-These are single-file, offline, zero-dependency programs. They run from `file://` with
-no server and no internet.
-
-| Asset | What it is | Function |
-|---|---|---|
-| `app/src/main/assets/vendor/darkterm.js` | Hand-written POSIX-style **shell engine** in one file (the canonical copy). | Implements words and quoting, expansions, splitting, globbing, pipelines, redirection, sequences, control flow, functions, arithmetic, and a coreutils set over a virtual filesystem. Exposed as `window.DarkTerm` / `module.exports`. |
-| `app/src/main/assets/vendor/darktools.js` | Hand-written dev toolkits layered on DarkTerm. | Four things: `store` (persistence), `tk` (a toolkit host), `task` (a real task manager), and `sync` (a synchronicity engine that learns from explicit intent and passive evidence, with an honest deficit ledger and a capability ladder). |
-| `app/src/main/assets/homekeeper.html` | Hand-written dashboard UI (one file). | The app's dashboard page. |
-| `app/src/main/assets/savf_core.html` | Hand-written SAVF engine, browser form. | The audit engine as a page. |
-| `app/src/main/assets/darkith_ui.html` | Hand-written studio page. | The studio shipped as an app asset; byte-identical to the repo-root copy below (a declared mirror). |
-| `darkith-inscriber.html` | Hand-written studio app (repo-root copy). | The browser copy of the studio. |
-| `savf.html` | Hand-written SAVF engine (repo-root). | The universal audit engine as a standalone page. |
-| `omega.html` | Hand-written design page. | The Omega terminal + local-assistant design surface. |
-| `omega-reader.html` | Hand-written single-file **reader shell** (the "Omega Reader"). | Projects a unit through the **four registers** — Plain, Paper, Machine, Provenance — with hash routing (`#/plain/5`), a landing page of bookmarks, a TOC drawer, keyboard nav, print CSS, a persisted theme, and the per-claim provenance spine inlined as `<details>`. Its shell is generated by the `render(unit)` projection; here it is instantiated for the doctrine unit `docs/DARKITH-OMEGA-repo.txt` (Part 7). Verified by `tools/test_omega_reader.js`. |
-| `darkith home forge.html` | Hand-written main studio. | The main offline studio page. |
-| `darkith code studio.html` | Hand-written audit studio. | The offline code-audit studio page. |
-| `icon_forge.html` | Hand-written single-file **visual-affordance specialist** (the "Ω Icon Forge"). | The first domain app of the launcher userspace: icons, logos and thumbnails. Builds an installable adaptive-icon pack (foreground VectorDrawable or PNG fallback, `ic_launcher_background` colour, the two `mipmap-anydpi-v26` XMLs, and legacy mipmaps) as a deterministic ZIP. Gates are live and four-state; coupling to the device is through the real `window.darkith` bridge (`fileWrite`/`fileStat`/`getAppIcon`), and with no bridge it reports UNAVAILABLE, never a silent PASS. Verified by `tools/test_icon_forge.js`. |
-
-### 5.8 The child-forge engine inputs (a mix of hand-written and generated)
-
-| Asset | What it is | Function |
-|---|---|---|
-| `app/src/main/assets/engine/AndroidManifest.tpl.xml` | Hand-written **child-APK manifest template**. | Declares the child's identity; `{{PKG_NAME}}` and `{{APP_NAME}}` are filled at forge time. The launcher is the host's `HomekeeperActivity`. |
-| `app/src/main/assets/engine/template.dex` | **Generated** by `build.sh` (step 5b). | The host's compiled `classes.dex`, shipped so the forge can stamp a child without recompiling. |
-
-### 5.9 The hand-written Python tooling
-
-| Asset | What it is | Function |
-|---|---|---|
-| `savf.py` | Hand-written, zero-dependency Python. | The **Signed Axis Verification Formulary** (SAVF-1): an axis core plus gates (`scan`, `reach`, `mutate`, `freeze`, `manifest`, `ledger`, `verdict`). It grades each claim by kind and can re-run recorded evidence commands. |
-| `tools/*.py`, `tools/*.sh` | Hand-written gates and helpers. | The executable laws. See [§9](#9-the-gates-what-runs-and-why). |
-
-### 5.10 The hand-written build scripts
-
-| Asset | What it is | Function |
-|---|---|---|
-| `build.sh` | Hand-written shell. | The seven-step raw chain, in one script, with discovery, guards, and honest failure. |
-| `build&install.sh` | Hand-written shell. | The one-shot: provision the toolchain, stage engine inputs, build, then hand the APK to the installer. |
-
----
-
-## 6. Why hand-coding from source yields a pristine shipped app
-
-> **Plain.** When a machine writes your code for you, you ship code nobody read.
-> Here a person wrote every part, so every part can be read, checked, and proven. That
-> is what keeps the shipped app clean.
-> **Precise.** Hand-derivation removes corruption modes 1–9 ([§2.3](#23-the-nine-corruption-modes-why-hand-coding-makes-the-app-pristine))
-> at the source, then the gates keep them removed: a gate is a falsifier aimed at one
-> mode, so a mode that returns fails CI instead of shipping.
-> **Machine.** Run `bash tools/ci.sh`; each gate names the mode it guards.
-
-The chain of guarantees, end to end:
-
-1. **Written in full.** Every class is in a `.kt` file; nothing appears only in
-   compiled output (kills abstraction opacity).
-2. **Inputs versioned.** The manifest, `res/`, `assets/`, and `build.sh` live in the
-   tree, so the built app is the tree on disk (kills silent omission).
-3. **Compiled by the only judge.** `kotlinc` decides validity; a text search never
-   does (kills false confidence — W-023).
-4. **One tree.** No second live copy can drift (kills speciation).
-5. **Gated.** Every rule names a gate, and the gates run in one command (kills
-   ritualistic retention).
-6. **Honest about boundaries.** Anything that genuinely needs an external artifact is
-   declared, never faked (kills the tenth mode).
-
----
-
-## 7. How the assets are stress-tested in exact coupling relation
-
-> **Plain.** Writing each part by hand is not enough — the parts must fit. This project
-> checks that they fit in three ways: they must not share names, the connections
-> between them must actually carry work, and they must share one clock. Then it runs
-> the whole thing until the residual is zero.
-> **Precise.** The coupling law holds iff *disjointness*, *continuity*, and *synchrony*
-> hold ([§2.4](#24-the-mint-and-the-coupling-that-must-hold)); closure is `Σ = 0`
-> ([§2.5](#25-the-closure-criterion-sigma-equals-zero)).
-> **Machine.** The three legs and their gates:
-
-| Coupling leg | Condition | Gate that enforces it |
-|---|---|---|
-| Disjointness | `D ∩ P = ∅` (no colliding name) | `tools/fork_integrity_gate.sh` — one tree, no foreign symbol, zero `import androidx` |
-| Continuity | the interface passes a real load | `tools/bridge_contract_audit.py` — the HTML ↔ Kotlin contract is complete |
-| Synchrony | one shared clock | `tools/synchrony_gate.py` — one clock, UTC+8, on every surface |
-
-The **Autophagic Healer** closes the loop: when the compiler fails, it does not stop;
-it queries the verified substrate, patches the exact chunk, and re-invokes the chain
-until the residual is zero. The chain itself never changes — only the driver does.
-
-The **strongest proof of coupling** is not a gate but the live core itself: the
-`AutophagicAllocator` (Pole A's control law) and `MemoryGovernor` (the two-pole budget)
-are joined to `OmegaRenderer` by a per-frame **invariant witness** that throws with both
-numbers named if the renderer's grid ever exceeds the allocator's budget. That is the
-coupling law running at 60 Hz on the real device
-([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
-
----
-
-## 8. The repository map
-
-| Item | What it is |
-|---|---|
-| `app/` | The Android app: Kotlin source, resources, assets, manifest. |
-| `app/src/main/java/com/darkith/transliaison/` | The one authoritative Kotlin tree (69 `.kt` files, counted from the current repository tree). |
-| `app/src/main/AndroidManifest.xml` | Declares identity, version, permissions, screens. |
-| `app/src/main/jniLibs/arm64-v8a/` | The hand-coded native binaries. |
-| `app/src/main/assets/` | The shipped web studio, the vendor engines, and the engine inputs. |
-| `build.sh` | The seven-step raw chain. |
-| `build&install.sh` | The one-shot build-and-install. |
-| `savf.py` | The SAVF auditing engine. |
-| `omega-reader.html` | The four-register reader shell (the "Omega Reader") — the doctrine unit as one self-contained page. |
-| `zipalign.py` | The pure-Python zipalign fallback. |
-| `tools/` | The gates and helpers. |
-| `docs/` | The knowledge corpus: `docs/nt/` (NT corpus), `docs/INDEX.md`, `docs/ARCHITECTURE-OMEGA.md`, `docs/DARKITH-OMEGA-repo.txt`. |
-| `proof/` | Machine-generated evidence: ledgers, proofs, reconciliation reports. |
-| `build/` | Build tooling and generators. |
-| `libs/` | Jars on the compile classpath (`apksig.jar`). |
-| `delivery/` | Regenerable delivery output (git-ignored). |
-| `DARKITH.md` | The single canonical record: version, reconciliation, deficits, laws. |
-| `AGENTS.md` | Repository knowledge for an AI agent or a returning human. |
-| `RESUME.md` | The recovery protocol. |
-| `TASKS.md` | The durable board. |
-| `DEFICITS.json` | The deficit ledger. |
-
-**Agents publish without asking.** The Operator's decision to publish is made and
-automated, so an agent commits and pushes to the working branch (and runs
-`tools/board_pulse.sh` / `continuity.sh` / `sync.sh` / `converge.sh`) with no approval,
-and never ends a turn holding unpushed work. Force-pushes, history rewrites, and
-anything touching secrets still require explicit approval. Law: `DARKITH.md` MUST #35,
-`AGENTS.md` §40, `RESUME.md` §4.
-
-**Stall is measured as time, not as a flag.** `tools/stall_clock.py` (in `tools/ci.sh`)
-fails CI when unpushed or uncommitted work dwells past the budget in
-`STALL_BUDGET.json` — the schedule is the Operator's, and a missing budget fails
-closed. `board_pulse` asks *is it pushed?*; this asks *for how long was it not?*, which
-is the question that actually defends a deadline. Law: `DARKITH.md` MUST #36,
-`AGENTS.md` §41.
-
----
-
-## 9. The gates (what runs and why)
-
-`bash tools/ci.sh` runs every check and exits `0` only if all pass. The important gates,
-and the corruption mode each one guards:
-
-| Gate | Prevents |
-|---|---|
-| `tools/fork_integrity_gate.sh` | divergent trees (mode 8); foreign symbols; unversioned inputs (mode 1); non-compiling code |
-| `tools/delivery_gate.sh` | declaring "delivered" while any named loophole is open |
-| `tools/nt_gate.py` | a corpus claim cited but not carried; an unresolved contradiction (mode 9) |
-| `tools/nt_sensor.py` | the Healer example naming a symbol the reference jar does not carry |
-| `tools/syntax_gate.py` | unclosed block comments in Kotlin |
-| `tools/api_level_gate.py` | a high-API call with no guard (mode 7) |
-| `tools/secret_gate.py` | a credential committed to the tree |
-| `tools/source_inspector.py` | an unexamined source feature: unclosed comment, foreign import, `!!`, stub, swallowed exception, duplicate node function (and the stasis gate that would tolerate them) |
-| `tools/board_gate.py` | a board item marked done with no evidence |
-| `tools/session_boot_gate.py` | a fresh agent starting work without the mandatory first-screen restore/heal/self-test/CI formulary |
-| `tools/stall_gate.py` | a named deficit left open across deliveries |
-| `tools/law_gate.py` | a rule with no executable gate (mode 5) |
-| `tools/synchrony_gate.py` | a surface with no clock (coupling leg 3) |
-| `tools/convergence_gate.py` | two derivations of one fact that disagree |
-| `tools/circadian_gate.py` | time reported in the wrong zone |
-| `tools/download_gate.py` | a link that opens a viewer instead of downloading |
-| `tools/kb_index.py` | a readable file unfiled, duplicated, or index-stale (A∧B∧C∧D) |
-| `tools/icon_gate.py` | a missing or malformed app icon |
-| `tools/install_gate.py` | an installable APK that fails its install checks |
-
----
-
-## 10. Build and install (exact)
+From the repository root in Termux:
 
 ```bash
-# In Termux, from the repo root:
-bash build&install.sh
-#   toolchain: provisioning (cached under .tools/)
-#   1/7 aapt2 compile  ok
-#   2/7 aapt2 link     ok -> base.apk
-#   3/7 kotlinc        ok -> classes/
-#   4/7 d8             ok -> classes.dex
-#   5/7 package        ok -> base.apk
-#   6/7 zipalign       ok -> aligned.apk
-#   7/7 apksigner      ok -> app-signed.apk
-#   then the Android installer opens. Tap "Install."
+bash 'build&install.sh'
 ```
 
-**If step 3 (`kotlinc`) fails with "unresolved reference":** the toolchain may be
-missing, or two compiles ran at once. Run `bash tools/fetch_toolchain.sh`, then run one
-build at a time (two `kotlinc` runs each reserve 2 GB and starve a 4 GB phone).
+Build without installing:
 
-**If you see "no APK produced":** read the log on disk; the terminal screen truncates.
-This is SPI-4: *log to disk, read from disk; the terminal is a liar.*
+```bash
+bash 'build&install.sh' --build
+```
 
----
+Provision and build without installing:
 
-## 11. Honest limits (what this does NOT do)
+```bash
+bash 'build&install.sh' --verify
+```
 
-A README that hides its limits creates follow-up questions. These are the real ones.
+The resulting APK is left at `app-signed.apk`. In install mode, the script hands it to Android's package installer when available; installation still requires the device's confirmation or applicable local permission.
 
-1. **No Gradle, ever.** There is no Gradle project file. Use `build.sh`.
-2. **No AndroidX or Compose.** Code needing them will not compile here; use raw
-   `android.*` equivalents.
-3. **The signing key is not in the repo.** By design. The build self-reports its signer.
-4. **The child-forge inputs are partly on-device only.** `android.jar` and the signing
-   pair are staged at build time, never committed.
-5. **`AegisVM` is not implemented, and says so.** It returns `"ERROR: NOT_IMPLEMENTED"`
-   rather than faking success (the Prime Directive).
-6. **The local-assistant / terminal features in `docs/ARCHITECTURE-OMEGA.md` are
-   design-stage.** Grounded in verified upstream facts; not all implemented.
-7. **There is no license file.** The repository is public, but public visibility is
-   not a license. No permission to reuse, modify, or redistribute is granted by the
-   act of publication. All rights remain reserved until the owner adds a license.
+### Run the repository checks
+
+```bash
+bash tools/ci.sh
+```
+
+Exit code `0` means the script's required checks passed. A check reported as SKIP did not pass. Read the recorded output and proof files; do not treat the final line as a universal guarantee.
 
 ---
 
-## 12. FAQ (each answer is terminal)
+## Repository map
 
-**Q. What is this project, in one sentence?**
-A hand-written, Gradle-free Android app and offline studio, built on the phone itself,
-whose uniqueness is that nothing load-bearing is generated and everything is coupled
-and gated.
+| Path | Purpose |
+|---|---|
+| `app/src/main/java/com/darkith/transliaison/` | Android application source |
+| `app/src/main/assets/` | Web assets packaged into the app |
+| `build.sh` | Raw APK build chain |
+| `build&install.sh` | Provision, build, and optionally install |
+| `tools/ci.sh` | Provider-neutral verification entry point |
+| `tools/` | Build, integrity, admission, audit, and correction tools |
+| `savf.py` / `savf.html` | SAVF engine and browser-facing interface |
+| `proof/` | Machine-readable claims, results, and evidence records |
+| `DARKITH.md` | Canonical governing record |
+| `AGENTS.md` | Operational instructions and working constraints |
+| `docs/nt/` | Noveltreatise corpus and index |
+| `omega-reader.html` | Offline reader for four presentation registers |
+| `TASKS.md` / `DEFICITS.json` | Project work and registered deficits |
 
-**Q. Do I need a computer?** No — Termux on the Android phone.
-**Q. Do I need internet?** Once, to fetch the toolchain. After that, no.
-**Q. What command builds it?** `bash build&install.sh`.
-**Q. What command checks it?** `bash tools/ci.sh` (ends in `CI: PASS`).
-**Q. Where is the version?** In `app/src/main/AndroidManifest.xml` — currently
-`2.1.0-omega` (`versionCode 4`; surface `v5.3.1`).
-**Q. Why is Gradle forbidden?** It exhausts the phone's memory and freezes it (SPI-1).
-**Q. Why not AndroidX/Compose?** The raw chain does not load them.
-**Q. Why is the code hand-written?** To ship pristine code — free of the nine corruption
-modes of stamped code ([§2.3](#23-the-nine-corruption-modes-why-hand-coding-makes-the-app-pristine)).
-**Q. What is a "stub"?** Fake code returning fake success; forbidden by the Prime
-Directive ([§2.1](#21-the-prime-directive-never-a-stub)).
-**Q. What is a "mint"?** A resolved defect, codified and re-runnable ([§2.4](#24-the-mint-and-the-coupling-that-must-hold)).
-**Q. What is the "coupling law"?** Disjoint names, load-bearing interface, one clock.
-**Q. What does "Σ = 0" mean?** The residual is exactly zero — the build is closed.
-**Q. What is the "Healer"?** The loop that repairs a compile failure with verified
-mechanism and re-runs until Σ = 0.
-**Q. What is SAVF?** The offline audit engine (`savf.py`).
-**Q. What is the "NT corpus"?** The graded reasoning documents in `docs/nt/`.
-**Q. What is "A∧B∧C∧D"?** The repository invariant ([§2.7](#27-the-repository-invariant-abcd)).
-**Q. What if a gate fails?** Read its message; it names the file and reason. Fix the
-cause, re-run. Never disable a gate.
-**Q. How do I know this README is complete?** Read
-[§13](#14-the-questions-this-file-pre-answers-the-loop-breaker). If your question is not
-there, add it, and answer it above.
+Start with `DARKITH.md` for the governing record, `docs/nt/NT-INDEX.md` for the reasoning corpus, and `tools/ci.sh` for the executable verification path.
 
 ---
 
-## 13. Glossary
+## How to read a Darkith claim
 
-Every abbreviation and specialist term used above, alphabetized.
+Ask what capability is meant and what evidence supports it.
 
-| Term | Expansion | One-line meaning |
-|---|---|---|
-| **Ω (Omega)** | — | The project's term for the fully-sovereign goal state. |
-| **aapt2** | Android Asset Packaging Tool 2 | Compiles and links resources; steps 1–2. |
-| **AAR** | Android ARchive | A packaged Android library. Not used here. |
-| **ADB** | Android Debug Bridge | A tool to talk to a phone from a computer. Not required here. |
-| **AI** | Artificial Intelligence | A program that performs tasks that normally need a human. |
-| **AndroidX** | (Android eXtensions) | A support library outside the platform framework. Banned here. |
-| **anti-windup** | — | Freezing the integral term when a step would leave the allowed bounds, so it cannot over-accumulate. |
-| **API** | Application Programming Interface | The set of features a program may call. |
-| **APK** | Android Package Kit | The installable Android app file. |
-| **apksigner** | — | Signs the APK; step 7. |
-| **arm64-v8a** | ARM 64-bit, v8-A | The CPU architecture of the target phone. |
-| **autophagic** | (*auto* + *phagein*, self-eating) | The loop eats its own previous allocation and re-derives the next from the residual. |
-| **A∧B∧C∧D** | Authoritative ∧ Apparatus-separated ∧ Preservation/retrieval/boundary ∧ Server-of-record | The four-condition repository invariant. |
-| **CI** | Continuous Integration | Automated checks on every change. Here: `tools/ci.sh`. |
-| **CLAMP_TO_EDGE** | — | A texture wrap mode GLES2 requires for non-power-of-two textures, or the texture is incomplete. |
-| **Compose** | Jetpack Compose | AndroidX's UI toolkit. Banned here. |
-| **corruption mode** | — | One of nine mechanical failure modes of a stamped artifact. |
-| **coupling** | — | Two things joined so the pair holds: names disjoint, interface load-bearing, one clock. |
-| **CPU** | Central Processing Unit | The chip that executes the program. |
-| **d8** | D8 dexer | Converts JVM `.class` files to Android `.dex`; step 4. |
-| **dex** | Dalvik EXecutable | Android's compiled-code format. |
-| **donor** | — | The substrate an artifact is grafted onto. |
-| **EXPOSABLE** | — | A named boundary: the mechanism needs an external artifact. |
-| **FAQ** | Frequently Asked Questions | A list of common questions with answers. |
-| **FBO** | Frame Buffer Object | An off-screen render target; the renderer draws into it, then blits it to the screen. |
-| **GB / MB** | GigaByte / MegaByte | Units of data size. |
-| **GGUF** | GPT-Generated Unified Format | A file format for local AI models. Design-stage here. |
-| **GLES** | OpenGL ES | The mobile 3D graphics API the renderer is hand-written against. |
-| **GLSL** | OpenGL Shading Language | The small program language the renderer's shaders are written in. |
-| **GPU** | Graphics Processing Unit | The chip that draws; its memory use is one of the loop's four inputs. |
-| **Gradle** | (build tool) | The conventional Android build system. Banned (SPI-1). |
-| **graft** | — | A payload made to grow on a donor; the two stay distinct in origin, one in function. |
-| **homeokinesis** | — | The living equilibrium: the internal state is held by a FLUX (the rate of clearance), never by a static setpoint. The inspector's escrow ratchet is homeokinetic — debt may only move down, and stasis is force-degraded. Contrast **homeostasis**, a fixed tolerated level, which the Operator rejects as a stasis that promotes stagnation (MUST #32). |
-| **invariant witness** | — | A check that throws if the coupling is violated (grid vertices ≤ allocator budget). |
-| **IR** | Intermediate Representation | A structural model between input and rendering. |
-| **JAR** | Java ARchive | A packaged bundle of compiled code. |
-| **JDK** | Java Development Kit | The Java toolset `kotlinc` and `d8` need. |
-| **JVM** | Java Virtual Machine | The runtime Kotlin compiles to first. |
-| **kotlinc** | Kotlin compiler | Translates Kotlin to JVM bytecode; step 3. |
-| **lmkd** | low-memory killer daemon | Android's process killer; it fires on system-wide pressure and kills at ~0.8 heap. |
-| **manufactory** | (*manus* + *facere*) | The place where the hand and the machine are joined. |
-| **minSdk / targetSdk** | minimum / target SDK | Oldest supported Android (24) / the API compiled against (34). |
-| **mint** | — | A resolved defect, codified and re-runnable. |
-| **NT** | Noveltreatise | A long-form reasoning document in `docs/nt/`. |
-| **OS** | Operating System | The base software that runs apps (here: Android). |
-| **payload** | — | The thing grafted onto a donor. |
-| **PC** | Personal Computer | A desktop or laptop. |
-| **PID** | Proportional–Integral–Derivative | A control loop that keeps a value on target. |
-| **PID controller** | Proportional–Integral–Derivative | A control loop that corrects an error using its present, accumulated, and rate-of-change terms. |
-| **Pole A / Pole B** | — | The two coupled budgets: A = the renderer, B = the model. They reciprocate memory. |
-| **POSIX** | Portable Operating System Interface | The standard shell/OS interface. |
-| **POV** | Point Of View | The reader's assumed frame of reference. |
-| **pristine** | — | Free of the nine corruption modes. |
-| **provenance register** | — | The fourth presentation volume: the per-claim record (who asserted, who verified, referent, status, falsifier). |
-| **RAM** | Random Access Memory | Working memory; limited on a phone. |
-| **reader shell** | — | The single-file page that projects one unit through the four registers. Here: `omega-reader.html`. |
-| **register (presentation)** | — | One of the four reader volumes: Plain, Paper, Machine, Provenance. |
-| **register (proof)** | — | One of the NT-X law's three proof layers: source, proof log, audit. Distinct from a presentation register. |
-| **SAVF** | Signed Axis Verification Formulary | The offline auditing engine. |
-| **SDK** | Software Development Kit | A versioned set of Android APIs. |
-| **SPI** | Sovereign Sandbox Protocol | The rule family distilled from real failures. |
-| **stamp** | — | A template pressed onto new material; reproduces its errors. |
-| **stub** | — | Fake code returning fake success. Forbidden. |
-| **sui generis** | (Latin, "of its own kind") | Unique in kind — no other app does this. |
-| **Termux** | — | The Android app that provides a terminal. |
-| **unit** | — | One self-contained artifact projected through the four registers; the content in B's sense. |
-| **W^X** | Write XOR Execute | The rule that a file may be writable or executable, not both. |
-| **WebView** | — | An Android component that renders web pages inside an app. |
-| **ZIP** | (archive format) | A file packing many files; an APK is a ZIP. |
-| **zipalign** | — | Aligns the APK before signing; step 6. |
-| **ZRAM** | (compressed RAM) | Compressed memory swap; behind the Gradle freeze. |
+- **Specified:** the rule or design is stated.
+- **Implemented:** the capability exists in executable form.
+- **Verified:** a relevant check or measurement supports the claim under stated conditions.
+- **Qualified:** the capability meets its explicit admission criteria.
+- **Partial:** some required behavior exists, but the whole capability does not.
+- **Missing:** the capability was searched for and not found in the inspected implementation.
+- **Skipped / inactive:** the check or stage did not run; it is not a pass.
+
+These labels describe different facts. They must not be collapsed into one reassuring status.
+
+## Limits and boundaries
+
+- Darkith is not a Gradle project. The supported build path is the repository's raw chain.
+- AndroidX and Jetpack Compose are not part of the app's supported source path.
+- Toolchain components and signing inputs may need to be staged locally.
+- `AegisVM` explicitly reports `ERROR: NOT_IMPLEMENTED`; it is not a completed execution engine.
+- Some local-assistant and terminal concepts in the architecture documents remain design-stage or incomplete.
+- The economic Omega system is a governing objective and specified architecture, not a completed production economy.
+- The repository is public but currently has no `LICENSE` file. Public visibility does not grant permission to reuse, modify, or redistribute the work. All rights remain reserved unless an explicit license is added.
 
 ---
 
-## 14. The questions this file pre-answers (the loop breaker)
+## The peer this work is looking for
 
-These are the follow-up questions a reader would ask next. Each is answered here in one
-or two terminal sentences, so the chain ends.
+Darkith is for the person who looks past the feature list and asks:
 
-1. **"Where do I type the commands?"** In Termux, from the repo root.
-2. **"How do I get the repo on the phone?"** Clone it with `git`, or copy the folder;
-   then open Termux there.
-3. **"What is the 'repo root'?"** The top folder — the one containing `build.sh`.
-4. **"The build said `aapt2 not found`."** Run `bash tools/fetch_toolchain.sh`, rebuild.
-5. **"The build said `kotlinc not found`."** Same cause and fix.
-6. **"It says 'Unclosed comment'."** Run `python3 tools/syntax_gate.py app/src/main/java`.
-7. **"It says 'unresolved reference: androidx'."** Replace the import with its raw
-   `android.*` equivalent.
-8. **"The install prompt never appeared."** Use `--build`, then install `app-signed.apk`
-   from the file manager.
-9. **"Which file declares permissions?"** `app/src/main/AndroidManifest.xml`.
-10. **"Where is the main screen?"** `HomekeeperActivity.kt` (dashboard) and
-    `MainActivity.kt` (launcher).
-11. **"How do I add a screen?"** Add an `<activity>` to the manifest, add the class in
-    the tree, run `bash tools/ci.sh`.
-12. **"How do I read the reasoning behind a rule?"** `DARKITH.md` for the rule,
-    `docs/nt/NT-INDEX.md` for the corpus.
-13. **"What is the difference between `DARKITH.md` and `AGENTS.md`?"** The first is the
-    canonical record; the second is working knowledge for an agent or a returning
-    developer.
-14. **"Why do files mention 'NEVER' and 'MUST'?"** They are the rule families; each is a
-    real failure converted into a check.
-15. **"Can I just use Android Studio?"** Not for this repo as shipped: there is no
-    Gradle project.
-16. **"Is the app on the Play Store?"** No; install the built `.apk`.
-17. **"What does the app do on launch?"** It opens a web dashboard (Homekeeper) in a
-    `WebView`, bridged to device features.
-18. **"Where is the data stored?"** The durable home is `/sdcard/Darkith/` (SPI-8).
-19. **"How do I know a corpus claim is true?"** It carries a grade and, where it touches
-    reality, a re-runnable command; `tools/nt_gate.py` enforces it.
-20. **"What if I disagree with a rule?"** Change the rule and its gate together, and say
-    why in `DARKITH.md`.
-21. **"Why are the binaries `.so` files?"** Android only allows execution from the
-    native library directory ([§5.6](#56-the-hand-coded-native-binaries)).
-22. **"Why is `AegisVM` unfinished?"** It refuses to fake success; that refusal is the
-    point ([§2.1](#21-the-prime-directive-never-a-stub)).
-23. **"What is the difference between the app and the studio?"** The app is the
-    installable `.apk`; the studio is the offline web pages that also run in a browser.
-24. **"Where does the web studio live?"** The shipped copies are in
-    `app/src/main/assets/`; the browser copies are at the repo root.
-25. **"How do the parts prove they fit?"** The coupling gates
-    ([§7](#7-how-the-assets-are-stress-tested-in-exact-coupling-relation)).
-26. **"What is the single most important thing in this repo?"** The sui generis
-    hardware auto-coupling loop ([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
-27. **"Where is the GL/GPU rendering code?"** `OmegaRenderer.kt` in
-    `app/src/main/java/com/darkith/transliaison/core/` ([§3.3](#33-the-renderer-that-carries-the-law-hand-written-gles-20)).
-28. **"Where is the memory allocator?"** `AutophagicAllocator.kt` (the PID loop) and
-    `MemoryGovernor.kt` (the two-pole budget), same directory
-    ([§3](#3-the-sui-generis-core-direct-hardware-auto-coupling)).
-29. **"Does the allocator read the real device, or a hardcoded guess?"** The real device:
-    total RAM from `/proc/meminfo` at construction, live free bytes each frame, and the
-    GPU's real `GL_MAX_TEXTURE_SIZE` from the live GL context ([§3.5](#35-the-hardware-this-loop-is-bound-to-the-ground-truth)).
-30. **"Can the allocator crash or return a bad number?"** No: it is total — no division
-    by zero, no NaN, and its output cannot leave `[65,536, 524,288]`; anti-windup resets
-    the integral at the bounds ([§3.1](#31-why-this-is-sui-generis-why-no-other-app-does-it)).
-31. **"Why are there two controllers, not one?"** Two budgets share one memory pool; a
-    single controller would starve one to feed the other, so they reciprocate
-    ([§3.2](#32-the-two-poles-of-the-coupling-why-it-is-a-pair-not-one-loop)).
-32. **"How do I see the loop actually ran on the phone?"** Read
-    `/sdcard/Darkith/logs/omega_trace.txt`; the loop writes free memory, tracked bytes,
-    and both budgets there about once a second ([§3.4](#34-the-evidence-the-loop-leaves-behind-why-you-can-trust-it-ran)).
-33. **"Why GLES and not Vulkan?"** On this exact device (TECNO KM4k / Mali-G52 MC2),
-    Vulkan is the verified crash path and GLES 3.2 is stable
-    ([§3.5](#35-the-hardware-this-loop-is-bound-to-the-ground-truth)).
+What does this system refuse to lie about?  
+What does it measure, and what does it merely infer?  
+Who retains control when the tool succeeds?  
+Can the claim be checked without trusting the person who made it?  
+Does the mechanism reduce dependence—or merely move it somewhere less visible?
 
-If you reached this line with a question not in this list, the fix is written at the top
-of this file: add it here, and answer it above. The list is the acceptance test.
+If those questions matter to you, you are reading the project at the level it was built to address.
+
+The invitation is not to believe the doctrine. Inspect the source. Run the checks. Challenge the claims. Help reduce the gap between stated principle and actual behavior.
+
+**Darkith does not ask to be trusted because it declares itself sovereign. It has to earn that trust by making its workings inspectable, its limits visible, and its corrections accountable.**
 
 ---
 
-## 15. The invariant format (the reusable spec)
+## The final boundary
 
-This README is an instance of a reusable shape. To apply it to any repository, follow
-these steps.
+The project ledger may reach its own zero. That is project completion.
 
-1. **Declare the audience and the prerequisite.** State who it is for and what the
-   reader must already know (ideally nothing).
-2. **Define before use.** Define every specialist term and abbreviation at first use,
-   and list it in a glossary.
-3. **State the principle first.** Say what makes this repo different in principle, before
-   the mechanics. A stack without a principle is a pile.
-4. **Narrate three tongues.** For each concept, write **Plain** (beginner), **Precise**
-   (engineer), and **Machine** (literal file/command).
-5. **Inventory every hand-made asset.** List each source file, what it is, and its
-   function; mark anything generated as generated.
-6. **Correct the point of view.** Where the reader's default assumption is wrong, name it
-   and correct it, before it is built upon.
-7. **Answer terminally.** End every answer with the reader able to act; never a bare
-   pointer.
-8. **Break the loop.** Close with an enumerated list of the questions the reader would
-   ask next, each already answered above.
+The world Darkith is meant to serve begins where project completion stops: with people able to create, understand, govern, and retain the value of their own work.
 
-**Why this shape works (the mechanism).** A confusing README leaks in four places: a term
-used before it is defined, an expert-only register, an uncorrected wrong mental model, and
-an answer that opens a new question. Steps 2, 4, 6, and 7 close those four leaks; step 8
-proves the closure. A README that also states its **principle** (step 3) and inventories
-its **assets** (step 5) is what makes it a description of a specific repository rather
-than a generic template.
-
-**The live instance.** This shape is not only prose. `omega-reader.html` is the same
-argument carried in **four registers** — Plain, Paper, Machine, Provenance — over one
-`#/volume/section` route. The Plain register is the novice's path, the Paper register the
-expert's, the Machine register the literal `key: value` synthesis, and the Provenance
-register the audit that lists, per claim, who asserted it, who verified it, its referent,
-and its falsifier. It runs from `file://` with no server and no network, so a reader who
-holds only the file still holds all four registers.
-
----
-
-*This file is the README for `Deobfugazi/darkith-forge`. It is governed by the same rules
-it describes: if it is unclear, that is a defect here, and the fix is a change to this
-file.*
-
-## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
-
-The Operator's standing demand, codified so it is a property of the apparatus and not of any
-one agent's memory:
-
-1. **The product is an installable, agnostic artifact.** Every completion report states, in
-   plain sight, whether the deliverable is a runnable/installable thing on any account or
-   host — and if it is not, that is the headline, not a footnote. No hunting.
-
-2. **No defect may be reported as an emergent surprise.** A defect that was *possible* is a
-   codification failure. Every fix lands as a class fix: a detector, a deterministic repair,
-   and a prevention gate in CI. `tools/autophagy.py` is that registry. A repair with no
-   prevention gate is refused at load.
-
-3. **The tree must always be a newborn.** `tools/autophagy.py` detects every registered
-   defect class, repairs it, re-runs the detector to prove the repair took, and loops to
-   convergence. A tree that requires watching is a patient, not an apparatus.
-
-4. **Only evolutionary progress is reported.** Against the omega endpoint: what class was
-   ended, what gate now prevents its return, what the tree can do that it could not before.
-
-5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
-   what the installable artifact is. Evidence after.
-
-### STANDING-AUTHORITY (NEVER #21) — the decision is already made
-
-Execute, commit, push. Do not ask permission for work already ordered. The Operator does not
-want a request to publish; they want the publish. A change that sits uncommitted waiting for
-a yes is a stall, and a stall is the failure mode this law exists to forbid.
-
-Scope: every board, every parallel agent, every session carrying this directive.
-Budget: 0 seconds. There is no waiting window to spend.
+No README, register, test suite, or machine may declare that destination achieved on its own. Only demonstrated capability and independent evidence can do that.
