@@ -53,6 +53,9 @@ The invitation is not to accept the doctrine. Inspect the source, run the checks
 | Know what exists vs. what remains | [Capability truth table](#12-what-exists-and-what-does-not) |
 | Find a source or tool | [Repository map](#14-repository-map) |
 | Get answers without a follow-up | [Nested FAQ](#16-the-nested-faq) |
+| Use Darkith or understand a subsystem | [Operational mini-wiki](#17-operational-mini-wiki) |
+| Diagnose a build, install, or verification failure | [Troubleshooting](#18-troubleshooting-and-recovery) |
+| Decode Darkith terminology | [Glossary](#19-glossary-and-concept-map) |
 
 ---
 
@@ -873,7 +876,401 @@ If this README disagrees with source or executable gate, the README is defective
 
 ---
 
-# 17. Reading path: conviction to evidence
+# 17. Operational mini-wiki
+
+This section is the practical answer layer. It is organized by the questions a reader, user, tester, or contributor is likely to ask after understanding the purpose and architecture. The governing rules remain in the sections above; this section explains how to act within them.
+
+## 17.1 I just arrived. What should I do first?
+
+1. Read the [Signature Prime](#signature-prime--what-this-makes-impossible).
+2. Read [What Darkith is](#0-start-here) and [the governing principles](#2-the-governing-principles).
+3. If you want to run it, follow [Build, install, and run](#9-build-install-and-run).
+4. If you want to judge whether a claim is real, follow [Verification and evidence](#10-verification-and-evidence).
+5. If you want the complete technical argument, follow the [reading path](#20-reading-path-conviction-to-evidence).
+
+Do not begin by treating a feature name, roadmap entry, or architecture diagram as proof of implementation.
+
+## 17.2 What exactly do the build flags do?
+
+| Command | Behavior |
+|---|---|
+| `bash 'build&install.sh'` | Provision the raw toolchain, stage child-forge inputs when available, build the APK, and hand it to the Android installer when available |
+| `bash 'build&install.sh' --build` | Provision and build; do not install |
+| `bash 'build&install.sh' --no-install` | Alias for `--build` |
+| `bash 'build&install.sh' --verify` | Provision and build; install nothing |
+| `bash build.sh . Darkith com.darkith.transliaison` | Run the raw build directly |
+
+The ampersand in the script filename is a shell metacharacter. Quote the filename exactly as shown. Running `bash build&install.sh` unquoted does not invoke the intended script.
+
+## 17.3 Where does the APK go, and how do I install it?
+
+The default output is `app-signed.apk` in the repository root.
+
+In install mode, the wrapper uses `termux-open` when available, or a package-manager path when available. Android may show an installer confirmation or require permission to install unknown apps. The script handing off the APK is not the same as Android confirming installation.
+
+## 17.4 Why might Android reject an update?
+
+Android update compatibility depends on package identity and signing identity.
+
+- The package name must match the installed app.
+- The new APK must be signed with a compatible signing key.
+- A different signer may require uninstalling the old package before installing the new one; uninstalling can erase app-private data.
+- A filename or matching versionName cannot override signer mismatch.
+
+Check the installed package on the device before changing or removing it. Do not assume a remote build environment knows the installed app's signer.
+
+## 17.5 How do I identify the installed version?
+
+Use the installed package metadata:
+
+```sh
+pm dump com.darkith.transliaison | grep -E 'versionName|versionCode'
+```
+
+Inspect a local APK:
+
+```sh
+aapt dump badging app-signed.apk | grep -E '^package'
+```
+
+The current release manifest is `VERSION.json`; the Android manifest declares package/build metadata. The repository's version and delivery gates are responsible for detecting disagreement. A README version statement is not a substitute for inspecting the actual installed artifact.
+
+## 17.6 What is the difference between the repository and the installed app?
+
+The repository is the full source and governing apparatus: Kotlin, HTML/JavaScript, build scripts, audit tools, law corpus, tests, and proof records.
+
+The APK is one packaged delivery of selected Android source and runtime assets. It does not contain every repository document, research file, test, or development tool. Conversely, a root-level HTML tool may be inspectable in the repository without being exposed as an app screen.
+
+## 17.7 Which HTML file should I edit?
+
+Use the source and mirror rule in [the offline studio section](#7-the-offline-studio-and-tools):
+
+- Root-level HTML files are development/inspection surfaces.
+- Files under `app/src/main/assets/` are packaged runtime assets.
+- Where the repository declares a mirror, update the canonical source and propagate the change through the repository's defined process.
+- Do not independently hand-edit both copies; that creates two authorities.
+- Run the relevant parity, tree, and CI gates after propagation.
+
+The exact canonical/mirror relationship is determined by the repository's index, packaging rules, and parity gates—not by whichever file is easier to open.
+
+## 17.8 Which app or surface should I open?
+
+| I want to… | Surface |
+|---|---|
+| Enter the Homekeeper environment | `darkith home forge.html` / packaged Homekeeper |
+| Inspect code and audit work | `darkith code studio.html` |
+| Use the lightweight audit interface | `darkith-inscriber.html` |
+| Open the full SAVF interface | `savf.html` |
+| Work with the terminal/local-assistant interface | `d-arkith-omega.html` or `omega.html` |
+| Explore the standalone device-app interfaces | Apps, Camera, Clock, Contacts, Files, Media Player, Messages, Phone |
+| Inspect the repository's four-register presentation | `omega-reader.html` |
+| Review the master Omega specification | `darkith-omega-master.html` |
+| Create icons | `icon_forge.html` |
+| Inspect debt-clearance behavior | `clearanceloop.html` |
+
+A listed surface is a navigable interface or artifact. It does not imply every control is connected to a complete native capability. For behavior claims, inspect the bridge, implementation, and relevant tests.
+
+## 17.9 Does offline-first mean no network or no permissions?
+
+No. Offline-first describes the intended local availability and control model. The manifest still declares network and device permissions for particular capabilities.
+
+- A manifest declaration means the app requests or may use a permission; it does not mean the user granted it.
+- A permission grant does not prove a feature works on every device.
+- Some provisioning and dependency downloads require network access on first use.
+- Cached toolchains may allow later build steps without downloading again.
+- Inspect the manifest and Android's app-permission settings for the actual package on your device.
+
+Do not describe Darkith as network-free, permission-free, or fully offline in every workflow unless the specific workflow has been tested under that condition.
+
+## 17.10 What does the terminal actually support?
+
+A terminal interface is not a runtime inventory. A language or command is supported only when the corresponding executable/runtime is present and the execution path works under Android's restrictions.
+
+The architecture distinguishes native, Wasm/WASI, and optional PRoot tiers. These are not all automatically available because the interface mentions them. See [the terminal and assistant boundary](#8-local-terminal-and-assistant-design-vs-implementation).
+
+## 17.11 What is the local assistant intended to provide?
+
+The intended local assistant is private, device-bounded, and integrated with the forge. Its potential advantages are offline availability and local control.
+
+It is not claimed to equal a frontier cloud model. Context length, model size, memory, latency, and device thermals constrain it. A chat panel or model-selection control is not proof that a production model runtime is installed.
+
+## 17.12 How do I use SAVF without guessing its CLI?
+
+Start with the CLI's own help:
+
+```sh
+python3 savf.py --help
+```
+
+Use the options exposed by the checked-out file. Then run the appropriate self-test or repository gate and preserve the output. The browser engine and Python engine have separate parity/UI checks; passing one does not automatically prove the other.
+
+SAVF's verdict is bounded by the checks and evidence it actually performs. A digest establishes byte identity, not truth. A source scan cannot establish an external fact merely because the fact appears in a comment or manifest.
+
+## 17.13 How do I interpret ClearanceLoop?
+
+ClearanceLoop tracks whether a debt class is being cleared rather than merely remaining below a static threshold.
+
+- A decrease establishes a lower high-water mark.
+- A regression above that mark is treated as new debt.
+- Stasis over the defined window triggers degradation.
+- A waiver must be recorded, justified, and expire; it does not permanently reset the ratchet.
+
+Use the implementation and test output for the configured window and thresholds. Do not infer a specific current debt value from the general law.
+
+## 17.14 What does Fracture Scout return?
+
+It returns ranked candidates from configured sources and query expressions. A candidate is not automatically:
+
+- a verified real-world need;
+- novel prior art;
+- a task authorized for implementation;
+- a bounty or payment;
+- a solved problem.
+
+Inspect the original source, confirm that the problem remains unresolved, identify a bounded capability, and apply the project's admission rules.
+
+## 17.15 What can I trust from Nodal?
+
+Nodal's current documented role is a receipt and coordination substrate: closed verdict vocabulary, hash-chained append-only records, and ordered firing/reconciliation.
+
+A hash chain can make later alteration detectable relative to retained records. It does not by itself establish truth, distributed consensus, decentralized governance, or an arbitrary-code sandbox.
+
+## 17.16 What does Homekeeper's four-core invariant test?
+
+The invariant is conjunctive: relational, structural, functional, and authority conditions must all hold. A unit cannot compensate for a missing condition by being strong in another.
+
+The model evaluates a bounded repository unit and its claim/admission behavior. It is not a universal proof that every file, economy, or institution is sovereign.
+
+## 17.17 What is the minting/witness idea—and what is it not?
+
+The contribution thesis centers on reproducible closure: a bounded command and expected result that another party can rerun without trusting the issuer.
+
+The current ledger is described as single-writer and tamper-evident. It is not a blockchain or global consensus system. A textual difference does not prove semantic novelty, and a reproducible command does not automatically prove that its real-world premise is true.
+
+## 17.18 How do I contribute a meaningful correction?
+
+A useful contribution should answer all of these before it is called complete:
+
+1. What capability is defective?
+2. What exact behavior was observed?
+3. What source, environment, and conditions produced it?
+4. Which invariant governs the defect?
+5. What is the root cause—not merely the visible symptom?
+6. What correction changes the defective class?
+7. What detector, prevention gate, or regression test makes recurrence inadmissible?
+8. What evidence proves the corrected behavior?
+9. What remains skipped, partial, or outside the test boundary?
+
+Do not submit a success message in place of the artifact or evidence. Do not mark a specification as an implementation.
+
+## 17.19 What is the correct way to report a defect?
+
+Include:
+
+- repository commit or exact source revision;
+- exact file and relevant line/function;
+- device, Android version, runtime, and toolchain when relevant;
+- minimal reproduction steps;
+- expected result and actual result;
+- complete relevant log, not only the final error line;
+- whether the check was PASS, FAIL, SKIP, or not run.
+
+A report that cannot be reproduced may still be useful, but it must be labeled as unconfirmed rather than promoted to a verified defect.
+
+## 17.20 Where should I look for a specific answer?
+
+| Question | Canonical starting point |
+|---|---|
+| What is the project state? | `DARKITH.md` |
+| What is the current work/deficit? | `TASKS.md`, `DEFICITS.json`, and `tools/omega_deficit.py` |
+| What is the app package/version? | `AndroidManifest.xml`, `VERSION.json`, installed package metadata |
+| What governs a build? | `build.sh`, `build&install.sh`, NT IX |
+| What checks ran? | Actual `tools/ci.sh` output and `proof/ci_last.log` |
+| What laws govern a subsystem? | `docs/nt/NT-INDEX.md` and the relevant NT file |
+| What is known about a failure class? | `docs/FAILURE-MODE-LEDGER.md` and the relevant gate |
+| What is the local assistant/terminal design? | `docs/ARCHITECTURE-OMEGA.md` |
+| What is the contribution/witness thesis? | `docs/BLACK-AND-WHITEPAPER-2026-11-23.md` and `docs/NT-XII-IN-THE-OPEN.md` |
+| What is the recovery procedure? | `RESUME.md` and `docs/RECOVERY_MANIFEST.md` |
+
+---
+
+# 18. Troubleshooting and recovery
+
+Troubleshooting follows the same evidence rule as the rest of Darkith: capture the actual failure, identify the responsible layer, and correct the cause. Do not infer success from a script starting or from an artifact filename existing.
+
+## 18.1 The build script does not start
+
+If the script filename contains `&`, quote it:
+
+```sh
+bash 'build&install.sh' --build
+```
+
+If the shell reports a syntax error or starts a background process, the filename was likely passed unquoted.
+
+## 18.2 Toolchain provisioning fails
+
+1. Read the complete provisioning output.
+2. Check whether the required network download is available or a cached toolchain is present.
+3. Inspect `tools/fetch_toolchain.sh` for the exact component and destination.
+4. Confirm that the downloaded archive is valid and the expected executable exists.
+5. Re-run the build only after the failing dependency is corrected.
+
+Do not replace a missing tool with a fake executable or a stub that returns success.
+
+## 18.3 Kotlin compilation cannot find Java or the Android framework
+
+Check the actual toolchain environment:
+
+- Is a JDK available and executable?
+- Does `JAVA_HOME` point to that JDK?
+- Is `kotlinc` available or selected through `KOTLINC`?
+- Is the correct Android framework `android.jar` staged?
+- Are required libraries present in the build classpath?
+
+The raw build and provisioning scripts are the source for exact paths. A compilation error is not resolved by changing the README's claimed SDK level.
+
+## 18.4 The build completes but no APK exists
+
+Confirm the working directory and output path. The default wrapper expects `app-signed.apk` in the repository root after `build.sh` succeeds.
+
+Check the full build log for the first failing stage: resource compilation, Kotlin, DEX, packaging, alignment, or signing. Later “done” text cannot override a missing artifact or a failed stage.
+
+## 18.5 Android says the package cannot be installed
+
+Check, in order:
+
+1. package name matches the installed app;
+2. APK signature is compatible with the installed signer;
+3. Android allows installation from the current source;
+4. the APK is valid and aligned;
+5. device SDK and manifest constraints are satisfied.
+
+If signer identity differs, do not uninstall reflexively. Uninstalling may remove app-private data. Confirm backup and installation consequences first.
+
+## 18.6 The app installs but crashes at launch
+
+A successful package install proves only that Android accepted the package. It does not prove runtime initialization or every bridge call works.
+
+Capture the device crash log, identify the first causal exception, and check the relevant DEX linkage, manifest, native bridge, and packaged asset. Re-run the app-specific gate and physical-device test after correction. Do not diagnose a crash from the last line of a truncated log.
+
+## 18.7 A button or web surface does nothing
+
+Check the complete interaction path:
+
+1. the HTML control has an actual handler;
+2. the handler calls the intended bridge/API;
+3. the bridge method exists and is exposed;
+4. Android permission or device capability is available;
+5. the return/error path reaches the UI;
+6. the behavior is covered by an applicable test.
+
+The bridge contract audit detects some boundary mismatches; it cannot replace testing the actual device behavior.
+
+## 18.8 A terminal command says it started but produces no output
+
+A start-like status is not proof of process execution. Check whether the selected runtime exists, whether Android permits execution from its location, whether output is streamed, and whether the process exit code is propagated.
+
+The architecture document explicitly distinguishes current terminal stubs from intended runtime tiers. Treat unverified execution as unverified.
+
+## 18.9 CI is green but a capability is still missing
+
+CI only evaluates the gates wired into that run. It cannot certify a capability whose implementation is absent, a check that was skipped, or an external economic outcome.
+
+Inspect the individual gate list and verdicts. Then inspect the capability's own implementation and admission evidence. If the relevant gate is missing, the correct finding is a verification gap—not an assumed pass.
+
+## 18.10 CI reports SKIP
+
+A SKIP means the check did not run because its required runtime, dependency, or artifact was unavailable. It is not a pass and must not be counted as one.
+
+Install/provision the missing prerequisite and rerun, or explicitly preserve the skip as an unresolved verification boundary.
+
+## 18.11 The root HTML and packaged HTML disagree
+
+Do not choose whichever copy looks newer. Identify the canonical source and declared mirror, propagate the change through the repository's mechanism, and run the relevant parity/index gate.
+
+A mismatch is a source-of-truth defect. Editing both copies independently is not a durable fix.
+
+## 18.12 The version shown in the app differs from the APK or manifest
+
+Inspect the actual installed package, APK metadata, Android manifest, and `VERSION.json`. Determine which artifact was installed and whether generated delivery metadata is stale.
+
+Do not “fix” a mismatch by changing only the README or displayed label. Correct the canonical version source and regenerate/verify all derived surfaces.
+
+## 18.13 The app requests a permission I did not expect
+
+Inspect `app/src/main/AndroidManifest.xml` and Android's per-app permission settings. A declared permission may support a surface that is not currently used; a granted permission does not prove active use.
+
+If a permission is unnecessary for a capability, the correct correction is to remove or gate the request and verify that the dependent feature still behaves honestly.
+
+## 18.14 I need to recover after a failed or interrupted session
+
+Use `RESUME.md` for the current continuation instructions and `docs/RECOVERY_MANIFEST.md` for reconstruction provenance. Reopen the exact source and proof artifacts; do not rely on a remembered summary.
+
+Before resuming writes, identify the current branch, commit, working-tree state, and any concurrent edits. A previously fetched blob SHA is not valid after the file changes.
+
+## 18.15 I found a secret in the repository
+
+Treat it as compromised if it was committed or pushed.
+
+1. Revoke or rotate the credential at its issuer.
+2. Remove it from the current tracked source.
+3. Follow the repository's security remediation procedure for history exposure.
+4. Run the secret gate and preserve its result.
+5. Add or strengthen the detector/prevention gate that missed the class.
+
+Deleting the current line does not revoke a credential or erase copies from forks, caches, backups, and Git history.
+
+---
+
+# 19. Glossary and concept map
+
+| Term | Meaning in Darkith | Do not confuse it with |
+|---|---|---|
+| Signature Prime | The governing end: make false completion, false verification, false accounting, silent extraction, and related corruption inadmissible | A slogan or decorative opening |
+| Sovereignty | Operational control over tools, understanding, correction, and retained value | Merely owning a device or using local software |
+| Omega | The convergence condition for capability, accounting, governance, and evidence | A version suffix or self-awarded status |
+| Absolution | A defined closure condition with evidence and explicit boundaries | A project reaching zero by deleting unresolved scope |
+| Project deficit | Remaining registered work under the project ledger | Economic extraction or community wealth |
+| Economic extraction | Value leaving the community's control under the economic model | Project debt or a CI failure count |
+| SAVF | Verification and correction engine family | A universal truth oracle |
+| NT / Noveltreatise | The governing technical/philosophical law corpus | A set of optional essays |
+| ASE | Autophagic Sovereign Economy: the economic architecture and objective | A production economy already proven operational |
+| Homekeeper | Executable repository model and four-core invariant apparatus | A universal proof of sovereignty |
+| A∧B∧C∧D | Conjunctive relational, structural, functional, and authority conditions | A score where one strong condition compensates for another missing |
+| ClearanceLoop | Debt-clearance ratchet that tracks progress, regression, stasis, and bounded waiver | A static threshold or permanent waiver |
+| Fracture Scout | Candidate discovery/ranking for unresolved problems from configured sources | Automatic novelty proof, bounty, or task authorization |
+| Darkbot | Provider-neutral dependency watcher and artifact-verification utility | An autonomous authority to change every dependency without review |
+| Nodal | Receipt/coordination substrate with hash-chained ledger and ordered reconciliation | Blockchain, cross-machine consensus, or arbitrary-code sandbox |
+| Homekeeper four-register reader | Generated presentation of repository units through four distinct registers | Four competing canonical repositories |
+| PASS | Named check ran and met its condition | Universal correctness |
+| FAIL | Named check ran and failed its condition | A vague warning |
+| SKIP | Check did not run | PASS or “close enough” |
+| INACTIVE | Capability/check is not active in that context | Healthy or verified |
+| Specified | Design or rule is stated | Implemented |
+| Implemented | Executable capability exists | Verified under all conditions |
+| Verified | Evidence supports a bounded claim under recorded conditions | Universal truth |
+| Qualified | Capability meets explicit admission criteria | Merely present |
+| Descoped | Capability intentionally excluded with a recorded boundary | Capability completed |
+| Receipt | Structured record of a bounded event/result | Proof that the real-world premise is true |
+| Hash chain | Tamper-evident ordering/byte relationship among retained records | Distributed consensus or truth |
+| Canonical source | The authoritative source from which declared copies are derived | Any file with a similar name |
+| Mirror | A generated or maintained copy whose parity is checked | A second authority |
+| Gate | Executable admission/check enforcing a law or invariant | Documentation that merely describes a law |
+| Defect class | Reusable category of failure corrected at its cause and guarded against recurrence | One isolated symptom |
+| W^X | Write/execute separation principle relevant to Android runtime placement | Permission to execute arbitrary app-writable files |
+| Raw build chain | Direct non-Gradle APK build sequence | A claim that the build has no dependencies |
+| Child forge | On-device build path carried by the host app | Automatically proven by building the host APK |
+
+## 19.1 The concept map in one line
+
+**Signature Prime → governing invariants → capability-level status → implementation → gate and reproducer → evidence → correction/prevention → project closure → independently demonstrated Omega.**
+
+Economic sovereignty is measured at its own capability boundary; it cannot be inferred from project closure.
+
+---
+
+# 20. Reading path: conviction to evidence
 
 For the complete argument, follow this sequence:
 
@@ -890,7 +1287,7 @@ For the complete argument, follow this sequence:
 
 ---
 
-# 18. The final boundary
+# 21. The final boundary
 
 Darkith does not ask to be trusted because it declares itself sovereign.
 
