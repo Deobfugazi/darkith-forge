@@ -137,6 +137,11 @@ def check() -> int:
     return 1
 
 
+def push_deferred() -> bool:
+    """Testnet repair commits locally; the workflow publishes only the settled tree."""
+    return os.environ.get("DARKITH_DEFER_PUSH") == "1"
+
+
 def repair() -> int:
     if cycle_open():
         print("tree_invariant: SKIP — a revitalization cycle is open; S16 lands the cycle, so "
@@ -183,6 +188,13 @@ def repair() -> int:
         print("tree_invariant: PASS — repaired and committed (detached HEAD; not pushing)")
         return 0
 
+    if push_deferred():
+        if drifted():
+            print(f"tree_invariant: FAIL — {len(drifted())} path(s) remain dirty before deferred push")
+            return 1
+        print("tree_invariant: PASS — repaired and committed locally; final testnet push deferred")
+        return 0
+
     p = sh(("git", "push", "-q", "origin", "HEAD"))
     if p.returncode != 0:
         print("tree_invariant: WARN — committed locally; push failed (offline or no remote)")
@@ -222,7 +234,18 @@ def selftest() -> int:
             out = sh(("git", "status", "--porcelain", "--untracked-files=no"), repo).stdout
             return [line[3:] for line in out.splitlines() if line.strip()]
 
-        check_("clean tree yields no drift", drift_in(tmp) == [])
+        check_("testnet repair mode defers publication", not push_deferred())
+    old_defer = os.environ.get("DARKITH_DEFER_PUSH")
+    os.environ["DARKITH_DEFER_PUSH"] = "1"
+    try:
+        check_("deferred-push mode is explicit and detectable", push_deferred())
+    finally:
+        if old_defer is None:
+            os.environ.pop("DARKITH_DEFER_PUSH", None)
+        else:
+            os.environ["DARKITH_DEFER_PUSH"] = old_defer
+
+    check_("clean tree yields no drift", drift_in(tmp) == [])
         (tmp / "a.txt").write_text("two\n")
         check_("edited file is detected as drift", drift_in(tmp) == ["a.txt"])
         sh(("git", "add", "-A"), tmp)
