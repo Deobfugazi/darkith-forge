@@ -116,6 +116,7 @@ jobs:
         id: carry
         env:
           BRANCH: ${{ steps.resolve.outputs.branch }}
+          DARKITH_DEFER_PUSH: "1"
         run: |
           set -euo pipefail
           python3 tools/secret_gate.py
