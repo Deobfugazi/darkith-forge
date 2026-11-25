@@ -237,6 +237,9 @@ if have python3; then
     # NEVER #22 / MUST #42: the general drift gate is a CLASS fix. The suite drives REAL
     # temporary git repos: detector fires on dirt, stays silent on a newborn tree, and
     # the deterministic repair provably converges.
+    if [ -f tools/drift_gate.py ]; then
+      run "drift gate selftest (deferred testnet publication)" python3 tools/drift_gate.py --selftest
+    fi
     if [ -f tools/tests/drift_gate_test.py ]; then
       run "drift gate test (NEVER #22)"   python3 tools/tests/drift_gate_test.py
     fi
@@ -297,6 +300,7 @@ if have python3; then
     # uncommitted and three gates went red on that one fact; none of them may repair it.
     # This gate names the drift as its own defect instead of leaving it to be misattributed.
     if [ -f tools/tree_invariant.py ]; then
+      run "tree invariant selftest (deferred testnet publication)" python3 tools/tree_invariant.py --selftest
       run "tree invariant (NEVER #22: derived tree is landed)" python3 tools/tree_invariant.py --check
     fi
     # NEVER #23 / MUST #41: every gate above runs on the far side of the push, so it can only
