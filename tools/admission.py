@@ -148,6 +148,7 @@ def workflow_contract_errors(auto_text: str, workflow_texts: list[str],
     required = (
         ("testnet trial 1/2", "trial 1 job missing"),
         ("testnet trial 2/2", "trial 2 job missing"),
+        ("  tests:\n    name: tests\n    needs: [trial_1, trial_2]", "required tests status does not gate both trials"),
         ("  trial_1:\n    name: testnet trial 1/2\n    needs: prepare_testnet", "trial 1 does not depend on preflight"),
         ("  trial_2:\n    name: testnet trial 2/2\n    needs: [prepare_testnet, trial_1]", "trial 2 does not depend on trial 1 and preflight"),
         ("needs: [prepare_testnet, trial_1, trial_2]", "main admission does not depend on both trials"),
@@ -392,6 +393,9 @@ def selftest() -> int:
     broken = workflow_text.replace("testnet trial 2/2", "trial omitted") if workflow_text else ""
     check(bool(workflow_contract_errors(broken, workflow_texts, ci_text)),
           "workflow contract detects a missing second trial")
+    broken_status = workflow_text.replace("needs: [trial_1, trial_2]", "needs: [trial_1]", 1)
+    check(bool(workflow_contract_errors(broken_status, workflow_texts, ci_text)),
+          "workflow contract detects a weakened required tests status")
     labels = gate_labels('  run "chain gate" python3 x\n  run "chain gate" python3 y\n'
                          '  run "other" python3 z\n')
     check(labels == {"chain gate": 2, "other": 1}, "duplicate gate label is counted")
