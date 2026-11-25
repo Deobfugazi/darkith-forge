@@ -1404,3 +1404,16 @@ a yes is a stall, and a stall is the failure mode this law exists to forbid.
 
 Scope: every board, every parallel agent, every session carrying this directive.
 Budget: 0 seconds. There is no waiting window to spend.
+
+
+---
+
+## Satietary Ergonomic Temperametrics (SET)
+
+SET is a proposed conceptual framework for describing an individual-indexed, time-varying physiological tolerance window across a sleep–wake cycle. Its boundaries are variable-specific and phase-dependent; the diagram is illustrative and does not establish universal clinical ranges or diagnostic thresholds.
+
+![SET individual-indexed, time-varying tolerance window](docs/set-tolerance-window.svg)
+
+[Open the standalone SVG infographic](docs/set-tolerance-window.svg)
+
+The model distinguishes wall-clock time from biological phase and depicts wake as active expenditure and sleep as active restoration. The plotted curves and normalized values are schematic, not measured physiological data. Any operational application must define the measurand, reference, boundary-setting method, and decision tolerance for the particular individual and context.
