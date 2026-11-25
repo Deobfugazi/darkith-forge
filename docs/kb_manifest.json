@@ -21,10 +21,10 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 71156,
+      "bytes": 86130,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "f6491446c4e78b8768c84d5443e7fa757771535bb004c7d6643c628d2034eba7"
+      "sha256": "b180a7e57ef1e7cb3ffedef179b7b8f864cfc15ea703202f36b05649cfbfb573"
     },
     {
       "bytes": 8805,
@@ -550,13 +550,13 @@
     }
   ],
   "registers": {
-    "A-apparatus": "Governance \u2014 the machine+human laws (read first)",
-    "B-knowledge": "Corpus \u2014 the human-readable knowledge base",
-    "C-skillbase": "Skill surfaces \u2014 the interactive web apps",
+    "A-apparatus": "Governance — the machine+human laws (read first)",
+    "B-knowledge": "Corpus — the human-readable knowledge base",
+    "C-skillbase": "Skill surfaces — the interactive web apps",
     "D-asset": "Shipped runtime assets",
     "E-evidence": "Machine-generated proof",
-    "F-config": "Build configuration \u2014 dependency manifests",
-    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels",
-    "H-homekeeper-app": "Homekeeper Node app \u2014 the invariant blueprint, executable"
+    "F-config": "Build configuration — dependency manifests",
+    "G-apparatus-portable": "Portable apparatus — the one-file toolkit that travels",
+    "H-homekeeper-app": "Homekeeper Node app — the invariant blueprint, executable"
   }
 }
