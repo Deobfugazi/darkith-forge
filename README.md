@@ -901,3 +901,36 @@ The app is a tool. The repository is the apparatus. The law is the constraint. T
 No README, register, test suite, or machine may declare that destination achieved on its own.
 
 **Only demonstrated capability and independent evidence can do that.**
+
+## CNS-DIRECTIVE (v1) — instantiated on every board and every peripheral at once
+
+The Operator's standing demand, codified so it is a property of the apparatus and not of any
+one agent's memory:
+
+1. **The product is an installable, agnostic artifact.** Every completion report states, in
+   plain sight, whether the deliverable is a runnable/installable thing on any account or
+   host — and if it is not, that is the headline, not a footnote. No hunting.
+
+2. **No defect may be reported as an emergent surprise.** A defect that was *possible* is a
+   codification failure. Every fix lands as a class fix: a detector, a deterministic repair,
+   and a prevention gate in CI. `tools/autophagy.py` is that registry. A repair with no
+   prevention gate is refused at load.
+
+3. **The tree must always be a newborn.** `tools/autophagy.py` detects every registered
+   defect class, repairs it, re-runs the detector to prove the repair took, and loops to
+   convergence. A tree that requires watching is a patient, not an apparatus.
+
+4. **Only evolutionary progress is reported.** Against the omega endpoint: what class was
+   ended, what gate now prevents its return, what the tree can do that it could not before.
+
+5. **Reports lead with a verdict.** First line: DIRECTIVE COMPLETE or NOT COMPLETE, and
+   what the installable artifact is. Evidence after.
+
+### STANDING-AUTHORITY (NEVER #21) — the decision is already made
+
+Execute, commit, push. Do not ask permission for work already ordered. The Operator does not
+want a request to publish; they want the publish. A change that sits uncommitted waiting for
+a yes is a stall, and a stall is the failure mode this law exists to forbid.
+
+Scope: every board, every parallel agent, every session carrying this directive.
+Budget: 0 seconds. There is no waiting window to spend.

@@ -945,6 +945,7 @@ fi
   # order. The board copy is the durable record; this gate proves it is on every board.
   if have python3 && [ -f tools/cns_directive.py ]; then
     run "cns directive (one order, every board)" python3 tools/cns_directive.py --check
+    run "cns directive selftest (rewrite preserves the tail)" python3 tools/cns_directive.py --selftest
   fi
 
   # ── autophagy: the tree consumes its own defects and returns to newborn ────────

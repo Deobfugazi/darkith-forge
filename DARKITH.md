@@ -2649,8 +2649,6 @@ a yes is a stall, and a stall is the failure mode this law exists to forbid.
 Scope: every board, every parallel agent, every session carrying this directive.
 Budget: 0 seconds. There is no waiting window to spend.
 
----
-
 # PART VII — THE DELIVERY LAWS
 
 Every law below was paid for by a specific failure committed in this project by an agent

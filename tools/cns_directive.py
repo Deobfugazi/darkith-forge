@@ -22,6 +22,7 @@ WHAT THIS DOES
 import json
 import os
 import pathlib
+import re
 import subprocess
 import sys
 import urllib.request
@@ -65,6 +66,18 @@ Budget: 0 seconds. There is no waiting window to spend.
 """
 
 
+def replace_block(text: str) -> str:
+    """Swap the existing directive block for the current DIRECTIVE, keeping what follows.
+
+    The block ends at the next level-1 or level-2 heading. Matching only "\\n## " silently
+    deleted everything after a "# PART VII" style heading, which is how the delivery laws
+    were truncated out of DARKITH.md on every repair.
+    """
+    head, _, tail = text.partition(f"## {MARK}")
+    end = re.search(r"\n#{1,2} ", tail)
+    return head + DIRECTIVE + (tail[end.start():] if end else "")
+
+
 def write():
     for b in BOARDS:
         p = ROOT / b
@@ -72,10 +85,7 @@ def write():
             continue
         text = p.read_text()
         if MARK in text:
-            head, _, tail = text.partition(f"## {MARK}")
-            rest = tail.split("\n## ", 1)
-            tail = ("\n## " + rest[1]) if len(rest) > 1 else ""
-            p.write_text(head + DIRECTIVE + tail)
+            p.write_text(replace_block(text))
         else:
             p.write_text(text.rstrip() + "\n\n" + DIRECTIVE)
         print(f"  wrote {b}")
@@ -135,8 +145,45 @@ def agents():
     return 0
 
 
+def selftest() -> int:
+    """Prove the block rewrite cannot swallow the document after it.
+
+    The repair ran in CI. A board whose directive block was followed by a level-1 heading
+    ("# PART VII") had everything from that heading to EOF deleted, because the end of the
+    block was located by splitting on "\n## " only. This pins the behaviour that matters:
+    a heading of ANY level ends the block, and text after it survives byte-for-byte.
+    """
+    ok = True
+
+    def check(name, cond):
+        nonlocal ok
+        ok = ok and cond
+        print(f"  [{'ok' if cond else 'FAIL'}] {name}")
+
+    # A level-1 heading after the block must survive, with its body.
+    doc = f"# T\n\n## {MARK} — old\n\nstale\n\n# PART VII\n\nNEVER #24 body\n"
+    out = replace_block(doc)
+    check("level-1 heading after the block survives", "# PART VII" in out)
+    check("body after the level-1 heading survives", "NEVER #24 body" in out)
+    check("the stale block body is replaced", "stale" not in out)
+
+    # A level-2 heading must also survive.
+    doc2 = f"# T\n\n## {MARK} — old\n\nx\n\n## Next Section\n\nkeep me\n"
+    out2 = replace_block(doc2)
+    check("level-2 heading after the block survives", "## Next Section" in out2)
+    check("body after the level-2 heading survives", "keep me" in out2)
+
+    # The rewrite is idempotent: a second pass changes nothing.
+    check("second pass is a no-op", replace_block(out) == out)
+
+    print(f"cns directive selftest: {'PASS' if ok else 'FAIL'}")
+    return 0 if ok else 1
+
+
 if __name__ == "__main__":
     rc = 0
+    if "--selftest" in sys.argv:
+        sys.exit(selftest())
     if "--write" in sys.argv or "--all" in sys.argv:
         write()
     if "--check" in sys.argv:
