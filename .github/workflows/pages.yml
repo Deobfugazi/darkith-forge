@@ -1,4 +1,5 @@
 name: Publish interactive README
+
 on:
   push:
     branches: [main]
@@ -8,35 +9,66 @@ on:
       - docs/sw.js
       - .github/workflows/pages.yml
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: true
+
 jobs:
   publish:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Validate reader JavaScript
+      - name: Check out canonical source
+        uses: actions/checkout@v4
+
+      - name: Validate required reader inputs and JavaScript
+        shell: bash
         run: |
-          node -e 'const fs=require("fs");const html=fs.readFileSync("docs/index.html","utf8");const match=html.match(/<script>([\s\S]*?)<\/script>/);if(!match)throw Error("reader script missing");new Function(match[1]);'
-      - name: Configure Pages
+          set -euo pipefail
+          test -s README.md
+          test -s docs/index.html
+          test -s docs/sw.js
+          node <<'NODE'
+          const fs = require('node:fs');
+          const html = fs.readFileSync('docs/index.html', 'utf8');
+          const match = html.match(/<script>([\\s\\S]*?)<\\/script>/);
+          if (!match) throw new Error('Reader script missing');
+          new Function(match[1]);
+          if (!html.includes("fetch('README.md')")) {
+            throw new Error('Reader must load the deployed canonical README.md');
+          }
+          NODE
+
+      - name: Verify GitHub Pages is initialized
+        id: pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - name: Assemble reader
+        continue-on-error: true
+
+      - name: Explain required one-time Pages setup
+        if: steps.pages.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::error title=GitHub Pages is not initialized::Open https://github.com/Deobfugazi/darkith-forge/settings/pages, set Build and deployment Source to GitHub Actions, and save. The workflow token cannot create or enable the Pages site because that requires repository administration permission. Then rerun this workflow."
+          exit 1
+
+      - name: Assemble site from canonical README
         run: |
           cp README.md docs/README.md
           touch docs/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: docs
-      - name: Deploy
+
+      - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
