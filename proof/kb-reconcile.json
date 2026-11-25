@@ -2,9 +2,9 @@
   "declared_count": 88,
   "drifted": [
     {
-      "bytes_declared": 13344,
+      "bytes_declared": 12538,
       "bytes_on_disk": 18779,
-      "delta": 5435,
+      "delta": 6241,
       "path": "TASKS.md"
     }
   ],
