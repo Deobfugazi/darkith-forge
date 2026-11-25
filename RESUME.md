@@ -12,7 +12,7 @@ exist. Uncommitted drift and unpushed commits are read as AGE IN SECONDS by
 `AGENTS.md` §0a, `TASKS.md` header, `DARKITH.md` NEVER #21.
 
 The agent VM is **ephemeral**. Its filesystem is wiped between sessions. The only
-bytes that survive are the ones pushed to the private repo. This file is the
+bytes that survive are the ones pushed to the public repository. This file is the
 recovery protocol; follow it before doing anything else.
 
 ## 0-PRE. CLOSED BRIEFINGS — do not re-open what the bytes already decided
@@ -42,7 +42,7 @@ is a defect in the board. Add it.
 
 ## 1. Where the project lives
 
-- **Canonical host (private):** `Deobfugazi/darkith-forge`, branch `main`.
+- **Canonical host (public):** `Deobfugazi/darkith-forge`, branch `main`.
 - Auth: the `GITHUB_TOKEN` secret (owner `Deobfugazi`). No credentials are stored
   in the repo, ever.
 
