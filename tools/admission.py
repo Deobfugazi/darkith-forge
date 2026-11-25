@@ -155,6 +155,7 @@ def workflow_contract_errors(auto_text: str, workflow_texts: list[str],
         ("TESTED_SHA", "candidate SHA is not revalidated before merge"),
         ("TESTED_BASE", "main base SHA is not revalidated before merge"),
         ("branch=\"testnet/darkbot-", "scheduled dependency proposal is not isolated on testnet"),
+        ('DARKITH_DEFER_PUSH: "1"', "repair does not defer internal pushes until fixed point"),
         ("gh workflow run auto-merge.yml", "dependency proposal does not dispatch the admission workflow"),
     )
     for token, message in required:
