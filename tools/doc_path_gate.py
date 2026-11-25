@@ -42,6 +42,9 @@ ALLOWLIST = {
     "classes.dex", "base.apk", "aligned.apk", "app-signed.apk",
     # generated mirror written beside a session board by tools/praxis_propagate.py
     "PRAXIS.md",
+    # ci.sh's own run log. It is written into proof/ and matched by the *.log ignore, so it
+    # exists in a working tree but never in a clean checkout; citing it is correct.
+    "proof/ci_last.log",
     # The Operator's research corpus. These documents sit BESIDE the repo on the home tree
     # (SPI-8: the home is the SD card, not the cloud). A law may cite them by name — that is
     # the point of citing a source — but they are not repo paths and must not be required to
