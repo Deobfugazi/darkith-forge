@@ -122,6 +122,7 @@ jobs:
           python3 tools/absolution_phase.py
           python3 tools/secret_gate.py
           python3 tools/absolution_phase.py --check
+          python3 tools/admission.py
           git add -A
           if ! git diff --cached --quiet; then
             git config user.name "darkith-testnet"
@@ -153,6 +154,7 @@ jobs:
        (github.event_name == 'workflow_dispatch' && inputs.testnet_pr != '')) &&
       (needs.prepare_testnet.result == 'success' || needs.prepare_testnet.result == 'skipped')
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - name: Check out exact candidate SHA
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -179,17 +181,24 @@ jobs:
           python3 -m playwright install --with-deps chromium
           bash tools/fetch_toolchain.sh
 
-      - name: Run full CI trial 1
-        env:
-          CI_LOG: ${{ runner.temp }}/darkith-ci-trial-1.log
+      - name: Run admission preflight and full isolated CI trial 1
         run: |
           set -euo pipefail
-          bash tools/ci.sh
+          python3 tools/admission.py
+          python3 tools/admission.py rehearse
+          test "$(git rev-parse HEAD)" = "${{ needs.prepare_testnet.outputs.sha || github.event.pull_request.head.sha }}"
           if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
             git status --short
             echo "::error::CI trial 1 mutated the candidate tree"
             exit 1
           fi
+      - name: Preserve trial 1 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: admission-trial-1-${{ github.run_id }}
+          path: proof/admission/*.log
+          if-no-files-found: error
 
   trial_2:
     name: testnet trial 2/2
@@ -201,6 +210,7 @@ jobs:
       (github.event_name == 'pull_request' ||
        (github.event_name == 'workflow_dispatch' && inputs.testnet_pr != ''))
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - name: Check out the same exact candidate SHA
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -227,17 +237,24 @@ jobs:
           python3 -m playwright install --with-deps chromium
           bash tools/fetch_toolchain.sh
 
-      - name: Run full CI trial 2
-        env:
-          CI_LOG: ${{ runner.temp }}/darkith-ci-trial-2.log
+      - name: Run admission preflight and full isolated CI trial 2
         run: |
           set -euo pipefail
-          bash tools/ci.sh
+          python3 tools/admission.py
+          python3 tools/admission.py rehearse
+          test "$(git rev-parse HEAD)" = "${{ needs.prepare_testnet.outputs.sha || github.event.pull_request.head.sha }}"
           if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
             git status --short
             echo "::error::CI trial 2 mutated the candidate tree"
             exit 1
           fi
+      - name: Preserve trial 2 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: admission-trial-2-${{ github.run_id }}
+          path: proof/admission/*.log
+          if-no-files-found: error
 
   tests:
     name: post-push / scheduled CI
@@ -262,17 +279,11 @@ jobs:
           python3 -m pip install --quiet -r requirements-dev.txt
           python3 -m playwright install --with-deps chromium
           bash tools/fetch_toolchain.sh
-      - name: Run CI
-        env:
-          CI_LOG: ${{ runner.temp }}/darkith-ci-post-push.log
+      - name: Run post-push admission rehearsal
         run: |
           set -euo pipefail
-          bash tools/ci.sh
-          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
-            git status --short
-            echo "::error::Post-push CI mutated the candidate tree"
-            exit 1
-          fi
+          python3 tools/admission.py
+          python3 tools/admission.py rehearse
 
   merge_testnet:
     name: auto-admit verified testnet PR
