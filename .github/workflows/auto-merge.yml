@@ -67,6 +67,7 @@ jobs:
           view="$(gh pr view "$pr" --json headRefName,headRefOid,baseRefOid,headRepository)"
           branch="$(jq -r .headRefName <<<"$view")"
           head_repo="$(jq -r .headRepository.nameWithOwner <<<"$view")"
+          head_sha="$(jq -r .headRefOid <<<"$view")"
           base_sha="$(jq -r .baseRefOid <<<"$view")"
           [ "$head_repo" = "$REPO" ] || { echo "::error::Fork PRs are not eligible for automatic admission"; exit 1; }
           [[ "$branch" == testnet/* ]] || { echo "::error::Admission branch must begin testnet/"; exit 1; }
@@ -76,15 +77,22 @@ jobs:
           fi
           echo "pr_number=$pr" >> "$GITHUB_OUTPUT"
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "head_sha=$head_sha" >> "$GITHUB_OUTPUT"
           echo "base_sha=$base_sha" >> "$GITHUB_OUTPUT"
 
       - name: Check out the testnet branch
         env:
           BRANCH: ${{ steps.resolve.outputs.branch }}
+          EXPECTED_HEAD: ${{ steps.resolve.outputs.head_sha }}
         run: |
           set -euo pipefail
           git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
           git checkout -B "$BRANCH" "refs/remotes/origin/$BRANCH"
+          actual="$(git rev-parse HEAD)"
+          [ "$actual" = "$EXPECTED_HEAD" ] || {
+            echo "::error::PR head moved before preflight (resolved $EXPECTED_HEAD, fetched $actual)"
+            exit 1
+          }
 
       - name: Set up Python and Node
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
@@ -332,11 +340,18 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           TESTED_SHA: ${{ github.event.pull_request.head.sha }}
+          TESTED_BASE: ${{ github.event.pull_request.base.sha }}
         run: |
           set -euo pipefail
-          live="$(gh pr view "$PR_URL" --json headRefOid -q .headRefOid)"
+          view="$(gh pr view "$PR_URL" --json headRefOid,baseRefOid)"
+          live="$(jq -r .headRefOid <<<"$view")"
+          base="$(jq -r .baseRefOid <<<"$view")"
           [ "$live" = "$TESTED_SHA" ] || {
             echo "::error::PR head moved after trial; refusing merge"
+            exit 1
+          }
+          [ "$base" = "$TESTED_BASE" ] || {
+            echo "::error::Base moved after trial; refusing merge"
             exit 1
           }
           gh pr merge "$PR_URL" --squash --delete-branch
