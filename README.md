@@ -10,7 +10,7 @@ False completion. False verification. False accounting. Silent extraction. Untra
 
 Everything in this repository must synchronously serve that singular end. A displacement, duplicating noise, or defect is not an additional feature; it is something the system must detect and correct.
 
-This README is the public bridge into the work: a nested field guide to the purpose, principles, machinery, evidence, limits, and practical answers a reader would otherwise have to ask for separately.
+This README is the public bridge into the work—and must practice the ergonomic invariant it sets. Its native GitHub presentation uses real anchors, source links, and expandable context rather than decorative controls. The companion reader in [docs/index.html](docs/index.html) renders this same canonical README into an adjustable, searchable interface with persistent text/theme/contrast/width settings, contextual hover-toasts, keyboard navigation, and an offline cache. The reader is published through [.github/workflows/pages.yml](.github/workflows/pages.yml); its repository-level GitHub Pages enablement is still required before the hosted experience becomes live. No control in this document claims to authorize or execute a system mutation.
 
 ---
 
