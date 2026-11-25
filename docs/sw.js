@@ -1,1 +1,22 @@
-const C='darkith-readme-v1';const A=['./','./index.html','./README.md'];self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(A))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x))))));self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(n=>{if(n.ok)caches.open(C).then(c=>c.put(e.request,n.clone()));return n}).catch(()=>caches.match('./README.md'))))});
+const CACHE='darkith-reader-v2';
+const SHELL=['./','./index.html','./README.md'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{
+  const request=event.request;
+  if(request.method!=='GET'||new URL(request.url).origin!==self.location.origin)return;
+  const isDocument=request.mode==='navigate'||request.destination==='document';
+  event.respondWith((async()=>{
+    const cache=await caches.open(CACHE);
+    try{
+      const response=await fetch(request);
+      if(response.ok)await cache.put(request,response.clone());
+      return response;
+    }catch(error){
+      const cached=await cache.match(request)||await cache.match('./index.html');
+      if(cached)return cached;
+      if(isDocument)return new Response('Darkith Reader is offline and no cached page is available yet. Connect once to load the reader and canonical README.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});
+      throw error;
+    }
+  })());
+});
