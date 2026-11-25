@@ -223,7 +223,7 @@ def selftest() -> int:
         with tempfile.TemporaryDirectory() as td:
             tmp = pathlib.Path(td)
             sh(("git", "init", "-q", "-b", "main"), tmp)
-            (tmp / "a.txt").write_text("one\\n", encoding="utf-8")
+            (tmp / "a.txt").write_text("one\n", encoding="utf-8")
             sh(("git", "add", "-A"), tmp)
             seed = sh(("git", "-c", "user.name=t", "-c", "user.email=t@t",
                        "commit", "-qm", "seed"), tmp)
@@ -239,7 +239,7 @@ def selftest() -> int:
             os.environ.pop("DARKITH_DEFER_PUSH", None)
 
             check_("clean tree yields no drift", drift_in(tmp) == [])
-            (tmp / "a.txt").write_text("two\\n", encoding="utf-8")
+            (tmp / "a.txt").write_text("two\n", encoding="utf-8")
             check_("edited file is detected as drift", drift_in(tmp) == ["a.txt"])
             sh(("git", "add", "-A"), tmp)
             check_("staged-but-uncommitted is still drift", drift_in(tmp) == ["a.txt"])
@@ -248,14 +248,14 @@ def selftest() -> int:
             check_("commit lands the repaired file", landed.returncode == 0, landed.stderr.strip())
             check_("committed tree is clean again", drift_in(tmp) == [])
 
-            (tmp / "a.txt").write_text("three\\n", encoding="utf-8")
+            (tmp / "a.txt").write_text("three\n", encoding="utf-8")
             before = sh(("git", "rev-parse", "HEAD"), tmp).stdout.strip()
             sh(("git", "add", "-A"), tmp)
             sh(("git", "-c", "user.name=t", "-c", "user.email=t@t",
                 "commit", "-qm", "rollback target"), tmp)
             sh(("git", "reset", "-q", "--hard", before), tmp)
             check_("rollback restores exact prior bytes",
-                   (tmp / "a.txt").read_text(encoding="utf-8") == "two\\n")
+                   (tmp / "a.txt").read_text(encoding="utf-8") == "two\n")
     finally:
         if old_defer is None:
             os.environ.pop("DARKITH_DEFER_PUSH", None)
