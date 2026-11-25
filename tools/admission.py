@@ -246,6 +246,8 @@ def preflight() -> list[str]:
         problems.extend(workflow_contract_errors(
             auto_path.read_text(encoding="utf-8"), workflow_texts,
             ci_path.read_text(encoding="utf-8")))
+        if "testnet/*" not in HOOK or TESTNET_BYPASS_REASON not in HOOK:
+            problems.append("pre-push hook bypass is not restricted to the explicit testnet trial rule")
         for repair_path in ("tools/drift_gate.py", "tools/tree_invariant.py"):
             repair_file = ROOT / repair_path
             if not repair_file.is_file() or "DARKITH_DEFER_PUSH" not in repair_file.read_text(encoding="utf-8"):
@@ -347,13 +349,30 @@ def rehearse(keep: bool = False) -> int:
 # the hook: refuse to push a known-red change
 # --------------------------------------------------------------------------------------
 
+TESTNET_BYPASS_REASON = "two independent testnet trials gate main"
+
+
+def testnet_bypass_allowed(branch: str, enabled: str, reason: str) -> bool:
+    return enabled == "1" and branch.startswith("testnet/") and reason == TESTNET_BYPASS_REASON
+
+
 HOOK = """#!/bin/sh
-# Installed by tools/admission.py --install-hook. Refuses to push a change that the real
-# suite already rejects. Bypass once with ADMISSION_BYPASS=1 when you have a reason.
-[ "$ADMISSION_BYPASS" = "1" ] && exit 0
+# Installed by tools/admission.py --install-hook. Main/master and ordinary branches must
+# rehearse the real suite. A bypass is narrowly reserved for staging a candidate on testnet;
+# the admission workflow then runs two independent full trials before any main merge.
+if [ "$ADMISSION_BYPASS" = "1" ]; then
+  branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+  case "$branch" in
+    testnet/*)
+      [ "$ADMISSION_BYPASS_REASON" = "two independent testnet trials gate main" ] && exit 0
+      ;;
+  esac
+  echo "admission: bypass refused outside the explicit testnet staging rule." >&2
+  exit 1
+fi
 python3 tools/admission.py rehearse || {
   echo "admission: push refused -- the suite is red on these exact bytes." >&2
-  echo "admission: fix it, or re-run with ADMISSION_BYPASS=1 to override." >&2
+  echo "admission: repair it or stage on testnet for two independent trials." >&2
   exit 1
 }
 """
@@ -388,6 +407,12 @@ def selftest() -> int:
     check(law_ids("NEVER #11 in prose\nNEVER #11 again in prose\n", "NEVER") == {},
           "prose mentions are not counted as declarations")
     check(law_ids("─── MUST #42 (X) ───\n", "MUST") == {"42": 1}, "MUST declaration counted")
+    check(testnet_bypass_allowed("testnet/candidate", "1", TESTNET_BYPASS_REASON),
+          "explicit testnet staging bypass is permitted")
+    check(not testnet_bypass_allowed("main", "1", TESTNET_BYPASS_REASON),
+          "main bypass is forbidden even with the testnet reason")
+    check(not testnet_bypass_allowed("testnet/candidate", "1", "unspecified"),
+          "testnet bypass requires the exact recorded reason")
 
     workflow_path = ROOT / ".github" / "workflows" / "auto-merge.yml"
     workflow_text = workflow_path.read_text(encoding="utf-8") if workflow_path.is_file() else ""
