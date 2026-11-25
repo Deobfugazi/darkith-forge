@@ -137,7 +137,7 @@ jobs:
             git config user.email "darkith-testnet@users.noreply.github.com"
             git commit -m "testnet: carry prophylactic repairs to fixed point"
           fi
-          # Re-enable the ordinary pre-push admission hook for the one final publication.
+          # Keep the explicit testnet-only bypass active through the final testnet publication; main admission remains gated by both isolated trials.
           unset DARKITH_DEFER_PUSH
           git push origin "HEAD:refs/heads/$BRANCH"
           git fetch origin "refs/heads/$BRANCH"
