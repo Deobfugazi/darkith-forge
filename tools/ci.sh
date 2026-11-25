@@ -82,10 +82,10 @@ if have python3; then
     # later hashing/sealing gates to run if this exact checkout is not already clean.
     run "absolution phase selftest" python3 tools/absolution_phase.py --selftest
     if python3 tools/absolution_phase.py --check; then
-      printf -- '--- absolution phase (read-only precondition): PASS\\n'
+      printf -- '--- absolution phase (read-only precondition): PASS\n'
     else
       rc=$?
-      printf -- '--- absolution phase (read-only precondition): FAIL (exit %s); downstream hashing stopped\\n' "$rc"
+      printf -- '--- absolution phase (read-only precondition): FAIL (exit %s); downstream hashing stopped\n' "$rc"
       exit 1
     fi
   fi
