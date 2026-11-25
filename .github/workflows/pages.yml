@@ -39,7 +39,7 @@ jobs:
           node <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('docs/index.html', 'utf8');
-          const match = html.match(/<script>([\\s\\S]*?)<\\/script>/);
+          const match = html.match(/<script>([\s\S]*?)<\/script>/);
           if (!match) throw new Error('Reader script missing');
           new Function(match[1]);
           if (!html.includes("fetch('README.md')")) {
