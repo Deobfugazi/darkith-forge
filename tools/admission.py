@@ -136,6 +136,60 @@ def cross_branch_collisions() -> list[str]:
     return problems
 
 
+def workflow_contract_errors(auto_text: str, workflow_texts: list[str],
+                               ci_text: str) -> list[str]:
+    """Prove the automation cannot admit a main-bound change after a single trial.
+
+    This gate intentionally checks the executable workflow contract, not its prose:
+    two fresh isolated rehearsals, exact candidate/base SHA checks, testnet-only repair,
+    and no scheduled dependency write directly to main.
+    """
+    errors: list[str] = []
+    required = (
+        ("testnet trial 1/2", "trial 1 job missing"),
+        ("testnet trial 2/2", "trial 2 job missing"),
+        ("needs: [prepare_testnet, trial_1]", "trial 1 does not depend on preflight"),
+        ("needs: [prepare_testnet, trial_1, trial_2]", "main admission does not depend on both trials"),
+        ("TESTED_SHA", "candidate SHA is not revalidated before merge"),
+        ("TESTED_BASE", "main base SHA is not revalidated before merge"),
+        ("branch=\"testnet/darkbot-", "scheduled dependency proposal is not isolated on testnet"),
+        ("gh workflow run auto-merge.yml", "dependency proposal does not dispatch the admission workflow"),
+    )
+    for token, message in required:
+        if token not in auto_text:
+            errors.append(message)
+
+    if auto_text.count("python3 tools/admission.py rehearse") < 2:
+        errors.append("fewer than two full isolated admission rehearsals are configured")
+    if "python3 tools/absolution_phase.py" not in auto_text or "python3 tools/admission.py" not in auto_text:
+        errors.append("testnet preflight repair/admission preflight is missing")
+    if "gh pr merge" not in auto_text or "merge_testnet:" not in auto_text:
+        errors.append("automatic promotion is not gated through the testnet merge job")
+    if re.search(r"git\s+push\s+(?:origin\s+)?(?:main|master)(?:\s|$)", auto_text):
+        errors.append("automation contains a direct push to main/master")
+
+    trial2 = auto_text.split("  trial_2:", 1)[1].split("\n  tests:", 1)[0] if "  trial_2:" in auto_text else ""
+    if "needs.trial_1.result == 'success'" not in trial2:
+        errors.append("trial 2 can run without trial 1 passing")
+    merge = auto_text.split("  merge_testnet:", 1)[1].split("\n  merge_dependency:", 1)[0] if "  merge_testnet:" in auto_text else ""
+    if ("needs.trial_1.result == 'success'" not in merge
+            or "needs.trial_2.result == 'success'" not in merge):
+        errors.append("main merge does not require both trial verdicts")
+
+    if "python3 tools/absolution_phase.py --check" not in ci_text:
+        errors.append("CI does not enforce read-only absolution before hashing")
+    if re.search(r"run\s+[\"'][^\n]*absolution phase[^\n]*[\"']\s+python3 tools/absolution_phase.py(?:\s|$)", ci_text):
+        errors.append("CI invokes the repair phase instead of checking the carried candidate")
+
+    for workflow in workflow_texts:
+        for line in workflow.splitlines():
+            if re.search(r"\buses\s*:", line):
+                if not re.search(r"\buses\s*:\s*[^@\s]+@[0-9a-f]{40}(?:\s|$)", line.strip()):
+                    errors.append("workflow action is not pinned to an immutable 40-character SHA")
+                    break
+    return errors
+
+
 def preflight() -> list[str]:
     problems: list[str] = []
 
@@ -177,6 +231,15 @@ def preflight() -> list[str]:
         problems.append(f"uncommitted drift in {len(drift)} file(s): " + ", ".join(drift[:5]))
 
     problems.extend(cross_branch_collisions())
+
+    workflow_dir = ROOT / ".github" / "workflows"
+    auto_path = workflow_dir / "auto-merge.yml"
+    ci_path = ROOT / "tools" / "ci.sh"
+    if auto_path.is_file() and ci_path.is_file():
+        workflow_texts = [p.read_text(encoding="utf-8") for p in sorted(workflow_dir.glob("*.yml"))]
+        problems.extend(workflow_contract_errors(
+            auto_path.read_text(encoding="utf-8"), workflow_texts,
+            ci_path.read_text(encoding="utf-8")))
 
     return problems
 
@@ -315,6 +378,19 @@ def selftest() -> int:
     check(law_ids("NEVER #11 in prose\nNEVER #11 again in prose\n", "NEVER") == {},
           "prose mentions are not counted as declarations")
     check(law_ids("─── MUST #42 (X) ───\n", "MUST") == {"42": 1}, "MUST declaration counted")
+
+    workflow_path = ROOT / ".github" / "workflows" / "auto-merge.yml"
+    workflow_text = workflow_path.read_text(encoding="utf-8") if workflow_path.is_file() else ""
+    workflow_texts = [p.read_text(encoding="utf-8") for p in
+                       sorted((ROOT / ".github" / "workflows").glob("*.yml"))]
+    ci_path = ROOT / "tools" / "ci.sh"
+    ci_text = ci_path.read_text(encoding="utf-8") if ci_path.is_file() else ""
+    errors = workflow_contract_errors(workflow_text, workflow_texts, ci_text)
+    check(not errors, "automation requires two isolated trials and immutable action pins",
+          "; ".join(errors))
+    broken = workflow_text.replace("testnet trial 2/2", "trial omitted") if workflow_text else ""
+    check(bool(workflow_contract_errors(broken, workflow_texts, ci_text)),
+          "workflow contract detects a missing second trial")
     labels = gate_labels('  run "chain gate" python3 x\n  run "chain gate" python3 y\n'
                          '  run "other" python3 z\n')
     check(labels == {"chain gate": 2, "other": 1}, "duplicate gate label is counted")
