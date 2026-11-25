@@ -26,7 +26,9 @@ permissions:
 
 concurrency:
   group: darkith-admission-${{ github.event.pull_request.number || inputs.testnet_pr || github.ref }}
-  cancel-in-progress: true
+  # A testnet repair commit can emit a newer PR event while the active run is carrying it.
+  # Never cancel the in-flight proof; candidate/base SHA guards fail closed if it becomes stale.
+  cancel-in-progress: false
 
 jobs:
   prepare_testnet:
