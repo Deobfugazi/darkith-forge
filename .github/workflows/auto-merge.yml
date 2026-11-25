@@ -1,80 +1,325 @@
-# Dependency auto-merge — a thin GitHub adapter for tools/darkbot.py + tools/ci.sh.
-#
-# Everything that decides anything lives in tools/ (darkbot.py, ci.sh, deps.txt), which
-# are provider-neutral. This file is only the GitHub-specific glue: when to run, and how
-# to merge. Move to another host and you rewrite this file, never the tools.
-#
-# Two producers of dependency pull requests feed it:
-#   * Dependabot, if you keep it enabled (author dependabot[bot]), and
-#   * tools/darkbot.py, which this workflow also runs on a schedule to bump pins itself
-#     (author github-actions[bot]). See the `bump` job.
-#
-# How the merge is gated:
-#   1. `tests` runs tools/ci.sh (the repo's own suites). Nothing merges unless it exits 0.
-#   2. `merge` has `needs: tests`, runs only for a dependency PR, re-checks the head has
-#      not moved since the tests ran (TOCTOU guard), then merges.
-#
-# Why the merge is a separate job and NOT a second workflow triggered by the PR: a PR
-# opened with the default GITHUB_TOKEN does not trigger pull_request workflows (they land
-# in an approval-required state). Keeping test+merge in one workflow run sidesteps that
-# recursion trap with no PAT and no pull_request_target (which is unsafe for forks).
-#
-# Security posture:
-#   * Actions pinned to full commit SHAs, not mutable tags.
-#   * Least privilege: read-only by default; write only where the merge needs it.
-#   * Fork PRs never auto-merge: the author check matches known bot logins only.
-#   * Fail closed: head moved, tests failed, or merge refused -> nothing merges.
+# Darkith admission pipeline.
+# A main-bound testnet PR is repaired and carried on its own branch, then tested twice
+# on the exact same SHA in fresh runners. Only those two green trials may admit it to main.
+# CI itself is read-only; repair is isolated to the PR/testnet branch.
 
-name: dependency auto-merge
+name: Darkith admission and dependency automation
 
 on:
   pull_request:
+    branches: [main, master]
   push:
     branches: [main, master]
   schedule:
-    - cron: "17 6 * * 1"   # Mondays 06:17 UTC — darkbot proposes pin bumps
+    - cron: "17 6 * * 1"
   workflow_dispatch:
+    inputs:
+      testnet_pr:
+        description: "PR number to trial twice and auto-admit (testnet branch only)"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
+  pull-requests: read
+
+concurrency:
+  group: darkith-admission-${{ github.event.pull_request.number || inputs.testnet_pr || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  tests:
-    name: tests
+  prepare_testnet:
+    name: testnet preflight repair and carry
+    if: >
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       startsWith(github.event.pull_request.head.ref, 'testnet/')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.testnet_pr != '')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    outputs:
+      sha: ${{ steps.carry.outputs.sha }}
+      branch: ${{ steps.resolve.outputs.branch }}
+      pr_number: ${{ steps.resolve.outputs.pr_number }}
+      base_sha: ${{ steps.resolve.outputs.base_sha }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check out main as authenticated workspace
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      - name: Resolve and validate testnet PR
+        id: resolve
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+          DISPATCH_PR: ${{ inputs.testnet_pr }}
+          EVENT_BRANCH: ${{ github.event.pull_request.head.ref }}
+          EVENT_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          pr="${EVENT_PR:-${DISPATCH_PR}}"
+          [ -n "$pr" ] || { echo "::error::No PR number"; exit 1; }
+          view="$(gh pr view "$pr" --json headRefName,headRefOid,baseRefOid,headRepository)"
+          branch="$(jq -r .headRefName <<<"$view")"
+          head_repo="$(jq -r .headRepository.nameWithOwner <<<"$view")"
+          base_sha="$(jq -r .baseRefOid <<<"$view")"
+          [ "$head_repo" = "$REPO" ] || { echo "::error::Fork PRs are not eligible for automatic admission"; exit 1; }
+          [[ "$branch" == testnet/* ]] || { echo "::error::Admission branch must begin testnet/"; exit 1; }
+          if [ -n "$EVENT_BRANCH" ]; then
+            [ "$branch" = "$EVENT_BRANCH" ] || { echo "::error::PR branch changed during resolution"; exit 1; }
+            [ "$EVENT_HEAD_REPO" = "$REPO" ] || { echo "::error::Head repository mismatch"; exit 1; }
+          fi
+          echo "pr_number=$pr" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "base_sha=$base_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the testnet branch
+        env:
+          BRANCH: ${{ steps.resolve.outputs.branch }}
+        run: |
+          set -euo pipefail
+          git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
+          git checkout -B "$BRANCH" "refs/remotes/origin/$BRANCH"
+
+      - name: Set up Python and Node
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.x"
 
       - name: Set up Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: "20"
+          node-version: "24"
 
-      - name: Install test dependencies (generated from tools/deps.txt)
+      - name: Install repair and test toolchain
         run: |
+          set -euo pipefail
           python3 tools/darkbot.py export
           python3 -m pip install --quiet -r requirements-dev.txt
           python3 -m playwright install --with-deps chromium
+          bash tools/fetch_toolchain.sh
 
-      - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
-        # The §19 compile proof (MUST-11) and the delivery gate's currency law need a real
-        # kotlinc + android.jar; without them those gates fail CLOSED, not skip. The stager
-        # is idempotent and caches into .tools/ (gitignored).
-        run: bash tools/fetch_toolchain.sh
+      - name: Heal to fixed point, validate, and carry only on testnet
+        id: carry
+        env:
+          BRANCH: ${{ steps.resolve.outputs.branch }}
+        run: |
+          set -euo pipefail
+          python3 tools/secret_gate.py
+          python3 tools/absolution_phase.py
+          python3 tools/secret_gate.py
+          python3 tools/absolution_phase.py --check
+          git add -A
+          if ! git diff --cached --quiet; then
+            git config user.name "darkith-testnet"
+            git config user.email "darkith-testnet@users.noreply.github.com"
+            git commit -m "testnet: carry prophylactic repairs to fixed point"
+          fi
+          git push origin "HEAD:refs/heads/$BRANCH"
+          git fetch origin "refs/heads/$BRANCH"
+          local_sha="$(git rev-parse HEAD)"
+          remote_sha="$(git rev-parse FETCH_HEAD)"
+          [ "$local_sha" = "$remote_sha" ] || {
+            echo "::error::Testnet branch moved during carry (local $local_sha remote $remote_sha)"
+            exit 1
+          }
+          python3 tools/absolution_phase.py --check
+          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+            git status --short
+            echo "::error::Preflight left uncarrried residue after commit"
+            exit 1
+          fi
+          echo "sha=$local_sha" >> "$GITHUB_OUTPUT"
 
-      - name: Run the repository's tests (tools/ci.sh)
-        run: bash tools/ci.sh
+  trial_1:
+    name: testnet trial 1/2
+    needs: prepare_testnet
+    if: >
+      always() &&
+      (github.event_name == 'pull_request' ||
+       (github.event_name == 'workflow_dispatch' && inputs.testnet_pr != '')) &&
+      (needs.prepare_testnet.result == 'success' || needs.prepare_testnet.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact candidate SHA
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.prepare_testnet.outputs.sha || github.event.pull_request.head.sha }}
+          fetch-depth: 0
 
-  merge:
-    name: merge dependency PR
-    needs: tests
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.x"
+
+      - name: Set up Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+
+      - name: Install test dependencies
+        run: |
+          set -euo pipefail
+          python3 tools/darkbot.py export
+          git diff --exit-code -- tools/deps.txt requirements-dev.txt
+          python3 -m pip install --quiet -r requirements-dev.txt
+          python3 -m playwright install --with-deps chromium
+          bash tools/fetch_toolchain.sh
+
+      - name: Run full CI trial 1
+        env:
+          CI_LOG: ${{ runner.temp }}/darkith-ci-trial-1.log
+        run: |
+          set -euo pipefail
+          bash tools/ci.sh
+          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+            git status --short
+            echo "::error::CI trial 1 mutated the candidate tree"
+            exit 1
+          fi
+
+  trial_2:
+    name: testnet trial 2/2
+    needs: [prepare_testnet, trial_1]
+    if: >
+      always() &&
+      needs.trial_1.result == 'success' &&
+      (needs.prepare_testnet.result == 'success' || needs.prepare_testnet.result == 'skipped') &&
+      (github.event_name == 'pull_request' ||
+       (github.event_name == 'workflow_dispatch' && inputs.testnet_pr != ''))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the same exact candidate SHA
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.prepare_testnet.outputs.sha || github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.x"
+
+      - name: Set up Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+
+      - name: Install test dependencies
+        run: |
+          set -euo pipefail
+          python3 tools/darkbot.py export
+          git diff --exit-code -- tools/deps.txt requirements-dev.txt
+          python3 -m pip install --quiet -r requirements-dev.txt
+          python3 -m playwright install --with-deps chromium
+          bash tools/fetch_toolchain.sh
+
+      - name: Run full CI trial 2
+        env:
+          CI_LOG: ${{ runner.temp }}/darkith-ci-trial-2.log
+        run: |
+          set -euo pipefail
+          bash tools/ci.sh
+          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+            git status --short
+            echo "::error::CI trial 2 mutated the candidate tree"
+            exit 1
+          fi
+
+  tests:
+    name: post-push / scheduled CI
+    if: github.event_name != 'pull_request' &&
+        !(github.event_name == 'workflow_dispatch' && inputs.testnet_pr != '')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.x"
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+      - name: Install test dependencies
+        run: |
+          set -euo pipefail
+          python3 tools/darkbot.py export
+          git diff --exit-code -- tools/deps.txt requirements-dev.txt
+          python3 -m pip install --quiet -r requirements-dev.txt
+          python3 -m playwright install --with-deps chromium
+          bash tools/fetch_toolchain.sh
+      - name: Run CI
+        env:
+          CI_LOG: ${{ runner.temp }}/darkith-ci-post-push.log
+        run: |
+          set -euo pipefail
+          bash tools/ci.sh
+          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+            git status --short
+            echo "::error::Post-push CI mutated the candidate tree"
+            exit 1
+          fi
+
+  merge_testnet:
+    name: auto-admit verified testnet PR
+    needs: [prepare_testnet, trial_1, trial_2]
+    if: >
+      needs.prepare_testnet.result == 'success' &&
+      needs.trial_1.result == 'success' &&
+      needs.trial_2.result == 'success' &&
+      ((github.event_name == 'pull_request' &&
+        startsWith(github.event.pull_request.head.ref, 'testnet/')) ||
+       (github.event_name == 'workflow_dispatch' && inputs.testnet_pr != ''))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Verify two-trial evidence and unchanged candidate/base
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ needs.prepare_testnet.outputs.pr_number }}
+          TESTED_SHA: ${{ needs.prepare_testnet.outputs.sha }}
+          TESTED_BASE: ${{ needs.prepare_testnet.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          view="$(gh pr view "$PR_NUMBER" --json headRefOid,baseRefOid,state,isDraft)"
+          live_head="$(jq -r .headRefOid <<<"$view")"
+          live_base="$(jq -r .baseRefOid <<<"$view")"
+          state="$(jq -r .state <<<"$view")"
+          [ "$state" = OPEN ] || { echo "::error::PR is not open"; exit 1; }
+          [ "$live_head" = "$TESTED_SHA" ] || {
+            echo "::error::Candidate changed after trials (tested $TESTED_SHA, live $live_head)"
+            exit 1
+          }
+          [ "$live_base" = "$TESTED_BASE" ] || {
+            echo "::error::Main changed after trials (tested base $TESTED_BASE, live $live_base)"
+            exit 1
+          }
+          echo "Two full CI trials passed on $TESTED_SHA against unchanged main $TESTED_BASE."
+
+      - name: Promote and squash-merge after both trials
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ needs.prepare_testnet.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          gh pr ready "$PR_NUMBER" || true
+          gh pr merge "$PR_NUMBER" --squash --delete-branch
+
+  merge_dependency:
+    name: auto-merge tested dependency PR
+    needs: [trial_1, trial_2]
     if: >
       github.event_name == 'pull_request' &&
+      needs.trial_1.result == 'success' &&
+      needs.trial_2.result == 'success' &&
       (github.event.pull_request.user.login == 'dependabot[bot]' ||
        github.event.pull_request.user.login == 'github-actions[bot]')
     runs-on: ubuntu-latest
@@ -82,77 +327,67 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Refuse to merge a commit that was not the one tested
+      - name: Refuse a moved dependency PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           TESTED_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          set -euo pipefail
           live="$(gh pr view "$PR_URL" --json headRefOid -q .headRefOid)"
-          if [ "$live" != "$TESTED_SHA" ]; then
-            echo "::error::PR head moved since tests ran (tested $TESTED_SHA, now $live); refusing."
+          [ "$live" = "$TESTED_SHA" ] || {
+            echo "::error::PR head moved after trial; refusing merge"
             exit 1
-          fi
-          echo "head unchanged since tests: $live"
-
-      - name: Merge (prefer GitHub auto-merge, fall back to direct squash)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          gh pr merge --auto --squash --delete-branch "$PR_URL" \
-            || gh pr merge --squash --delete-branch "$PR_URL"
+          }
+          gh pr merge "$PR_URL" --squash --delete-branch
 
   bump:
-    name: darkbot bump (test, then commit)
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    name: darkbot dependency proposal (never direct-main push)
+    if: github.event_name == 'schedule' ||
+        (github.event_name == 'workflow_dispatch' && inputs.testnet_pr == '')
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+      actions: write
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.x"
-
-      - name: Set up Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: "20"
-
-      - name: Bump pins to the latest registry versions
-        id: bump
+          node-version: "24"
+      - name: Propose dependency pins on an isolated testnet branch
+        id: proposal
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           python3 tools/darkbot.py update
           python3 tools/darkbot.py export
-          if git diff --quiet; then
+          if git diff --quiet -- tools/deps.txt requirements-dev.txt; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-
-      - name: Install test dependencies
-        if: steps.bump.outputs.changed == 'true'
-        run: |
-          python3 -m pip install --quiet -r requirements-dev.txt
-          python3 -m playwright install --with-deps chromium
-
-      # The bump is committed directly (not via a PR) only after the tests pass. A PR
-      # opened with GITHUB_TOKEN would sit in approval-required state and never reach the
-      # merge job, so test-then-commit is the self-contained, still-gated path for the
-      # bot's own bumps. A failed test leaves main untouched.
-      - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
-        if: steps.bump.outputs.changed == 'true'
-        run: bash tools/fetch_toolchain.sh
-
-      - name: Test, then commit only if green
-        if: steps.bump.outputs.changed == 'true'
-        run: |
-          bash tools/ci.sh
-          git config user.name  "darkbot"
-          git config user.email "darkbot@users.noreply.github.com"
+          branch="testnet/darkbot-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
           git add tools/deps.txt requirements-dev.txt
-          git commit -m "darkbot: bump dependency pins to latest registry versions"
-          git push
+          git config user.name "darkbot"
+          git config user.email "darkbot@users.noreply.github.com"
+          git commit -m "darkbot: propose dependency pin updates"
+          git push -u origin "$branch"
+          pr_url="$(gh pr create --base main --head "$branch"             --title "testnet: darkbot dependency pin proposal"             --body "Automated dependency proposal. This branch is repaired, carried, and subjected to two independent full CI trials by the Darkith admission workflow before any main merge.")"
+          pr_number="${pr_url##*/}"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
+      - name: Dispatch the two-trial testnet admission
+        if: steps.proposal.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.proposal.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+          gh workflow run auto-merge.yml --ref main -f testnet_pr="$PR_NUMBER"
