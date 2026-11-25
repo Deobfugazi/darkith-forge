@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+<title id="title">SET: Individual-indexed, time-varying physiological tolerance window</title>
+<desc id="desc">Proposed conceptual model, not a universal clinical standard. Illustrative normalized variable and phase-dependent lower and upper boundaries across wake and sleep. Wake is labeled active expenditure and sleep active restoration. Circadian phase is distinguished from wall-clock time.</desc>
+<defs>
+ <linearGradient id="phase" x1="0" x2="1"><stop stop-color="#f6d89b"/><stop offset=".49" stop-color="#e8f0fa"/><stop offset=".51" stop-color="#c5dcf8"/><stop offset="1" stop-color="#dbe9fb"/></linearGradient>
+ <linearGradient id="within" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#79c994" stop-opacity=".45"/><stop offset="1" stop-color="#79c994" stop-opacity=".2"/></linearGradient>
+ <style>
+ .bg{fill:#f7f9fc}.panel{fill:#fff;stroke:#c7d3e2;stroke-width:2}.ink{fill:#14243a;font-family:Arial,Helvetica,sans-serif}.head{font-size:34px;font-weight:700}.sub{font-size:20px}.label{font-size:19px;font-weight:600}.small{font-size:16px}.axis{stroke:#24364d;stroke-width:2.5;fill:none}.upper{stroke:#168443;stroke-width:4;stroke-dasharray:13 8;fill:none}.lower{stroke:#c77a16;stroke-width:4;stroke-dasharray:13 8;fill:none}.measure{stroke:#173e70;stroke-width:5;fill:none}.tick{stroke:#24364d;stroke-width:2}.note{fill:#f2f5f9;stroke:#c7d3e2;stroke-width:1.5}
+ </style>
+</defs>
+<rect class="bg" width="1440" height="900"/>
+<rect x="20" y="18" width="1400" height="100" rx="18" fill="#102a46"/>
+<text x="720" y="61" text-anchor="middle" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700">Satietary Ergonomic Temperametrics (SET)</text>
+<text x="720" y="91" text-anchor="middle" fill="#dce9f7" font-family="Arial,Helvetica,sans-serif" font-size="21">Individual-indexed, time-varying tolerance window</text>
+<rect class="panel" x="20" y="135" width="1400" height="125" rx="14"/>
+<text class="ink label" x="42" y="168">Biological phase</text><text class="ink small" x="42" y="192">(circadian)</text>
+<rect x="220" y="151" width="1175" height="58" rx="9" fill="url(#phase)"/>
+<text class="ink label" x="480" y="177" text-anchor="middle">WAKE</text><text class="ink small" x="480" y="198" text-anchor="middle">Active expenditure</text>
+<text class="ink label" x="1080" y="177" text-anchor="middle">SLEEP</text><text class="ink small" x="1080" y="198" text-anchor="middle">Active restoration</text>
+<text class="ink label" x="42" y="232">Wall-clock time</text><text class="ink small" x="42" y="250">(example)</text>
+<path class="axis" d="M220 226 H1395"/><g class="ink small" text-anchor="middle">
+<path class="tick" d="M220 218v16 M455 218v16 M690 218v16 M925 218v16 M1160 218v16 M1395 218v16"/>
+<text x="220" y="252">06:00</text><text x="455" y="252">12:00</text><text x="690" y="252">18:00</text><text x="925" y="252">00:00</text><text x="1160" y="252">06:00</text>
+</g>
+<rect class="panel" x="20" y="278" width="1400" height="490" rx="14"/>
+<rect x="220" y="294" width="587" height="455" fill="#fff0d5" opacity=".7"/><rect x="807" y="294" width="588" height="455" fill="#dceafa" opacity=".85"/>
+<g class="ink small" text-anchor="end"><text x="195" y="372">1.0</text><text x="195" y="516">0.5</text><text x="195" y="660">0.0</text></g>
+<path class="axis" d="M220 310 V730 H1395"/><path class="tick" d="M208 372h12 M208 516h12 M208 660h12"/>
+<text class="ink label" x="43" y="440">Measured variable</text><text class="ink sub" x="43" y="468">xᵢ(t)</text><text class="ink small" x="43" y="493">Normalized units</text>
+<path d="M220 450 C320 414 390 460 490 422 S650 350 745 392 S900 410 980 378 S1110 450 1190 446 S1310 390 1395 408 L1395 548 C1300 575 1260 610 1175 580 S1020 530 950 550 S820 570 740 530 S600 545 500 560 S320 550 220 570 Z" fill="url(#within)"/>
+<path class="upper" d="M220 450 C320 414 390 460 490 422 S650 350 745 392 S900 410 980 378 S1110 450 1190 446 S1310 390 1395 408"/>
+<path class="lower" d="M220 570 C320 550 400 590 500 560 S650 530 740 530 S880 570 950 550 S1100 530 1175 580 S1300 575 1395 548"/>
+<path class="measure" d="M220 515 C270 470 310 545 360 520 S430 550 490 490 S550 480 600 525 S680 545 730 500 S800 470 850 510 S910 470 960 480 S1040 550 1100 565 S1200 530 1250 555 S1330 470 1395 500"/>
+<text class="ink label" x="390" y="348">Upper boundary uᵢ(t)</text><path class="axis" d="M500 355l34 45"/>
+<text class="ink label" x="390" y="622">Lower boundary lᵢ(t)</text><path class="axis" d="M500 612l-30 -43"/>
+<path d="M655 410v118 M645 420l10 -10 10 10 M645 518l10 10 10 -10" stroke="#152b43" stroke-width="3" fill="none"/>
+<text class="ink label" x="674" y="456">Wᵢ(t)</text><text class="ink small" x="674" y="480">Tolerance</text><text class="ink small" x="674" y="501">window</text>
+<text class="ink label" x="510" y="713" text-anchor="middle">Wake</text><text class="ink label" x="1090" y="713" text-anchor="middle">Sleep</text>
+<text class="ink small" x="220" y="747">Circadian phase: internal biological timing (schematic; not inferred from clock time alone)</text>
+<rect class="note" x="1015" y="310" width="360" height="116" rx="10"/>
+<rect x="1035" y="329" width="24" height="18" fill="#a9dcb7" stroke="#168443"/><text class="ink small" x="1070" y="344">In-range: lᵢ(t) ≤ xᵢ(t) ≤ uᵢ(t)</text>
+<rect x="1035" y="360" width="24" height="18" fill="#fff0d5" stroke="#c77a16"/><text class="ink small" x="1070" y="375">Below-range: xᵢ(t) &lt; lᵢ(t)</text>
+<rect x="1035" y="391" width="24" height="18" fill="#dceafa" stroke="#4387ce"/><text class="ink small" x="1070" y="406">Above-range: xᵢ(t) &gt; uᵢ(t)</text>
+<rect x="20" y="785" width="1400" height="95" rx="14" fill="#102a46"/>
+<text x="45" y="817" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="700">Model status</text>
+<text x="45" y="844" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="18">Proposed conceptual model—not an established universal clinical standard.</text>
+<text x="45" y="867" fill="#dce9f7" font-family="Arial,Helvetica,sans-serif" font-size="15">Illustrative curves and normalized values only. Boundaries must be defined and validated for each specified variable and individual.</text>
+</svg>
