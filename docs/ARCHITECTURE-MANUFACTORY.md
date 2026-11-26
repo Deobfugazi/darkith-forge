@@ -2,6 +2,8 @@
 
 Status: governing architecture and integration specification. This document defines the manufactory model; it does not claim that every described industry-facing service is already implemented.
 
+Executable local boundary: the evidence-bound dossier and repair-packet kernel is implemented in `tools/manufactory.py`, tested in `tools/tests/manufactory_test.py`, and wired into `tools/ci.sh`. It connects saved Scout output to a sequential evidence record and integrity-checked patch packet. It does not yet provide live external participant orchestration, execute adapters/tests, submit upstream changes, settle compensation, or issue NT XII units. See `docs/manufactory/OPERATIONS.md`.
+
 ## 0. Governing identity
 
 Darkith is the manufactory, not a derivative product assembled by scavenging repositories and competing for adoption.
