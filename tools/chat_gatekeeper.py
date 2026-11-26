@@ -39,6 +39,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from bisect import bisect_left
 import hashlib
 import json
 import os
@@ -201,31 +202,30 @@ ADDRESSES_OPERATOR = re.compile(
     r"^(?:operator\s*[\u2014:,\-]|foreman[\u2019']?s\s+report\b)", re.IGNORECASE)
 
 
-def _is_echo(user_text: str, assistant_texts: list[str]) -> bool:
-    """True when this 'user' turn is the agent's own reply recorded under the user role.
+class AssistantEchoIndex:
+    """Reusable exact/prefix index; build once per session."""
+    def __init__(self, texts: list[str]):
+        self.sorted = sorted(set(" ".join(t.split()) for t in texts if len(" ".join(t.split())) >= ECHO_MIN))
+        self.by_prefix: dict[str, list[str]] = {}
+        for text in self.sorted:
+            self.by_prefix.setdefault(text[:ECHO_MIN], []).append(text)
 
-    The session log carries the agent's replies under role="user" — sometimes duplicated from
-    an assistant event, sometimes ONLY as a user event, so a byte match against assistant
-    messages alone is not enough. Two signals, both narrow:
+    def matches_normalized(self, user_text: str) -> bool:
+        if len(user_text) < ECHO_MIN:
+            return False
+        if any(user_text.startswith(a) for a in self.by_prefix.get(user_text[:ECHO_MIN], ())):
+            return True
+        i = bisect_left(self.sorted, user_text)
+        return i < len(self.sorted) and self.sorted[i].startswith(user_text)
 
-    * a long message that reappears verbatim among the assistant messages, and
-    * a message that opens by addressing the Operator ("Operator — ...").
 
-    Both are the machine speaking about its work, never the Operator giving an order. Without
-    this, the agent's own report is ingested as a directive, lands on the board, and can even
-    re-open a brief the agent had just closed.
-    """
+def _is_echo(user_text: str, assistant_texts: list[str] | AssistantEchoIndex) -> bool:
+    """Recognize agent echoes without rescanning the whole session."""
     u = " ".join(user_text.split())
     if ADDRESSES_OPERATOR.match(u):
         return True
-    for a in assistant_texts:
-        a = " ".join(a.split())
-        if len(a) < ECHO_MIN:
-            continue
-        if u == a or (len(u) >= ECHO_MIN and (u.startswith(a) or a.startswith(u))):
-            return True
-    return False
-
+    index = assistant_texts if isinstance(assistant_texts, AssistantEchoIndex) else AssistantEchoIndex(assistant_texts)
+    return index.matches_normalized(u)
 
 def session_events() -> tuple[str, list[tuple[int, str, str]]]:
     """Return (conversation_id, [(index, timestamp, text)]) for the newest session with events."""
@@ -252,8 +252,9 @@ def session_events() -> tuple[str, list[tuple[int, str, str]]]:
         if e.get("kind") != "MessageEvent":
             continue
         events.append((f, e))
-    assistant_texts = [" ".join(_msg_text(e).split()) for _, e in events
+    assistant_texts = [_msg_text(e) for _, e in events
                        if (e.get("llm_message") or {}).get("role") == "assistant"]
+    assistant_index = AssistantEchoIndex(assistant_texts)
     out = []
     for f, e in events:
         lm = e.get("llm_message") or {}
@@ -262,7 +263,7 @@ def session_events() -> tuple[str, list[tuple[int, str, str]]]:
         txt = _msg_text(e)
         if not txt.strip():
             continue
-        if _is_echo(txt, assistant_texts):
+        if _is_echo(txt, assistant_index):
             continue
         idx = int(re.sub(r"^event-(\d+)-.*$", r"\1", f.name))
         out.append((idx, e.get("timestamp", ""), txt))
