@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 90,
+  "count": 91,
   "files": [
     {
       "bytes": 88503,
@@ -175,6 +175,12 @@
       "path": "docs/evidence/SECTOR-PAIN-LEDGER.md",
       "register": "B-knowledge",
       "sha256": "9d6b452e87d84d38eec53a3d6a5fbcaf3377aaec72291523dd3d299ffee9706e"
+    },
+    {
+      "bytes": 19891,
+      "path": "docs/index.html",
+      "register": "B-knowledge",
+      "sha256": "8585e98e027becc381bd113b8a1f423634f594fca9a19138ec32c6fcdf7f6f8c"
     },
     {
       "bytes": 1383,
