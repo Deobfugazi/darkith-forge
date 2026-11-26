@@ -80,7 +80,8 @@ jobs:
     if: >
       github.event_name == 'pull_request' &&
       (github.event.pull_request.user.login == 'dependabot[bot]' ||
-       github.event.pull_request.user.login == 'github-actions[bot]')
+       github.event.pull_request.user.login == 'github-actions[bot]') &&
+      github.event.pull_request.head.ref != 'trial-net/ci-merge-barrier'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -113,6 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
@@ -143,10 +145,8 @@ jobs:
           python3 -m pip install --quiet -r requirements-dev.txt
           python3 -m playwright install --with-deps chromium
 
-      # The bump is committed directly (not via a PR) only after the tests pass. A PR
-      # opened with GITHUB_TOKEN would sit in approval-required state and never reach the
-      # merge job, so test-then-commit is the self-contained, still-gated path for the
-      # bot's own bumps. A failed test leaves main untouched.
+      # Dependency candidates are staged on trial-net, never pushed directly to main.
+      # The resulting PR runs the normal tests + exact-head merge gate before main.
       - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
         if: steps.bump.outputs.changed == 'true'
         run: bash tools/fetch_toolchain.sh
@@ -159,4 +159,17 @@ jobs:
           git config user.email "darkbot@users.noreply.github.com"
           git add tools/deps.txt requirements-dev.txt
           git commit -m "darkbot: bump dependency pins to latest registry versions"
-          git push
+          git push origin HEAD:refs/heads/trial-net/dependency-bumps
+
+      - name: Open or reuse the trial-net pull request
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh pr view trial-net/dependency-bumps --json state -q .state 2>/dev/null | grep -q OPEN; then
+            echo "Existing trial-net PR updated; it will be validated before merge."
+          else
+            gh pr create --base main --head trial-net/dependency-bumps \
+              --title "darkbot: dependency pin update" \
+              --body "Automated dependency candidate. This change was tested by the scheduled candidate job and must pass the PR CI gate before merge."
+          fi
