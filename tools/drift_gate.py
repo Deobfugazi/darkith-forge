@@ -57,8 +57,8 @@ def find_drift(root=ROOT):
     return ("drift" if paths else "clean"), paths
 
 
-def repair(root=ROOT):
-    """One deterministic sweep: stage, commit, push. Never force, never rewrite."""
+def repair(root=ROOT, push=False):
+    """Stage and commit locally; push only when the caller explicitly authorizes it."""
     st = git(["status", "--porcelain"], root=root)
     if st.returncode != 0:
         return 'skip', [st.stderr.strip() or 'git unavailable']
@@ -72,14 +72,15 @@ def repair(root=ROOT):
              "Co-authored-by: openhands <openhands@all-hands.dev>"], root=root)
     if c.returncode != 0:
         return 'drift', [c.stderr.strip() or 'commit refused']
-    # Push only where a remote exists. A local-only worktree (or a throwaway test repo)
-    # converges on the commit itself; unpushed age is a separate measurement owned by
-    # authority_gate (NEVER #21), so this gate must not fail what git cannot reach.
-    remote = git(["remote", "get-url", "origin"], root=root)
-    if remote.returncode == 0:
-        push = git(["push", "origin", "HEAD"], root=root)
-        if push.returncode != 0:
-            return 'drift', [push.stderr.strip() or 'push refused (never force-pushed)']
+    # A repair gate may create a local commit, but a remote write is a separate
+    # authority boundary. NEVER #21: require the explicit --push switch.
+    if push:
+        remote = git(["remote", "get-url", "origin"], root=root)
+        if remote.returncode != 0:
+            return 'drift', [remote.stderr.strip() or 'push requested but origin is absent']
+        push_result = git(["push", "origin", "HEAD"], root=root)
+        if push_result.returncode != 0:
+            return 'drift', [push_result.stderr.strip() or 'push refused (never force-pushed)']
     state, paths = find_drift(root=root)
     if state != "clean":
         return "drift", paths or ["repair did not converge"]
@@ -157,18 +158,23 @@ def selftest():
     log = git(["log", "--format=%s"], root=dirty)
     check("the repair is a committed fact", "eliminate uncommitted drift" in log.stdout)
 
-    print("== with a remote, the repair also lands the push ==")
+    print("== with a remote, default repair commits locally and does not push ==")
     import tempfile
     remote_dir = tempfile.mkdtemp()
     subprocess.run(["git", "init", "-q", "--bare"], cwd=remote_dir, check=True)
     shared = fresh_repo()
     subprocess.run(["git", "remote", "add", "origin", remote_dir], cwd=shared, check=True)
-    (shared / "HISTORY.md").write_text("half a repair\n")
+    (shared / "HISTORY.md").write_text("half a repair\\n")
     s_state, s_paths = repair(shared)
     check("repair converges with a remote", s_state == "clean", str(s_paths))
-    heads = subprocess.run(["git", "rev-list", "HEAD"], cwd=remote_dir,
+    refs = git(["ls-remote", "origin"], root=shared)
+    check("default repair does not push", refs.returncode == 0 and not refs.stdout.strip(), refs.stdout.strip())
+    (shared / "HISTORY2.md").write_text("explicit push\\n")
+    p_state, p_paths = repair(shared, push=True)
+    check("explicit push repair converges", p_state == "clean", str(p_paths))
+    heads = subprocess.run(["git", "rev-list", "--all"], cwd=remote_dir,
                            capture_output=True, text=True).stdout.splitlines()
-    check("the push really landed", len(heads) == 1, str(len(heads)) + " head on the remote")
+    check("explicit push really landed", len(heads) >= 2, str(len(heads)) + " commit(s) on remote")
 
     print("== no git repo is a named SKIP, never a pass ==")
     with tempfile.TemporaryDirectory() as bare:
@@ -187,7 +193,7 @@ if __name__ == "__main__":
     if "--selftest" in sys.argv:
         sys.exit(selftest())
     if "--fix" in sys.argv:
-        state, paths = repair()
+        state, paths = repair(push="--push" in sys.argv)
         if state == "skip":
             print("drift repair: SKIP (no git repository)")
             sys.exit(3)
