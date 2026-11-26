@@ -186,8 +186,11 @@ def patch_page(page: str, facade: str) -> str:
     return inject(page, PF_START, PF_END, wrap_script(facade))
 
 
-def build_core() -> None:
-    subprocess.run([sys.executable, str(BUILD / "make_core.py")], check=True)
+def build_core(check: bool = False) -> None:
+    cmd = [sys.executable, str(BUILD / "make_core.py")]
+    if check:
+        cmd.append("--check")
+    subprocess.run(cmd, check=True)
 
 
 def syntax_gate(*paths: pathlib.Path) -> None:
@@ -209,7 +212,7 @@ def main() -> int:
     ap.add_argument("--check", action="store_true", help="verify sync; write nothing")
     args = ap.parse_args()
 
-    build_core()
+    build_core(check=args.check)
     core = CORE.read_text(encoding="utf-8")
     host = HOST.read_text(encoding="utf-8")
     facade = FACADE.read_text(encoding="utf-8")
