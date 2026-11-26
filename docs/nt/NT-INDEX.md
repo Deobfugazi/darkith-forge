@@ -63,3 +63,18 @@ synchrony) are enforced by three existing gates:
 
 NT IX and NT X were cited throughout the Kotlin sources and `DARKITH.md` before
 this run, but were not in the tree. They are carried here now.
+
+
+## Manufactory architecture — cross-corpus integration
+
+The industry-coupled manufactory is specified in [ARCHITECTURE-MANUFACTORY.md](../ARCHITECTURE-MANUFACTORY.md). It integrates the existing components without replacing their governing documents:
+
+- Fracture Scout discovers and ranks candidates; it does not prove defect, novelty, authorization, or payment.
+- The autophage/coupling layer connects to the affected environment through bounded adapters.
+- Homekeeper governs repository-unit admission and authority boundaries.
+- SAVF and the existing gates supply bounded reproduction and verification evidence.
+- Autophagy turns recurring defects into class-level correction and prevention.
+- Nodal supplies the current receipt/coordination substrate within its stated single-writer and tamper-evident limits.
+- NT XII and the Black & Whitepaper remain authoritative for issuance. Repair compensation/settlement is a separate economic rail.
+
+The manufactory document is a governing architecture and staged implementation specification. It does not promote industry-wide participant routing, autonomous settlement, or decentralized governance to implemented status without their own evidence.

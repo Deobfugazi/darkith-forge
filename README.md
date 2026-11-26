@@ -16,6 +16,15 @@ This README is the public bridge into the work—and must practice the ergonomic
 
 # 0. Start here
 
+## 0.0 Darkith is the manufactory
+
+Darkith is not positioned as a fork competing to become another project's replacement. It is the manufactory: the factory architecture that discovers fractures, couples to the affected environment through bounded adapters, coordinates the developers and maintainers already equipped to resolve them, verifies and preserves corrections, and operates the downstream evidence and economic machinery.
+
+The founder establishes the factory's governing architecture; the fractured industry participates in production. Participants retain their own project authority, source, and native workflow. The factory is designed to reduce the founder's role as a permanent repair bottleneck—not to convert the industry into an owned labor pool.
+
+The integrated production model, state machine, participant contract, verification boundary, economic-rail distinction, failure modes, and staged admission gates are specified in [ARCHITECTURE-MANUFACTORY.md](docs/ARCHITECTURE-MANUFACTORY.md). That document is an architecture, not a claim that industry-scale operation is already implemented.
+
+
 ## 0.1 What is Darkith in one sentence?
 
 Darkith, for now, is a local-first Android and offline-software forge built to turn inspectable source into usable tools while making claims, corrections, and progress accountable to evidence.
