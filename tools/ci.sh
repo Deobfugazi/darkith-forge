@@ -360,6 +360,7 @@ if have python3; then
       run "chat gatekeeper perf gate"             python3 tools/chat_gatekeeper_perf_gate.py --check
       run "chat gatekeeper perf regression"        python3 tools/tests/chat_gatekeeper_perf_test.py
       run "toolchain download resilience"          python3 tools/toolchain_fetch_gate.py --check
+  run "toolchain gate bounded probe"            python3 tools/tests/toolchain_gate_test.py
       run "toolchain fetch regression"              python3 tools/tests/toolchain_fetch_test.py
       run "chat gatekeeper ingest (MUST #38)"   python3 tools/chat_gatekeeper.py --check
     fi
