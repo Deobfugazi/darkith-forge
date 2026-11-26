@@ -18,9 +18,9 @@ This README is the public bridge into the work—and must practice the ergonomic
 
 ## 0.1 What is Darkith in one sentence?
 
-Darkith, for now, is a local-first Android and offline-software forge built to turn inspectable source into usable tools while making claims, corrections, and progress accountable to evidence.
+Darkith is the manufactory: a local-first, interoperable production architecture that discovers fractures, couples to native environments, mobilizes the developer and maintainer industry to resolve them, verifies correction, preserves reusable capability, and coordinates downstream value capture while keeping project ownership and repair labor distributed.
 
-## 0.2 What is it trying to accomplish?
+## 0.2 What is it trying to accomplish?\n\n**Manufactory architecture:** [Read the governing architecture, production cycle, lifecycle, trust boundaries, settlement gates, current implementation map, and integration order](MANUFACTORY.md). Darkith is the factory; the fractured industry is its distributed production force; verified correction is the accepted output; minting is downstream settlement—not a substitute for proof.\n
 
 The immediate evolving work in progress is software: an Android host, offline interfaces, build machinery, audit tools, and repository gates.
 
