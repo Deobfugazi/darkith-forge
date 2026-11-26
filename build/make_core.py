@@ -13,6 +13,7 @@ writes build/savf-core.js: a single self-contained module with no DOM access.
 
 Run:  python3 build/make_core.py
 """
+import argparse
 import pathlib
 import re
 import sys
@@ -40,6 +41,10 @@ BANNER = """/* =================================================================
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--check", action="store_true", help="verify generated core; write nothing")
+    args = ap.parse_args()
+
     html = SAVF_HTML.read_text(encoding="utf-8")
     m = re.search(r"<script[^>]*>([\s\S]*?)</script>", html)
     if not m:
@@ -74,11 +79,8 @@ def main() -> int:
 
     core = BANNER + shim + engine.rstrip() + "\n\n" + tables.rstrip() + "\n\n"
     core += FACADE.read_text(encoding="utf-8").rstrip() + "\n"
-    OUT.write_text(core, encoding="utf-8")
-
     have = {name: (f"global.{name}" in core) for name in
             ("PyLex", "PyAst", "SavfScan", "SavfHash", "SavfCore", "SavfAudit")}
-    print(f"wrote {OUT.relative_to(ROOT)}  {len(core)} bytes")
     print("  modules: " + " ".join(f"{k}={'ok' if v else 'MISSING'}" for k, v in have.items()))
     print(f"  tables:  STDLIB={'ok' if 'global.SAVF_STDLIB' in core else 'MISSING'} "
           f"STDATTRIB={'ok' if 'global.SAVF_STDATTRIB' in core else 'MISSING'}")
@@ -86,6 +88,14 @@ def main() -> int:
           f"auditFiles={'ok' if 'auditFiles' in core else 'MISSING'}")
     if not all(have.values()):
         return 1
+    if args.check:
+        if not OUT.exists() or OUT.read_text(encoding="utf-8") != core:
+            print(f"OUT OF SYNC: {OUT.relative_to(ROOT)}", file=sys.stderr)
+            return 1
+        print("check: in sync (write-free)")
+        return 0
+    OUT.write_text(core, encoding="utf-8")
+    print(f"wrote {OUT.relative_to(ROOT)}  {len(core)} bytes")
     return 0
 
 
