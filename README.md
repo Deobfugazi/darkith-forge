@@ -24,6 +24,8 @@ The founder establishes the factory's governing architecture; the fractured indu
 
 The integrated production model, state machine, participant contract, verification boundary, economic-rail distinction, failure modes, and staged admission gates are specified in [ARCHITECTURE-MANUFACTORY.md](docs/ARCHITECTURE-MANUFACTORY.md). That document is an architecture, not a claim that industry-scale operation is already implemented.
 
+The first executable local kernel connects saved Fracture Scout candidates to evidence-gated dossiers, portable repair packets, independent verification, and preservation. See [the manufactory kernel operations](docs/manufactory/OPERATIONS.md) for its commands and explicit limits.
+
 
 ## 0.1 What is Darkith in one sentence?
 
