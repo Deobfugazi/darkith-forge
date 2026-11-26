@@ -78,7 +78,7 @@ def step(d,target,evidence):
 def import_scout(path,index,project):
     raw=path.read_bytes(); proof=json.loads(raw); item=proof["fractures"][index-1]
     d=create(item["title"],project,item["url"],item.get("source","fracture-scout"))
-    d["source"]["retrieved_at"]=omega_iso(datetime.fromtimestamp(path.stat().st_mtime,timezone.utc))
+    d["source"]["retrieved_at"]=omega_iso()
     d["source"]["revision"]="scout-run:"+hashlib.sha256(raw).hexdigest(); d["source"]["content_sha256"]=sha(item)
     d["scout"]={"proof_sha256":hashlib.sha256(raw).hexdigest(),"candidate_index":index,"candidate":item}
     origin=copy.deepcopy(d); origin.pop("origin",None); origin.pop("history",None); d["origin"]=origin; validate(d); return d
