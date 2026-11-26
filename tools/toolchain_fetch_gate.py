@@ -28,7 +28,8 @@ def patch_text(text):
     a=text.index('  say "android.jar: fetching'); b=text.index(chr(10)+"fi",a)
     return text[:a]+BLOCK.rstrip(chr(10))+text[b:]
 def check(text):
-    return all(x in text for x in ("fetch_artifact() {","repo.maven.apache.org/maven2/org/robolectric","maven-central.storage-download.googleapis.com/maven2/org/robolectric","repo1.maven.org/maven2/org/robolectric","--retry-all-errors","--max-time 900","\${dest}.part","mv -f","android.jar download failed from all configured mirrors"))
+    return all(x in text for x in ("fetch_artifact() {","repo.maven.apache.org/maven2/org/robolectric","maven-central.storage-download.googleapis.com/maven2/org/robolectric","repo1.maven.org/maven2/org/robolectric","--retry-all-errors","--max-time 900","local tmp=","dest}.part","mv -f","android.jar download failed from all configured mirrors"))
+
 def selftest():
     fixture='''say() { printf '  %s\n' "$*"; }
 if [ -r "$DEST/$ANDROID_JAR_NAME" ]; then
