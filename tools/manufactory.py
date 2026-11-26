@@ -99,7 +99,8 @@ def check_packet(p):
     except Exception as e: return [str(e)]
     errs=[]
     if m.get("fracture_id")!=d.get("id") or m.get("dossier_sha256")!=sha(d): errs.append("dossier identity/digest mismatch")
-    if m.get("patch_sha256")!=hashlib.sha256(patch).hexdigest() or m.get("state")!="SUBMITTED": errs.append("patch/state mismatch")
+    if m.get("patch_sha256")!=hashlib.sha256(patch).hexdigest() or m.get("state")!="SUBMITTED" or d.get("state")!="SUBMITTED": errs.append("patch/state mismatch")
+    if m.get("source_revision")!=d.get("work",{}).get("base_revision") or m.get("patch_sha256")!=d.get("repair",{}).get("patch_sha256"): errs.append("packet source/repair binding mismatch")
     if m.get("target_project_disposition")!="UNREVIEWED" or m.get("compensation")!="NOT_EXECUTED" or m.get("nt_xii_issuance")!="NOT_EXECUTED": errs.append("downstream state falsely promoted")
     return errs
 def selftest():
@@ -114,6 +115,13 @@ def selftest():
     step(d,"VERIFIED",{"verification":{"reviewer":"independent","independent":True,"tests":[{"command":"test","exit_code":0,"source_revision":"b"*40,"stdout_sha256":"d"*64}]}})
     step(d,"PRESERVED",{"preservation":{"license":"MIT","provenance":"source+patch","record_sha256":"e"*64}})
     assert d["state"]=="PRESERVED"; print("MANUFACTORY SELFTEST: PASS"); return 0
+def write_json(path,d):
+    temp=path.with_name(path.name+".tmp-"+uuid.uuid4().hex)
+    try:
+        temp.write_bytes(canon(d)+b"\n"); temp.replace(path)
+    finally:
+        try: temp.unlink()
+        except FileNotFoundError: pass
 def main():
     ap=argparse.ArgumentParser(); sub=ap.add_subparsers(dest="cmd",required=True); sub.add_parser("selftest")
     p=sub.add_parser("create"); p.add_argument("--title",required=True); p.add_argument("--project",required=True); p.add_argument("--url",required=True); p.add_argument("--source",default=""); p.add_argument("--out",type=pathlib.Path,required=True)
@@ -127,12 +135,12 @@ def main():
         if a.cmd=="create": d=create(a.title,a.project,a.url,a.source)
         elif a.cmd=="import-scout": d=import_scout(a.proof,a.index,a.project)
         elif a.cmd=="transition":
-            d=json.loads(a.dossier.read_text()); validate(d); step(d,a.to,json.loads(a.evidence.read_text())); a.dossier.write_bytes(canon(d)+b"\n")
+            d=json.loads(a.dossier.read_text()); validate(d); step(d,a.to,json.loads(a.evidence.read_text())); write_json(a.dossier,d)
         elif a.cmd=="packet":
-            d=json.loads(a.dossier.read_text()); validate(d); packet(d,a.patch,a.out); return 0
+            d=json.loads(a.dossier.read_text()); validate(d); packet(d,a.patch,a.out); write_json(a.dossier,d); return 0
         elif a.cmd=="verify-packet":
             errs=check_packet(a.packet); print("PACKET VALID" if not errs else "\n".join(errs)); return int(bool(errs))
-        if a.cmd in ("create","import-scout"): a.out.parent.mkdir(parents=True,exist_ok=True); a.out.write_bytes(canon(d)+b"\n"); print(d["id"]+" DISCOVERED")
+        if a.cmd in ("create","import-scout"): a.out.parent.mkdir(parents=True,exist_ok=True); write_json(a.out,d); print(d["id"]+" DISCOVERED")
         return 0
     except (Refused,OSError,ValueError,KeyError,IndexError,json.JSONDecodeError) as e: print("REFUSED:",e,file=sys.stderr); return 2
 if __name__=="__main__": sys.exit(main())
