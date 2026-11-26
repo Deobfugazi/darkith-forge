@@ -106,6 +106,8 @@ if have python3; then
   run "secret gate self-test"             python3 tools/secret_gate.py selftest
   # Fracture Scout: offline proof its boolean parser, adapters, and ranker are correct.
   run "fracture scout self-test"          python3 tools/fracture_scout.py selftest
+  run "manufactory kernel self-test"      python3 tools/manufactory.py selftest
+  run "manufactory contract regression"    python3 tools/tests/manufactory_test.py
   # Burden gates: BURDEN-GATE-1 (double-count registry) and BURDEN-GATE-2 (witness
   # strength) were disclosed as ABSENT by the first rehearsal and refused their phantoms
   # only by admission review. Written down is not closed; these are the mechanical gates,
