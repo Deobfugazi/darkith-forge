@@ -4,26 +4,13 @@
 # are provider-neutral. This file is only the GitHub-specific glue: when to run, and how
 # to merge. Move to another host and you rewrite this file, never the tools.
 #
-# Two producers of dependency pull requests feed it:
-#   * Dependabot, if you keep it enabled (author dependabot[bot]), and
-#   * tools/darkbot.py, which this workflow also runs on a schedule to bump pins itself
-#     (author github-actions[bot]). See the `bump` job.
-#
-# How the merge is gated:
-#   1. `tests` runs tools/ci.sh (the repo's own suites). Nothing merges unless it exits 0.
-#   2. `merge` has `needs: tests`, runs only for a dependency PR, re-checks the head has
-#      not moved since the tests ran (TOCTOU guard), then merges.
-#
-# Why the merge is a separate job and NOT a second workflow triggered by the PR: a PR
-# opened with the default GITHUB_TOKEN does not trigger pull_request workflows (they land
-# in an approval-required state). Keeping test+merge in one workflow run sidesteps that
-# recursion trap with no PAT and no pull_request_target (which is unsafe for forks).
-#
-# Security posture:
-#   * Actions pinned to full commit SHAs, not mutable tags.
-#   * Least privilege: read-only by default; write only where the merge needs it.
-#   * Fork PRs never auto-merge: the author check matches known bot logins only.
-#   * Fail closed: head moved, tests failed, or merge refused -> nothing merges.
+# Dependency changes are tested on isolated trial-net branches.
+# This workflow never merges PRs and never writes dependency commits to main.
+# Scheduled dependency updates are committed only to a unique trial-net branch,
+# tested at the exact candidate SHA, then submitted as a draft PR for review.
+# GITHUB_TOKEN-created PRs do not trigger a new pull_request workflow run, so
+# the scheduled run itself carries the full test proof for that candidate.
+# Main remains unchanged if any test, race check, or PR creation step fails.
 
 name: dependency auto-merge
 
@@ -74,47 +61,22 @@ jobs:
       - name: Run the repository's tests (tools/ci.sh)
         run: bash tools/ci.sh
 
-  merge:
-    name: merge dependency PR
-    needs: tests
-    if: >
-      github.event_name == 'pull_request' &&
-      (github.event.pull_request.user.login == 'dependabot[bot]' ||
-       github.event.pull_request.user.login == 'github-actions[bot]')
+  bump:
+    name: darkbot bump (trial-net only)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
     steps:
-      - name: Refuse to merge a commit that was not the one tested
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          TESTED_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          live="$(gh pr view "$PR_URL" --json headRefOid -q .headRefOid)"
-          if [ "$live" != "$TESTED_SHA" ]; then
-            echo "::error::PR head moved since tests ran (tested $TESTED_SHA, now $live); refusing."
-            exit 1
-          fi
-          echo "head unchanged since tests: $live"
-
-      - name: Merge (prefer GitHub auto-merge, fall back to direct squash)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          gh pr merge --auto --squash --delete-branch "$PR_URL" \
-            || gh pr merge --squash --delete-branch "$PR_URL"
-
-  bump:
-    name: darkbot bump (test, then commit)
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Record the exact base commit
+        id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -137,26 +99,64 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Stop when no dependency changes exist
+        if: steps.bump.outputs.changed != 'true'
+        run: echo "No dependency updates; main and trial-net remain unchanged."
+
       - name: Install test dependencies
         if: steps.bump.outputs.changed == 'true'
         run: |
           python3 -m pip install --quiet -r requirements-dev.txt
           python3 -m playwright install --with-deps chromium
 
-      # The bump is committed directly (not via a PR) only after the tests pass. A PR
-      # opened with GITHUB_TOKEN would sit in approval-required state and never reach the
-      # merge job, so test-then-commit is the self-contained, still-gated path for the
-      # bot's own bumps. A failed test leaves main untouched.
       - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
         if: steps.bump.outputs.changed == 'true'
         run: bash tools/fetch_toolchain.sh
 
-      - name: Test, then commit only if green
+      - name: Commit candidate locally, then validate that exact commit
         if: steps.bump.outputs.changed == 'true'
+        id: candidate
         run: |
-          bash tools/ci.sh
-          git config user.name  "darkbot"
+          git config user.name "darkbot"
           git config user.email "darkbot@users.noreply.github.com"
           git add tools/deps.txt requirements-dev.txt
-          git commit -m "darkbot: bump dependency pins to latest registry versions"
-          git push
+          git commit -m "darkbot: propose dependency pin updates on trial-net"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          bash tools/ci.sh
+
+      - name: Reject a stale candidate if main moved during validation
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          BASE_SHA: ${{ steps.base.outputs.sha }}
+        run: |
+          git fetch origin main
+          LIVE_MAIN="$(git rev-parse origin/main)"
+          if [ "$LIVE_MAIN" != "$BASE_SHA" ]; then
+            echo "::error::main moved during trial-net validation; refusing to publish candidate."
+            exit 1
+          fi
+
+      - name: Publish the tested candidate to an isolated trial-net branch
+        if: steps.bump.outputs.changed == 'true'
+        id: publish
+        env:
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+        run: |
+          BRANCH="trial-net/dependency-bumps-${GITHUB_RUN_ID}"
+          git push origin "$CANDIDATE_SHA:refs/heads/$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Open a draft PR for human review; never merge automatically
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.publish.outputs.branch }}
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+          BASE_SHA: ${{ steps.base.outputs.sha }}
+        run: |
+          gh pr create \
+            --draft \
+            --base main \
+            --head "$BRANCH" \
+            --title "Trial-net dependency update ($GITHUB_RUN_ID)" \
+            --body "Automated dependency candidate.\n\nBase: $BASE_SHA\nCandidate: $CANDIDATE_SHA\n\nThe exact candidate commit passed `bash tools/ci.sh` in the scheduled workflow before publication. This PR is draft-only and is not auto-merged. Review the run and all required checks before promotion."
