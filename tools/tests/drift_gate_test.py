@@ -56,23 +56,26 @@ def main():
     log = g.git(["log", "--format=%s"], root=dirty)
     check("repair left a real commit", "eliminate uncommitted drift" in log.stdout)
 
-    print("== with a real bare remote, the repair lands the push ==")
+    print("== with a real bare remote, default repair stays local; explicit push lands ==")
     import tempfile
     remote_dir = tempfile.mkdtemp()
     subprocess.run(["git", "init", "-q", "--bare"], cwd=remote_dir, check=True)
     shared = fresh_repo()
     subprocess.run(["git", "remote", "add", "origin", remote_dir], cwd=shared, check=True)
-    (shared / "HISTORY.md").write_text("half a repair\n")
+    (shared / "HISTORY.md").write_text("half a repair\\n")
     s_state, s_paths = g.repair(shared)
     check("repair converges with a remote", s_state == "clean", str(s_paths))
-    heads = subprocess.run(["git", "rev-list", "HEAD"], cwd=remote_dir,
+    refs = g.git(["ls-remote", "origin"], root=shared)
+    check("default repair does not push", refs.returncode == 0 and not refs.stdout.strip(), refs.stdout.strip())
+    (shared / "HISTORY2.md").write_text("explicit push\\n")
+    p_state, p_paths = g.repair(shared, push=True)
+    check("explicit push repair converges", p_state == "clean", str(p_paths))
+    heads = subprocess.run(["git", "rev-list", "--all"], cwd=remote_dir,
                            capture_output=True, text=True).stdout.splitlines()
-    # the seed commit plus the repair commit; the point is that the repair is ON the remote,
-    # so assert the remote head equals local head rather than counting to a magic number.
     local_head = g.git(["rev-parse", "HEAD"], root=shared).stdout.strip()
     remote_head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=remote_dir,
                                  capture_output=True, text=True).stdout.strip()
-    check("the push really landed", remote_head == local_head and bool(remote_head),
+    check("explicit push really landed", remote_head == local_head and bool(remote_head),
           f"remote {remote_head[:8]} vs local {local_head[:8]}, {len(heads)} commit(s)")
 
     print("== a repair on a clean tree is a no-op, not a stray commit ==")
