@@ -19,6 +19,21 @@ DEST="$ROOT/.tools"
 mkdir -p "$DEST"
 say() { printf '  %s\n' "$*"; }
 
+fetch_artifact() {
+  local label="$1" dest="$2"; shift 2
+  local tmp="${dest}.part"
+  rm -f "$tmp"
+  for url in "$@"; do
+    say "$label: trying mirror ${url%%/maven2/*}"
+    if curl -fsSL --retry 5 --retry-all-errors --retry-delay 3 --retry-max-time 90 --connect-timeout 30 --max-time 900 -o "$tmp" "$url" && [ -s "$tmp" ]; then
+      mv -f "$tmp" "$dest"
+      return 0
+    fi
+    rm -f "$tmp"
+  done
+  return 1
+}
+
 KOTLIN_VER="1.9.24"
 JDK_VER="17.0.12+7"
 JDK_DIR="jdk-17.0.12+7"
@@ -72,9 +87,7 @@ if [ -r "$DEST/$ANDROID_JAR_NAME" ]; then
   say "android.jar: cached"
 else
   say "android.jar: fetching ($ANDROID_JAR_NAME, ~137 MB)"
-  curl -fsSL -o "$DEST/$ANDROID_JAR_NAME" \
-    "https://repo1.maven.org/maven2/org/robolectric/android-all/14-robolectric-10818077/${ANDROID_JAR_NAME}" \
-    || { say "DEFICIT: android.jar download failed"; exit 1; }
+  fetch_artifact "android.jar" "$DEST/$ANDROID_JAR_NAME" "https://repo.maven.apache.org/maven2/org/robolectric/android-all/14-robolectric-10818077/${ANDROID_JAR_NAME}" "https://maven-central.storage-download.googleapis.com/maven2/org/robolectric/android-all/14-robolectric-10818077/${ANDROID_JAR_NAME}" "https://repo1.maven.org/maven2/org/robolectric/android-all/14-robolectric-10818077/${ANDROID_JAR_NAME}" || { say "DEFICIT: android.jar download failed from all configured mirrors"; exit 1; }
 fi
 
 # 4. apksig.jar (the signer the tree imports)
