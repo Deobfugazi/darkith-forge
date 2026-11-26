@@ -33,7 +33,7 @@ def patch_text(text):
     if "from bisect import bisect_left" not in text: text=text.replace("import argparse\n","import argparse\nfrom bisect import bisect_left\n",1)
     a=text.find("class AssistantEchoIndex")
     if a<0: a=text.index("def _is_echo(")
-    b=text.index("\\ndef session_events",a)
+    b=text.index("\ndef session_events",a)
     text=text[:a]+INDEX_CLASS+IS_ECHO+text[b:]
     old='''    assistant_texts = [" ".join(_msg_text(e).split()) for _, e in events
                        if (e.get("llm_message") or {}).get("role") == "assistant"]
