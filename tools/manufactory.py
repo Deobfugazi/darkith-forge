@@ -81,7 +81,7 @@ def import_scout(path,index,project):
     d["source"]["retrieved_at"]=omega_iso(datetime.fromtimestamp(path.stat().st_mtime,timezone.utc))
     d["source"]["revision"]="scout-run:"+hashlib.sha256(raw).hexdigest(); d["source"]["content_sha256"]=sha(item)
     d["scout"]={"proof_sha256":hashlib.sha256(raw).hexdigest(),"candidate_index":index,"candidate":item}
-    d["origin"]=copy.deepcopy(d); d["origin"].pop("history",None); validate(d); return d
+    origin=copy.deepcopy(d); origin.pop("origin",None); origin.pop("history",None); d["origin"]=origin; validate(d); return d
 def packet(d,patch,out):
     validate(d)
     if d["state"]!="IN_PROGRESS": raise Refused("packet requires IN_PROGRESS")
