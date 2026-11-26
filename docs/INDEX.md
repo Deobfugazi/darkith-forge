@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**90 readable files across 8 registers.**
+**91 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -49,6 +49,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
 | `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
 | `docs/evidence/SECTOR-PAIN-LEDGER.md` | 5,077 | `9d6b452e87d8` | Sector pain ledger — primary-source observations |
+| `docs/index.html` | 19,891 | `8585e98e027b` | Darkith — Interactive README |
 | `docs/manufactory/OPERATIONS.md` | 1,383 | `fc1d132e1d0b` | Manufactory kernel — operator contract |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
 | `docs/nt/NT-INDEX.md` | 4,329 | `c244fba77d05` | NT INDEX — the noveltreatise corpus, carried and reconciled |
