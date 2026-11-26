@@ -357,6 +357,8 @@ if have python3; then
     # because someone typed it into TASKS.md by hand is not ingested from his speech.
     if [ -f tools/chat_gatekeeper.py ]; then
       run "chat gatekeeper selftest (MUST #38)" python3 tools/chat_gatekeeper.py --selftest
+      run "chat gatekeeper perf gate"             python3 tools/chat_gatekeeper_perf_gate.py --check
+      run "chat gatekeeper perf regression"        python3 tools/tests/chat_gatekeeper_perf_test.py
       run "chat gatekeeper ingest (MUST #38)"   python3 tools/chat_gatekeeper.py --check
     fi
     # The self-rewriting-producer class is repaired by tools/absolution.py and carries its
