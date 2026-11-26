@@ -69,6 +69,11 @@ CLASSES = [
            "python3 tools/chat_gatekeeper.py --write",
            "ci: chat gate",
            "an un-ingested order is an order nobody is executing"),
+    Class_("chat gate echo index",
+           "python3 tools/chat_gatekeeper_perf_gate.py --check",
+           "python3 tools/chat_gatekeeper_perf_gate.py --fix",
+           "ci: chat gatekeeper performance",
+           "re-normalizing the assistant corpus for every user event is quadratic; index once per session"),
 
     Class_("pulse freshness",
            "python3 tools/synchrony_pulse.py --check",
