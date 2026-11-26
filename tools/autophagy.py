@@ -69,6 +69,17 @@ CLASSES = [
            "python3 tools/chat_gatekeeper.py --write",
            "ci: chat gate",
            "an un-ingested order is an order nobody is executing"),
+    Class_("chat gate echo index",
+           "python3 tools/chat_gatekeeper_perf_gate.py --check",
+           "python3 tools/chat_gatekeeper_perf_gate.py --fix",
+           "ci: chat gatekeeper performance",
+           "re-normalizing the assistant corpus for every user event is quadratic; index once per session"),
+
+    Class_("android platform jar download resilience",
+           "python3 tools/toolchain_fetch_gate.py --check",
+           "python3 tools/toolchain_fetch_gate.py --fix",
+           "ci: toolchain download resilience",
+           "one Maven endpoint rate-limited android.jar; retry and mirror fallback must prevent transient 429 from blocking compile proof"),
 
     Class_("pulse freshness",
            "python3 tools/synchrony_pulse.py --check",

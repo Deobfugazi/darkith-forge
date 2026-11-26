@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 88,
+  "count": 91,
   "files": [
     {
       "bytes": 88503,
@@ -21,10 +21,10 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 71156,
+      "bytes": 87534,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "f6491446c4e78b8768c84d5443e7fa757771535bb004c7d6643c628d2034eba7"
+      "sha256": "b0c58722563dd6a6a202d05fa96a1b8f249674d15a524fdce2b75614abeb92a8"
     },
     {
       "bytes": 8805,
@@ -61,6 +61,12 @@
       "path": "docs/06_expected_root.txt",
       "register": "B-knowledge",
       "sha256": "f6ab85268b43e443c65fbc43a4ba5499c1c808197e11fdcf27edf7c341fffbce"
+    },
+    {
+      "bytes": 22793,
+      "path": "docs/ARCHITECTURE-MANUFACTORY.md",
+      "register": "B-knowledge",
+      "sha256": "5e9d3a2957f93a5ab4b5f355bda99e317d050a06cdad1eaf52f1d3ed9f0b7bf6"
     },
     {
       "bytes": 9608,
@@ -169,6 +175,18 @@
       "path": "docs/evidence/SECTOR-PAIN-LEDGER.md",
       "register": "B-knowledge",
       "sha256": "9d6b452e87d84d38eec53a3d6a5fbcaf3377aaec72291523dd3d299ffee9706e"
+    },
+    {
+      "bytes": 19891,
+      "path": "docs/index.html",
+      "register": "B-knowledge",
+      "sha256": "8585e98e027becc381bd113b8a1f423634f594fca9a19138ec32c6fcdf7f6f8c"
+    },
+    {
+      "bytes": 1383,
+      "path": "docs/manufactory/OPERATIONS.md",
+      "register": "B-knowledge",
+      "sha256": "fc1d132e1d0b39c6e0f189edf85993aaf2ba566a6749b7a67871d9ead3a84923"
     },
     {
       "bytes": 146183,
@@ -550,13 +568,13 @@
     }
   ],
   "registers": {
-    "A-apparatus": "Governance \u2014 the machine+human laws (read first)",
-    "B-knowledge": "Corpus \u2014 the human-readable knowledge base",
-    "C-skillbase": "Skill surfaces \u2014 the interactive web apps",
+    "A-apparatus": "Governance — the machine+human laws (read first)",
+    "B-knowledge": "Corpus — the human-readable knowledge base",
+    "C-skillbase": "Skill surfaces — the interactive web apps",
     "D-asset": "Shipped runtime assets",
     "E-evidence": "Machine-generated proof",
-    "F-config": "Build configuration \u2014 dependency manifests",
-    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels",
-    "H-homekeeper-app": "Homekeeper Node app \u2014 the invariant blueprint, executable"
+    "F-config": "Build configuration — dependency manifests",
+    "G-apparatus-portable": "Portable apparatus — the one-file toolkit that travels",
+    "H-homekeeper-app": "Homekeeper Node app — the invariant blueprint, executable"
   }
 }

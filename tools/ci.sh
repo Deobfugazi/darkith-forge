@@ -106,6 +106,8 @@ if have python3; then
   run "secret gate self-test"             python3 tools/secret_gate.py selftest
   # Fracture Scout: offline proof its boolean parser, adapters, and ranker are correct.
   run "fracture scout self-test"          python3 tools/fracture_scout.py selftest
+  run "manufactory kernel self-test"      python3 tools/manufactory.py selftest
+  run "manufactory contract regression"    python3 tools/tests/manufactory_test.py
   # Burden gates: BURDEN-GATE-1 (double-count registry) and BURDEN-GATE-2 (witness
   # strength) were disclosed as ABSENT by the first rehearsal and refused their phantoms
   # only by admission review. Written down is not closed; these are the mechanical gates,
@@ -355,6 +357,11 @@ if have python3; then
     # because someone typed it into TASKS.md by hand is not ingested from his speech.
     if [ -f tools/chat_gatekeeper.py ]; then
       run "chat gatekeeper selftest (MUST #38)" python3 tools/chat_gatekeeper.py --selftest
+      run "chat gatekeeper perf gate"             python3 tools/chat_gatekeeper_perf_gate.py --check
+      run "chat gatekeeper perf regression"        python3 tools/tests/chat_gatekeeper_perf_test.py
+      run "toolchain download resilience"          python3 tools/toolchain_fetch_gate.py --check
+  run "toolchain gate bounded probe"            python3 tools/tests/toolchain_gate_test.py
+      run "toolchain fetch regression"              python3 tools/tests/toolchain_fetch_test.py
       run "chat gatekeeper ingest (MUST #38)"   python3 tools/chat_gatekeeper.py --check
     fi
     # The self-rewriting-producer class is repaired by tools/absolution.py and carries its
