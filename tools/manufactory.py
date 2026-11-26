@@ -2,6 +2,7 @@
 """Offline Darkith manufactory contract. No remote writes, command execution, minting or payment."""
 import argparse, copy, hashlib, json, pathlib, re, sys, uuid
 from datetime import datetime, timezone
+from omega_time import iso as omega_iso
 from urllib.parse import urlsplit
 
 STATES=("DISCOVERED","CONFIRMED","ADMITTED","COUPLED","ROUTED","IN_PROGRESS","SUBMITTED","VERIFIED","PRESERVED")
@@ -9,7 +10,7 @@ NEXT=dict(zip(STATES,STATES[1:]))
 HEX64=re.compile(r"^[0-9a-f]{64}$")
 class Refused(ValueError): pass
 def now():
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
+    return omega_iso()
 def canon(x): return json.dumps(x,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode()
 def sha(x): return hashlib.sha256(x if isinstance(x,bytes) else canon(x)).hexdigest()
 def snap(d): return {k:copy.deepcopy(v) for k,v in d.items() if k not in ("history","origin")}
@@ -25,7 +26,7 @@ def create(title,project,url,source=""):
        "title":title.strip(),"project":project.strip(),"source":{"name":source,"url":url,"retrieved_at":now(),"revision":None,"content_sha256":None},
        "observed":None,"expected":None,"reproduction":None,"acceptance":None,"scope":None,"authority":None,
        "adapter":None,"participant":None,"work":None,"repair":None,"verification":None,"preservation":None,"history":[]}
-    d["origin"]=copy.deepcopy(d); d["origin"].pop("history",None); validate(d); return d
+    origin=copy.deepcopy(d); origin.pop("origin",None); origin.pop("history",None); d["origin"]=origin; validate(d); return d
 def validate(d):
     if not isinstance(d,dict) or d.get("schema")!="darkith.fracture-dossier/1" or not re.fullmatch(r"FR-[0-9a-f]{12}",str(d.get("id",""))): raise Refused("schema/id invalid")
     if d.get("state") not in STATES: raise Refused("state invalid")
@@ -77,7 +78,7 @@ def step(d,target,evidence):
 def import_scout(path,index,project):
     raw=path.read_bytes(); proof=json.loads(raw); item=proof["fractures"][index-1]
     d=create(item["title"],project,item["url"],item.get("source","fracture-scout"))
-    d["source"]["retrieved_at"]=datetime.fromtimestamp(path.stat().st_mtime,timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
+    d["source"]["retrieved_at"]=omega_iso(datetime.fromtimestamp(path.stat().st_mtime,timezone.utc))
     d["source"]["revision"]="scout-run:"+hashlib.sha256(raw).hexdigest(); d["source"]["content_sha256"]=sha(item)
     d["scout"]={"proof_sha256":hashlib.sha256(raw).hexdigest(),"candidate_index":index,"candidate":item}
     d["origin"]=copy.deepcopy(d); d["origin"].pop("history",None); validate(d); return d
