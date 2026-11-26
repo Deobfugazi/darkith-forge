@@ -3,11 +3,13 @@
 import hashlib, pathlib, sys
 ROOT=pathlib.Path(__file__).resolve().parents[2]; sys.path.insert(0,str(ROOT/"tools"))
 import chat_gatekeeper as g
+import chat_gatekeeper_perf_gate as gate
 def main():
     messages=[]
     for i in range(6000):
         key=f"{i:08d}:"+hashlib.sha256(str(i).encode()).hexdigest()
         messages.append(key+" "+("payload-"+str(i))*4)
+    assert gate.selftest()==0
     idx=g.AssistantEchoIndex(messages)
     assert len(idx.sorted)==6000
     assert idx.matches_normalized(messages[-1])
