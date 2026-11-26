@@ -61,7 +61,7 @@ def kotlinc_runs() -> tuple[bool, str]:
         # JAVA_HOME overrides PATH in several kotlinc launchers; force the pinned runtime.
         env["JAVA_HOME"] = str(BUNDLED_JDK_BIN.parent)
     try:
-        p = subprocess.run([exe, "-version"], capture_output=True, text=True, timeout=180,
+        p = subprocess.run([exe, "-version"], capture_output=True, text=True, timeout=30,
                            env=env)
     except (OSError, subprocess.TimeoutExpired) as e:
         return False, f"kotlinc could not be executed: {e}"
