@@ -31,7 +31,9 @@ IS_ECHO="""def _is_echo(user_text: str, assistant_texts: list[str] | AssistantEc
 """
 def patch_text(text):
     if "from bisect import bisect_left" not in text: text=text.replace("import argparse\n","import argparse\nfrom bisect import bisect_left\n",1)
-    a=text.index("def _is_echo("); b=text.index("\ndef session_events",a)
+    a=text.find("class AssistantEchoIndex")
+    if a<0: a=text.index("def _is_echo(")
+    b=text.index("\\ndef session_events",a)
     text=text[:a]+INDEX_CLASS+IS_ECHO+text[b:]
     old='''    assistant_texts = [" ".join(_msg_text(e).split()) for _, e in events
                        if (e.get("llm_message") or {}).get("role") == "assistant"]
@@ -50,7 +52,7 @@ def check(text):
     return "class AssistantEchoIndex" in text and "from bisect import bisect_left" in text and "for a in assistant_texts" not in fn and "assistant_index = AssistantEchoIndex(assistant_texts)" in session and "_is_echo(txt, assistant_index)" in session
 def selftest():
     fixture='''import argparse\ndef _is_echo(user_text, assistant_texts):\n    for a in assistant_texts:\n        pass\n    return False\ndef session_events():\n    assistant_texts = [" ".join(_msg_text(e).split()) for _, e in events\n                       if (e.get("llm_message") or {}).get("role") == "assistant"]\n    out = []\n    if _is_echo(txt, assistant_texts):\n        pass\n'''
-    ok=check(patch_text(fixture)); print("chat gatekeeper perf selftest: "+("PASS" if ok else "FAIL")); return 0 if ok else 1
+    fixed=patch_text(fixture); ok=check(fixed) and patch_text(fixed)==fixed; print("chat gatekeeper perf selftest: "+("PASS" if ok else "FAIL")); return 0 if ok else 1
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--check",action="store_true"); ap.add_argument("--fix",action="store_true"); ap.add_argument("--selftest",action="store_true"); a=ap.parse_args()
     if a.selftest: return selftest()
