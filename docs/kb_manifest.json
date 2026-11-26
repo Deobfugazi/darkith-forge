@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 88,
+  "count": 90,
   "files": [
     {
       "bytes": 88503,
@@ -21,10 +21,10 @@
       "sha256": "4232cd8c5550cc9e03ef3bf4c24b690fb7d7ab012f073591127eda71d90f6abc"
     },
     {
-      "bytes": 71156,
+      "bytes": 87534,
       "path": "README.md",
       "register": "A-apparatus",
-      "sha256": "f6491446c4e78b8768c84d5443e7fa757771535bb004c7d6643c628d2034eba7"
+      "sha256": "b0c58722563dd6a6a202d05fa96a1b8f249674d15a524fdce2b75614abeb92a8"
     },
     {
       "bytes": 8805,
@@ -63,6 +63,12 @@
       "sha256": "f6ab85268b43e443c65fbc43a4ba5499c1c808197e11fdcf27edf7c341fffbce"
     },
     {
+      "bytes": 22793,
+      "path": "docs/ARCHITECTURE-MANUFACTORY.md",
+      "register": "B-knowledge",
+      "sha256": "5e9d3a2957f93a5ab4b5f355bda99e317d050a06cdad1eaf52f1d3ed9f0b7bf6"
+    },
+    {
       "bytes": 9608,
       "path": "docs/ARCHITECTURE-OMEGA.md",
       "register": "B-knowledge",
@@ -85,6 +91,18 @@
       "path": "docs/DARKITH-OMEGA-repo.txt",
       "register": "B-knowledge",
       "sha256": "40e583a08a9ca06d14987821a526cb3f4e4a2bbc8ce927368ced6fa34860f7bd"
+    },
+    {
+      "bytes": 4950,
+      "path": "docs/evidence/NODAL-ZIP-VS-OURS.md",
+      "register": "B-knowledge",
+      "sha256": "7b45fe6a3cf2a6e944ce6b767f97da645a06de145d3ad901e1e3286212c02ec8"
+    },
+    {
+      "bytes": 5077,
+      "path": "docs/evidence/SECTOR-PAIN-LEDGER.md",
+      "register": "B-knowledge",
+      "sha256": "9d6b452e87d84d38eec53a3d6a5fbcaf3377aaec72291523dd3d299ffee9706e"
     },
     {
       "bytes": 13929,
@@ -117,6 +135,12 @@
       "sha256": "fbf7d5d0f43aba977a6d7187d249e8862d2243a0110f5681cba97010a0a457e5"
     },
     {
+      "bytes": 1383,
+      "path": "docs/manufactory/OPERATIONS.md",
+      "register": "B-knowledge",
+      "sha256": "fc1d132e1d0b39c6e0f189edf85993aaf2ba566a6749b7a67871d9ead3a84923"
+    },
+    {
       "bytes": 20400,
       "path": "docs/MISCOMMUNICATION-AND-WAR.html",
       "register": "B-knowledge",
@@ -127,48 +151,6 @@
       "path": "docs/NT-XII-IN-THE-OPEN.md",
       "register": "B-knowledge",
       "sha256": "dbf7a79f1821b98096945b0f79ad7c2fd7070b0e2455f040d54d721035d01733"
-    },
-    {
-      "bytes": 1423,
-      "path": "docs/RECOVERY_MANIFEST.md",
-      "register": "B-knowledge",
-      "sha256": "0cc6e23164c833e7d06caa9b28f691a4402275d410ba7ee4821a0231c6803523"
-    },
-    {
-      "bytes": 3960,
-      "path": "docs/SECURITY_REMEDIATION.md",
-      "register": "B-knowledge",
-      "sha256": "714045540aa609926a3f1fed7c94d7282296016db34f73a4e1e824d2f635fddf"
-    },
-    {
-      "bytes": 41117,
-      "path": "docs/TEN-BURDENS-THREE-TONGUES.html",
-      "register": "B-knowledge",
-      "sha256": "289c22857e81114480ef6f76bf02ff4831ace4c7f8e0616767bea761c2f92dbf"
-    },
-    {
-      "bytes": 4095,
-      "path": "docs/THESIS.md",
-      "register": "B-knowledge",
-      "sha256": "93d546d9959934a6ec2a68ff539431e0e6790f57bc59859f2bd86f4aa81ae578"
-    },
-    {
-      "bytes": 2729,
-      "path": "docs/UPDATES.md",
-      "register": "B-knowledge",
-      "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
-    },
-    {
-      "bytes": 4950,
-      "path": "docs/evidence/NODAL-ZIP-VS-OURS.md",
-      "register": "B-knowledge",
-      "sha256": "7b45fe6a3cf2a6e944ce6b767f97da645a06de145d3ad901e1e3286212c02ec8"
-    },
-    {
-      "bytes": 5077,
-      "path": "docs/evidence/SECTOR-PAIN-LEDGER.md",
-      "register": "B-knowledge",
-      "sha256": "9d6b452e87d84d38eec53a3d6a5fbcaf3377aaec72291523dd3d299ffee9706e"
     },
     {
       "bytes": 146183,
@@ -235,6 +217,36 @@
       "path": "docs/nt/NT-XIII-OFIF.txt",
       "register": "B-knowledge",
       "sha256": "5ab6f2706f8ac80f0262b54c769109dfef368d083e8905bea93fa01f7bebc6ae"
+    },
+    {
+      "bytes": 1423,
+      "path": "docs/RECOVERY_MANIFEST.md",
+      "register": "B-knowledge",
+      "sha256": "0cc6e23164c833e7d06caa9b28f691a4402275d410ba7ee4821a0231c6803523"
+    },
+    {
+      "bytes": 3960,
+      "path": "docs/SECURITY_REMEDIATION.md",
+      "register": "B-knowledge",
+      "sha256": "714045540aa609926a3f1fed7c94d7282296016db34f73a4e1e824d2f635fddf"
+    },
+    {
+      "bytes": 41117,
+      "path": "docs/TEN-BURDENS-THREE-TONGUES.html",
+      "register": "B-knowledge",
+      "sha256": "289c22857e81114480ef6f76bf02ff4831ace4c7f8e0616767bea761c2f92dbf"
+    },
+    {
+      "bytes": 4095,
+      "path": "docs/THESIS.md",
+      "register": "B-knowledge",
+      "sha256": "93d546d9959934a6ec2a68ff539431e0e6790f57bc59859f2bd86f4aa81ae578"
+    },
+    {
+      "bytes": 2729,
+      "path": "docs/UPDATES.md",
+      "register": "B-knowledge",
+      "sha256": "b0b742d733fe07a419d1203c4deb9649616ae060d0ad500c2ff4b3173c732d3e"
     },
     {
       "bytes": 98859,
@@ -345,6 +357,12 @@
       "sha256": "e37837910ad5dbd0e1e472cb7ced1777758929a569139e61a4e6ed86b6787f1e"
     },
     {
+      "bytes": 279277,
+      "path": "app/src/main/assets/darkith_ui.html",
+      "register": "D-asset",
+      "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
+    },
+    {
       "bytes": 11465,
       "path": "app/src/main/assets/darkith-omega-apps.html",
       "register": "D-asset",
@@ -393,12 +411,6 @@
       "sha256": "2bccb0ab5978142e3811988700e93691efb0e1a5e50b1f61d94ae4d8a3b1936a"
     },
     {
-      "bytes": 279277,
-      "path": "app/src/main/assets/darkith_ui.html",
-      "register": "D-asset",
-      "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
-    },
-    {
       "bytes": 490080,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
@@ -423,24 +435,6 @@
       "sha256": "ad4206e03c6fd77bdec212da08ebfcc30687472ad8bc67abdf7c8053aa2cbaa8"
     },
     {
-      "bytes": 11203,
-      "path": "proof/FIELD_REPORT_THIS_TAB.md",
-      "register": "E-evidence",
-      "sha256": "bd7589bc3d9344ae2d0996d0774ed1b5ad543ab7259bf162a8a143fe31e26fb9"
-    },
-    {
-      "bytes": 2158,
-      "path": "proof/KOTLIN-COMMENT-PROOF.txt",
-      "register": "E-evidence",
-      "sha256": "a428f32364020f80d94c57ab430153d62f7e1c9660f84edb4943e47f89caa4d3"
-    },
-    {
-      "bytes": 7185,
-      "path": "proof/NT_RECONCILIATION.md",
-      "register": "E-evidence",
-      "sha256": "fa523afa591475099b08349515e14f8e73c96661b3dfcaf97483d79b0feed920"
-    },
-    {
       "bytes": 168,
       "path": "proof/burden-uplift/E2E-REHEARSAL-2026-11-24/06_expected_root.txt",
       "register": "E-evidence",
@@ -459,10 +453,22 @@
       "sha256": "f4110f2272d78d64b9fec79b2e8095caafc27a8d8bcd26aa9a5e794c8a84897b"
     },
     {
+      "bytes": 11203,
+      "path": "proof/FIELD_REPORT_THIS_TAB.md",
+      "register": "E-evidence",
+      "sha256": "bd7589bc3d9344ae2d0996d0774ed1b5ad543ab7259bf162a8a143fe31e26fb9"
+    },
+    {
       "bytes": 7701,
       "path": "proof/invariant-resolution/CAPTURED.txt",
       "register": "E-evidence",
       "sha256": "543c899d3523f7c47d722157720ea826d14af92defff314942bd2b126357c546"
+    },
+    {
+      "bytes": 2158,
+      "path": "proof/KOTLIN-COMMENT-PROOF.txt",
+      "register": "E-evidence",
+      "sha256": "a428f32364020f80d94c57ab430153d62f7e1c9660f84edb4943e47f89caa4d3"
     },
     {
       "bytes": 1003,
@@ -475,6 +481,12 @@
       "path": "proof/nt_ledger_prereconcile.txt",
       "register": "E-evidence",
       "sha256": "800061c03912d4ff0b3c3fad4ab977180d9369e2b0d3abdbd3a780d8b24a76c7"
+    },
+    {
+      "bytes": 7185,
+      "path": "proof/NT_RECONCILIATION.md",
+      "register": "E-evidence",
+      "sha256": "fa523afa591475099b08349515e14f8e73c96661b3dfcaf97483d79b0feed920"
     },
     {
       "bytes": 1780,
@@ -550,13 +562,13 @@
     }
   ],
   "registers": {
-    "A-apparatus": "Governance \u2014 the machine+human laws (read first)",
-    "B-knowledge": "Corpus \u2014 the human-readable knowledge base",
-    "C-skillbase": "Skill surfaces \u2014 the interactive web apps",
+    "A-apparatus": "Governance — the machine+human laws (read first)",
+    "B-knowledge": "Corpus — the human-readable knowledge base",
+    "C-skillbase": "Skill surfaces — the interactive web apps",
     "D-asset": "Shipped runtime assets",
     "E-evidence": "Machine-generated proof",
-    "F-config": "Build configuration \u2014 dependency manifests",
-    "G-apparatus-portable": "Portable apparatus \u2014 the one-file toolkit that travels",
-    "H-homekeeper-app": "Homekeeper Node app \u2014 the invariant blueprint, executable"
+    "F-config": "Build configuration — dependency manifests",
+    "G-apparatus-portable": "Portable apparatus — the one-file toolkit that travels",
+    "H-homekeeper-app": "Homekeeper Node app — the invariant blueprint, executable"
   }
 }
