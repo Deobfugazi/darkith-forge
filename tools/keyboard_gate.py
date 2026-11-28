@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Static admission checks for the native Darkith IME and its offline resources."""
 from pathlib import Path
+import hashlib
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -40,14 +41,29 @@ assets = ROOT / "app/src/main/assets/keyboard"
 dic = assets / "en_US.dic"
 aff = assets / "en_US.aff"
 notice = assets / "README_en_US.txt"
-need(dic.is_file() and aff.is_file() and notice.is_file(), "English dictionary, affix rules, and license notice are bundled")
+resource_manifest = assets / "RESOURCE-MANIFEST.md"
+need(dic.is_file() and aff.is_file() and notice.is_file() and resource_manifest.is_file(),
+     "English dictionary, affix rules, licence notice, and byte-addressed resource manifest are bundled")
 if dic.is_file():
     lines = dic.read_text(encoding="utf-8").splitlines()
     count = int(lines[0].strip()) if lines else 0
-    need(count >= 40000 and len(lines) > 40000, "bundled en_US dictionary is a real 40k+ headword resource")
+    entries = [line for line in lines[1:] if line.strip() and not line.lstrip().startswith("#")]
+    need(count == len(entries) and count >= 40000,
+         "bundled en_US dictionary header matches all nonblank source entries")
+    need(hashlib.sha256(dic.read_bytes()).hexdigest() ==
+         "f0b1a234bd178bdd01875b2a392a9647f888b8fe879f79c52aae62c2759b3647",
+         "en_US.dic raw SHA-256 matches the pinned source identity")
 if aff.is_file():
     text = aff.read_text(encoding="utf-8")
     need("PFX " in text and "SFX " in text and "REP " in text, "affix resource contains prefix, suffix, and replacement tables")
+    need(hashlib.sha256(aff.read_bytes()).hexdigest() ==
+         "e746c882dd6f303c2c46e7452804b9201115a6942cfeb15f18f8edf774d2e24e",
+         "en_US.aff raw SHA-256 matches the pinned source identity")
+if resource_manifest.is_file():
+    resource_text = resource_manifest.read_text(encoding="utf-8")
+    need("This is not a complete Hunspell implementation" in resource_text
+         and "ONLYINCOMPOUND" in resource_text and "SCOWL 2020.12.07" in resource_text,
+         "resource manifest states source version and unsupported Hunspell constructs")
 if notice.is_file():
     text = notice.read_text(encoding="utf-8")
     need("Copyright 2000-2018 by Kevin Atkinson" in text and "Permission to use, copy, modify, distribute and sell" in text,
@@ -65,7 +81,9 @@ need("Elrp.initialize(applicationContext)" in service_src, "IME initializes the 
 need("NOSUGGEST" in (assets / "en_US.aff").read_text(encoding="utf-8")
      and "noSuggestFlag" in elrp_src and "suggestible" in elrp_src,
      "Hunspell NOSUGGEST entries are excluded from suggestions")
-need("accepted == declared" in elrp_src, "ELRP validates the dictionary's declared entry count")
+need("accepted == declared" in elrp_src and "onlyInCompoundFlag" in elrp_src
+     and "stem.any { it.isLetter() }" in elrp_src,
+     "ELRP validates every source row, preserves single-letter words, and excludes compound-only roots")
 need("setComposingText" in service_src and "currentInputConnection" in service_src,
      "text composition and commits use the live editor connection")
 need("prefs?.autocorrect == true" in service_src and "options.size == 1" in service_src,
