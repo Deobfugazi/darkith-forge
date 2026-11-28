@@ -18,6 +18,7 @@ EXPECTED_SHA256="1482e152c1ff2d8bdf97cd52684c98f7224d58713b0b8735f902878aebb3405
 ASSET="$ROOT/app/src/main/assets/homekeeper.html"
 DEST_DIR="$DOWNLOAD_DIR"
 DEST_APK="$DEST_DIR/Darkith-Homekeeper-OMEGA.apk"
+PKG="com.darkith.transliaison"
 
 die(){ echo "STOP: $*" >&2; exit 1; }
 [ -f "$ROOT/build.sh" ] || die "Run this script from the Darkith Forge repository root."
@@ -70,6 +71,20 @@ print("APK ASSET SHA-256:", hashlib.sha256(packed).hexdigest())
 PY
 
 "$APKSIGNER" verify --verbose "$APK"
+
+# Never uninstall an existing app or ask Android to replace it with a different signer.
+if command -v pm >/dev/null 2>&1; then
+  EXISTING_LINE="$(pm path "$PKG" 2>/dev/null | head -n 1 || true)"
+  EXISTING_APK="${EXISTING_LINE#package:}"
+  if [ -n "$EXISTING_APK" ] && [ -r "$EXISTING_APK" ]; then
+    EXISTING_CERT="$("$APKSIGNER" verify --print-certs "$EXISTING_APK" 2>/dev/null | sed -n 's/.*Signer #1 certificate SHA-256 digest: //p' | head -n 1)"
+    NEW_CERT="$("$APKSIGNER" verify --print-certs "$APK" 2>/dev/null | sed -n 's/.*Signer #1 certificate SHA-256 digest: //p' | head -n 1)"
+    if [ -n "$EXISTING_CERT" ] && [ -n "$NEW_CERT" ] && [ "$EXISTING_CERT" != "$NEW_CERT" ]; then
+      die "Installed $PKG has a different signing certificate. Refusing an update or uninstall; preserve the original keystore or plan a separate data-safe migration."
+    fi
+  fi
+fi
+
 cp "$APK" "$DEST_APK"
 echo "APK SHA-256: $(sha256sum "$DEST_APK" | awk '{print $1}')"
 echo "APK SIZE:    $(wc -c < "$DEST_APK" | tr -d ' ') bytes"
