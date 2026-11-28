@@ -65,7 +65,7 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         composing.setLength(0)
         revision++
         val type = info?.inputType ?: InputType.TYPE_CLASS_TEXT
-        sensitiveField = prefs?.privacyFieldBlock == true && isSensitive(type, info)
+        sensitiveField = isSensitive(type, info)
         limitedEditor = type == InputType.TYPE_NULL
         incognito = false
         lastCorrection = null
@@ -97,14 +97,25 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
     private fun isSensitive(type: Int, info: EditorInfo?): Boolean {
         val klass = type and InputType.TYPE_MASK_CLASS
         val variation = type and InputType.TYPE_MASK_VARIATION
-        if (klass == InputType.TYPE_CLASS_TEXT) {
-            if (variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
-                variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
-                variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD) return true
-        }
-        if (klass == InputType.TYPE_CLASS_NUMBER &&
-            variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD) return true
-        return ((info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) != 0
+        val platformNoLearn =
+            ((info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) != 0
+        val passwordField =
+            (klass == InputType.TYPE_CLASS_TEXT &&
+                (variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                 variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
+                 variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD)) ||
+            (klass == InputType.TYPE_CLASS_NUMBER &&
+                variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD)
+        if (platformNoLearn || passwordField) return true
+
+        // User preference extends privacy protection to contact/address entry fields.
+        val extendedPrivacy = prefs?.privacyFieldBlock == true &&
+            (klass == InputType.TYPE_CLASS_PHONE ||
+             (klass == InputType.TYPE_CLASS_TEXT &&
+                (variation == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS ||
+                 variation == InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS ||
+                 variation == InputType.TYPE_TEXT_VARIATION_URI)))
+        return extendedPrivacy
     }
 
     private fun ic(): InputConnection? = currentInputConnection
