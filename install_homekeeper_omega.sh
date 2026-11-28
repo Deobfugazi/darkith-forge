@@ -4,6 +4,8 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE="${1:-/sdcard/Download/homekeeper(2).html}"
+SPEC="${2:-/sdcard/Download/DARKITH-KEYBOARD-SINGULAR-INVARIANT(1).md}"
+SPEC_SHA256="75c0058a83d71ad8593dadd0f4f0003448cc3cfbfb0558e2754e13efad91c4b2"
 EXPECTED_SHA256="1482e152c1ff2d8bdf97cd52684c98f7224d58713b0b8735f902878aebb3405d"
 ASSET="$ROOT/app/src/main/assets/homekeeper.html"
 DEST_DIR="/sdcard/Download"
@@ -13,6 +15,8 @@ die(){ echo "STOP: $*" >&2; exit 1; }
 [ -f "$ROOT/build.sh" ] || die "Run this script from the Darkith Forge repository root."
 [ -f "$ROOT/app/src/main/AndroidManifest.xml" ] || die "Native Android manifest is missing."
 [ -f "$SOURCE" ] || die "Source HTML not found: $SOURCE"
+[ -f "$SPEC" ] || die "Keyboard invariant source not found: $SPEC"
+[ "$(sha256sum "$SPEC" | awk '{print $1}')" = "$SPEC_SHA256" ] || die "Keyboard invariant source SHA-256 mismatch."
 [ -f "$ROOT/app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt" ] || die "Homekeeper native bridge source is missing."
 grep -q 'addJavascriptInterface(HomekeeperBridge' "$ROOT/app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt" || die "HomekeeperActivity does not inject the native bridge."
 grep -q 'OMEGA-BRIDGEDIAG' "$SOURCE" || die "Uploaded HTML lacks the bridge diagnostic block."
@@ -35,6 +39,9 @@ bash "$ROOT/tools/setup_termux_toolchain.sh"
 [ -f "$ROOT/.tools/termux.env" ] || die "Termux toolchain did not emit its environment file."
 # shellcheck disable=SC1091
 source "$ROOT/.tools/termux.env"
+
+# Admit the keyboard invariant into the canonical KB and run the NT/citation witnesses.
+bash "$ROOT/tools/admit_keyboard_spec.sh" "$SPEC"
 
 mkdir -p "$ROOT/delivery" "$DEST_DIR"
 APK="$ROOT/delivery/Darkith-Homekeeper-OMEGA.apk"
