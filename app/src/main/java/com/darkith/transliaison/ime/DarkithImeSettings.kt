@@ -99,6 +99,32 @@ class DarkithImeSettings : Activity() {
         personalList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(personalList)
         renderPersonalWords()
+        root.addView(Button(this).apply {
+            text = "Export personal vocabulary to clipboard"
+            setOnClickListener {
+                val data = Elrp.exportPersonalWords()
+                if (data.isNotBlank()) {
+                    (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager)
+                        .setPrimaryClip(ClipData.newPlainText("Darkith personal vocabulary", data))
+                    status.text = "Personal vocabulary copied as newline-delimited text"
+                } else status.text = "No personal vocabulary to export"
+            }
+        })
+        root.addView(Button(this).apply {
+            text = "Reset personal vocabulary"
+            setOnClickListener {
+                Elrp.clearPersonalWords(this@DarkithImeSettings)
+                renderPersonalWords()
+                status.text = "Personal vocabulary cleared"
+            }
+        })
+        root.addView(Button(this).apply {
+            text = "Clear rejected suggestions"
+            setOnClickListener {
+                Elrp.clearRejected(this@DarkithImeSettings)
+                status.text = "Rejected suggestions cleared"
+            }
+        })
 
         root.addView(TextView(this).apply {
             text = "Next-word predictions begin only after opt-in local learning has observed word pairs. No corpus is preloaded and no text is sent to a server. Clipboard history is local and captures only while the keyboard is visible. Secret-like clips are rejected heuristically; this is not a perfect sensitive-data detector."
