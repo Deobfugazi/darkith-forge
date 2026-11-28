@@ -52,6 +52,8 @@ object Elrp {
                 val rules = parseAffix(affixLines)
                 val noSuggestFlag = affixLines.firstOrNull { it.trim().startsWith("NOSUGGEST ") }
                     ?.trim()?.split(Regex("\\s+"))?.getOrNull(1)
+                val onlyInCompoundFlag = affixLines.firstOrNull { it.trim().startsWith("ONLYINCOMPOUND ") }
+                    ?.trim()?.split(Regex("\\s+"))?.getOrNull(1)
                 val lines = context.assets.open("keyboard/en_US.dic").bufferedReader(Charsets.UTF_8).use { it.readLines() }
                 require(lines.isNotEmpty()) { "dictionary asset is empty" }
                 val declared = lines.first().trim().toIntOrNull()
