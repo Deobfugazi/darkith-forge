@@ -79,7 +79,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val rowsHeight = (keyH + 6f * dpr) * 4
-        setMeasuredDimension(widthMeasureSpec, (candidateH + rowsHeight).toInt())
+        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), (candidateH + rowsHeight).toInt())
     }
 
     private fun keyFor(x: Float, y: Float): String? {
