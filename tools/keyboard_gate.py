@@ -123,6 +123,9 @@ need("personal_words" in elrp_src and "addPersonalWord" in elrp_src and "removeP
      "personal vocabulary supports persistent add, remove, export, and reset")
 need("rejectSuggestion" in elrp_src and "rejected_suggestions" in elrp_src,
      "rejected suggestions persist and are excluded from future candidate lists")
+need("platformNoLearn" in service_src and "passwordField" in service_src
+     and "TYPE_TEXT_VARIATION_EMAIL_ADDRESS" in service_src and "TYPE_CLASS_PHONE" in service_src,
+     "password and platform no-learning fields are unconditional; contact fields obey privacy preference")
 need("ClipDescription.EXTRA_IS_SENSITIVE" in service_src and "item.uri != null" in service_src
      and "item.intent != null" in service_src and "passesLuhn" in service_src,
      "clipboard capture rejects platform-marked sensitive clips, non-text payloads, and common secret patterns")
