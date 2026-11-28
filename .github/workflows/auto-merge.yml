@@ -1,52 +1,38 @@
-# Dependency auto-merge — a thin GitHub adapter for tools/darkbot.py + tools/ci.sh.
-#
-# Everything that decides anything lives in tools/ (darkbot.py, ci.sh, deps.txt), which
-# are provider-neutral. This file is only the GitHub-specific glue: when to run, and how
-# to merge. Move to another host and you rewrite this file, never the tools.
-#
-# Two producers of dependency pull requests feed it:
-#   * Dependabot, if you keep it enabled (author dependabot[bot]), and
-#   * tools/darkbot.py, which this workflow also runs on a schedule to bump pins itself
-#     (author github-actions[bot]). See the `bump` job.
-#
-# How the merge is gated:
-#   1. `tests` runs tools/ci.sh (the repo's own suites). Nothing merges unless it exits 0.
-#   2. `merge` has `needs: tests`, runs only for a dependency PR, re-checks the head has
-#      not moved since the tests ran (TOCTOU guard), then merges.
-#
-# Why the merge is a separate job and NOT a second workflow triggered by the PR: a PR
-# opened with the default GITHUB_TOKEN does not trigger pull_request workflows (they land
-# in an approval-required state). Keeping test+merge in one workflow run sidesteps that
-# recursion trap with no PAT and no pull_request_target (which is unsafe for forks).
-#
-# Security posture:
-#   * Actions pinned to full commit SHAs, not mutable tags.
-#   * Least privilege: read-only by default; write only where the merge needs it.
-#   * Fork PRs never auto-merge: the author check matches known bot logins only.
-#   * Fail closed: head moved, tests failed, or merge refused -> nothing merges.
+# Candidate-only CI. Main is a protected destination, never a test target.
+# Full tests execute on pull-request merge candidates or an explicitly selected
+# non-main candidate branch. This workflow does not push, merge, release, or deploy.
+# Dependency bump automation is intentionally disabled until it can create a
+# candidate PR without publishing directly to main and can bind admission to that SHA.
 
-name: dependency auto-merge
+name: dependency candidate admission
 
 on:
   pull_request:
-  push:
     branches: [main, master]
-  schedule:
-    - cron: "17 6 * * 1"   # Mondays 06:17 UTC — darkbot proposes pin bumps
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: candidate-admission-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  tests:
-    name: tests
+  candidate-ci:
+    name: candidate CI (pre-admission)
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       github.ref != 'refs/heads/main' &&
+       github.ref != 'refs/heads/master')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check out the exact candidate event SHA
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          # Test the event's exact tree in detached HEAD. CI repair commits must never
-          # create a local main branch that remote-state gates mistake for published work.
           ref: ${{ github.sha }}
 
       - name: Set up Python
@@ -66,97 +52,7 @@ jobs:
           python3 -m playwright install --with-deps chromium
 
       - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
-        # The §19 compile proof (MUST-11) and the delivery gate's currency law need a real
-        # kotlinc + android.jar; without them those gates fail CLOSED, not skip. The stager
-        # is idempotent and caches into .tools/ (gitignored).
         run: bash tools/fetch_toolchain.sh
 
-      - name: Run the repository's tests (tools/ci.sh)
+      - name: Run full repository CI on the candidate
         run: bash tools/ci.sh
-
-  merge:
-    name: merge dependency PR
-    needs: tests
-    if: >
-      github.event_name == 'pull_request' &&
-      (github.event.pull_request.user.login == 'dependabot[bot]' ||
-       github.event.pull_request.user.login == 'github-actions[bot]')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Refuse to merge a commit that was not the one tested
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          TESTED_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          live="$(gh pr view "$PR_URL" --json headRefOid -q .headRefOid)"
-          if [ "$live" != "$TESTED_SHA" ]; then
-            echo "::error::PR head moved since tests ran (tested $TESTED_SHA, now $live); refusing."
-            exit 1
-          fi
-          echo "head unchanged since tests: $live"
-
-      - name: Merge (prefer GitHub auto-merge, fall back to direct squash)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          gh pr merge --auto --squash --delete-branch "$PR_URL" \
-            || gh pr merge --squash --delete-branch "$PR_URL"
-
-  bump:
-    name: darkbot bump (test, then commit)
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
-        with:
-          python-version: "3.x"
-
-      - name: Set up Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: "20"
-
-      - name: Bump pins to the latest registry versions
-        id: bump
-        run: |
-          python3 tools/darkbot.py update
-          python3 tools/darkbot.py export
-          if git diff --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Install test dependencies
-        if: steps.bump.outputs.changed == 'true'
-        run: |
-          python3 -m pip install --quiet -r requirements-dev.txt
-          python3 -m playwright install --with-deps chromium
-
-      # The bump is committed directly (not via a PR) only after the tests pass. A PR
-      # opened with GITHUB_TOKEN would sit in approval-required state and never reach the
-      # merge job, so test-then-commit is the self-contained, still-gated path for the
-      # bot's own bumps. A failed test leaves main untouched.
-      - name: Stage the raw-chain toolchain (kotlinc + android.jar + apksig)
-        if: steps.bump.outputs.changed == 'true'
-        run: bash tools/fetch_toolchain.sh
-
-      - name: Test, then commit only if green
-        if: steps.bump.outputs.changed == 'true'
-        run: |
-          bash tools/ci.sh
-          git config user.name  "darkbot"
-          git config user.email "darkbot@users.noreply.github.com"
-          git add tools/deps.txt requirements-dev.txt
-          git commit -m "darkbot: bump dependency pins to latest registry versions"
-          git push
