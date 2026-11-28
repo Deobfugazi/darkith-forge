@@ -17,7 +17,7 @@ mkdir -p "$TOOLS"
 command -v pkg >/dev/null 2>&1 || { echo "Termux pkg command not found." >&2; exit 2; }
 
 # These are native Termux packages. Never run Google's glibc aapt2/apksigner binaries on Android.
-pkg install -y openjdk-21 aapt2 apksigner python curl unzip
+pkg install -y openjdk-21 aapt2 apksigner python curl unzip git termux-tools
 
 JAVA_BIN="$(command -v java)"
 JAVA_HOME_REAL="$(dirname "$(dirname "$(readlink -f "$JAVA_BIN")")")"
