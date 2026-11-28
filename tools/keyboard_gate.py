@@ -147,6 +147,18 @@ need("NT14-CANONICAL-SOURCE-CARRIED" in admission and "NT15-CANONICAL-SOURCE-CAR
      "admission creates re-runnable provenance witnesses for NT XIV, NT XV, and the keyboard spec")
 need("assets/homekeeper.html" in installer and "packed != expected" in installer,
      "Homekeeper installer copies the HTML into the native APK asset path and verifies packaged bytes")
+need("termux-setup-storage" in installer and "storage/downloads" in installer
+     and "termux-open" in installer,
+     "on-device delivery provisions shared storage and opens Android's package installer")
+need("EXISTING_CERT" in installer and "different signing certificate" in installer,
+     "installer refuses unsafe replacement when the installed app signer differs")
+toolchain_src = (ROOT / "tools/setup_termux_toolchain.sh").read_text()
+need('uname -m' in toolchain_src and 'aarch64' in toolchain_src
+     and 'pkg install -y openjdk-21 aapt2 apksigner zipalign' in toolchain_src,
+     "Termux provisioner selects native ARM64 Java, aapt2, apksigner, and zipalign")
+need('export ZIPALIGN="$ZIPALIGN"' in toolchain_src and 'export ANDROID_JAR="$TOOLS/android.jar"' in toolchain_src
+     and 'export R8_JAR="$TOOLS/r8.jar"' in toolchain_src,
+     "Termux toolchain exports every raw-build dependency")
 
 activity = (ROOT / "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt").read_text()
 bridge = (ROOT / "app/src/main/java/com/darkith/transliaison/HomekeeperBridge.kt").read_text()
