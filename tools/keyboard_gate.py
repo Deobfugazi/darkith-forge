@@ -134,6 +134,9 @@ need("Learn adjacent words on this device (off by default)" in settings_src,
 need("Export personal vocabulary to clipboard" in settings_src and "Reset personal vocabulary" in settings_src
      and "Clear rejected suggestions" in settings_src,
      "personal vocabulary export/reset and rejected-word reset are exposed")
+need("SeekBar" in settings_src and "prefs.heightScale = scale" in settings_src
+     and "keyboard?.scaleFor(p.heightScale)" in service_src,
+     "keyboard-height preference is user-adjustable and applied on the next IME session")
 need("setBoolean(\"clip_history\", v)" in prefs_src and "getBoolean(\"clip_history\", false)" in prefs_src
      and "clipRetentionDays" in prefs_src,
      "clipboard preference is opt-in and retention is bounded")
