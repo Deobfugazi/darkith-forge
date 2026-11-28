@@ -41,7 +41,7 @@ class PersonalLanguageModel(context: Context) :
             val values = ContentValues().apply {
                 put("previous", p)
                 put("next", n)
-                put("count", 1)
+                put("count", 0)
                 put("updated", System.currentTimeMillis())
             }
             db.insertWithOnConflict("bigram", null, values, SQLiteDatabase.CONFLICT_IGNORE)
