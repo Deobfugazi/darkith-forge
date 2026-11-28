@@ -21,6 +21,9 @@ class DarkithKeyboardView(context: Context) : View(context) {
         fun onCandidate(text: String)
         fun onClipboard()
         fun onClip(text: String)
+        fun onToggleIncognito()
+        fun onRejectCandidate(text: String)
+        fun onCursorMove(direction: Int)
     }
     var listener: Listener? = null
 
@@ -34,6 +37,11 @@ class DarkithKeyboardView(context: Context) : View(context) {
     private var candidates: List<String> = emptyList()
     private var clipboardMode = false
     private var clips: List<String> = emptyList()
+    private var incognito = false
+    private var downKey: String? = null
+    private var downX = 0f
+    private var downY = 0f
+    private var downAt = 0L
     private val keyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12151A"); style = Paint.Style.FILL
     }
@@ -58,6 +66,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
     fun setCandidates(list: List<String>) { candidates = list; invalidate() }
     fun setClipboardItems(items: List<String>) { clips = items.take(4); clipboardMode = true; invalidate() }
     fun leaveClipboard() { clipboardMode = false; invalidate() }
+    fun setIncognito(enabled: Boolean) { incognito = enabled; invalidate() }
 
     /** Input-type adaptation: number/phone fields get digits; email and URI get useful symbols. */
     fun setEditorType(type: Int, options: Int) {
@@ -91,8 +100,9 @@ class DarkithKeyboardView(context: Context) : View(context) {
         }
         if (y < candidateH) {
             if (x < width * 0.14f) return "CLIP"
+            if (x > width * 0.86f) return "PRIV"
             if (candidates.isEmpty()) return null
-            val candidateWidth = width * 0.86f / candidates.size
+            val candidateWidth = width * 0.72f / candidates.size
             val index = ((x - width * 0.14f) / candidateWidth).toInt().coerceIn(0, candidates.lastIndex)
             return "CANDSEL:" + candidates[index]
         }
@@ -139,23 +149,44 @@ class DarkithKeyboardView(context: Context) : View(context) {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action != MotionEvent.ACTION_DOWN) return true
-        val key = keyFor(event.x, event.y) ?: return true
         val target = listener ?: return true
-        when {
-            key.startsWith("CANDSEL:") -> target.onCandidate(key.removePrefix("CANDSEL:"))
-            key.startsWith("CLIPSEL:") -> clips.getOrNull(key.removePrefix("CLIPSEL:").toIntOrNull() ?: -1)?.let(target::onClip)
-            key == "CLIP" -> target.onClipboard()
-            key == "CLIPBACK" -> { clipboardMode = false; invalidate() }
-            key == "SHIFT" -> { shift = !shift; invalidate(); target.onShift() }
-            key == "SYM" -> { symbolPage = !symbolPage; invalidate() }
-            key == "BACK" -> target.onBackspace()
-            key == "ENTER" -> target.onEnter()
-            else -> {
-                val out = if (key.length == 1 && key[0].isLetter() && (shift xor caps)) key.uppercase() else key
-                if (shift && !caps) { shift = false; invalidate() }
-                target.onKey(out)
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                downX = event.x
+                downY = event.y
+                downAt = event.eventTime
+                downKey = keyFor(event.x, event.y)
+                return true
             }
+            MotionEvent.ACTION_UP -> {
+                val key = downKey ?: keyFor(event.x, event.y)
+                downKey = null
+                if (key == null) return true
+                if (key == " " && kotlin.math.abs(event.x - downX) > 18f * dpr) {
+                    target.onCursorMove(if (event.x > downX) 1 else -1)
+                    return true
+                }
+                when {
+                    key.startsWith("CANDSEL:") && event.eventTime - downAt >= 500L ->
+                        target.onRejectCandidate(key.removePrefix("CANDSEL:"))
+                    key.startsWith("CANDSEL:") -> target.onCandidate(key.removePrefix("CANDSEL:"))
+                    key.startsWith("CLIPSEL:") -> clips.getOrNull(key.removePrefix("CLIPSEL:").toIntOrNull() ?: -1)?.let(target::onClip)
+                    key == "CLIP" -> target.onClipboard()
+                    key == "PRIV" -> target.onToggleIncognito()
+                    key == "CLIPBACK" -> { clipboardMode = false; invalidate() }
+                    key == "SHIFT" -> { shift = !shift; invalidate(); target.onShift() }
+                    key == "SYM" -> { symbolPage = !symbolPage; invalidate() }
+                    key == "BACK" -> target.onBackspace()
+                    key == "ENTER" -> target.onEnter()
+                    else -> {
+                        val out = if (key.length == 1 && key[0].isLetter() && (shift xor caps)) key.uppercase() else key
+                        if (shift && !caps) { shift = false; invalidate() }
+                        target.onKey(out)
+                    }
+                }
+                return true
+            }
+            MotionEvent.ACTION_CANCEL -> { downKey = null; return true }
         }
         return true
     }
@@ -182,9 +213,12 @@ class DarkithKeyboardView(context: Context) : View(context) {
         labelPaint.textSize = 12f * dpr
         labelPaint.color = Color.parseColor("#39D3A0")
         canvas.drawText("CLIP", width * 0.07f, candidateH / 2f - (labelPaint.descent() + labelPaint.ascent()) / 2f, labelPaint)
+        labelPaint.color = if (incognito) Color.parseColor("#FF8A80") else Color.parseColor("#39D3A0")
+        canvas.drawText(if (incognito) "PRIVATE" else "PRIV", width * 0.93f,
+            candidateH / 2f - (labelPaint.descent() + labelPaint.ascent()) / 2f, labelPaint)
         if (candidates.isNotEmpty()) {
             val start = width * 0.14f
-            val w = width * 0.86f / candidates.size
+            val w = width * 0.72f / candidates.size
             labelPaint.textSize = 15f * dpr
             candidates.forEachIndexed { index, value ->
                 canvas.drawRect(start + index * w, 0f, start + (index + 1) * w, candidateH, candidatePaint)
