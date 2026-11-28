@@ -22,6 +22,7 @@ object Elrp {
     private val lock = Any()
     @Volatile private var loaded = false
     private val words = HashSet<String>()
+    private val suggestible = HashSet<String>()
     private val personal = LinkedHashSet<String>()
     private val byInitial = HashMap<String, MutableList<String>>()
     private val commonRank = HashMap<String, Int>()
@@ -48,6 +49,8 @@ object Elrp {
                 common.forEachIndexed { index, word -> commonRank[word] = index }
                 val affixLines = context.assets.open("keyboard/en_US.aff").bufferedReader(Charsets.UTF_8).use { it.readLines() }
                 val rules = parseAffix(affixLines)
+                val noSuggestFlag = affixLines.firstOrNull { it.trim().startsWith("NOSUGGEST ") }
+                    ?.trim()?.split(Regex("\\s+"))?.getOrNull(1)
                 val lines = context.assets.open("keyboard/en_US.dic").bufferedReader(Charsets.UTF_8).use { it.readLines() }
                 require(lines.isNotEmpty()) { "dictionary asset is empty" }
                 val declared = lines.first().trim().toIntOrNull()
@@ -61,20 +64,28 @@ object Elrp {
                     if (!stem.any { it.isLetter() } || stem.length > 48) continue
                     words.add(stem)
                     accepted++
+                    val flags = parts.getOrNull(1).orEmpty()
+                    val suppressSuggestions = noSuggestFlag != null && flags.contains(noSuggestFlag)
+                    if (!suppressSuggestions) suggestible.add(stem)
                     if (parts.size == 2) {
-                        for (flag in parts[1]) {
+                        for (flag in flags) {
                             for (rule in rules[flag.toString()].orEmpty()) {
                                 val form = rule.apply(stem) ?: continue
-                                if (form.length <= 56) words.add(form)
+                                if (form.length <= 56) {
+                                    words.add(form)
+                                    if (!suppressSuggestions) suggestible.add(form)
+                                }
                             }
                         }
                     }
                 }
+                require(accepted == declared) { "dictionary count mismatch: declared $declared, read $accepted" }
                 require(accepted > 10000) { "dictionary admission count too small: $accepted" }
                 val overlay = context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE)
                     .getStringSet("personal_words", emptySet()).orEmpty()
                 personal.addAll(overlay.map { it.lowercase(Locale.US) }.filter { it.matches(Regex("[a-z][a-z'’-]{1,39}")) })
-                words.forEach { word ->
+                suggestible.addAll(personal)
+                suggestible.forEach { word ->
                     if (word.length >= 2) byInitial.getOrPut(word.substring(0, 2)) { ArrayList() }.add(word)
                 }
                 byInitial.values.forEach { bucket ->
@@ -84,6 +95,8 @@ object Elrp {
                 loadError = null
             } catch (e: Exception) {
                 words.clear()
+                suggestible.clear()
+                personal.clear()
                 byInitial.clear()
                 loadError = e.message ?: e.javaClass.simpleName
             }
@@ -133,7 +146,7 @@ object Elrp {
         }
         for (i in 0..w.length) for (c in alphabet) candidates.add(w.substring(0, i) + c + w.substring(i))
         return candidates.asSequence()
-            .filter { it != w && (it in words || it in personal) }
+            .filter { it != w && (it in suggestible || it in personal) }
             .sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
             .take(limit)
             .toList()
