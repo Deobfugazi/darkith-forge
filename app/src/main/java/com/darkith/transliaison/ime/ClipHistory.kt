@@ -60,8 +60,25 @@ class ClipHistory(context: Context) : SQLiteOpenHelper(context, "darkith_clip.db
         return out
     }
 
+    data class Item(val id: Long, val text: String, val pinned: Boolean, val created: Long)
+
+    fun search(query: String, limit: Int = 100): List<Item> {
+        val out = ArrayList<Item>()
+        readableDatabase.rawQuery(
+            "SELECT id, text, pinned, created FROM clip WHERE instr(lower(text), lower(?)) > 0 ORDER BY pinned DESC, created DESC LIMIT ?",
+            arrayOf(query, limit.coerceIn(1, 200).toString())
+        ).use { c ->
+            while (c.moveToNext()) out.add(Item(c.getLong(0), c.getString(1), c.getInt(2) != 0, c.getLong(3)))
+        }
+        return out
+    }
+
     fun pin(id: Long) {
         writableDatabase.execSQL("UPDATE clip SET pinned=1 WHERE id=?", arrayOf(id))
+    }
+
+    fun setPinned(id: Long, pinned: Boolean) {
+        writableDatabase.execSQL("UPDATE clip SET pinned=? WHERE id=?", arrayOf(if (pinned) 1 else 0, id))
     }
 
     fun delete(id: Long) {
