@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import java.util.Locale
 
+data class LearnedWordPair(val previous: String, val next: String, val count: Int)
+
 /**
  * Opt-in, local-only next-word model. It stores adjacent accepted word pairs, never full sentences.
  * No learning occurs in sensitive fields or while the preference is disabled.
@@ -34,7 +36,7 @@ class PersonalLanguageModel(context: Context) :
     fun observe(previous: String, next: String) {
         val p = normalize(previous)
         val n = normalize(next)
-        if (p.isEmpty() || n.isEmpty() || p == n || !Elrp.isValid(n)) return
+        if (p.isEmpty() || n.isEmpty() || p == n || !Elrp.isValid(p) || !Elrp.isValid(n)) return
         val db = writableDatabase
         db.beginTransaction()
         try {
@@ -70,6 +72,27 @@ class PersonalLanguageModel(context: Context) :
         }
         return out
     }
+
+    fun patterns(limit: Int = 100): List<LearnedWordPair> {
+        val out = ArrayList<LearnedWordPair>()
+        readableDatabase.rawQuery(
+            "SELECT previous, next, count FROM bigram ORDER BY count DESC, updated DESC LIMIT ?",
+            arrayOf(limit.coerceIn(1, 500).toString())
+        ).use { cursor ->
+            while (cursor.moveToNext()) {
+                out.add(LearnedWordPair(cursor.getString(0), cursor.getString(1), cursor.getInt(2)))
+            }
+        }
+        return out
+    }
+
+    fun exportPatterns(): String = buildString {
+        append("previous\\tnext\\tcount\\n")
+        patterns(500).forEach { append(it.previous).append('\\t').append(it.next).append('\\t').append(it.count).append('\\n') }
+    }
+
+    fun deletePair(previous: String, next: String): Int =
+        writableDatabase.delete("bigram", "previous=? AND next=?", arrayOf(normalize(previous), normalize(next)))
 
     fun clear() {
         writableDatabase.delete("bigram", null, null)
