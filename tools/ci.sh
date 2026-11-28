@@ -90,6 +90,7 @@ if have python3; then
   fi
   run "fresh-session boot formulary"      python3 tools/session_boot_gate.py
   run "repo gate (build/verify.py --fast)" python3 build/verify.py --fast
+  run "native keyboard/clipboard admission" python3 tools/keyboard_gate.py
   run "savf cli contract"                 python3 build/savf-cli-test.py
   run "darkbot self-test"                 python3 tools/darkbot.py selftest
   # Secret gate (fail-closed): no credential may ever be committed to the tracked tree.

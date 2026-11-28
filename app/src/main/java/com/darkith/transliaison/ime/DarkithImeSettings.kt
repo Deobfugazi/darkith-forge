@@ -1,68 +1,312 @@
 package com.darkith.transliaison.ime
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.TextView
+import kotlin.math.roundToInt
 
-/**
- * G9 settings surface: every control is bound to [ImePrefs], and [ImePrefs] is the same object the
- * service reads. A toggle here changes runtime behaviour or the test for it fails.
- */
+/** Settings and local clipboard controls. Every toggle is backed by the same ImePrefs as the IME. */
 class DarkithImeSettings : Activity() {
-
     private lateinit var prefs: ImePrefs
+    private lateinit var history: ClipHistory
+    private lateinit var model: PersonalLanguageModel
+    private lateinit var historyList: LinearLayout
+    private lateinit var learnedList: LinearLayout
+    private lateinit var status: TextView
+    private lateinit var personalList: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = ImePrefs(this)
+        Elrp.initialize(applicationContext)
+        history = ClipHistory(this)
+        model = PersonalLanguageModel(this)
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(48, 48, 48, 48)
+            setPadding(24, 24, 24, 24)
         }
-
-        val title = TextView(this).apply {
+        root.addView(TextView(this).apply {
             text = "Darkith Keyboard"
             textSize = 22f
             gravity = Gravity.START
-        }
-        root.addView(title)
-
-        val status = TextView(this).apply {
-            text = Elrp.IDENTITY + " v" + Elrp.VERSION + " · offline"
-            textSize = 13f
+        })
+        status = TextView(this).apply {
+            text = "${Elrp.status()} · Learned model: ${model.integrityStatus()} · Clipboard store: ${history.integrityStatus()}"
+            textSize = 12f
         }
         root.addView(status)
-
-        root.addView(toggle("Next-word prediction", prefs.prediction) { prefs.prediction = it })
-        root.addView(toggle("Candidate strip", prefs.candidates) { prefs.candidates = it })
-        root.addView(toggle("Autocorrect", prefs.autocorrect) { prefs.autocorrect = it })
-        root.addView(toggle("Clipboard history", prefs.clipHistory) { prefs.clipHistory = it })
-        root.addView(toggle("Protect sensitive fields", prefs.privacyFieldBlock) { prefs.privacyFieldBlock = it })
-
-        val clear = Button(this).apply {
-            text = "Clear clipboard history"
+        root.addView(toggle("Word completion", prefs.prediction) { prefs.prediction = it })
+        root.addView(toggle("Next-word prediction from learned local patterns", prefs.nextWordPrediction) { prefs.nextWordPrediction = it })
+        root.addView(toggle("Learn adjacent words on this device (off by default)", prefs.personalLearning) { prefs.personalLearning = it })
+        root.addView(Button(this).apply {
+            text = "Clear learned next-word patterns"
             setOnClickListener {
-                val h = ClipHistory(this@DarkithImeSettings)
-                h.clearUnpinned()
-                h.close()
-                status.text = "Clipboard history cleared"
+                model.clear()
+                renderLearnedPairs()
+                status.text = "Learned next-word patterns cleared"
             }
+        })
+        root.addView(Button(this).apply {
+            text = "Export learned word pairs to clipboard"
+            setOnClickListener {
+                val data = model.exportPatterns()
+                if (model.patterns(1).isNotEmpty()) {
+                    (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager)
+                        .setPrimaryClip(ClipData.newPlainText("Darkith learned word pairs", data))
+                    status.text = "Learned word pairs copied; no full sentences are stored"
+                } else status.text = "No learned word pairs to export"
+            }
+        })
+        learnedList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(learnedList)
+        renderLearnedPairs()
+        root.addView(toggle("Candidate strip", prefs.candidates) { prefs.candidates = it })
+        root.addView(toggle("Conservative autocorrect (unique match only)", prefs.autocorrect) { prefs.autocorrect = it })
+        root.addView(toggle("Clipboard history capture (off by default)", prefs.clipHistory) { prefs.clipHistory = it })
+        root.addView(toggle("Protect phone, email, and URI fields (password/no-learning always protected)", prefs.privacyFieldBlock) { prefs.privacyFieldBlock = it })
+        val heightLabel = TextView(this).apply {
+            text = "Keyboard height: ${"%.2f".format(prefs.heightScale)}×"
+            textSize = 13f
         }
-        root.addView(clear)
+        root.addView(heightLabel)
+        root.addView(SeekBar(this).apply {
+            max = 16
+            progress = ((prefs.heightScale - 0.8f) * 20f).roundToInt().coerceIn(0, 16)
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    val scale = 0.8f + progress / 20f
+                    prefs.heightScale = scale
+                    heightLabel.text = "Keyboard height: ${"%.2f".format(prefs.heightScale)}×"
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+        })
+        val retention = EditText(this).apply {
+            hint = "Clipboard retention in days (1–365)"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            setText(prefs.clipRetentionDays.toString())
+            singleLine = true
+        }
+        root.addView(retention)
+        root.addView(Button(this).apply {
+            text = "Save clipboard retention"
+            setOnClickListener {
+                val days = retention.text.toString().toIntOrNull()
+                if (days == null || days !in 1..365) status.text = "Retention must be 1–365 days"
+                else {
+                    prefs.clipRetentionDays = days
+                    status.text = "Clipboard retention set to ${prefs.clipRetentionDays} days"
+                }
+            }
+        })
 
+        root.addView(TextView(this).apply {
+            text = "Personal vocabulary"
+            textSize = 18f
+            setPadding(0, 16, 0, 4)
+        })
+        val wordInput = EditText(this).apply {
+            hint = "Add a name, slang term, or technical word"
+            singleLine = true
+        }
+        root.addView(wordInput)
+        root.addView(Button(this).apply {
+            text = "Add word"
+            setOnClickListener {
+                if (Elrp.addPersonalWord(this@DarkithImeSettings, wordInput.text.toString())) {
+                    status.text = Elrp.status() + " · personal word saved"
+                    wordInput.text.clear()
+                    renderPersonalWords()
+                } else status.text = "Word rejected: use 2–40 English letters, apostrophes, or hyphens."
+            }
+        })
+        personalList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(personalList)
+        renderPersonalWords()
+        root.addView(Button(this).apply {
+            text = "Export personal vocabulary to clipboard"
+            setOnClickListener {
+                val data = Elrp.exportPersonalWords()
+                if (data.isNotBlank()) {
+                    (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager)
+                        .setPrimaryClip(ClipData.newPlainText("Darkith personal vocabulary", data))
+                    status.text = "Personal vocabulary copied as newline-delimited text"
+                } else status.text = "No personal vocabulary to export"
+            }
+        })
+        root.addView(Button(this).apply {
+            text = "Reset personal vocabulary"
+            setOnClickListener {
+                Elrp.clearPersonalWords(this@DarkithImeSettings)
+                renderPersonalWords()
+                status.text = "Personal vocabulary cleared"
+            }
+        })
+        root.addView(Button(this).apply {
+            text = "Clear rejected suggestions"
+            setOnClickListener {
+                Elrp.clearRejected(this@DarkithImeSettings)
+                status.text = "Rejected suggestions cleared"
+            }
+        })
+
+        root.addView(TextView(this).apply {
+            text = "Next-word predictions begin only after opt-in local learning has observed word pairs. No corpus is preloaded and no text is sent to a server. Clipboard history is local and captures only while the keyboard is visible. Secret-like clips are rejected heuristically; this is not a perfect sensitive-data detector. Synchronization is not implemented and remains disabled; no keyboard sync traffic is sent. A future sync path requires paired-device authentication, encryption, replay protection, conflict handling, revocation, deletion, retries, and two-device verification."
+            textSize = 12f
+            setPadding(0, 12, 0, 12)
+        })
+
+        val search = EditText(this).apply {
+            hint = "Search saved clipboard text"
+            singleLine = true
+        }
+        root.addView(search)
+        val actions = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        actions.addView(Button(this).apply {
+            text = "Clear unpinned"
+            setOnClickListener { history.clearUnpinned(); renderHistory(search.text.toString()) }
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        actions.addView(Button(this).apply {
+            text = "Clear all"
+            setOnClickListener {
+                history.clearAll()
+                renderHistory(search.text.toString())
+            }
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        root.addView(actions)
+
+        historyList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(historyList)
+        search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                renderHistory(s?.toString().orEmpty())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        renderHistory("")
         setContentView(root)
+    }
+
+    private fun renderLearnedPairs() {
+        if (!::learnedList.isInitialized) return
+        learnedList.removeAllViews()
+        val pairs = model.patterns(100)
+        if (pairs.isEmpty()) {
+            learnedList.addView(TextView(this).apply {
+                text = "No learned word pairs yet."
+                textSize = 13f
+            })
+            return
+        }
+        pairs.forEach { pair ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            row.addView(TextView(this@DarkithImeSettings).apply {
+                text = "${pair.previous} → ${pair.next} (${pair.count})"
+                textSize = 14f
+            }, LinearLayout.LayoutParams(0, -2, 1f))
+            row.addView(Button(this@DarkithImeSettings).apply {
+                text = "Delete"
+                setOnClickListener {
+                    model.deletePair(pair.previous, pair.next)
+                    renderLearnedPairs()
+                }
+            })
+            learnedList.addView(row)
+        }
+    }
+
+    private fun renderPersonalWords() {
+        if (!::personalList.isInitialized) return
+        personalList.removeAllViews()
+        Elrp.personalWords().sorted().forEach { word ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            row.addView(TextView(this@DarkithImeSettings).apply {
+                text = word
+                textSize = 14f
+            }, LinearLayout.LayoutParams(0, -2, 1f))
+            row.addView(Button(this@DarkithImeSettings).apply {
+                text = "Remove"
+                setOnClickListener {
+                    Elrp.removePersonalWord(this@DarkithImeSettings, word)
+                    renderPersonalWords()
+                }
+            })
+            personalList.addView(row)
+        }
+    }
+
+    private fun renderHistory(query: String) {
+        if (!::historyList.isInitialized) return
+        historyList.removeAllViews()
+        val items = history.search(query, 100)
+        if (items.isEmpty()) {
+            historyList.addView(TextView(this).apply {
+                text = "No matching saved clips."
+                textSize = 13f
+            })
+            return
+        }
+        items.forEach { item ->
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(0, 8, 0, 8)
+            }
+            row.addView(TextView(this).apply {
+                text = item.text.replace("\n", " ").take(180)
+                textSize = 14f
+            })
+            val buttons = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            buttons.addView(Button(this@DarkithImeSettings).apply {
+                text = if (item.pinned) "Unpin" else "Pin"
+                setOnClickListener {
+                    history.setPinned(item.id, !item.pinned)
+                    renderHistory(query)
+                }
+            }, LinearLayout.LayoutParams(0, -2, 1f))
+            buttons.addView(Button(this@DarkithImeSettings).apply {
+                text = "Copy"
+                setOnClickListener {
+                    val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    cm.setPrimaryClip(ClipData.newPlainText("Darkith clipboard history", item.text))
+                    status.text = "Copied to Android clipboard"
+                }
+            }, LinearLayout.LayoutParams(0, -2, 1f))
+            buttons.addView(Button(this@DarkithImeSettings).apply {
+                text = "Delete"
+                setOnClickListener {
+                    history.delete(item.id)
+                    renderHistory(query)
+                }
+            }, LinearLayout.LayoutParams(0, -2, 1f))
+            row.addView(buttons)
+            historyList.addView(row)
+        }
+    }
+
+    override fun onDestroy() {
+        if (::history.isInitialized) history.close()
+        if (::model.isInitialized) model.close()
+        super.onDestroy()
     }
 
     private fun toggle(label: String, initial: Boolean, onChange: (Boolean) -> Unit): Button =
         Button(this).apply {
             text = (if (initial) "☑ " else "☐ ") + label
             setOnClickListener {
-                val current = text.toString().startsWith("☑")
-                val next = !current
+                val next = !text.toString().startsWith("☑")
                 onChange(next)
                 text = (if (next) "☑ " else "☐ ") + label
             }
