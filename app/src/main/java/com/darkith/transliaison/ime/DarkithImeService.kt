@@ -247,7 +247,7 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
             val text = clip.getItemAt(0).coerceToText(this)?.toString() ?: return
             if (text.isBlank() || text.length > 20000) return
             if (looksSensitive(text)) return
-            clipboardHistory?.admit(text, false, 30)
+            clipboardHistory?.admit(text, false, p.clipRetentionDays)
         }
     }
 
