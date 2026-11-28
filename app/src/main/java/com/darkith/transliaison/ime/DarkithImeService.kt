@@ -40,6 +40,8 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         val view = DarkithKeyboardView(this)
         view.listener = this
         view.scaleFor(prefs?.heightScale ?: 1.0f)
+        val editor = currentInputEditorInfo
+        view.setEditorType(editor?.inputType ?: InputType.TYPE_CLASS_TEXT, editor?.imeOptions ?: 0)
         keyboard = view
         refreshCandidates()
         return view
