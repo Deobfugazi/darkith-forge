@@ -367,6 +367,45 @@ class HomekeeperBridge(private val host: HomekeeperActivity) {
         return try { if (path.isNullOrBlank()) "ERROR: empty path" else ApkInstaller(host).install(java.io.File(path)) } catch (e: Throwable) { "ERROR: installApkNative: ${e.message}" }
     }
 
+    // OMEGA-SELFREPACK:BEGIN
+    /**
+     * Rebuild THIS app with a new homekeeper.html and no compiler: the installed DEX is reused,
+     * the page asset is swapped, the APK is aligned, signed with the on-device key, written to
+     * Downloads and verified byte-for-byte. Returns "OK:<apk path>" or "ERROR: ...".
+     * Install it with installApkNative. Kotlin changes still need a compiler; page changes do not.
+     */
+    @JavascriptInterface
+    fun selfRepack(htmlPath: String?): String {
+        return try {
+            val src = java.io.File(norm(htmlPath))
+            if (!src.isFile) return "ERROR: not a file: " + src.path
+            val bytes = src.readBytes()
+            if (bytes.size < 1024) return "ERROR: too small to be a Homekeeper page"
+            val head = String(bytes, 0, minOf(bytes.size, 4096), Charsets.UTF_8).lowercase()
+            if (!head.contains("<html") && !head.contains("<!doctype html")) return "ERROR: not an HTML page"
+            val base = java.io.File(host.applicationInfo.sourceDir)
+            val work = java.io.File(host.cacheDir, "selfrepack")
+            work.deleteRecursively(); work.mkdirs()
+            val unsigned = java.io.File(work, "unsigned.apk")
+            SelfRepack.rewrite(base, unsigned, "assets/homekeeper.html", bytes)
+            val aligned = java.io.File(work, "aligned.apk")
+            NativeTools.zipalign(host, unsigned, aligned)
+            val signed = java.io.File(work, "signed.apk")
+            ApkSignerRunner(host).sign(aligned, signed)
+            val dl = java.io.File("/sdcard/Download"); dl.mkdirs()
+            val dst = java.io.File(dl, "Homekeeper_self_" + System.currentTimeMillis() + ".apk")
+            signed.copyTo(dst, overwrite = true)
+            java.util.zip.ZipFile(dst).use { zf ->
+                val ent = zf.getEntry("assets/homekeeper.html") ?: return "ERROR: verify: page entry missing"
+                if (!zf.getInputStream(ent).readBytes().contentEquals(bytes)) return "ERROR: verify: packed page differs from source"
+                if (zf.getEntry("AndroidManifest.xml") == null || zf.getEntry("classes.dex") == null) return "ERROR: verify: manifest or classes.dex missing"
+            }
+            work.deleteRecursively()
+            "OK:" + dst.path
+        } catch (e: Throwable) { err(e) }
+    }
+    // OMEGA-SELFREPACK:END
+
     // ---- Omega: HTML -> Compose translator, Healer, Substrate Ingestor (wire_final.sh) ----
     private fun omegaEsc(s: String): String = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", " ").replace("\r", " ")
 
