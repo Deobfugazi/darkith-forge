@@ -1,11 +1,16 @@
 package com.darkith.transliaison.ime
 
+import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.inputmethodservice.InputMethodService
+import android.os.Build
 import android.text.InputType
+import android.view.KeyCharacterMap
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 
 /**
@@ -20,6 +25,9 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
     private var composing = StringBuilder()
     private var revision = 0
     private var sensitiveField = false
+    private var limitedEditor = false
+    private var incognito = false
+    private var lastCorrection: Pair<String, String>? = null
     private var clipListenerAttached = false
 
     private val clipListener = ClipboardManager.OnPrimaryClipChangedListener { captureClip() }
@@ -45,6 +53,7 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         view.scaleFor(prefs?.heightScale ?: 1.0f)
         val editor = currentInputEditorInfo
         view.setEditorType(editor?.inputType ?: InputType.TYPE_CLASS_TEXT, editor?.imeOptions ?: 0)
+        view.setIncognito(incognito)
         keyboard = view
         refreshCandidates()
         return view
@@ -56,14 +65,18 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         revision++
         val type = info?.inputType ?: InputType.TYPE_CLASS_TEXT
         sensitiveField = prefs?.privacyFieldBlock == true && isSensitive(type, info)
+        limitedEditor = type == InputType.TYPE_NULL
+        incognito = false
+        lastCorrection = null
         keyboard?.setCandidates(emptyList())
+        keyboard?.setIncognito(false)
         keyboard?.setEditorType(type, info?.imeOptions ?: 0)
     }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         val p = prefs ?: return
-        if (p.clipHistory && !sensitiveField) attachClipboardListener()
+        if (p.clipHistory && !sensitiveField && !incognito) attachClipboardListener()
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
@@ -94,7 +107,12 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     override fun onKey(label: String) {
         val conn = ic() ?: return
-        if (sensitiveField) {
+        if (limitedEditor) {
+            sendRawText(conn, label)
+            return
+        }
+        if (sensitiveField || incognito) {
+            lastCorrection = null
             conn.commitText(label, 1)
             return
         }
@@ -107,6 +125,7 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
                 refreshCandidates()
             }
             else -> {
+                lastCorrection = null
                 composing.append(label)
                 revision++
                 conn.setComposingText(composing, 1)
@@ -117,6 +136,20 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     private fun commitWordAndSpace(conn: InputConnection) {
         val raw = composing.toString()
+        if (limitedEditor) {
+            sendRawText(conn, raw + " ")
+            composing.setLength(0)
+            revision++
+            refreshCandidates()
+            return
+        }
+        if (sensitiveField || incognito) {
+            conn.commitText(raw + " ", 1)
+            composing.setLength(0)
+            revision++
+            refreshCandidates()
+            return
+        }
         val before = conn.getTextBeforeCursor(120, 0)?.toString().orEmpty()
         val contextBefore = if (raw.isNotEmpty() && before.endsWith(raw)) before.dropLast(raw.length) else before
         val previousWord = contextBefore.trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
@@ -128,9 +161,9 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
             if (options.size == 1) committed = options[0]
         }
         conn.commitText(committed + " ", 1)
-        if (raw.isNotBlank() && previousWord.isNotBlank() &&
-            prefs?.personalLearning == true && !sensitiveField) {
-            languageModel?.observe(previousWord, committed)
+        lastCorrection = if (committed != raw) raw to committed else null
+        if (raw.isNotBlank() && previousWord.isNotBlank() && prefs?.personalLearning == true) {
+            runCatching { languageModel?.observe(previousWord, committed) }
         }
         composing.setLength(0)
         revision++
@@ -139,6 +172,25 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     override fun onBackspace() {
         val conn = ic() ?: return
+        if (limitedEditor) {
+            sendKey(conn, KeyEvent.KEYCODE_DEL)
+            return
+        }
+        val undo = lastCorrection
+        if (undo != null && !sensitiveField && !incognito) {
+            val before = conn.getTextBeforeCursor(120, 0)?.toString().orEmpty()
+            val suffix = undo.second + " "
+            if (before.endsWith(suffix)) {
+                conn.deleteSurroundingText(suffix.length, 0)
+                conn.commitText(undo.first, 1)
+                lastCorrection = null
+                composing.setLength(0)
+                revision++
+                refreshCandidates()
+                return
+            }
+            lastCorrection = null
+        }
         if (composing.isNotEmpty()) {
             composing.setLength(composing.length - 1)
             revision++
@@ -150,6 +202,12 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     override fun onEnter() {
         val conn = ic() ?: return
+        lastCorrection = null
+        if (limitedEditor) {
+            sendKey(conn, KeyEvent.KEYCODE_ENTER)
+            composing.setLength(0)
+            return
+        }
         val action = currentInputEditorInfo?.imeOptions?.and(EditorInfo.IME_MASK_ACTION)
             ?: EditorInfo.IME_ACTION_NONE
         conn.commitText(composing.toString(), 1)
@@ -165,12 +223,14 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     override fun onCandidate(text: String) {
         val conn = ic() ?: return
+        if (limitedEditor || sensitiveField || incognito) return
+        lastCorrection = null
         val raw = composing.toString()
-        if (prefs?.personalLearning == true && !sensitiveField) {
+        if (prefs?.personalLearning == true) {
             val before = conn.getTextBeforeCursor(120, 0)?.toString().orEmpty()
             val contextBefore = if (raw.isNotEmpty() && before.endsWith(raw)) before.dropLast(raw.length) else before
             val previous = contextBefore.trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
-            if (previous.isNotBlank()) languageModel?.observe(previous, text)
+            if (previous.isNotBlank()) runCatching { languageModel?.observe(previous, text) }
         }
         conn.commitText(text + " ", 1)
         composing.setLength(0)
@@ -194,10 +254,66 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         refreshCandidates()
     }
 
+    override fun onToggleIncognito() {
+        incognito = !incognito
+        keyboard?.setIncognito(incognito)
+        if (incognito) {
+            detachClipboardListener()
+            keyboard?.setCandidates(emptyList())
+        } else {
+            val p = prefs
+            if (p?.clipHistory == true && !sensitiveField) attachClipboardListener()
+            refreshCandidates()
+        }
+    }
+
+    override fun onRejectCandidate(text: String) {
+        if (sensitiveField || incognito || limitedEditor) return
+        Elrp.rejectSuggestion(this, text)
+        refreshCandidates()
+    }
+
+    override fun onCursorMove(direction: Int) {
+        val conn = ic() ?: return
+        lastCorrection = null
+        if (limitedEditor) {
+            sendKey(conn, if (direction < 0) KeyEvent.KEYCODE_DPAD_LEFT else KeyEvent.KEYCODE_DPAD_RIGHT)
+            return
+        }
+        runCatching {
+            val extracted = conn.getExtractedText(ExtractedTextRequest(), 0)
+            if (extracted == null) {
+                sendKey(conn, if (direction < 0) KeyEvent.KEYCODE_DPAD_LEFT else KeyEvent.KEYCODE_DPAD_RIGHT)
+            } else {
+                val start = extracted.startOffset.coerceAtLeast(0)
+                val low = minOf(extracted.selectionStart, extracted.selectionEnd)
+                val high = maxOf(extracted.selectionStart, extracted.selectionEnd)
+                val relative = if (low != high) {
+                    if (direction < 0) low else high
+                } else low + direction
+                val absolute = (start + relative).coerceAtLeast(0)
+                conn.setSelection(absolute, absolute)
+            }
+        }
+    }
+
+    private fun sendRawText(conn: InputConnection, value: String) {
+        if (value.isEmpty()) return
+        val events = runCatching {
+            KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD).getEvents(value.toCharArray())
+        }.getOrNull() ?: return
+        events.forEach { conn.sendKeyEvent(it) }
+    }
+
+    private fun sendKey(conn: InputConnection, keyCode: Int) {
+        conn.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
+        conn.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
+    }
+
     private fun refreshCandidates() {
         val view = keyboard ?: return
         val p = prefs ?: return
-        if (!p.candidates || sensitiveField) {
+        if (!p.candidates || sensitiveField || incognito || limitedEditor) {
             view.setCandidates(emptyList())
             return
         }
@@ -206,7 +322,7 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
             val before = ic()?.getTextBeforeCursor(120, 0)?.toString().orEmpty()
             val previous = before.trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
             val next = if (p.nextWordPrediction && previous.isNotBlank())
-                languageModel?.predict(previous, 3).orEmpty() else emptyList()
+                runCatching { languageModel?.predict(previous, 3).orEmpty() }.getOrDefault(emptyList()) else emptyList()
             view.setCandidates(next)
             return
         }
@@ -239,12 +355,16 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     private fun captureClip() {
         val p = prefs ?: return
-        if (!p.clipHistory || sensitiveField || !clipListenerAttached) return
+        if (!p.clipHistory || sensitiveField || incognito || !clipListenerAttached) return
         runCatching {
             val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = cm.primaryClip ?: return
             if (clip.itemCount == 0) return
-            val text = clip.getItemAt(0).coerceToText(this)?.toString() ?: return
+            if (Build.VERSION.SDK_INT >= 33 &&
+                clip.description.extras?.getBoolean(ClipDescription.EXTRA_IS_SENSITIVE, false) == true) return
+            val item = clip.getItemAt(0)
+            if (item.uri != null || item.intent != null) return
+            val text = item.text?.toString() ?: return
             if (text.isBlank() || text.length > 20000) return
             if (looksSensitive(text)) return
             clipboardHistory?.admit(text, false, p.clipRetentionDays)
