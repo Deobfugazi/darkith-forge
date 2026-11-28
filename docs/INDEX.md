@@ -9,16 +9,16 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**88 readable files across 8 registers.**
+**90 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
 | `AGENTS.md` | 88,503 | `6efd99d9bfa8` | AGENTS.md — Darkith |
-| `DARKITH.md` | 169,112 | `a3cdb073cae3` | DARKITH — THE SINGLE SOURCE OF TRUTH |
+| `DARKITH.md` | 169,107 | `0cb835b07dfd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
-| `README.md` | 71,156 | `f6491446c4e7` | DARKITH — README |
+| `README.md` | 87,251 | `89f889048b9e` | DARKITH — The Forge of Verifiable Sovereignty |
 | `RESUME.md` | 8,805 | `05b87b5f7ee0` | RESUME — read this first in any new session |
 | `TASKS.md` | 12,962 | `55124aa5be48` | TASKS — the durable board |
 
@@ -30,6 +30,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/02-ATTACKS-captured.txt` | 1,718 | `bff648fbc3a0` | baseline intact: rc=0  EXPECT:BURDEN_ABSENT_REHEARSAL_OK e14350baf1871 |
 | `docs/03-RESOLUTION-captured.txt` | 7,701 | `543c899d3523` | === resolve_invariants.py === |
 | `docs/06_expected_root.txt` | 168 | `f6ab85268b43` | expected_root=e14350baf18719f1e1f7ddb79cccd0a6ce416eb4143b037fa40436a3 |
+| `docs/ARCHITECTURE-MANUFACTORY.md` | 22,301 | `4f02adbaa729` | DARKITH MANUFACTORY — Industry-Coupled Fracture-to-Capability Architec |
 | `docs/ARCHITECTURE-OMEGA.md` | 9,608 | `43c74ae223ec` | DARKITH Ω — local-assistant + polyglot terminal architecture |
 | `docs/BLACK-AND-WHITEPAPER-2026-11-23.md` | 7,519 | `9cbfbeb13fbb` | THE BLACK & WHITEPAPER — Three Tongues, Zero Hedges |
 | `docs/DARKITH-OMEGA-README.html` | 68,526 | `bd13537fb359` | The Invariant — A Constant Parameter Formulary |
@@ -48,8 +49,9 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/UPDATES.md` | 2,729 | `b0b742d733fe` | Sovereign upliftment tracking — the integrated client-coupling update  |
 | `docs/evidence/NODAL-ZIP-VS-OURS.md` | 4,950 | `7b45fe6a3cf2` | nodal.zip vs the nodal/ already in this repo |
 | `docs/evidence/SECTOR-PAIN-LEDGER.md` | 5,077 | `9d6b452e87d8` | Sector pain ledger — primary-source observations |
+| `docs/index.html` | 19,891 | `8585e98e027b` | Darkith — Interactive README |
 | `docs/nt/NT-I-IV-protocol.md` | 146,183 | `5c35948728cd` | THE NOVELTREATISE ENGINE |
-| `docs/nt/NT-INDEX.md` | 4,329 | `c244fba77d05` | NT INDEX — the noveltreatise corpus, carried and reconciled |
+| `docs/nt/NT-INDEX.md` | 6,446 | `72d48efa4498` | NT INDEX — the noveltreatise corpus, carried and reconciled |
 | `docs/nt/NT-IX.txt` | 47,852 | `148373385f60` | NOVELTREATISE IX — OMEGA FINAL EDITION (REVISED: DEVICE-BOUND, ALIGNME |
 | `docs/nt/NT-V.txt` | 154,001 | `fc36c1018bac` | NOVELTREATISE V |
 | `docs/nt/NT-VI.txt` | 31,069 | `72a2ca0e1a6a` | NOVELTREATISE VI — THE SYNCHRONICITY ENGINE |
