@@ -87,17 +87,57 @@ python3 tools/citation_gate.py > proof/keyboard-citation-gate.txt 2>&1
 CITATION_RC=$?
 set -e
 case "$CITATION_RC" in
-  0) echo "CITATION_GATE: PASS";;
+  0)
+    echo "CITATION_GATE: PASS"
+    python3 - <<'PY'
+from pathlib import Path
+import json
+bt = chr(96)
+xiv = Path("docs/nt/NT-XIV-AI-SUBSTRATE.md")
+idx = Path("docs/nt/NT-INDEX.md")
+old_xiv = f"| G-015 | Infrastructure / Closure | Closure | The 25 Nov 2026 archive lacked NT XIV under {bt}docs/nt/{bt}; the current repository now carries the canonical file and NT-INDEX row. | Remaining admission evidence: claim-level provenance in {bt}proof/nt_claims.json{bt}, regenerated {bt}docs/INDEX.md{bt} / {bt}docs/kb_manifest.json{bt}, and a recorded successful {bt}tools/citation_gate.py{bt} run. The historical archive omission remains true; current admission is not closed until these checks pass. | OPEN |"
+new_xiv = f"| G-015 | Infrastructure / Closure | Closure | The 25 Nov 2026 archive lacked NT XIV under {bt}docs/nt/{bt}; the current repository carries the canonical source, index row, and byte-addressed KB entry. | Claim-level source witnesses are recorded in {bt}proof/nt_claims.json{bt}; {bt}tools/citation_gate.py{bt} returned {bt}CITATIONS_REAL_AND_AUTHOR_INTACT{bt} and its output is preserved in {bt}proof/keyboard-citation-gate.txt{bt}. This closes repository admission only; NT XIV's epistemic gaps remain open. | RESOLVED (procedural admission only) |"
+old_idx = f"| XIV | {bt}NT-XIV-AI-SUBSTRATE.md{bt} | the forensic, diachronic reconstruction of the AI substrate (eleven coordinates per transition; the generating instance included as evidence) | PROCEDURAL CLOSURE ONLY — epistemic closure NOT earned (Σ ≠ 0; G-001…G-015 remain OPEN; current source is carried, but G-015 repository-admission evidence is still pending) |"
+new_idx = f"| XIV | {bt}NT-XIV-AI-SUBSTRATE.md{bt} | the forensic, diachronic reconstruction of the AI substrate (eleven coordinates per transition; the generating instance included as evidence) | PROCEDURAL CLOSURE ONLY — epistemic closure NOT earned (Σ ≠ 0; G-001…G-014 remain OPEN; G-015 repository admission RESOLVED by claim-level witnesses and the recorded citation gate) |"
+xtext = xiv.read_text(encoding="utf-8")
+itext = idx.read_text(encoding="utf-8")
+if old_xiv not in xtext or old_idx not in itext:
+    raise SystemExit("G-015 source/index rows differ from the pinned admission template; refusing automatic closure")
+xiv.write_text(xtext.replace(old_xiv, new_xiv), encoding="utf-8")
+idx.write_text(itext.replace(old_idx, new_idx), encoding="utf-8")
+claims_path = Path("proof/nt_claims.json")
+claims = json.loads(claims_path.read_text(encoding="utf-8"))
+if not any(x.get("id") == "NT14-G015-PROCEDURAL-ADMISSION-RESOLVED" for x in claims):
+    claims.append({
+        "id": "NT14-G015-PROCEDURAL-ADMISSION-RESOLVED",
+        "kind": "W",
+        "referent": "NT XIV G-015 repository-admission closure",
+        "evidence": {
+            "cmd": "python3 -c \"import pathlib; xiv=pathlib.Path('docs/nt/NT-XIV-AI-SUBSTRATE.md').read_text(); idx=pathlib.Path('docs/nt/NT-INDEX.md').read_text(); log=pathlib.Path('proof/keyboard-citation-gate.txt').read_text(); assert 'RESOLVED (procedural admission only)' in xiv; assert 'G-015 repository admission RESOLVED' in idx; assert 'VERDICT: CITATIONS_REAL_AND_AUTHOR_INTACT' in log; print('NT14-G015-PROCEDURAL-ADMISSION-RESOLVED')\"",
+            "expect": "NT14-G015-PROCEDURAL-ADMISSION-RESOLVED",
+            "external": True
+        },
+        "note": "G-015 is closed only as a repository-admission gap after canonical source/index/manifest witnesses and a successful recorded citation gate. NT XIV's epistemic gaps remain open."
+    })
+claims_path.write_text(json.dumps(claims, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+PY
+    ;;
   3) echo "CITATION_GATE: SKIP — corpus source absent; G-015 remains OPEN";;
   *) cat proof/keyboard-citation-gate.txt; die "citation gate rejected the source admission";;
 esac
 
+git add docs/nt/NT-XIV-AI-SUBSTRATE.md docs/nt/NT-INDEX.md proof/nt_claims.json
 python3 tools/kb_index.py --write
 git add docs/INDEX.md docs/kb_manifest.json proof/keyboard-citation-gate.txt
 python3 tools/kb_index.py
 python3 tools/nt_gate.py
+python3 tools/citation_gate.py
 python3 tools/keyboard_gate.py
-git add docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md docs/INDEX.md docs/kb_manifest.json proof/nt_claims.json proof/keyboard-citation-gate.txt
-echo "KB ADMISSION: PASS — exact source copied, indexed, and source-presence witnesses admitted."
-echo "NT XIV G-015 remains OPEN until citation-gate evidence is available; no epistemic closure is implied."
+git add docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md docs/nt/NT-XIV-AI-SUBSTRATE.md docs/nt/NT-INDEX.md docs/INDEX.md docs/kb_manifest.json proof/nt_claims.json proof/keyboard-citation-gate.txt
+echo "KB SOURCE ADMISSION: PASS — exact source copied, indexed, and source-presence witnesses admitted."
+if [ "$CITATION_RC" -eq 0 ]; then
+  echo "NT XIV G-015: RESOLVED (procedural admission only); epistemic gaps remain open."
+else
+  echo "NT XIV G-015: OPEN — citation corpus was unavailable; no closure claimed."
+fi
 echo "Changes are staged only. This script does not commit or push."
