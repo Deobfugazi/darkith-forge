@@ -159,6 +159,22 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         refreshCandidates()
     }
 
+    override fun onClipboard() {
+        val p = prefs ?: return
+        if (!p.clipHistory) return
+        val items = clipboardHistory?.recent(4)?.map { it.second }.orEmpty()
+        keyboard?.setClipboardItems(items)
+    }
+
+    override fun onClip(text: String) {
+        val conn = ic() ?: return
+        conn.commitText(text, 1)
+        composing.setLength(0)
+        revision++
+        keyboard?.leaveClipboard()
+        refreshCandidates()
+    }
+
     private fun refreshCandidates() {
         val view = keyboard ?: return
         val p = prefs ?: return
@@ -207,7 +223,8 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
             if (clip.itemCount == 0) return
             val text = clip.getItemAt(0).coerceToText(this)?.toString() ?: return
             if (text.isBlank() || text.length > 20000) return
-            clipboardHistory?.admit(text, looksSensitive(text), 30)
+            if (looksSensitive(text)) return
+            clipboardHistory?.admit(text, false, 30)
         }
     }
 
