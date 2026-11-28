@@ -89,11 +89,15 @@ set -e
 case "$CITATION_RC" in
   0) echo "CITATION_GATE: PASS";;
   3) echo "CITATION_GATE: SKIP — corpus source absent; G-015 remains OPEN";;
-  *) cat proof/keyboard-citation-gate.log; die "citation gate rejected the source admission";;
+  *) cat proof/keyboard-citation-gate.txt; die "citation gate rejected the source admission";;
 esac
 
+python3 tools/kb_index.py --write
+git add docs/INDEX.md docs/kb_manifest.json proof/keyboard-citation-gate.txt
+python3 tools/kb_index.py
+python3 tools/nt_gate.py
 python3 tools/keyboard_gate.py
-git add docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md docs/INDEX.md docs/kb_manifest.json proof/nt_claims.json proof/keyboard-citation-gate.log
+git add docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md docs/INDEX.md docs/kb_manifest.json proof/nt_claims.json proof/keyboard-citation-gate.txt
 echo "KB ADMISSION: PASS — exact source copied, indexed, and source-presence witnesses admitted."
 echo "NT XIV G-015 remains OPEN until citation-gate evidence is available; no epistemic closure is implied."
 echo "Changes are staged only. This script does not commit or push."
