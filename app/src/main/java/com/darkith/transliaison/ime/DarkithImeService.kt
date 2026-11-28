@@ -77,6 +77,9 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         val p = prefs ?: return
+        keyboard?.scaleFor(p.heightScale)
+        keyboard?.setEditorType(info?.inputType ?: InputType.TYPE_CLASS_TEXT, info?.imeOptions ?: 0)
+        keyboard?.setIncognito(incognito)
         if (p.clipHistory && !sensitiveField && !incognito) attachClipboardListener()
     }
 
