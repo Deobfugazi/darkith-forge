@@ -91,6 +91,13 @@ need("nextWordPrediction" in prefs_src and "personalLearning" in prefs_src
      "next-word prediction is a real opt-in local adjacent-word model")
 need("Learn adjacent words on this device (off by default)" in settings_src,
      "local learning is explicitly opt-in and described in settings")
+need("PRIMARY KEY(previous, next)" in model_src and "CREATE TABLE bigram" in model_src,
+     "personal prediction stores adjacent word pairs rather than complete text")
+need("Clear learned next-word patterns" in settings_src and "fun clear()" in model_src,
+     "users can erase the local prediction model")
+need("Search saved clipboard text" in settings_src and "Clear all" in settings_src
+     and "Clipboard retention" in settings_src,
+     "clipboard manager exposes search, clear, and retention controls")
 
 installer = (ROOT / "install_homekeeper_omega.sh").read_text()
 need("1482e152c1ff2d8bdf97cd52684c98f7224d58713b0b8735f902878aebb3405d" in installer,
