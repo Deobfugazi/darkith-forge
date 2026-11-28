@@ -80,6 +80,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
         symbolPage = false
         shift = false
         caps = false
+        lastShiftTapAt = 0L
         altOptions = emptyList()
         invalidate()
     }
