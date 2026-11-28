@@ -42,6 +42,9 @@ class DarkithKeyboardView(context: Context) : View(context) {
     private var downX = 0f
     private var downY = 0f
     private var downAt = 0L
+    private var altOptions: List<String> = emptyList()
+    private val altRect = RectF()
+    private var altCellWidth = 0f
     private val keyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12151A"); style = Paint.Style.FILL
     }
@@ -92,6 +95,10 @@ class DarkithKeyboardView(context: Context) : View(context) {
     }
 
     private fun keyFor(x: Float, y: Float): String? {
+        if (altOptions.isNotEmpty() && altRect.contains(x, y)) {
+            val index = ((x - altRect.left) / altCellWidth).toInt().coerceIn(0, altOptions.lastIndex)
+            return "ALTSEL:$index"
+        }
         if (clipboardMode) {
             if (y < candidateH) return "CLIPBACK"
             val rowH = keyH + 6f * dpr
@@ -156,6 +163,10 @@ class DarkithKeyboardView(context: Context) : View(context) {
                 downY = event.y
                 downAt = event.eventTime
                 downKey = keyFor(event.x, event.y)
+                if (altOptions.isNotEmpty() && downKey?.startsWith("ALTSEL:") != true) {
+                    altOptions = emptyList()
+                    invalidate()
+                }
                 return true
             }
             MotionEvent.ACTION_UP -> {
@@ -165,6 +176,26 @@ class DarkithKeyboardView(context: Context) : View(context) {
                 if (key == " " && kotlin.math.abs(event.x - downX) > 18f * dpr) {
                     target.onCursorMove(if (event.x > downX) 1 else -1)
                     return true
+                }
+                if (key.startsWith("ALTSEL:")) {
+                    val selected = altOptions.getOrNull(key.removePrefix("ALTSEL:").toIntOrNull() ?: -1)
+                    altOptions = emptyList()
+                    invalidate()
+                    selected?.let { target.onKey(if (shift xor caps) it.uppercase() else it) }
+                    return true
+                }
+                if (event.eventTime - downAt >= 500L && key.length == 1) {
+                    val alternatives = alternativesFor(key)
+                    if (alternatives.isNotEmpty()) {
+                        altOptions = alternatives
+                        altCellWidth = 40f * dpr
+                        val total = altCellWidth * altOptions.size
+                        val left = (downX - total / 2f).coerceIn(4f * dpr, (width - total - 4f * dpr).coerceAtLeast(4f * dpr))
+                        val top = (downY - 48f * dpr).coerceAtLeast(candidateH)
+                        altRect.set(left, top, left + total, top + 42f * dpr)
+                        invalidate()
+                        return true
+                    }
                 }
                 when {
                     key.startsWith("CANDSEL:") && event.eventTime - downAt >= 500L ->
@@ -189,6 +220,22 @@ class DarkithKeyboardView(context: Context) : View(context) {
             MotionEvent.ACTION_CANCEL -> { downKey = null; return true }
         }
         return true
+    }
+
+    private fun alternativesFor(key: String): List<String> = when (key.lowercase()) {
+        "a" -> listOf("á", "à", "â", "ä", "æ", "å")
+        "e" -> listOf("é", "è", "ê", "ë")
+        "i" -> listOf("í", "ì", "î", "ï")
+        "o" -> listOf("ó", "ò", "ô", "ö", "œ")
+        "u" -> listOf("ú", "ù", "û", "ü")
+        "n" -> listOf("ñ")
+        "c" -> listOf("ç")
+        "s" -> listOf("ß")
+        "." -> listOf("…", "?", "!")
+        "," -> listOf(";", "–", "—")
+        "'" -> listOf("’", "`", "´")
+        "-" -> listOf("–", "—")
+        else -> emptyList()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -245,6 +292,16 @@ class DarkithKeyboardView(context: Context) : View(context) {
             }
         }
         drawBottomRow(canvas, candidateH + 3 * rowH + 3f * dpr)
+        if (altOptions.isNotEmpty()) {
+            canvas.drawRoundRect(altRect, 7f * dpr, 7f * dpr, specialPaint)
+            labelPaint.textSize = 18f * dpr
+            labelPaint.color = Color.parseColor("#E8ECF1")
+            altOptions.forEachIndexed { index, value ->
+                val cell = RectF(altRect.left + index * altCellWidth, altRect.top,
+                    altRect.left + (index + 1) * altCellWidth, altRect.bottom)
+                drawLabel(canvas, value, cell)
+            }
+        }
     }
 
     private fun drawBottomRow(canvas: Canvas, top: Float) {
