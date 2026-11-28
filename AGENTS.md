@@ -148,29 +148,36 @@ so at line 1033, after the code was already written. The Operator asked the only
 that matters: *what are you doing to prevent this on the next reset?* This section, and the
 gate that enforces it, are the answer.
 
-## 0a. PUBLICATION AUTHORITY — LOCAL BY DEFAULT, REMOTE ONLY WHEN GRANTED
+## 0a. PUBLICATION IS MANDATORY — PUSH IS STANDING AND PRE-GRANTED
 
-**Verification is not authorization.** A passing gate, a green build, a local commit, a
-successful rehearsal, or a previous session's approval does not authorize the next remote
-action. Each boundary is separate and needs its own explicit grant from the Operator:
+**YOU ALREADY HAVE PERMISSION TO PUSH. PUSHING IS REQUIREMENT, NOT A QUESTION.**
 
-- local branch / worktree / edit / test / commit / rehearsal — allowed within the task;
-- push of a review branch — a remote publication action, needs a grant naming the repository,
-  the destination branch, and the change;
-- merge to `main`, release, deploy, protected-branch changes, secret changes, history rewrite,
-  force-push, and any value promotion — each needs its own separate grant.
+This section previously said the opposite ("local by default, remote only when granted").
+That text caused completed work to be stranded in ephemeral sandboxes and lost when the VM
+was recycled. It contradicted `DARKITH.md` MUST #35 and AGENTS.md §40. It has been deleted.
 
-Absent or ambiguous authorization means: keep the candidate local and report the exact
-blocker. It never means "proceed anyway".
+**THE LAW, in one read:**
 
-Automation in this repo does not create authorization. A timer, a dirty tree, an unpushed
-commit, a passing gate, a repair request, or a generated instruction is not a grant. The
-canonical statement of these boundaries is in `DARKITH.md`; this section is a pointer and the
-operational summary.
+1. Verified work MUST be committed and pushed in the same turn. Not next turn. Not "on request".
+2. NEVER end a turn holding an unpushed commit on the working branch.
+3. NEVER write "ready to push", "awaiting approval", "say the word", or "tell me to push".
+   Those phrases are the defect. The grant exists and is standing.
+4. Push to the working branch (`main`, or a feature branch you created) requires NO approval.
+5. Push the artifact too, or push a receipt that names where it lives and its sha256. An APK
+   or build product left only in `/tmp`, `dist/`, or a gitignored path is NOT delivered.
 
-Why this is a hard law: a blanket grant once told agents that any automated decision was
-already approved, so a stale automation was read as a standing licence to publish. A gate that
-cannot tell a fresh grant from an old one is not a gate — it is a rubber stamp.
+**WHAT STILL NEEDS A SEPARATE, EXPLICIT GRANT** (these are not publishing your own work):
+- `git push --force` / `--force-with-lease` to a shared branch; deleting a remote branch.
+- `git reset --hard` on work not already on the remote; rewriting published history.
+- Pushing secrets (signing keys, credentials) — a hard NEVER, enforced by `tools/continuity.sh`.
+- Publishing outside this repo (app stores, third-party services, public releases).
+
+**Verification is not authorization** applies to exactly one thing: a gate result is not a
+licence to skip the ruling that the change is wanted. It is NOT a reason to withhold a
+completed, gate-green commit. That misreading is what stranded the work.
+
+Canonical law text: `DARKITH.md` MUST #35. Operational copy: AGENTS.md §40.
+
 
 ## 0. CONTINUITY (read first — the VM is ephemeral)
 - **Canonical public host:** `Deobfugazi/darkith-forge` (branch `main`). Nothing
