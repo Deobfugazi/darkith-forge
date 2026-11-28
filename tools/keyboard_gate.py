@@ -72,6 +72,17 @@ need("prefs?.autocorrect == true" in service_src and "options.size == 1" in serv
      "autocorrect is preference-gated and unique-candidate-only")
 need("setEditorType" in service_src and "numericMode()" in view_src and "symbolPage" in view_src,
      "numeric and symbol layouts are wired to editor input type")
+need("limitedEditor = type == InputType.TYPE_NULL" in service_src and "sendRawText" in service_src
+     and "KeyEvent.FLAG_SOFT_KEYBOARD" in service_src,
+     "TYPE_NULL editors use the documented raw key-event pathway")
+need("onCursorMove" in service_src and "setSelection(absolute, absolute)" in service_src
+     and "onCursorMove" in view_src,
+     "spacebar swipe moves the editor cursor through extracted selection offsets")
+need("onToggleIncognito" in service_src and "incognito" in service_src
+     and "onRejectCandidate" in service_src and "alternativesFor" in view_src,
+     "incognito, long-press alternatives, and candidate rejection are wired")
+need("lastCorrection" in service_src and "conn.deleteSurroundingText(suffix.length, 0)" in service_src,
+     "autocorrection can be undone by immediate backspace")
 need("onStartInputView" in service_src and "attachClipboardListener()" in service_src
      and "onFinishInputView" in service_src and "detachClipboardListener()" in service_src,
      "clipboard observation is scoped to visible IME sessions")
@@ -84,13 +95,25 @@ need("fun search(" in history_src and "fun setPinned(" in history_src and "fun c
      "clipboard store supports search, pin state, delete, and clear-all")
 need("clipRetentionDays" in prefs_src and "p.clipRetentionDays" in service_src,
      "clipboard retention is persisted and used by capture")
-need("personal_words" in elrp_src and "addPersonalWord" in elrp_src and "removePersonalWord" in elrp_src,
-     "personal vocabulary is a persistent overlay separate from bundled words")
+need("personal_words" in elrp_src and "addPersonalWord" in elrp_src and "removePersonalWord" in elrp_src
+     and "exportPersonalWords" in elrp_src and "clearPersonalWords" in elrp_src,
+     "personal vocabulary supports persistent add, remove, export, and reset")
+need("rejectSuggestion" in elrp_src and "rejected_suggestions" in elrp_src,
+     "rejected suggestions persist and are excluded from future candidate lists")
+need("ClipDescription.EXTRA_IS_SENSITIVE" in service_src and "item.uri != null" in service_src
+     and "item.intent != null" in service_src and "passesLuhn" in service_src,
+     "clipboard capture rejects platform-marked sensitive clips, non-text payloads, and common secret patterns")
 need("nextWordPrediction" in prefs_src and "personalLearning" in prefs_src
      and "languageModel?.predict" in service_src and "languageModel?.observe" in service_src,
      "next-word prediction is a real opt-in local adjacent-word model")
 need("Learn adjacent words on this device (off by default)" in settings_src,
      "local learning is explicitly opt-in and described in settings")
+need("Export personal vocabulary to clipboard" in settings_src and "Reset personal vocabulary" in settings_src
+     and "Clear rejected suggestions" in settings_src,
+     "personal vocabulary export/reset and rejected-word reset are exposed")
+need("setBoolean(\"clip_history\", v)" in prefs_src and "getBoolean(\"clip_history\", false)" in prefs_src
+     and "clipRetentionDays" in prefs_src,
+     "clipboard preference is opt-in and retention is bounded")
 need("PRIMARY KEY(previous, next)" in model_src and "CREATE TABLE bigram" in model_src,
      "personal prediction stores adjacent word pairs rather than complete text")
 need("Clear learned next-word patterns" in settings_src and "fun clear()" in model_src,
