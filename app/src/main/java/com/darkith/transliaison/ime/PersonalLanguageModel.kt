@@ -87,8 +87,8 @@ class PersonalLanguageModel(context: Context) :
     }
 
     fun exportPatterns(): String = buildString {
-        append("previous\\tnext\\tcount\\n")
-        patterns(500).forEach { append(it.previous).append('\\t').append(it.next).append('\\t').append(it.count).append('\\n') }
+        append("previous\tnext\tcount\n")
+        patterns(500).forEach { append(it.previous).append('\t').append(it.next).append('\t').append(it.count).append('\n') }
     }
 
     fun deletePair(previous: String, next: String): Int =
