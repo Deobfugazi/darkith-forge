@@ -102,11 +102,11 @@ class DarkithKeyboardView(context: Context) : View(context) {
         }
         if (numericMode()) {
             return when {
-                x < width * .18f -> "-"
-                x < width * .36f -> "SYM"
-                x < width * .56f -> "0"
-                x < width * .72f -> "."
-                x < width * .86f -> "BACK"
+                x < width * 0.18f -> "-"
+                x < width * 0.36f -> "SYM"
+                x < width * 0.56f -> "0"
+                x < width * 0.72f -> "."
+                x < width * 0.86f -> "BACK"
                 else -> "ENTER"
             }
         }
@@ -114,12 +114,12 @@ class DarkithKeyboardView(context: Context) : View(context) {
             variation == InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS
         val uri = variation == InputType.TYPE_TEXT_VARIATION_URI
         return when {
-            x < width * .12f -> "SHIFT"
-            x < width * .24f -> "SYM"
-            x < width * .36f -> if (email) "@" else if (uri) "/" else ","
-            x < width * .72f -> " "
-            x < width * .84f -> "."
-            x < width * .93f -> "BACK"
+            x < width * 0.12f -> "SHIFT"
+            x < width * 0.24f -> "SYM"
+            x < width * 0.36f -> if (email) "@" else if (uri) "/" else ","
+            x < width * 0.72f -> " "
+            x < width * 0.84f -> "."
+            x < width * 0.93f -> "BACK"
             else -> "ENTER"
         }
     }
@@ -162,7 +162,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
         for (row in 0..2) {
             val set = rows[row]
             val cellW = if (numericMode()) width.toFloat() / set.length else width.toFloat() / 10f
-            val offset = if (numericMode() || symbolPage) 0f else if (row == 1) cellW * .5f else if (row == 2) cellW * 1.4f else 0f
+            val offset = if (numericMode() || symbolPage) 0f else if (row == 1) cellW * 0.5f else if (row == 2) cellW * 1.4f else 0f
             for (index in set.indices) {
                 val left = offset + index * cellW + 2f * dpr
                 val top = candidateH + row * rowH + 3f * dpr
@@ -177,16 +177,16 @@ class DarkithKeyboardView(context: Context) : View(context) {
 
     private fun drawBottomRow(canvas: Canvas, top: Float) {
         val spans: List<Triple<Float, Float, String>> = if (numericMode()) {
-            listOf(Triple(0f,.18f,"−"), Triple(.18f,.36f,"SYM"), Triple(.36f,.56f,"0"),
-                Triple(.56f,.72f,"."), Triple(.72f,.86f,"⌫"), Triple(.86f,1f,"⏎"))
+            listOf(Triple(0f,0.18f,"−"), Triple(0.18f,0.36f,"SYM"), Triple(0.36f,0.56f,"0"),
+                Triple(0.56f,0.72f,"."), Triple(0.72f,0.86f,"⌫"), Triple(0.86f,1f,"⏎"))
         } else {
             val email = variation == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS ||
                 variation == InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS
             val uri = variation == InputType.TYPE_TEXT_VARIATION_URI
-            listOf(Triple(0f,.12f,"⇧"), Triple(.12f,.24f,"?123"),
-                Triple(.24f,.36f,if (email) "@" else if (uri) "/" else ","),
-                Triple(.36f,.72f,"space"), Triple(.72f,.84f,"."),
-                Triple(.84f,.93f,"⌫"), Triple(.93f,1f,"⏎"))
+            listOf(Triple(0f,0.12f,"⇧"), Triple(0.12f,0.24f,"?123"),
+                Triple(0.24f,0.36f,if (email) "@" else if (uri) "/" else ","),
+                Triple(0.36f,0.72f,"space"), Triple(0.72f,0.84f,"."),
+                Triple(0.84f,0.93f,"⌫"), Triple(0.93f,1f,"⏎"))
         }
         labelPaint.textSize = 13f * dpr
         spans.forEach { (start, end, label) ->
