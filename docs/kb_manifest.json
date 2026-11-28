@@ -1,12 +1,12 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 92,
+  "count": 94,
   "files": [
     {
-      "bytes": 88503,
+      "bytes": 88904,
       "path": "AGENTS.md",
       "register": "A-apparatus",
-      "sha256": "6efd99d9bfa856974569e180fee80b21c4674b7a5d8c2b9f5fc6e15c44618723"
+      "sha256": "7c75a3b48d24417e6ed2d43e1039cf868cb0300bc7e32c34262d1ee6b5aa0ea3"
     },
     {
       "bytes": 169107,
@@ -423,10 +423,10 @@
       "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
     },
     {
-      "bytes": 1271388,
+      "bytes": 1292139,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "e20a6d1f3dbb5d704e77017fc455e07765638236469fd4898e49e1650fb81749"
+      "sha256": "6eb291a872bd1950b9b6c36f60a64155912eb1860d36c0e4500c14d9a907b929"
     },
     {
       "bytes": 96790,
@@ -553,6 +553,18 @@
       "path": "darkith-omega-homekeeper/src/reader-shell.html",
       "register": "H-homekeeper-app",
       "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
+    },
+    {
+      "bytes": 2500,
+      "path": "releases/keyboard-omega-2.1.0/README.md",
+      "register": "UNFILED",
+      "sha256": "b388f8db24685696ee33064b46170fe8418f7a8bffa4380daa2111a5b399eaab"
+    },
+    {
+      "bytes": 93,
+      "path": "releases/keyboard-omega-2.1.0/SHA256SUMS.txt",
+      "register": "UNFILED",
+      "sha256": "393d732c77cc6ee9b390ec32c3832327075ae82cdfd04f24c58ddd91b1ce16da"
     }
   ],
   "mirrors": [

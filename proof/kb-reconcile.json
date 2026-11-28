@@ -2,15 +2,26 @@
   "declared_count": 92,
   "drifted": [
     {
+      "bytes_declared": 88503,
+      "bytes_on_disk": 88904,
+      "delta": 401,
+      "path": "AGENTS.md"
+    },
+    {
       "bytes_declared": 12148,
       "bytes_on_disk": 18389,
       "delta": 6241,
       "path": "TASKS.md"
+    },
+    {
+      "bytes_declared": 1271388,
+      "bytes_on_disk": 1292139,
+      "delta": 20751,
+      "path": "app/src/main/assets/homekeeper.html"
     }
   ],
   "entries": 92,
   "matched": [
-    "AGENTS.md",
     "DARKITH.md",
     "DEFICITS.json",
     "README.md",
@@ -79,7 +90,6 @@
     "app/src/main/assets/darkith-omega-messages.html",
     "app/src/main/assets/darkith-omega-phone.html",
     "app/src/main/assets/darkith_ui.html",
-    "app/src/main/assets/homekeeper.html",
     "app/src/main/assets/savf_core.html",
     "omega-app/src/main/assets/github_console.html",
     "omega-app/src/main/assets/omega_studio.html",
@@ -104,7 +114,10 @@
   ],
   "missing": [],
   "registers": 8,
-  "undeclared_drift": [],
+  "undeclared_drift": [
+    "AGENTS.md",
+    "app/src/main/assets/homekeeper.html"
+  ],
   "undeclared_missing": [],
-  "verdict": "RECONCILED"
+  "verdict": "RECONCILIATION_INCOMPLETE"
 }

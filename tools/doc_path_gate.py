@@ -55,8 +55,10 @@ ALLOWLIST = {
 # Extensions that mark a token as a file path (not prose).
 _EXTS = (".kt", ".py", ".sh", ".js", ".html", ".md", ".txt", ".xml", ".yml", ".yaml",
          ".json", ".jar", ".zip", ".apk", ".dex", ".so", ".tpl")
-# Tokens that are pure placeholders in usage lines, never real paths.
-_SKIP = re.compile(r"[<>{}*$]|^\.\.\.$|^-")
+# Tokens that are pure placeholders in usage lines, never real paths. An elision
+# (`releases/.../download`) is a URL shape, not a repo path: skip anything containing
+# `...`, otherwise creating a top-level `releases/` makes the elision look resolvable.
+_SKIP = re.compile(r"[<>{}*$]|\.\.\.|^\.\.$|^-")
 # External or generated artifacts whose absence is never a defect: jars/apks fetched or
 # produced by the build, and any absolute/home/URL path (not in the repo).
 _EXT_ARTIFACT = (".jar", ".apk")

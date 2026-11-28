@@ -9,13 +9,13 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**92 readable files across 8 registers.**
+**94 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
 | file | bytes | sha256 | what it is |
 |---|---|---|---|
-| `AGENTS.md` | 88,503 | `6efd99d9bfa8` | AGENTS.md — Darkith |
+| `AGENTS.md` | 88,904 | `7c75a3b48d24` | AGENTS.md — Darkith |
 | `DARKITH.md` | 169,107 | `0cb835b07dfd` | DARKITH — THE SINGLE SOURCE OF TRUTH |
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 87,251 | `89f889048b9e` | DARKITH — The Forge of Verifiable Sovereignty |
@@ -100,7 +100,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `app/src/main/assets/darkith-omega-messages.html` | 13,791 | `c43b0d8585ce` | DARKITH Ω — messages |
 | `app/src/main/assets/darkith-omega-phone.html` | 12,478 | `2bccb0ab5978` | DARKITH Ω — phone |
 | `app/src/main/assets/darkith_ui.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
-| `app/src/main/assets/homekeeper.html` | 1,271,388 | `e20a6d1f3dbb` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `app/src/main/assets/homekeeper.html` | 1,292,139 | `6eb291a872bd` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,790 | `a37cd725501b` | SAVF-1 Universal Audit Engine |
 | `omega-app/src/main/assets/github_console.html` | 20,516 | `2d2333b818b4` | GitHub Console |
 | `omega-app/src/main/assets/omega_studio.html` | 1,320,579 | `ad4206e03c6f` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
@@ -142,6 +142,13 @@ content (B), one retrieval surface (C), one canonical copy (D).
 |---|---|---|---|
 | `darkith-omega-homekeeper/README.md` | 2,479 | `beea5851ef25` | Darkith Omega Homekeeper |
 | `darkith-omega-homekeeper/src/reader-shell.html` | 24,606 | `03d97349bb43` | Repository — A Unit in Four Registers |
+
+## UNFILED — a defect
+
+| file | bytes | sha256 |
+|---|---|---|
+| `releases/keyboard-omega-2.1.0/README.md` | 2,500 | `b388f8db2468` |
+| `releases/keyboard-omega-2.1.0/SHA256SUMS.txt` | 93 | `393d732c77cc` |
 
 ## Declared mirrors (one surface, two names — kept byte-identical)
 
