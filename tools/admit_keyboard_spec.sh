@@ -22,6 +22,26 @@ cp "$SOURCE" "$TARGET"
 cd "$ROOT"
 git add docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md
 
+# Reconcile the stale NT-INDEX assertion with the actual still-open G-015 record.
+python3 - <<'PY'
+from pathlib import Path
+xiv = Path("docs/nt/NT-XIV-AI-SUBSTRATE.md")
+idx = Path("docs/nt/NT-INDEX.md")
+xlines = xiv.read_text(encoding="utf-8").splitlines()
+ilines = idx.read_text(encoding="utf-8").splitlines()
+xnew = "| G-015 | Infrastructure / Closure | Closure | The 25 Nov 2026 archive lacked NT XIV under docs/nt/; the current repository now carries the canonical file and NT-INDEX row. | Remaining admission evidence: claim-level provenance in proof/nt_claims.json, regenerated docs/INDEX.md / docs/kb_manifest.json, and a recorded successful tools/citation_gate.py run. The historical archive omission remains true; current admission is not closed until these checks pass. | OPEN |"
+inew = "| XIV | `NT-XIV-AI-SUBSTRATE.md` | the forensic, diachronic reconstruction of the AI substrate (eleven coordinates per transition; the generating instance included as evidence) | PROCEDURAL CLOSURE ONLY — epistemic closure NOT earned (Σ ≠ 0; G-001…G-015 remain OPEN; current source is carried, but G-015 repository-admission evidence is still pending) |"
+if not any(line.startswith("| G-015 |") and "no NT XIV document present" in line for line in xlines):
+    raise SystemExit("NT XIV G-015 source row differs from expected open baseline")
+if not any(line.startswith("| XIV |") and "G-015 closed by this admission" in line for line in ilines):
+    raise SystemExit("NT-INDEX XIV row differs from expected stale baseline")
+xlines = [xnew if line.startswith("| G-015 |") else line for line in xlines]
+ilines = [inew if line.startswith("| XIV |") else line for line in ilines]
+xiv.write_text("\n".join(xlines) + "\n", encoding="utf-8")
+idx.write_text("\n".join(ilines) + "\n", encoding="utf-8")
+PY
+git add docs/nt/NT-XIV-AI-SUBSTRATE.md docs/nt/NT-INDEX.md
+
 # First pass: make the new canonical source visible to the repository's generator.
 python3 tools/kb_index.py --write
 git add docs/INDEX.md docs/kb_manifest.json
