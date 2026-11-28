@@ -4,8 +4,8 @@ Resource identity is byte-addressed. These hashes are SHA-256 over the exact UTF
 
 | Resource | Declared identity | SHA-256 | Notes |
 |---|---|---|---|
-| `en_US.dic` | LibreOffice `en_US` Hunspell dictionary; SCOWL-derived; header declares 49,568 entries | `f0b1a2349b5e5b0c8f65d5e18a3c4f4a4c2d6f1b2b3f1a8c7e9d0c4b5a6f7e8d` | Exact resource bytes are pinned; the count is validated at load time |
-| `en_US.aff` | Matching `en_US` affix resource; UTF-8 | `e746c882a6c7c9a0b4f1d2e3c5a7b9d0e2f4a6c8b0d2e4f6a8c0b2d4e6f8a0c2` | Exact resource bytes are pinned; parser support is deliberately narrower than full Hunspell |
+| `en_US.dic` | LibreOffice `en_US` Hunspell dictionary; SCOWL 2020.12.07-derived; header declares 49,568 entries | `f0b1a234bd178bdd01875b2a392a9647f888b8fe879f79c52aae62c2759b3647` | 551,762 bytes; exact resource bytes are pinned; the count is validated at load time |
+| `en_US.aff` | Matching `en_US` affix resource; UTF-8; no independent release string is declared | `e746c882dd6f303c2c46e7452804b9201115a6942cfeb15f18f8edf774d2e24e` | 3,205 UTF-8 bytes; exact resource bytes are pinned; parser support is deliberately narrower than full Hunspell |
 
 ## Provenance and licensing
 
