@@ -19,6 +19,7 @@ class DarkithImeSettings : Activity() {
     private lateinit var history: ClipHistory
     private lateinit var historyList: LinearLayout
     private lateinit var status: TextView
+    private lateinit var personalList: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,30 @@ class DarkithImeSettings : Activity() {
         root.addView(toggle("Conservative autocorrect (unique match only)", prefs.autocorrect) { prefs.autocorrect = it })
         root.addView(toggle("Clipboard history capture (off by default)", prefs.clipHistory) { prefs.clipHistory = it })
         root.addView(toggle("Protect sensitive fields", prefs.privacyFieldBlock) { prefs.privacyFieldBlock = it })
+
+        root.addView(TextView(this).apply {
+            text = "Personal vocabulary"
+            textSize = 18f
+            setPadding(0, 16, 0, 4)
+        })
+        val wordInput = EditText(this).apply {
+            hint = "Add a name, slang term, or technical word"
+            singleLine = true
+        }
+        root.addView(wordInput)
+        root.addView(Button(this).apply {
+            text = "Add word"
+            setOnClickListener {
+                if (Elrp.addPersonalWord(this@DarkithImeSettings, wordInput.text.toString())) {
+                    status.text = Elrp.status() + " · personal word saved"
+                    wordInput.text.clear()
+                    renderPersonalWords()
+                } else status.text = "Word rejected: use 2–40 English letters, apostrophes, or hyphens."
+            }
+        })
+        personalList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(personalList)
+        renderPersonalWords()
 
         root.addView(TextView(this).apply {
             text = "Clipboard history is local and captures only while the keyboard is visible. Secret-like clips are rejected heuristically; this is not a perfect sensitive-data detector."
@@ -82,6 +107,26 @@ class DarkithImeSettings : Activity() {
         })
         renderHistory("")
         setContentView(root)
+    }
+
+    private fun renderPersonalWords() {
+        if (!::personalList.isInitialized) return
+        personalList.removeAllViews()
+        Elrp.personalWords().sorted().forEach { word ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            row.addView(TextView(this@DarkithImeSettings).apply {
+                text = word
+                textSize = 14f
+            }, LinearLayout.LayoutParams(0, -2, 1f))
+            row.addView(Button(this@DarkithImeSettings).apply {
+                text = "Remove"
+                setOnClickListener {
+                    Elrp.removePersonalWord(this@DarkithImeSettings, word)
+                    renderPersonalWords()
+                }
+            })
+            personalList.addView(row)
+        }
     }
 
     private fun renderHistory(query: String) {
