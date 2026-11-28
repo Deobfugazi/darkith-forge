@@ -46,7 +46,8 @@ object Elrp {
             if (loaded) return
             try {
                 common.forEachIndexed { index, word -> commonRank[word] = index }
-                val rules = parseAffix(context.assets.open("keyboard/en_US.aff").bufferedReader(Charsets.UTF_8).readLines())
+                val affixLines = context.assets.open("keyboard/en_US.aff").bufferedReader(Charsets.UTF_8).use { it.readLines() }
+                val rules = parseAffix(affixLines)
                 val lines = context.assets.open("keyboard/en_US.dic").bufferedReader(Charsets.UTF_8).use { it.readLines() }
                 require(lines.isNotEmpty()) { "dictionary asset is empty" }
                 val declared = lines.first().trim().toIntOrNull()
