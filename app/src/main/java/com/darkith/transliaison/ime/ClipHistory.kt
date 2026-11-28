@@ -9,8 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper
  * (DK-SIC-001 §5.8). It records only what the IME observed while authorised; it never claims to
  * reconstruct clips it did not see, and it never becomes the system clipboard.
  *
- * Payloads are stored because paste requires them. The evidence stream (AuditWriter) records only
- * admission decisions and identifiers, never the payload text (§8).
+ * Payloads are stored because paste requires them. Sensitive clips are rejected before admission.
  */
 class ClipHistory(context: Context) : SQLiteOpenHelper(context, "darkith_clip.db", null, 1) {
 
@@ -36,16 +35,16 @@ class ClipHistory(context: Context) : SQLiteOpenHelper(context, "darkith_clip.db
      *  user-intended duplicates survive (§5.8 "without destroying distinct items"). */
     fun admit(text: String, sensitive: Boolean, retentionDays: Int) {
         val t = text.trim()
-        if (t.isEmpty()) return
+        if (t.isEmpty() || sensitive) return
         val db = writableDatabase
         db.rawQuery("SELECT id, text FROM clip ORDER BY created DESC LIMIT 1", null).use { c ->
             if (c.moveToFirst() && c.getString(1) == t) return
         }
         db.execSQL(
             "INSERT INTO clip(text, created, pinned, sensitive) VALUES(?,?,?,?)",
-            arrayOf(t, System.currentTimeMillis(), if (sensitive) 1 else 0, if (sensitive) 1 else 0)
+            arrayOf(t, System.currentTimeMillis(), 0, 0)
         )
-        val cutoff = System.currentTimeMillis() - retentionDays.toLong() * 86_400_000L
+        val cutoff = System.currentTimeMillis() - retentionDays.coerceIn(1, 365).toLong() * 86_400_000L
         db.execSQL("DELETE FROM clip WHERE pinned=0 AND created < ?", arrayOf(cutoff))
         db.execSQL(
             "DELETE FROM clip WHERE pinned=0 AND id NOT IN (SELECT id FROM clip WHERE pinned=0 ORDER BY created DESC LIMIT 200)"
