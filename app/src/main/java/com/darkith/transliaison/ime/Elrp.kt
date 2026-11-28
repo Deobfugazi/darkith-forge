@@ -7,8 +7,8 @@ import java.util.Locale
  * Offline English Language Resource Pack.
  *
  * Resource: LibreOffice en_US Hunspell dictionary, SCOWL-derived, bundled as source assets:
- * en_US.dic SHA-1 b41fd203e6daf76934db99dec6572a230516368a
- * en_US.aff SHA-1 290acfe87caf0f7ef44cf04dba4cd3b3cf2dbc58
+ * en_US.dic Git blob ID b41fd203e6daf76934db99dec6572a230516368a
+ * en_US.aff Git blob ID 290acfe87caf0f7ef44cf04dba4cd3b3cf2dbc58
  * Upstream copyright and permission notice: assets/keyboard/README_en_US.txt.
  *
  * The reader admits dictionary headwords and the simple single-affix rules represented in the
