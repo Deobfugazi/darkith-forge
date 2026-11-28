@@ -124,6 +124,11 @@ def register_of(path: str) -> str | None:
         return "H-homekeeper-app"
     if path.startswith("proof/"):
         return "E-evidence"
+    if path.startswith("releases/"):
+        # A delivered, signed artifact and its receipt. It is evidence of a build that
+        # exists, not corpus and not source: the signing key is a secret never in git,
+        # so these bytes cannot be regenerated from a clean clone.
+        return "E-evidence"
     if path in CONFIG:
         return "F-config"
     return None

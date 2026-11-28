@@ -519,6 +519,18 @@
       "sha256": "b4571adf757ed4e087f4527494343b8fb9f21799dbc6e9d0862161f878055bc1"
     },
     {
+      "bytes": 2500,
+      "path": "releases/keyboard-omega-2.1.0/README.md",
+      "register": "E-evidence",
+      "sha256": "b388f8db24685696ee33064b46170fe8418f7a8bffa4380daa2111a5b399eaab"
+    },
+    {
+      "bytes": 93,
+      "path": "releases/keyboard-omega-2.1.0/SHA256SUMS.txt",
+      "register": "E-evidence",
+      "sha256": "393d732c77cc6ee9b390ec32c3832327075ae82cdfd04f24c58ddd91b1ce16da"
+    },
+    {
       "bytes": 117,
       "path": "requirements-dev.txt",
       "register": "F-config",
@@ -553,18 +565,6 @@
       "path": "darkith-omega-homekeeper/src/reader-shell.html",
       "register": "H-homekeeper-app",
       "sha256": "03d97349bb43d516623e93d703ad5eedf8e0516c40e7de2b5e35e20f407bbd06"
-    },
-    {
-      "bytes": 2500,
-      "path": "releases/keyboard-omega-2.1.0/README.md",
-      "register": "UNFILED",
-      "sha256": "b388f8db24685696ee33064b46170fe8418f7a8bffa4380daa2111a5b399eaab"
-    },
-    {
-      "bytes": 93,
-      "path": "releases/keyboard-omega-2.1.0/SHA256SUMS.txt",
-      "register": "UNFILED",
-      "sha256": "393d732c77cc6ee9b390ec32c3832327075ae82cdfd04f24c58ddd91b1ce16da"
     }
   ],
   "mirrors": [

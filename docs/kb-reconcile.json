@@ -95,14 +95,14 @@
     "proof/offline_oneshot_proof.txt",
     "proof/oneshot_proof.txt",
     "proof/session_findings.txt",
+    "releases/keyboard-omega-2.1.0/README.md",
+    "releases/keyboard-omega-2.1.0/SHA256SUMS.txt",
     "requirements-dev.txt",
     "tools/deps.txt",
     "tools/fractures.txt",
     "kit/COORDINASYNC.md",
     "darkith-omega-homekeeper/README.md",
-    "darkith-omega-homekeeper/src/reader-shell.html",
-    "releases/keyboard-omega-2.1.0/README.md",
-    "releases/keyboard-omega-2.1.0/SHA256SUMS.txt"
+    "darkith-omega-homekeeper/src/reader-shell.html"
   ],
   "missing": [],
   "registers": 8,
