@@ -17,7 +17,8 @@ mkdir -p "$TOOLS"
 command -v pkg >/dev/null 2>&1 || { echo "Termux pkg command not found." >&2; exit 2; }
 
 # These are native Termux packages. Never run Google's glibc aapt2/apksigner binaries on Android.
-pkg install -y openjdk-21 aapt2 apksigner python curl unzip git termux-tools
+pkg update -y
+pkg install -y openjdk-21 aapt2 apksigner zipalign python curl unzip git termux-tools
 
 JAVA_BIN="$(command -v java)"
 JAVA_HOME_REAL="$(dirname "$(dirname "$(readlink -f "$JAVA_BIN")")")"
@@ -47,12 +48,14 @@ fi
 KOTLINC="$TOOLS/kotlinc/bin/kotlinc"
 AAPT2="$(command -v aapt2)"
 APKSIGNER="$(command -v apksigner)"
+ZIPALIGN="$(command -v zipalign)"
 PY3="$(command -v python3)"
-for item in "$KOTLINC" "$AAPT2" "$APKSIGNER" "$PY3" "$TOOLS/android.jar" "$TOOLS/r8.jar"; do
+for item in "$KOTLINC" "$AAPT2" "$APKSIGNER" "$ZIPALIGN" "$PY3" "$TOOLS/android.jar" "$TOOLS/r8.jar"; do
   [ -e "$item" ] || { echo "Missing required toolchain item: $item" >&2; exit 1; }
 done
 "$AAPT2" version >/dev/null
 "$APKSIGNER" --version >/dev/null
+"$ZIPALIGN" -h >/dev/null 2>&1 || true
 "$KOTLINC" -version >/dev/null 2>&1
 
 cat > "$ENV_FILE" <<EOF
@@ -61,6 +64,7 @@ export PATH="$JAVA_HOME/bin:$PREFIX/bin:\$PATH"
 export KOTLINC="$KOTLINC"
 export AAPT2="$AAPT2"
 export APKSIGNER="$APKSIGNER"
+export ZIPALIGN="$ZIPALIGN"
 export ANDROID_JAR="$TOOLS/android.jar"
 export R8_JAR="$TOOLS/r8.jar"
 export PY3="$PY3"
