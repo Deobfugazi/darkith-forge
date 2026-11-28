@@ -93,7 +93,7 @@ need("1482e152c1ff2d8bdf97cd52684c98f7224d58713b0b8735f902878aebb3405d" in insta
      "Homekeeper installer pins the uploaded HTML by SHA-256")
 need("build.sh" in installer and "gradle" not in installer.lower(),
      "Homekeeper installer uses the raw chain and does not invoke Gradle")
-need("assets/homekeeper.html" in installer and "APK ASSET CHECK: PASS" not in installer,
+need("assets/homekeeper.html" in installer and "packed != expected" in installer,
      "Homekeeper installer copies the HTML into the native APK asset path and verifies packaged bytes")
 
 activity = (ROOT / "app/src/main/java/com/darkith/transliaison/HomekeeperActivity.kt").read_text()
