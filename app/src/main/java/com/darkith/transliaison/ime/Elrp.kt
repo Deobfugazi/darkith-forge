@@ -91,7 +91,7 @@ object Elrp {
                 personal.addAll(overlay.map { it.lowercase(Locale.US) }.filter { it.matches(Regex("[\\p{L}][\\p{L}'’-]{1,39}")) })
                 rejected.addAll(context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE)
                     .getStringSet("rejected_suggestions", emptySet()).orEmpty().map { it.lowercase(Locale.US) })
-                (suggestible + personal.filter { it !in rejected }).forEach(::indexSuggestion)
+                (suggestible + personal).forEach(::indexSuggestion)
                 byInitial.values.forEach { bucket ->
                     bucket.sortWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
                 }
@@ -128,7 +128,7 @@ object Elrp {
         val matches = LinkedHashSet<String>()
         byInitial[p.take(2)].orEmpty().asSequence().filter { it.startsWith(p) && it != p && it !in rejected }
             .take(limit * 4).forEach(matches::add)
-        personal.asSequence().filter { it.startsWith(p) && it != p }.forEach(matches::add)
+        personal.asSequence().filter { it.startsWith(p) && it != p && it !in rejected }.forEach(matches::add)
         return matches.sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
             .take(limit)
     }
