@@ -22,6 +22,7 @@ object Elrp {
     private val lock = Any()
     @Volatile private var loaded = false
     private val words = HashSet<String>()
+    private val personal = LinkedHashSet<String>()
     private val byInitial = HashMap<String, MutableList<String>>()
     private val commonRank = HashMap<String, Int>()
     private var loadError: String? = null
@@ -69,6 +70,9 @@ object Elrp {
                     }
                 }
                 require(accepted > 10000) { "dictionary admission count too small: $accepted" }
+                val overlay = context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE)
+                    .getStringSet("personal_words", emptySet()).orEmpty()
+                personal.addAll(overlay.map { it.lowercase(Locale.US) }.filter { it.matches(Regex("[a-z][a-z'’-]{1,39}")) })
                 words.forEach { word ->
                     if (word.length >= 2) byInitial.getOrPut(word.substring(0, 2)) { ArrayList() }.add(word)
                 }
@@ -93,7 +97,8 @@ object Elrp {
 
     fun isValid(word: String): Boolean {
         ensureLoaded()
-        return word.lowercase(Locale.US) in words
+        val normalized = word.lowercase(Locale.US)
+        return normalized in words || normalized in personal
     }
 
     /** Prefix completion from the single admitted lexical resource. */
@@ -101,11 +106,12 @@ object Elrp {
         ensureLoaded()
         val p = prefix.lowercase(Locale.US)
         if (p.isEmpty() || p.length < 2) return emptyList()
-        return byInitial[p.take(2)].orEmpty().asSequence()
-            .filter { it.startsWith(p) && it != p }
-            .sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
+        val matches = LinkedHashSet<String>()
+        byInitial[p.take(2)].orEmpty().asSequence().filter { it.startsWith(p) && it != p }
+            .take(limit * 4).forEach(matches::add)
+        personal.asSequence().filter { it.startsWith(p) && it != p }.forEach(matches::add)
+        return matches.sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
             .take(limit)
-            .toList()
     }
 
     /** Bounded edit-distance-one generation; no full-dictionary scan per keystroke. */
@@ -126,10 +132,33 @@ object Elrp {
         }
         for (i in 0..w.length) for (c in alphabet) candidates.add(w.substring(0, i) + c + w.substring(i))
         return candidates.asSequence()
-            .filter { it != w && it in words }
+            .filter { it != w && (it in words || it in personal) }
             .sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
             .take(limit)
             .toList()
+    }
+
+    fun personalWords(): Set<String> = synchronized(lock) { personal.toSet() }
+
+    fun addPersonalWord(context: Context, input: String): Boolean {
+        ensureLoaded()
+        val word = input.trim().lowercase(Locale.US)
+        if (!word.matches(Regex("[a-z][a-z'’-]{1,39}"))) return false
+        synchronized(lock) {
+            if (!personal.add(word)) return true
+            context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
+                .putStringSet("personal_words", personal.toSet()).apply()
+        }
+        return true
+    }
+
+    fun removePersonalWord(context: Context, input: String) {
+        val word = input.lowercase(Locale.US)
+        synchronized(lock) {
+            personal.remove(word)
+            context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
+                .putStringSet("personal_words", personal.toSet()).apply()
+        }
     }
 
     private fun ensureLoaded() {
