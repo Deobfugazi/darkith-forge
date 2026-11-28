@@ -3,12 +3,20 @@
 # verify the packaged bytes, copy the APK to Downloads, and open Android's package installer.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE="${1:-/sdcard/Download/homekeeper(2).html}"
-SPEC="${2:-/sdcard/Download/DARKITH-KEYBOARD-SINGULAR-INVARIANT(1).md}"
+if ! command -v termux-setup-storage >/dev/null 2>&1; then
+  pkg install -y termux-tools
+fi
+if [ ! -d "$HOME/storage/downloads" ] && command -v termux-setup-storage >/dev/null 2>&1; then
+  termux-setup-storage
+fi
+DOWNLOAD_DIR="$HOME/storage/downloads"
+[ -d "$DOWNLOAD_DIR" ] || DOWNLOAD_DIR="/sdcard/Download"
+SOURCE="${1:-$DOWNLOAD_DIR/homekeeper(2).html}"
+SPEC="${2:-$DOWNLOAD_DIR/DARKITH-KEYBOARD-SINGULAR-INVARIANT(1).md}"
 SPEC_SHA256="75c0058a83d71ad8593dadd0f4f0003448cc3cfbfb0558e2754e13efad91c4b2"
 EXPECTED_SHA256="1482e152c1ff2d8bdf97cd52684c98f7224d58713b0b8735f902878aebb3405d"
 ASSET="$ROOT/app/src/main/assets/homekeeper.html"
-DEST_DIR="/sdcard/Download"
+DEST_DIR="$DOWNLOAD_DIR"
 DEST_APK="$DEST_DIR/Darkith-Homekeeper-OMEGA.apk"
 
 die(){ echo "STOP: $*" >&2; exit 1; }
