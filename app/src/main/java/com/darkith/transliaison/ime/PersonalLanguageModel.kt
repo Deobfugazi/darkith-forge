@@ -99,5 +99,5 @@ class PersonalLanguageModel(context: Context) :
     }
 
     private fun normalize(value: String): String =
-        value.trim().lowercase(Locale.US).takeIf { it.matches(Regex("[a-z][a-z'’-]{1,39}")) }.orEmpty()
+        value.trim().lowercase(Locale.US).takeIf { it.matches(Regex("[a-z][a-z'’-]{0,39}")) }.orEmpty()
 }
