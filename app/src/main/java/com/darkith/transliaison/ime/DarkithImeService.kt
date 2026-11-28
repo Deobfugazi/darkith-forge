@@ -371,15 +371,18 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         runCatching {
             val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = cm.primaryClip ?: return
-            if (clip.itemCount == 0) return
+            if (clip.itemCount == 0 || !clip.description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) return
             if (Build.VERSION.SDK_INT >= 33 &&
                 clip.description.extras?.getBoolean(ClipDescription.EXTRA_IS_SENSITIVE, false) == true) return
-            val item = clip.getItemAt(0)
-            if (item.uri != null || item.intent != null) return
-            val text = item.text?.toString() ?: return
-            if (text.isBlank() || text.length > 20000) return
-            if (looksSensitive(text)) return
-            clipboardHistory?.admit(text, false, p.clipRetentionDays)
+            val texts = ArrayList<String>(clip.itemCount)
+            for (index in 0 until clip.itemCount) {
+                val item = clip.getItemAt(index)
+                if (item.uri != null || item.intent != null) return
+                val text = item.text?.toString() ?: return
+                if (text.isBlank() || text.length > 20000 || looksSensitive(text)) return
+                texts.add(text)
+            }
+            texts.forEach { clipboardHistory?.admit(it, false, p.clipRetentionDays) }
         }
     }
 
@@ -387,8 +390,31 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         val text = value.trim()
         if (text.length in 4..8 && text.all { it.isDigit() }) return true
         val lower = text.lowercase()
-        return lower.contains("password") || lower.contains("one-time code") ||
+        val digits = text.filter(Char::isDigit)
+        val cardLike = digits.length in 13..19 && passesLuhn(digits)
+        val tokenLike = Regex("(?i)(sk-[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{20,})").containsMatchIn(text)
+        val jwtLike = Regex("eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}").containsMatchIn(text)
+        val keyLike = text.contains("-----BEGIN") && text.contains("PRIVATE KEY-----")
+        val bearerLike = Regex("(?i)\\bBearer\\s+[A-Za-z0-9._~+/-]{16,}").containsMatchIn(text)
+        val labelledCode = Regex("(?i)(otp|verification|security|one.time)\\s*(code)?\\D{0,12}\\d{4,8}").containsMatchIn(text)
+        return cardLike || tokenLike || jwtLike || keyLike || bearerLike || labelledCode ||
+            lower.contains("password") || lower.contains("one-time code") ||
             lower.contains("verification code") || lower.contains("access token")
+    }
+
+    private fun passesLuhn(number: String): Boolean {
+        var sum = 0
+        var double = false
+        for (index in number.lastIndex downTo 0) {
+            var digit = number[index].digitToIntOrNull() ?: return false
+            if (double) {
+                digit *= 2
+                if (digit > 9) digit -= 9
+            }
+            sum += digit
+            double = !double
+        }
+        return sum % 10 == 0
     }
 
     override fun onEvaluateInputViewShown(): Boolean = true
