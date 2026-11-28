@@ -19,7 +19,9 @@ import kotlin.math.roundToInt
 class DarkithImeSettings : Activity() {
     private lateinit var prefs: ImePrefs
     private lateinit var history: ClipHistory
+    private lateinit var model: PersonalLanguageModel
     private lateinit var historyList: LinearLayout
+    private lateinit var learnedList: LinearLayout
     private lateinit var status: TextView
     private lateinit var personalList: LinearLayout
 
@@ -28,6 +30,7 @@ class DarkithImeSettings : Activity() {
         prefs = ImePrefs(this)
         Elrp.initialize(applicationContext)
         history = ClipHistory(this)
+        model = PersonalLanguageModel(this)
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -49,12 +52,25 @@ class DarkithImeSettings : Activity() {
         root.addView(Button(this).apply {
             text = "Clear learned next-word patterns"
             setOnClickListener {
-                val model = PersonalLanguageModel(this@DarkithImeSettings)
                 model.clear()
-                model.close()
+                renderLearnedPairs()
                 status.text = "Learned next-word patterns cleared"
             }
         })
+        root.addView(Button(this).apply {
+            text = "Export learned word pairs to clipboard"
+            setOnClickListener {
+                val data = model.exportPatterns()
+                if (model.patterns(1).isNotEmpty()) {
+                    (getSystemService(CLIPBOARD_SERVICE) as ClipboardManager)
+                        .setPrimaryClip(ClipData.newPlainText("Darkith learned word pairs", data))
+                    status.text = "Learned word pairs copied; no full sentences are stored"
+                } else status.text = "No learned word pairs to export"
+            }
+        })
+        learnedList = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(learnedList)
+        renderLearnedPairs()
         root.addView(toggle("Candidate strip", prefs.candidates) { prefs.candidates = it })
         root.addView(toggle("Conservative autocorrect (unique match only)", prefs.autocorrect) { prefs.autocorrect = it })
         root.addView(toggle("Clipboard history capture (off by default)", prefs.clipHistory) { prefs.clipHistory = it })
@@ -184,6 +200,34 @@ class DarkithImeSettings : Activity() {
         setContentView(root)
     }
 
+    private fun renderLearnedPairs() {
+        if (!::learnedList.isInitialized) return
+        learnedList.removeAllViews()
+        val pairs = model.patterns(100)
+        if (pairs.isEmpty()) {
+            learnedList.addView(TextView(this).apply {
+                text = "No learned word pairs yet."
+                textSize = 13f
+            })
+            return
+        }
+        pairs.forEach { pair ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            row.addView(TextView(this@DarkithImeSettings).apply {
+                text = "${pair.previous} → ${pair.next} (${pair.count})"
+                textSize = 14f
+            }, LinearLayout.LayoutParams(0, -2, 1f))
+            row.addView(Button(this@DarkithImeSettings).apply {
+                text = "Delete"
+                setOnClickListener {
+                    model.deletePair(pair.previous, pair.next)
+                    renderLearnedPairs()
+                }
+            })
+            learnedList.addView(row)
+        }
+    }
+
     private fun renderPersonalWords() {
         if (!::personalList.isInitialized) return
         personalList.removeAllViews()
@@ -254,6 +298,7 @@ class DarkithImeSettings : Activity() {
 
     override fun onDestroy() {
         if (::history.isInitialized) history.close()
+        if (::model.isInitialized) model.close()
         super.onDestroy()
     }
 
