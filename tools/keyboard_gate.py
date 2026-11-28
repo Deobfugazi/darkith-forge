@@ -99,11 +99,22 @@ need("Search saved clipboard text" in settings_src and "Clear all" in settings_s
      and "Clipboard retention" in settings_src,
      "clipboard manager exposes search, clear, and retention controls")
 
+spec_path = ROOT / "docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md"
+if spec_path.is_file():
+    import hashlib
+    need(hashlib.sha256(spec_path.read_bytes()).hexdigest() == "75c0058a83d71ad8593dadd0f4f0003448cc3cfbfb0558e2754e13efad91c4b2",
+         "admitted keyboard invariant source matches the uploaded bytes")
+else:
+    print("DEFERRED keyboard invariant source: run tools/admit_keyboard_spec.sh with the uploaded file")
+
 installer = (ROOT / "install_homekeeper_omega.sh").read_text()
+need("75c0058a83d71ad8593dadd0f4f0003448cc3cfbfb0558e2754e13efad91c4b2" in installer, "installer pins the keyboard invariant source")
 need("1482e152c1ff2d8bdf97cd52684c98f7224d58713b0b8735f902878aebb3405d" in installer,
      "Homekeeper installer pins the uploaded HTML by SHA-256")
 need("build.sh" in installer and "gradle" not in installer.lower(),
      "Homekeeper installer uses the raw chain and does not invoke Gradle")
+need("tools/admit_keyboard_spec.sh" in installer,
+     "Homekeeper installer invokes canonical indexed keyboard-spec admission")
 need("assets/homekeeper.html" in installer and "packed != expected" in installer,
      "Homekeeper installer copies the HTML into the native APK asset path and verifies packaged bytes")
 
