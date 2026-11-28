@@ -45,6 +45,11 @@ class ImePrefs(context: Context) {
         get() = sp.getBoolean("clip_history", false)
         set(v) = sp.edit().putBoolean("clip_history", v).apply()
 
+    /** Clipboard retention window, independently configurable by the user. */
+    var clipRetentionDays: Int
+        get() = sp.getInt("clip_retention_days", 30)
+        set(v) = sp.edit().putInt("clip_retention_days", v.coerceIn(1, 365)).apply()
+
     /** G9: sensitive-field exclusion for learning and capture. */
     var privacyFieldBlock: Boolean
         get() = sp.getBoolean("privacy_field_block", true)
