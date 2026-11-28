@@ -62,6 +62,10 @@ model_src = (ROOT / "app/src/main/java/com/darkith/transliaison/ime/PersonalLang
 settings_src = (ROOT / "app/src/main/java/com/darkith/transliaison/ime/DarkithImeSettings.kt").read_text()
 
 need("Elrp.initialize(applicationContext)" in service_src, "IME initializes the bundled lexical resource")
+need("NOSUGGEST" in (assets / "en_US.aff").read_text(encoding="utf-8")
+     and "noSuggestFlag" in elrp_src and "suggestible" in elrp_src,
+     "Hunspell NOSUGGEST entries are excluded from suggestions")
+need("accepted == declared" in elrp_src, "ELRP validates the dictionary's declared entry count")
 need("setComposingText" in service_src and "currentInputConnection" in service_src,
      "text composition and commits use the live editor connection")
 need("prefs?.autocorrect == true" in service_src and "options.size == 1" in service_src,
