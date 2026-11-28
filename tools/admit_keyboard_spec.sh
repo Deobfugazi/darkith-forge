@@ -20,7 +20,36 @@ cp "$SOURCE" "$TARGET"
 [ "$(sha256sum "$TARGET" | awk '{print $1}')" = "$EXPECTED" ] || die "copied source does not match pinned bytes"
 
 cd "$ROOT"
-git add docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md
+cat > docs/keyboard/STATUS.md <<'STATUS'
+# Darkith Keyboard implementation status
+
+Status: NOT ADMITTED. This file records implementation progress; it does not certify G1–G14.
+
+| Gate | Current implementation evidence | Status / missing evidence |
+|---|---|---|
+| G1 — IME registration | Native InputMethodService, manifest permission/action, and input-method metadata are present. | PARTIAL — Android settings/picker selection and switching have not been exercised on the target device. |
+| G2 — Real text editing | Live InputConnection commits/composition/deletion/actions; TYPE_NULL key-event fallback; cursor movement; spacebar swipe; selection replacement through editor commits. | PARTIAL — multiple-app matrix, selection edge cases, editor switching, and OEM behavior remain untested. |
+| G3 — Input-type/privacy | Text, numeric, phone, email/URI, password, platform no-learning flags, and incognito paths are handled. | PARTIAL — field matrix and Android/OEM behavior tests remain open. |
+| G4 — Lexical resource | en_US.dic/en_US.aff source, version, license, attribution, and raw SHA-256 are pinned in RESOURCE-MANIFEST.md. Parser validates declared rows, applies supported PFX/SFX rules, honors NOSUGGEST, and excludes ONLYINCOMPOUND roots. | PARTIAL — this is not full Hunspell; common/rare/regional/technical/inflected/user-added test corpus and malformed-package tests remain open. |
+| G5 — Correction utility | Opt-in correction is restricted to lowercase four-letter-plus tokens with one common-list candidate; immediate backspace undo and long-press rejection exist. | OPEN — no declared typo/context corpus, precision/recall, false-correction rate, or calibrated threshold evidence. |
+| G6 — Prediction utility | Optional local adjacent-word bigram predictor; accepted word pairs only; synchronous candidate refresh. | OPEN — no held-out corpus, baseline comparison, top-k utility, or latency measurement. |
+| G7 — Personalization | Add/remove/export/reset personal vocabulary; opt-in local pair learning; pair export, inspection, deletion, and reset; incognito isolation. | PARTIAL — persistence, reversible ranking, and sensitive-field non-contamination tests remain open. |
+| G8 — Clipboard history | Opt-in local SQLite history; search, pin, paste, delete, clear, deduplication, expiry; platform sensitive-clip flag and secret heuristics; visible-IME-only capture. | PARTIAL — process restart, Android-version, OEM, sensitivity false-positive/negative, and capture-gap tests remain open. |
+| G9 — Preference/runtime coupling | Persisted completion, candidate strip, next-word, learning, autocorrect, clipboard, privacy, retention, and height controls are wired to runtime paths. | PARTIAL — per-preference automated behavior tests remain open. |
+| G10 — Synchronization | No keyboard synchronization implementation or sync transport exists; sync is explicitly disabled/not implemented. | OPEN — no paired-device protocol or tests; no sync claim is made. |
+| G11 — Resource closure | Dictionary and affix byte sizes are recorded. | OPEN — APK, RAM, allocation, CPU, battery, thermal, input-latency, and prediction-latency measurements on TECNO KM4k are absent. |
+| G12 — Build/reproducibility | Raw aapt2/Kotlin/D8/package/zipalign/sign chain and Termux ARM64 provisioner are present. | OPEN — build and repeatability have not been executed in this session; APK signature/install result absent. |
+| G13 — Failure/rejection | Dictionary load fails closed; unavailable model predictions return empty; sensitive clips are rejected. | PARTIAL — unsupported editor, corrupted database, allocation budget, connection failure, and complete failure-reason matrix remain open. |
+| G14 — Evidence/change control | Static keyboard gate, source checksums, resource manifest, and indexed admission script are present. | PARTIAL — full test logs, build provenance, target-device measurements, and complete G1–G14 evidence package remain open. |
+
+Target device: TECNO KM4k / Android 15, not yet exercised by this status record.
+Testnet execution: NOT RUN.
+APK build and install: NOT VERIFIED.
+Full G1–G14 implementation admission: NOT EARNED.
+STATUS
+git add docs/keyboard/DARKITH-KEYBOARD-SINGULAR-INVARIANT.md docs/keyboard/STATUS.md
+
+# Reconcile the stale NT-INDEX assertion with the actual still-open G-015 record.
 
 # Reconcile the stale NT-INDEX assertion with the actual still-open G-015 record.
 python3 - <<'PY'
