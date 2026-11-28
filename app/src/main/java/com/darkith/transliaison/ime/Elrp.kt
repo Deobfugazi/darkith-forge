@@ -125,7 +125,7 @@ object Elrp {
         val p = prefix.lowercase(Locale.US)
         if (p.isEmpty() || p.length < 2) return emptyList()
         val matches = LinkedHashSet<String>()
-        byInitial[p.take(2)].orEmpty().asSequence().filter { it.startsWith(p) && it != p }
+        byInitial[p.take(2)].orEmpty().asSequence().filter { it.startsWith(p) && it != p && it !in rejected }
             .take(limit * 4).forEach(matches::add)
         personal.asSequence().filter { it.startsWith(p) && it != p }.forEach(matches::add)
         return matches.sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
@@ -158,7 +158,7 @@ object Elrp {
 
     fun personalWords(): Set<String> = synchronized(lock) { personal.toSet() }
 
-    fun exportPersonalWords(): String = personalWords().sorted().joinToString("\\n")
+    fun exportPersonalWords(): String = personalWords().sorted().joinToString("\n")
 
     fun clearPersonalWords(context: Context) {
         synchronized(lock) {
@@ -191,9 +191,11 @@ object Elrp {
         val word = input.trim().lowercase(Locale.US)
         if (!word.matches(Regex("[\\p{L}][\\p{L}'’-]{1,39}"))) return false
         synchronized(lock) {
+            rejected.remove(word)
             if (!personal.add(word)) return true
             context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
-                .putStringSet("personal_words", personal.toSet()).apply()
+                .putStringSet("personal_words", personal.toSet())
+                .putStringSet("rejected_suggestions", rejected.toSet()).apply()
         }
         return true
     }
