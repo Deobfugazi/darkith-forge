@@ -50,7 +50,7 @@ class ImePrefs(context: Context) {
         get() = sp.getInt("clip_retention_days", 30)
         set(v) = sp.edit().putInt("clip_retention_days", v.coerceIn(1, 365)).apply()
 
-    /** G9: sensitive-field exclusion for learning and capture. */
+    /** G9: optional phone/email/URI exclusion; password and platform no-learning flags are unconditional. */
     var privacyFieldBlock: Boolean
         get() = sp.getBoolean("privacy_field_block", true)
         set(v) = sp.edit().putBoolean("privacy_field_block", v).apply()
