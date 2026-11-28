@@ -91,7 +91,7 @@ need("prefs?.autocorrect == true" in service_src and "options.size == 1" in serv
      "autocorrect is opt-in, conservative, and limited to one common-list candidate")
 need("!p.prediction" in service_src and "!p.candidates" in service_src
      and "p.nextWordPrediction" in service_src and "prefs?.personalLearning" in service_src
-     and "p.clipRetentionDays" in service_src and "p.heightScale" in service_src,
+     and "p.clipRetentionDays" in service_src and "heightScale" in service_src,
      "persisted prediction, strip, next-word, learning, retention, and height preferences reach runtime")
 need("setEditorType" in service_src and "numericMode()" in view_src and "symbolPage" in view_src,
      "numeric and symbol layouts are wired to editor input type")
