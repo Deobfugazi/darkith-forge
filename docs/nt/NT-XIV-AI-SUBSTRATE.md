@@ -473,7 +473,7 @@ The manuscript remains open until the unresolved coordinates are resolved by pri
 | G-012 | All chapters | 8 (Selection) | Counterfactual selection analysis showing why each surviving approach outcompeted every alternative | Requires archival and quantitative evidence beyond public narrative | OPEN |
 | G-013 | Ch. 7 | 6, 7 | Complete priority map of backpropagation: unpublished work, technical reports, diffusion pathways | Priority history only partially public | OPEN |
 | G-014 | Ch. 7 (Mechanism/Selection) | 3, 7 | Quantitative coupling invariant (Bond Formation Number) with operational variables and units | Formal test specification only until measured | OPEN |
-| G-015 | Infrastructure / Closure | Closure | The 25 Nov 2026 archive lacked NT XIV under `docs/nt/`; the current repository now carries the canonical file and NT-INDEX row. | Remaining admission evidence: claim-level provenance in `proof/nt_claims.json`, regenerated `docs/INDEX.md` / `docs/kb_manifest.json`, and a recorded successful `tools/citation_gate.py` run. The historical archive omission remains true; current admission is not closed until these checks pass. | OPEN |
+| G-015 | Infrastructure / Closure | Closure | Darkith repository admission: no NT XIV document present in the inspected `darkith-forge-main.zip` snapshot (25 Nov 2026) under `docs/nt/` | Requires commit to `docs/nt/NT-XIV-AI-SUBSTRATE.md`, NT-INDEX update, claim-level manifest, and execution of `tools/citation_gate.py` | OPEN |
 
 **Registry rule (binding).** Registering a gap accounts for it procedurally; it does not resolve it. The registry is nonempty; epistemic closure therefore remains unearned.
 
