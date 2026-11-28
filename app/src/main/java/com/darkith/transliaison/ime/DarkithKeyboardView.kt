@@ -19,6 +19,8 @@ class DarkithKeyboardView(context: Context) : View(context) {
         fun onEnter()
         fun onShift()
         fun onCandidate(text: String)
+        fun onClipboard()
+        fun onClip(text: String)
     }
     var listener: Listener? = null
 
@@ -30,6 +32,8 @@ class DarkithKeyboardView(context: Context) : View(context) {
     private var caps = false
     private var symbolPage = false
     private var candidates: List<String> = emptyList()
+    private var clipboardMode = false
+    private var clips: List<String> = emptyList()
     private val keyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12151A"); style = Paint.Style.FILL
     }
@@ -52,6 +56,8 @@ class DarkithKeyboardView(context: Context) : View(context) {
         invalidate(); requestLayout()
     }
     fun setCandidates(list: List<String>) { candidates = list; invalidate() }
+    fun setClipboardItems(items: List<String>) { clips = items.take(4); clipboardMode = true; invalidate() }
+    fun leaveClipboard() { clipboardMode = false; invalidate() }
 
     /** Input-type adaptation: number/phone fields get digits; email and URI get useful symbols. */
     fun setEditorType(type: Int, options: Int) {
@@ -77,10 +83,18 @@ class DarkithKeyboardView(context: Context) : View(context) {
     }
 
     private fun keyFor(x: Float, y: Float): String? {
+        if (clipboardMode) {
+            if (y < candidateH) return "CLIPBACK"
+            val rowH = keyH + 6f * dpr
+            val row = ((y - candidateH) / rowH).toInt()
+            return if (row in clips.indices) "CLIPSEL:$row" else null
+        }
         if (y < candidateH) {
+            if (x < width * 0.14f) return "CLIP"
             if (candidates.isEmpty()) return null
-            val w = width.toFloat() / candidates.size
-            return "CANDSEL:" + candidates[(x / w).toInt().coerceIn(0, candidates.lastIndex)]
+            val candidateWidth = width * 0.86f / candidates.size
+            val index = ((x - width * 0.14f) / candidateWidth).toInt().coerceIn(0, candidates.lastIndex)
+            return "CANDSEL:" + candidates[index]
         }
         val body = y - candidateH
         val rowH = keyH + 6f * dpr
@@ -130,6 +144,9 @@ class DarkithKeyboardView(context: Context) : View(context) {
         val target = listener ?: return true
         when {
             key.startsWith("CANDSEL:") -> target.onCandidate(key.removePrefix("CANDSEL:"))
+            key.startsWith("CLIPSEL:") -> clips.getOrNull(key.removePrefix("CLIPSEL:").toIntOrNull() ?: -1)?.let(target::onClip)
+            key == "CLIP" -> target.onClipboard()
+            key == "CLIPBACK" -> { clipboardMode = false; invalidate() }
             key == "SHIFT" -> { shift = !shift; invalidate(); target.onShift() }
             key == "SYM" -> { symbolPage = !symbolPage; invalidate() }
             key == "BACK" -> target.onBackspace()
@@ -145,14 +162,35 @@ class DarkithKeyboardView(context: Context) : View(context) {
 
     override fun onDraw(canvas: Canvas) {
         canvas.drawColor(Color.parseColor("#050505"))
+        if (clipboardMode) {
+            labelPaint.textSize = 12f * dpr
+            labelPaint.color = Color.parseColor("#39D3A0")
+            canvas.drawText("CLIPBOARD HISTORY · TAP HEADER TO RETURN", width / 2f,
+                candidateH / 2f - (labelPaint.descent() + labelPaint.ascent()) / 2f, labelPaint)
+            val rowH = keyH + 6f * dpr
+            for (index in 0..3) {
+                val top = candidateH + index * rowH + 3f * dpr
+                keyRect.set(4f * dpr, top, width - 4f * dpr, top + keyH)
+                canvas.drawRoundRect(keyRect, 6f * dpr, 6f * dpr, specialPaint)
+                val value = clips.getOrNull(index)?.replace("\\n", " ")?.take(42) ?: "—"
+                labelPaint.color = Color.parseColor("#E8ECF1")
+                labelPaint.textSize = 13f * dpr
+                drawLabel(canvas, value, keyRect)
+            }
+            return
+        }
+        labelPaint.textSize = 12f * dpr
+        labelPaint.color = Color.parseColor("#39D3A0")
+        canvas.drawText("CLIP", width * 0.07f, candidateH / 2f - (labelPaint.descent() + labelPaint.ascent()) / 2f, labelPaint)
         if (candidates.isNotEmpty()) {
-            val w = width.toFloat() / candidates.size
+            val start = width * 0.14f
+            val w = width * 0.86f / candidates.size
             labelPaint.textSize = 15f * dpr
             candidates.forEachIndexed { index, value ->
-                canvas.drawRect(index * w, 0f, (index + 1) * w, candidateH, candidatePaint)
+                canvas.drawRect(start + index * w, 0f, start + (index + 1) * w, candidateH, candidatePaint)
                 labelPaint.color = Color.BLACK
                 val baseline = candidateH / 2f - (labelPaint.descent() + labelPaint.ascent()) / 2f
-                canvas.drawText(value, index * w + w / 2f, baseline, labelPaint)
+                canvas.drawText(value, start + index * w + w / 2f, baseline, labelPaint)
             }
             labelPaint.color = Color.parseColor("#E8ECF1")
         }
