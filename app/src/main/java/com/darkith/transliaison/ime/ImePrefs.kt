@@ -20,6 +20,16 @@ class ImePrefs(context: Context) {
         get() = sp.getBoolean("prediction", true)
         set(v) = sp.edit().putBoolean("prediction", v).apply()
 
+    /** Opt-in personalized next-word prediction from locally observed adjacent word pairs. */
+    var nextWordPrediction: Boolean
+        get() = sp.getBoolean("next_word_prediction", false)
+        set(v) = sp.edit().putBoolean("next_word_prediction", v).apply()
+
+    /** Opt-in learning; stores word pairs only, never full sentences. */
+    var personalLearning: Boolean
+        get() = sp.getBoolean("personal_learning", false)
+        set(v) = sp.edit().putBoolean("personal_learning", v).apply()
+
     /** G9: suggestion strip visibility. */
     var candidates: Boolean
         get() = sp.getBoolean("candidates", true)
