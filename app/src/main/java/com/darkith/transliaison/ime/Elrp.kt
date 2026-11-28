@@ -65,9 +65,11 @@ object Elrp {
                     val parts = raw.split("/", limit = 2)
                     val stem = parts[0].lowercase(Locale.US)
                     if (!stem.any { it.isLetter() } || stem.length > 48) continue
-                    words.add(stem)
                     accepted++
                     val flags = parts.getOrNull(1).orEmpty()
+                    // Compound-only roots are not standalone words in this non-compounding engine.
+                    if (onlyInCompoundFlag != null && flags.contains(onlyInCompoundFlag)) continue
+                    words.add(stem)
                     val suppressSuggestions = noSuggestFlag != null && flags.contains(noSuggestFlag)
                     if (!suppressSuggestions) suggestible.add(stem)
                     if (parts.size == 2) {
@@ -89,10 +91,7 @@ object Elrp {
                 personal.addAll(overlay.map { it.lowercase(Locale.US) }.filter { it.matches(Regex("[\\p{L}][\\p{L}'’-]{1,39}")) })
                 rejected.addAll(context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE)
                     .getStringSet("rejected_suggestions", emptySet()).orEmpty().map { it.lowercase(Locale.US) })
-                suggestible.addAll(personal.filter { it !in rejected })
-                suggestible.forEach { word ->
-                    if (word.length >= 2) byInitial.getOrPut(word.substring(0, 2)) { ArrayList() }.add(word)
-                }
+                (suggestible + personal.filter { it !in rejected }).forEach(::indexSuggestion)
                 byInitial.values.forEach { bucket ->
                     bucket.sortWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
                 }
@@ -164,6 +163,7 @@ object Elrp {
 
     fun clearPersonalWords(context: Context) {
         synchronized(lock) {
+            personal.filter { it !in suggestible }.forEach(::unindexSuggestion)
             personal.clear()
             context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
                 .putStringSet("personal_words", emptySet()).apply()
@@ -193,11 +193,14 @@ object Elrp {
         val word = input.trim().lowercase(Locale.US)
         if (!word.matches(Regex("[\\p{L}][\\p{L}'’-]{1,39}"))) return false
         synchronized(lock) {
-            rejected.remove(word)
-            if (!personal.add(word)) return true
-            context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
-                .putStringSet("personal_words", personal.toSet())
-                .putStringSet("rejected_suggestions", rejected.toSet()).apply()
+            val unblocked = rejected.remove(word)
+            val added = personal.add(word)
+            if (added || unblocked) {
+                indexSuggestion(word)
+                context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
+                    .putStringSet("personal_words", personal.toSet())
+                    .putStringSet("rejected_suggestions", rejected.toSet()).apply()
+            }
         }
         return true
     }
@@ -205,10 +208,24 @@ object Elrp {
     fun removePersonalWord(context: Context, input: String) {
         val word = input.lowercase(Locale.US)
         synchronized(lock) {
-            personal.remove(word)
+            if (personal.remove(word) && word !in suggestible) unindexSuggestion(word)
             context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
                 .putStringSet("personal_words", personal.toSet()).apply()
         }
+    }
+
+    private fun indexSuggestion(word: String) {
+        if (word.length < 2) return
+        val bucket = byInitial.getOrPut(word.substring(0, 2)) { ArrayList() }
+        if (word !in bucket) bucket.add(word)
+        bucket.sortWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
+    }
+
+    private fun unindexSuggestion(word: String) {
+        if (word.length < 2) return
+        val key = word.substring(0, 2)
+        byInitial[key]?.remove(word)
+        if (byInitial[key].isNullOrEmpty()) byInitial.remove(key)
     }
 
     private fun ensureLoaded() {
