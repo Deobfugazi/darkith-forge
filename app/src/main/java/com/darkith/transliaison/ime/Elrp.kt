@@ -1,101 +1,181 @@
 package com.darkith.transliaison.ime
 
+import android.content.Context
+import java.util.Locale
+
 /**
- * English Language Resource Pack — the offline lexical substrate (DK-SIC-001 §5.3).
+ * Offline English Language Resource Pack.
  *
- * The bundled seed is deliberately small and inspectable: it is the *mechanism* proof, not a claim
- * of full English coverage. Valid-word membership, morphology and frequency are kept separate, as
- * §5.3 requires. A larger pinned dictionary is admitted later by replacing [SEED] and recording its
- * identity, version, licence and checksum — never by inventing a second code path.
+ * Resource: LibreOffice en_US Hunspell dictionary, SCOWL-derived, bundled as source assets:
+ * en_US.dic SHA-1 b41fd203e6daf76934db99dec6572a230516368a
+ * en_US.aff SHA-1 290acfe87caf0f7ef44cf04dba4cd3b3cf2dbc58
+ * Upstream copyright and permission notice: assets/keyboard/README_en_US.txt.
+ *
+ * The reader admits dictionary headwords and the simple single-affix rules represented in the
+ * bundled .aff file. It does NOT claim complete Hunspell compatibility, compound-rule support,
+ * or frequency-corpus coverage. Those remain explicit profile boundaries.
  */
 object Elrp {
+    const val IDENTITY = "LibreOffice-en_US-SCOWL-derived"
+    const val VERSION = "2020.12.07+affix-2024-01-29"
 
-    const val IDENTITY = "darkith-elrp-seed"
-    const val VERSION = "1"
+    private val lock = Any()
+    @Volatile private var loaded = false
+    private val words = HashSet<String>()
+    private val byInitial = HashMap<String, MutableList<String>>()
+    private val commonRank = HashMap<String, Int>()
+    private var loadError: String? = null
 
-    /** Common English headwords plus the technical/darkith vocabulary the host actually types. */
-    private val SEED: Set<String> = setOf(
-        "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on",
-        "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we",
-        "say", "her", "she", "or", "an", "will", "my", "one", "all", "would", "there", "their",
-        "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "me", "when",
-        "make", "can", "like", "time", "no", "just", "him", "know", "take", "people", "into",
-        "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now",
-        "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two",
-        "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any",
-        "these", "give", "day", "most", "us", "is", "are", "was", "were", "been", "has", "had",
-        "did", "does", "said", "made", "went", "got", "seen", "known", "taken", "given",
-        "word", "words", "text", "type", "typing", "keyboard", "key", "keys", "press", "space",
-        "darkith", "omega", "forge", "homekeeper", "android", "kotlin", "build", "termux",
-        "phone", "device", "file", "files", "path", "data", "code", "run", "test", "gate",
-        "clipboard", "copy", "paste", "cut", "history", "sync", "local", "offline", "native",
-        "the", "and", "yes", "no", "ok", "okay", "thanks", "please", "hello", "sorry", "sure"
+    // A small transparent common-word ordering is only a tie-breaker, not a corpus frequency claim.
+    private val common = listOf(
+        "the","be","to","of","and","a","in","that","have","i","it","for","not","on","with",
+        "he","as","you","do","at","this","but","his","by","from","they","we","say","her","she",
+        "or","an","will","my","one","all","would","there","their","what","so","up","out","if",
+        "about","who","get","which","go","me","when","make","can","like","time","no","just","him",
+        "know","take","people","into","year","your","good","some","could","them","see","other",
+        "than","then","now","look","only","come","its","over","think","also","back","after","use",
+        "two","how","our","work","first","well","way","even","new","want","because","any","these",
+        "give","day","most","us","is","are","was","were","been","has","had","did","does","said",
+        "made","went","got","seen","known","taken","given","hello","thanks","please","okay"
     )
 
-    private val FREQ: Map<String, Int> by lazy {
-        SEED.withIndex().associate { (i, w) -> w to (SEED.size - i) }
+    fun initialize(context: Context) {
+        if (loaded) return
+        synchronized(lock) {
+            if (loaded) return
+            try {
+                common.forEachIndexed { index, word -> commonRank[word] = index }
+                val rules = parseAffix(context.assets.open("keyboard/en_US.aff").bufferedReader(Charsets.UTF_8).readLines())
+                val lines = context.assets.open("keyboard/en_US.dic").bufferedReader(Charsets.UTF_8).use { it.readLines() }
+                require(lines.isNotEmpty()) { "dictionary asset is empty" }
+                val declared = lines.first().trim().toIntOrNull()
+                    ?: throw IllegalArgumentException("dictionary count header is malformed")
+                var accepted = 0
+                for (line in lines.drop(1)) {
+                    val raw = line.trim()
+                    if (raw.isEmpty() || raw.startsWith("#")) continue
+                    val parts = raw.split("/", limit = 2)
+                    val stem = parts[0].lowercase(Locale.US)
+                    if (!stem.any { it.isLetter() } || stem.length > 48) continue
+                    words.add(stem)
+                    accepted++
+                    if (parts.size == 2) {
+                        for (flag in parts[1]) {
+                            for (rule in rules[flag.toString()].orEmpty()) {
+                                val form = rule.apply(stem) ?: continue
+                                if (form.length <= 56) words.add(form)
+                            }
+                        }
+                    }
+                }
+                require(accepted > 10000) { "dictionary admission count too small: $accepted" }
+                words.forEach { word ->
+                    if (word.length >= 2) byInitial.getOrPut(word.substring(0, 2)) { ArrayList() }.add(word)
+                }
+                byInitial.values.forEach { bucket ->
+                    bucket.sortWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
+                }
+                loaded = true
+                loadError = null
+            } catch (e: Exception) {
+                words.clear()
+                byInitial.clear()
+                loadError = e.message ?: e.javaClass.simpleName
+            }
+        }
     }
 
-    /** Suffix rules that expand the seed into valid inflections (§5.3 morphology, kept separate). */
-    private val SUFFIXES = listOf("s", "es", "ed", "d", "ing", "er", "est", "ly", "s'", "'s")
-
-    private val PREFIXES = listOf("un", "re", "in", "dis", "pre", "non")
+    fun status(): String = when {
+        loaded -> "$IDENTITY/$VERSION · ${words.size} forms loaded"
+        loadError != null -> "ELRP unavailable: $loadError"
+        else -> "ELRP not initialized"
+    }
 
     fun isValid(word: String): Boolean {
-        val w = word.lowercase()
-        if (w.isEmpty()) return false
-        if (w in SEED) return true
-        for (s in SUFFIXES) {
-            if (w.endsWith(s) && w.length > s.length + 1 && w.dropLast(s.length) in SEED) return true
-        }
-        for (p in PREFIXES) {
-            if (w.startsWith(p) && w.length > p.length + 1 && w.removePrefix(p) in SEED) return true
-        }
-        return false
+        ensureLoaded()
+        return word.lowercase(Locale.US) in words
     }
 
-    fun frequency(word: String): Int = FREQ[word.lowercase()] ?: 0
-
-    /** Prefix lookup over the seed: the primary completion path (§5.4, one path only). */
+    /** Prefix completion from the single admitted lexical resource. */
     fun completing(prefix: String, limit: Int = 8): List<String> {
-        val p = prefix.lowercase()
-        if (p.isEmpty()) return emptyList()
-        return SEED.asSequence()
+        ensureLoaded()
+        val p = prefix.lowercase(Locale.US)
+        if (p.isEmpty() || p.length < 2) return emptyList()
+        return byInitial[p.take(2)].orEmpty().asSequence()
             .filter { it.startsWith(p) && it != p }
-            .sortedByDescending { frequency(it) }
+            .sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
             .take(limit)
             .toList()
     }
 
-    /** Bounded edit-distance-1 candidates over the seed — the spelling-suggestion path. */
+    /** Bounded edit-distance-one generation; no full-dictionary scan per keystroke. */
     fun near(word: String, limit: Int = 8): List<String> {
-        val w = word.lowercase()
-        if (w.isEmpty()) return emptyList()
-        val out = ArrayList<Pair<String, Int>>()
-        for (cand in SEED) {
-            val d = editDistance(w, cand, 2)
-            if (d in 1..2) out.add(cand to d)
+        ensureLoaded()
+        val w = word.lowercase(Locale.US)
+        if (w.length < 2 || w.length > 32) return emptyList()
+        val candidates = LinkedHashSet<String>()
+        val alphabet = "abcdefghijklmnopqrstuvwxyz"
+        for (i in w.indices) {
+            candidates.add(w.removeRange(i, i + 1))
+            if (i + 1 < w.length) {
+                val chars = w.toCharArray()
+                val c = chars[i]; chars[i] = chars[i + 1]; chars[i + 1] = c
+                candidates.add(String(chars))
+            }
+            for (c in alphabet) candidates.add(w.substring(0, i) + c + w.substring(i + 1))
         }
-        return out.sortedWith(compareBy({ it.second }, { -frequency(it.first) }))
+        for (i in 0..w.length) for (c in alphabet) candidates.add(w.substring(0, i) + c + w.substring(i))
+        return candidates.asSequence()
+            .filter { it != w && it in words }
+            .sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
             .take(limit)
-            .map { it.first }
+            .toList()
     }
 
-    private fun editDistance(a: String, b: String, cap: Int): Int {
-        if (Math.abs(a.length - b.length) > cap) return cap + 1
-        var prev = IntArray(b.length + 1) { it }
-        var cur = IntArray(b.length + 1)
-        for (i in 1..a.length) {
-            cur[0] = i
-            var rowMin = cur[0]
-            for (j in 1..b.length) {
-                val cost = if (a[i - 1] == b[j - 1]) 0 else 1
-                cur[j] = minOf(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost)
-                if (cur[j] < rowMin) rowMin = cur[j]
-            }
-            if (rowMin > cap) return cap + 1
-            val t = prev; prev = cur; cur = t
+    private fun ensureLoaded() {
+        check(loaded || loadError != null) {
+            "ELRP must be initialized by DarkithImeService before lookup"
         }
-        return prev[b.length]
+    }
+
+    private data class Rule(val kind: String, val strip: String, val add: String, val condition: Regex) {
+        fun apply(stem: String): String? {
+            if (!condition.containsMatchIn(stem)) return null
+            val base = if (strip == "0") stem else if (kind == "SFX") {
+                if (!stem.endsWith(strip)) return null
+                stem.dropLast(strip.length)
+            } else {
+                if (!stem.startsWith(strip)) return null
+                stem.drop(strip.length)
+            }
+            return if (kind == "SFX") base + add else add + base
+        }
+    }
+
+    private fun parseAffix(lines: List<String>): Map<String, List<Rule>> {
+        val result = HashMap<String, List<Rule>>()
+        var i = 0
+        while (i < lines.size) {
+            val header = lines[i].trim().split(Regex("\\s+"))
+            if (header.size >= 4 && header[0] in setOf("PFX", "SFX") &&
+                header[2] in setOf("Y", "N")) {
+                val kind = header[0]
+                val flag = header[1]
+                val count = header[3].toIntOrNull() ?: 0
+                val rules = ArrayList<Rule>()
+                repeat(count) {
+                    if (i + 1 >= lines.size) return@repeat
+                    val fields = lines[++i].trim().split(Regex("\\s+"))
+                    if (fields.size < 5 || fields[0] != kind || fields[1] != flag) return@repeat
+                    val condition = try {
+                        Regex(if (kind == "SFX") fields[4] + "$" else "^" + fields[4])
+                    } catch (_: Exception) { return@repeat }
+                    rules.add(Rule(kind, fields[2], fields[3], condition))
+                }
+                result[flag] = rules
+            }
+            i++
+        }
+        return result
     }
 }
