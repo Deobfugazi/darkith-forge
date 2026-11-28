@@ -66,7 +66,7 @@ def repo_identity(root: pathlib.Path) -> dict[str, str]:
     commit = git(root, "rev-parse", "--verify", "HEAD").strip()
     tree = git(root, "rev-parse", "--verify", "HEAD^{tree}").strip()
     remote = git(root, "remote", "get-url", "origin", check=False).strip()
-    return {"commit": commit, "git_tree": tree, "remote": remote}
+    status = git(root, "status", "--porcelain=v1", "--untracked-files=all", check=False)\n    return {"head_commit": commit, "head_tree": tree, "remote": remote,\n            "working_tree_status": status}
 
 
 def candidate_manifest(root: pathlib.Path) -> dict[str, Any]:
@@ -89,7 +89,7 @@ def candidate_manifest(root: pathlib.Path) -> dict[str, Any]:
             continue
         if not path.is_file():
             raise PIError(f"unsupported candidate path type: {rel}")
-        mode = "100755" if os.access(path, os.X_OK) else "100644"
+        mode = "100755" if (path.stat().st_mode & 0o111) else "100644"
         data = path.read_bytes()
         records.append({"path": rel, "type": "file", "mode": mode,
                         "length": len(data), "sha256": sha256(data)})
