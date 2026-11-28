@@ -1,14 +1,14 @@
 {
-  "declared_count": 88,
+  "declared_count": 92,
   "drifted": [
     {
-      "bytes_declared": 12962,
-      "bytes_on_disk": 19203,
+      "bytes_declared": 12148,
+      "bytes_on_disk": 18389,
       "delta": 6241,
       "path": "TASKS.md"
     }
   ],
-  "entries": 88,
+  "entries": 92,
   "matched": [
     "AGENTS.md",
     "DARKITH.md",
@@ -19,6 +19,7 @@
     "docs/02-ATTACKS-captured.txt",
     "docs/03-RESOLUTION-captured.txt",
     "docs/06_expected_root.txt",
+    "docs/ARCHITECTURE-MANUFACTORY.md",
     "docs/ARCHITECTURE-OMEGA.md",
     "docs/BLACK-AND-WHITEPAPER-2026-11-23.md",
     "docs/DARKITH-OMEGA-README.html",
@@ -37,6 +38,7 @@
     "docs/UPDATES.md",
     "docs/evidence/NODAL-ZIP-VS-OURS.md",
     "docs/evidence/SECTOR-PAIN-LEDGER.md",
+    "docs/index.html",
     "docs/nt/NT-I-IV-protocol.md",
     "docs/nt/NT-INDEX.md",
     "docs/nt/NT-IX.txt",
@@ -48,6 +50,8 @@
     "docs/nt/NT-XI.txt",
     "docs/nt/NT-XII.txt",
     "docs/nt/NT-XIII-OFIF.txt",
+    "docs/nt/NT-XIV-AI-SUBSTRATE.md",
+    "docs/nt/NT-XV-INFERENCE-OBJECTIVE.md",
     "clearanceloop.html",
     "d-arkith-omega.html",
     "darkith code studio.html",

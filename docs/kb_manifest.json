@@ -1,6 +1,6 @@
 {
   "_law": "kb_index: the readable knowledge-skill base, indexed from bytes; registers A-apparatus/B-knowledge/C-skillbase/D-asset/E-evidence",
-  "count": 90,
+  "count": 92,
   "files": [
     {
       "bytes": 88503,
@@ -33,10 +33,10 @@
       "sha256": "05b87b5f7ee00b7666d9a370c4e78873c68d3e0700ecb420f29e3fa84280feaa"
     },
     {
-      "bytes": 12962,
+      "bytes": 12148,
       "path": "TASKS.md",
       "register": "A-apparatus",
-      "sha256": "55124aa5be48568aca07b7e4383bbe5e2dd63080665af15f41104108c047561a"
+      "sha256": "3b7b577072de91cc5182280a8a5a07c73dcd22a1ca566f7218e3bf2d43c5cf24"
     },
     {
       "bytes": 817,
@@ -249,6 +249,18 @@
       "sha256": "5ab6f2706f8ac80f0262b54c769109dfef368d083e8905bea93fa01f7bebc6ae"
     },
     {
+      "bytes": 67568,
+      "path": "docs/nt/NT-XIV-AI-SUBSTRATE.md",
+      "register": "B-knowledge",
+      "sha256": "1eb86ffd7dbdcaa37203ac5703e2c7aac3f4be9cdccbab997cf0be4b4dbe1675"
+    },
+    {
+      "bytes": 22746,
+      "path": "docs/nt/NT-XV-INFERENCE-OBJECTIVE.md",
+      "register": "B-knowledge",
+      "sha256": "78fcf1d156dd0287199c2f4dc1b548347c01bf7e164e19fefb6d0fd1daec8f90"
+    },
+    {
       "bytes": 98859,
       "path": "clearanceloop.html",
       "register": "C-skillbase",
@@ -411,10 +423,10 @@
       "sha256": "76052ecf48e69857eddecf6aab2df686c7408b437053feee590024db097ffa1f"
     },
     {
-      "bytes": 490080,
+      "bytes": 1271388,
       "path": "app/src/main/assets/homekeeper.html",
       "register": "D-asset",
-      "sha256": "f3c83ac2f31cbeda21c0e1d180da5eda1599b1c3620ec854a114b31b8993d75e"
+      "sha256": "e20a6d1f3dbb5d704e77017fc455e07765638236469fd4898e49e1650fb81749"
     },
     {
       "bytes": 96790,

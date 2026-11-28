@@ -9,7 +9,7 @@ The registers are the repo's own invariant (A∧B∧C∧D — see
 `docs/DARKITH-OMEGA-repo.txt`) applied to the filesystem: apparatus separated from
 content (B), one retrieval surface (C), one canonical copy (D).
 
-**90 readable files across 8 registers.**
+**92 readable files across 8 registers.**
 
 ## A-apparatus — Governance — the machine+human laws (read first)
 
@@ -20,7 +20,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `DEFICITS.json` | 3,356 | `4232cd8c5550` | NEVER #17 (NO STALLED DEFICIENCY) / MUST #19 (IMPLEMENT OR DESCope, WI |
 | `README.md` | 87,251 | `89f889048b9e` | DARKITH — The Forge of Verifiable Sovereignty |
 | `RESUME.md` | 8,805 | `05b87b5f7ee0` | RESUME — read this first in any new session |
-| `TASKS.md` | 12,962 | `55124aa5be48` | TASKS — the durable board |
+| `TASKS.md` | 12,148 | `3b7b577072de` | TASKS — the durable board |
 
 ## B-knowledge — Corpus — the human-readable knowledge base
 
@@ -61,6 +61,8 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `docs/nt/NT-XI.txt` | 70,277 | `a46ef4198869` | NOVELTREATISE XI: THE AUTOPHAGIC SOVEREIGN ECONOMY (ASE) |
 | `docs/nt/NT-XII.txt` | 78,125 | `9412708d5468` | NOVELTREATISE XII — OMEGA FINAL EDITION |
 | `docs/nt/NT-XIII-OFIF.txt` | 9,228 | `5ab6f2706f8a` | NOVELTREATISE XIII — THE OMEGA FIELD-INVARIANT FORMULARY (OFIF) |
+| `docs/nt/NT-XIV-AI-SUBSTRATE.md` | 67,568 | `1eb86ffd7dbd` | NT XIV — OMEGA EDITION |
+| `docs/nt/NT-XV-INFERENCE-OBJECTIVE.md` | 22,746 | `78fcf1d156dd` | NT XV — OMEGA EDITION |
 
 ## C-skillbase — Skill surfaces — the interactive web apps
 
@@ -98,7 +100,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `app/src/main/assets/darkith-omega-messages.html` | 13,791 | `c43b0d8585ce` | DARKITH Ω — messages |
 | `app/src/main/assets/darkith-omega-phone.html` | 12,478 | `2bccb0ab5978` | DARKITH Ω — phone |
 | `app/src/main/assets/darkith_ui.html` | 279,277 | `76052ecf48e6` | Darkith Inscriber — SAVF Lite Studio |
-| `app/src/main/assets/homekeeper.html` | 490,080 | `f3c83ac2f31c` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
+| `app/src/main/assets/homekeeper.html` | 1,271,388 | `e20a6d1f3dbb` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |
 | `app/src/main/assets/savf_core.html` | 96,790 | `a37cd725501b` | SAVF-1 Universal Audit Engine |
 | `omega-app/src/main/assets/github_console.html` | 20,516 | `2d2333b818b4` | GitHub Console |
 | `omega-app/src/main/assets/omega_studio.html` | 1,320,579 | `ad4206e03c6f` | DARKITH · SOVEREIGN HOMEKEEPER · Ω v5.3.1 |

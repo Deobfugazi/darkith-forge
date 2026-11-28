@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- G1: input-method metadata the Android picker reads. -->
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+    android:settingsActivity="com.darkith.transliaison.ime.DarkithImeSettings"
+    android:supportsSwitchingToNextInputMethod="true">
+    <subtype
+        android:label="English (Darkith)"
+        android:imeSubtypeLocale="en_US"
+        android:imeSubtypeMode="keyboard" />
+</input-method>

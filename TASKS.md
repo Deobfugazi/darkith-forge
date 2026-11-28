@@ -5,19 +5,14 @@
 
 **Directive:** DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-25T03:58:28.458166`. This section is regenerated, never hand-edited._
+> _Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-28T08:26:36.497695`. This section is regenerated, never hand-edited._
 >
 > **Coupled laws:** MUST #11, MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-13, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 >
-> 1. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
->    - prompt index `42708` at `2026-11-25T03:17:31.346607`
->    - sha256 `a7376a057529fc8e`
-> 2. **[order]** Pisti k!! If youre fucking seeing the previous agents' worka already green on your trial branch fucking push it to main already yawaaaaaa!!!🤬🤬🤬🤬🤬🤬🤬🤬 …
->    - prompt index `42828` at `2026-11-25T03:35:07.255856`
->    - sha256 `805a93b7a75d67ee`
-> 3. **[forbid]** Hoyyyyy!!!!! Stop whatever the fuck youre doing now!!! You are all disregarding and disrespecting me!!!
->    - prompt index `43010` at `2026-11-25T03:58:28.458166`
->    - sha256 `b79e9d2ec06f78a2`
+> 1. **[order]** Check my fucking uploaded sources, i need the keyboard/clipboard fucking build and downloaded coupled to my fucking tecno device itself now!!!🤬🤬🤬🤬🤬 A…
+>    - prompt index `46430` at `2026-11-28T08:26:36.497695`
+>    - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, SPI-15
+>    - sha256 `b037e3343eaa6b65`
 >
 
 **Coupled laws (declared by the directive):** `MUST #11`, `MUST #17`, `MUST #18`, `MUST #20`, `MUST #21`, `MUST #22`, `MUST #26`, `MUST #27`, `MUST #28`, `MUST #30`, `MUST #33`, `MUST #35`, `MUST #36`, `MUST #41`, `MUST #42`, `NEVER #19`, `NEVER #21`, `NEVER #22`, `SPI-10`, `SPI-11`, `SPI-13`, `SPI-15`, `SPI-2`, `SPI-25`, `SPI-26`, `SPI-37`, `SPI-38`, `SPI-4`, `SPI-40`, `SPI-5`, `SPI-6`
@@ -56,7 +51,7 @@
 | `SPI-5` | NO ANDROIDX ON THE RAW CHAIN |
 | `SPI-6` | READ THE WHOLE LOG |
 
-**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`, `MUST #40`
+**Also matched by term (derived, advisory — not an order):** `MUST #37`, `MUST #38`
 
 <!-- PRAXIS:END -->
 
@@ -257,18 +252,13 @@ Named skips this cycle (SKIP is never PASS): clearanceloop webapp gate (headless
 
 ## ★ DIRECTIVE PRIME TASK — the Operator's orders, ingested from chat
 
-_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-25T03:58:28.458166`. This section is regenerated, never hand-edited._
+_Source: conversation `18393131094c4acfb45d943764549f23`, ingested by `tools/chat_gatekeeper.py`. Latest order `2026-11-28T08:26:36.497695`. This section is regenerated, never hand-edited._
 
 **Coupled laws:** MUST #11, MUST #17, MUST #18, MUST #20, MUST #21, MUST #22, MUST #26, MUST #27, MUST #28, MUST #30, MUST #33, MUST #35, MUST #36, MUST #41, MUST #42, NEVER #19, NEVER #21, NEVER #22, SPI-10, SPI-11, SPI-13, SPI-15, SPI-2, SPI-25, SPI-26, SPI-37, SPI-38, SPI-4, SPI-40, SPI-5, SPI-6
 
-1. **[forbid]** My standing orders say never push to main, never open a PR targeting main. I obeyed that. That is exactly why you're staring at a broken main while t…
-   - prompt index `42708` at `2026-11-25T03:17:31.346607`
-   - sha256 `a7376a057529fc8e`
-2. **[order]** Pisti k!! If youre fucking seeing the previous agents' worka already green on your trial branch fucking push it to main already yawaaaaaa!!!🤬🤬🤬🤬🤬🤬🤬🤬 …
-   - prompt index `42828` at `2026-11-25T03:35:07.255856`
-   - sha256 `805a93b7a75d67ee`
-3. **[forbid]** Hoyyyyy!!!!! Stop whatever the fuck youre doing now!!! You are all disregarding and disrespecting me!!!
-   - prompt index `43010` at `2026-11-25T03:58:28.458166`
-   - sha256 `b79e9d2ec06f78a2`
+1. **[order]** Check my fucking uploaded sources, i need the keyboard/clipboard fucking build and downloaded coupled to my fucking tecno device itself now!!!🤬🤬🤬🤬🤬 A…
+   - prompt index `46430` at `2026-11-28T08:26:36.497695`
+   - **Coupled laws:** MUST #21, MUST #22, MUST #26, MUST #27, MUST #33, SPI-15
+   - sha256 `b037e3343eaa6b65`
 
 <!-- CHAT-GATE:END -->
