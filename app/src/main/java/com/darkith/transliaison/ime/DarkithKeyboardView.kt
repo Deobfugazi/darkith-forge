@@ -63,6 +63,12 @@ class DarkithKeyboardView(context: Context) : View(context) {
     private var keyH = 52f * dpr
     private val candidateH = 34f * dpr
 
+    init {
+        contentDescription = "Darkith keyboard. Swipe space to move the cursor. Long press letters for alternatives and suggestions to reject them. PRIV toggles incognito."
+        isFocusable = true
+        isClickable = true
+    }
+
     fun scaleFor(scale: Float) {
         keyH = 52f * dpr * scale.coerceIn(0.8f, 1.6f)
         invalidate(); requestLayout()
@@ -131,7 +137,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
                 offset = 0f
             } else {
                 cellW = width.toFloat() / 10f
-                offset = if (row == 1) cellW * 0.5f else if (row == 2) cellW * 1.4f else 0f
+                offset = if (symbolPage) 0f else if (row == 1) cellW * 0.5f else if (row == 2) cellW * 1.4f else 0f
             }
             val index = ((x - offset) / cellW).toInt()
             return if (index in set.indices) set[index].toString() else null
@@ -213,7 +219,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
                     key == "PRIV" -> target.onToggleIncognito()
                     key == "CLIPBACK" -> { clipboardMode = false; invalidate() }
                     key == "SHIFT" -> {
-                        if (event.eventTime - lastShiftTapAt in 1..350L) {
+                        if (lastShiftTapAt > 0L && event.eventTime - lastShiftTapAt in 1..350L) {
                             caps = !caps
                             shift = false
                         } else shift = !shift
@@ -276,7 +282,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
         labelPaint.color = Color.parseColor("#39D3A0")
         canvas.drawText("CLIP", width * 0.07f, candidateH / 2f - (labelPaint.descent() + labelPaint.ascent()) / 2f, labelPaint)
         labelPaint.color = if (incognito) Color.parseColor("#FF8A80") else Color.parseColor("#39D3A0")
-        canvas.drawText(if (incognito) "PRIVATE" else "PRIV", width * 0.93f,
+        canvas.drawText(if (incognito) "INCOG" else "PRIV", width * 0.93f,
             candidateH / 2f - (labelPaint.descent() + labelPaint.ascent()) / 2f, labelPaint)
         if (candidates.isNotEmpty()) {
             val start = width * 0.14f
