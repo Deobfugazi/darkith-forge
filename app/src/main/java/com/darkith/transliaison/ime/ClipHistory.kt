@@ -47,6 +47,9 @@ class ClipHistory(context: Context) : SQLiteOpenHelper(context, "darkith_clip.db
         )
         val cutoff = System.currentTimeMillis() - retentionDays.toLong() * 86_400_000L
         db.execSQL("DELETE FROM clip WHERE pinned=0 AND created < ?", arrayOf(cutoff))
+        db.execSQL(
+            "DELETE FROM clip WHERE pinned=0 AND id NOT IN (SELECT id FROM clip WHERE pinned=0 ORDER BY created DESC LIMIT 200)"
+        )
     }
 
     fun recent(limit: Int = 25): List<Pair<Long, String>> {
@@ -87,6 +90,10 @@ class ClipHistory(context: Context) : SQLiteOpenHelper(context, "darkith_clip.db
 
     fun clearUnpinned() {
         writableDatabase.execSQL("DELETE FROM clip WHERE pinned=0")
+    }
+
+    fun clearAll() {
+        writableDatabase.execSQL("DELETE FROM clip")
     }
 
     fun count(): Int {
