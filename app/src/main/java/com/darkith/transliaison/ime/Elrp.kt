@@ -64,8 +64,8 @@ object Elrp {
                     if (raw.isEmpty() || raw.startsWith("#")) continue
                     val parts = raw.split("/", limit = 2)
                     val stem = parts[0].lowercase(Locale.US)
-                    if (!stem.any { it.isLetter() } || stem.length > 48) continue
                     accepted++
+                    if (!stem.any { it.isLetter() } || stem.length > 48) continue
                     val flags = parts.getOrNull(1).orEmpty()
                     // Compound-only roots are not standalone words in this non-compounding engine.
                     if (onlyInCompoundFlag != null && flags.contains(onlyInCompoundFlag)) continue
