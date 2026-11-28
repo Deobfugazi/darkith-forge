@@ -240,14 +240,15 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     override fun onClipboard() {
         val p = prefs ?: return
-        if (!p.clipHistory) return
+        if (!p.clipHistory || sensitiveField || incognito || limitedEditor) return
         val items = clipboardHistory?.recent(4)?.map { it.second }.orEmpty()
         keyboard?.setClipboardItems(items)
     }
 
     override fun onClip(text: String) {
         val conn = ic() ?: return
-        conn.commitText(text, 1)
+        if (sensitiveField || incognito) return
+        if (limitedEditor) sendRawText(conn, text) else conn.commitText(text, 1)
         composing.setLength(0)
         revision++
         keyboard?.leaveClipboard()
