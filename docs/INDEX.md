@@ -121,7 +121,7 @@ content (B), one retrieval surface (C), one canonical copy (D).
 | `proof/offline_oneshot_proof.txt` | 1,780 | `fce363ef10fd` | DARKITH OFFLINE ONE-SHOT — VERIFICATION PROOF (SPI-2/4/6) |
 | `proof/oneshot_proof.txt` | 1,556 | `dcda10db485e` | PROOF — one-shot installer + native-lib packaging (SPI-2/4/6) |
 | `proof/session_findings.txt` | 1,768 | `b4571adf757e` | DARKITH EVIDENCE SNAPSHOT 2026-11-20T03:44:32Z |
-| `releases/keyboard-omega-2.1.0/README.md` | 2,500 | `b388f8db2468` | Darkith Keyboard Omega 2.1.0 — delivery receipt |
+| `releases/keyboard-omega-2.1.0/DELIVERY-RECEIPT.md` | 2,500 | `b388f8db2468` | Darkith Keyboard Omega 2.1.0 — delivery receipt |
 | `releases/keyboard-omega-2.1.0/SHA256SUMS.txt` | 93 | `393d732c77cc` | 2814522667384dcc2301f61dddb1c6792a707915b7c1712a6f858b77345aa07a  dark |
 
 ## F-config — Build configuration — dependency manifests
