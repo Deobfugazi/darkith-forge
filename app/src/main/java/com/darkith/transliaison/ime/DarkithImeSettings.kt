@@ -11,7 +11,9 @@ import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.TextView
+import kotlin.math.roundToInt
 
 /** Settings and local clipboard controls. Every toggle is backed by the same ImePrefs as the IME. */
 class DarkithImeSettings : Activity() {
@@ -57,6 +59,24 @@ class DarkithImeSettings : Activity() {
         root.addView(toggle("Conservative autocorrect (unique match only)", prefs.autocorrect) { prefs.autocorrect = it })
         root.addView(toggle("Clipboard history capture (off by default)", prefs.clipHistory) { prefs.clipHistory = it })
         root.addView(toggle("Protect sensitive fields", prefs.privacyFieldBlock) { prefs.privacyFieldBlock = it })
+        val heightLabel = TextView(this).apply {
+            text = "Keyboard height: ${"%.2f".format(prefs.heightScale)}×"
+            textSize = 13f
+        }
+        root.addView(heightLabel)
+        root.addView(SeekBar(this).apply {
+            max = 16
+            progress = ((prefs.heightScale - 0.8f) * 20f).roundToInt().coerceIn(0, 16)
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    val scale = 0.8f + progress / 20f
+                    prefs.heightScale = scale
+                    heightLabel.text = "Keyboard height: ${"%.2f".format(prefs.heightScale)}×"
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+        })
         val retention = EditText(this).apply {
             hint = "Clipboard retention in days (1–365)"
             inputType = android.text.InputType.TYPE_CLASS_NUMBER
