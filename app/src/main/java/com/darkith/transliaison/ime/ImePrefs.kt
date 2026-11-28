@@ -32,7 +32,7 @@ class ImePrefs(context: Context) {
 
     /** G9: clipboard history capture gate. */
     var clipHistory: Boolean
-        get() = sp.getBoolean("clip_history", true)
+        get() = sp.getBoolean("clip_history", false)
         set(v) = sp.edit().putBoolean("clip_history", v).apply()
 
     /** G9: sensitive-field exclusion for learning and capture. */
