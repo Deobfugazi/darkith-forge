@@ -166,9 +166,10 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
     override fun onCandidate(text: String) {
         val conn = ic() ?: return
         val raw = composing.toString()
-        if (raw.isEmpty() && prefs?.personalLearning == true && !sensitiveField) {
-            val previous = conn.getTextBeforeCursor(120, 0)?.toString().orEmpty()
-                .trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
+        if (prefs?.personalLearning == true && !sensitiveField) {
+            val before = conn.getTextBeforeCursor(120, 0)?.toString().orEmpty()
+            val contextBefore = if (raw.isNotEmpty() && before.endsWith(raw)) before.dropLast(raw.length) else before
+            val previous = contextBefore.trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
             if (previous.isNotBlank()) languageModel?.observe(previous, text)
         }
         conn.commitText(text + " ", 1)
