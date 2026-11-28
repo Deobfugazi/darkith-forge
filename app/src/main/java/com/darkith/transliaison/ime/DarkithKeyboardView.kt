@@ -33,6 +33,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
     private var imeOptions = 0
     private var shift = false
     private var caps = false
+    private var lastShiftTapAt = 0L
     private var symbolPage = false
     private var candidates: List<String> = emptyList()
     private var clipboardMode = false
@@ -66,10 +67,10 @@ class DarkithKeyboardView(context: Context) : View(context) {
         keyH = 52f * dpr * scale.coerceIn(0.8f, 1.6f)
         invalidate(); requestLayout()
     }
-    fun setCandidates(list: List<String>) { candidates = list; invalidate() }
-    fun setClipboardItems(items: List<String>) { clips = items.take(4); clipboardMode = true; invalidate() }
-    fun leaveClipboard() { clipboardMode = false; invalidate() }
-    fun setIncognito(enabled: Boolean) { incognito = enabled; invalidate() }
+    fun setCandidates(list: List<String>) { candidates = list; altOptions = emptyList(); invalidate() }
+    fun setClipboardItems(items: List<String>) { clips = items.take(4); altOptions = emptyList(); clipboardMode = true; invalidate() }
+    fun leaveClipboard() { clipboardMode = false; altOptions = emptyList(); invalidate() }
+    fun setIncognito(enabled: Boolean) { incognito = enabled; altOptions = emptyList(); invalidate() }
 
     /** Input-type adaptation: number/phone fields get digits; email and URI get useful symbols. */
     fun setEditorType(type: Int, options: Int) {
@@ -77,6 +78,9 @@ class DarkithKeyboardView(context: Context) : View(context) {
         variation = type and InputType.TYPE_MASK_VARIATION
         imeOptions = options
         symbolPage = false
+        shift = false
+        caps = false
+        altOptions = emptyList()
         invalidate()
     }
 
@@ -181,7 +185,7 @@ class DarkithKeyboardView(context: Context) : View(context) {
                     val selected = altOptions.getOrNull(key.removePrefix("ALTSEL:").toIntOrNull() ?: -1)
                     altOptions = emptyList()
                     val output = selected?.let { if (shift xor caps) it.uppercase() else it }
-                    if (shift && !caps) shift = false
+                    if (shift) shift = false
                     invalidate()
                     output?.let(target::onKey)
                     return true
@@ -207,13 +211,21 @@ class DarkithKeyboardView(context: Context) : View(context) {
                     key == "CLIP" -> target.onClipboard()
                     key == "PRIV" -> target.onToggleIncognito()
                     key == "CLIPBACK" -> { clipboardMode = false; invalidate() }
-                    key == "SHIFT" -> { shift = !shift; invalidate(); target.onShift() }
+                    key == "SHIFT" -> {
+                        if (event.eventTime - lastShiftTapAt in 1..350L) {
+                            caps = !caps
+                            shift = false
+                        } else shift = !shift
+                        lastShiftTapAt = event.eventTime
+                        invalidate()
+                        target.onShift()
+                    }
                     key == "SYM" -> { symbolPage = !symbolPage; invalidate() }
                     key == "BACK" -> target.onBackspace()
                     key == "ENTER" -> target.onEnter()
                     else -> {
                         val out = if (key.length == 1 && key[0].isLetter() && (shift xor caps)) key.uppercase() else key
-                        if (shift && !caps) { shift = false; invalidate() }
+                        if (shift) { shift = false; invalidate() }
                         target.onKey(out)
                     }
                 }
