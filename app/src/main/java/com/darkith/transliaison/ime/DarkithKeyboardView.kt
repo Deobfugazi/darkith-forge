@@ -180,15 +180,17 @@ class DarkithKeyboardView(context: Context) : View(context) {
                 if (key.startsWith("ALTSEL:")) {
                     val selected = altOptions.getOrNull(key.removePrefix("ALTSEL:").toIntOrNull() ?: -1)
                     altOptions = emptyList()
+                    val output = selected?.let { if (shift xor caps) it.uppercase() else it }
+                    if (shift && !caps) shift = false
                     invalidate()
-                    selected?.let { target.onKey(if (shift xor caps) it.uppercase() else it) }
+                    output?.let(target::onKey)
                     return true
                 }
                 if (event.eventTime - downAt >= 500L && key.length == 1) {
                     val alternatives = alternativesFor(key)
                     if (alternatives.isNotEmpty()) {
                         altOptions = alternatives
-                        altCellWidth = 40f * dpr
+                        altCellWidth = minOf(40f * dpr, (width - 8f * dpr).coerceAtLeast(1f) / altOptions.size)
                         val total = altCellWidth * altOptions.size
                         val left = (downX - total / 2f).coerceIn(4f * dpr, (width - total - 4f * dpr).coerceAtLeast(4f * dpr))
                         val top = (downY - 48f * dpr).coerceAtLeast(candidateH)
