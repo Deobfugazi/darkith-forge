@@ -163,7 +163,7 @@ class DarkithImeSettings : Activity() {
         })
 
         root.addView(TextView(this).apply {
-            text = "Next-word predictions begin only after opt-in local learning has observed word pairs. No corpus is preloaded and no text is sent to a server. Clipboard history is local and captures only while the keyboard is visible. Secret-like clips are rejected heuristically; this is not a perfect sensitive-data detector."
+            text = "Next-word predictions begin only after opt-in local learning has observed word pairs. No corpus is preloaded and no text is sent to a server. Clipboard history is local and captures only while the keyboard is visible. Secret-like clips are rejected heuristically; this is not a perfect sensitive-data detector. Synchronization is not implemented and remains disabled; no keyboard sync traffic is sent. A future sync path requires paired-device authentication, encryption, replay protection, conflict handling, revocation, deletion, retries, and two-device verification."
             textSize = 12f
             setPadding(0, 12, 0, 12)
         })
