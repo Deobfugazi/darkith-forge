@@ -58,7 +58,7 @@ class DarkithImeSettings : Activity() {
         root.addView(toggle("Candidate strip", prefs.candidates) { prefs.candidates = it })
         root.addView(toggle("Conservative autocorrect (unique match only)", prefs.autocorrect) { prefs.autocorrect = it })
         root.addView(toggle("Clipboard history capture (off by default)", prefs.clipHistory) { prefs.clipHistory = it })
-        root.addView(toggle("Protect sensitive fields", prefs.privacyFieldBlock) { prefs.privacyFieldBlock = it })
+        root.addView(toggle("Protect phone, email, and URI fields (password/no-learning always protected)", prefs.privacyFieldBlock) { prefs.privacyFieldBlock = it })
         val heightLabel = TextView(this).apply {
             text = "Keyboard height: ${"%.2f".format(prefs.heightScale)}×"
             textSize = 13f
