@@ -23,6 +23,7 @@ class DarkithImeSettings : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = ImePrefs(this)
+        Elrp.initialize(applicationContext)
         history = ClipHistory(this)
 
         val root = LinearLayout(this).apply {
