@@ -72,6 +72,7 @@ run() {
 have() { command -v "$1" >/dev/null 2>&1; }
 
 if have python3; then
+  run "Prime Invariant v2 foundation self-test" python3 tools/prime_invariant.py selftest
   # ── ABSOLUTION IS A PRECONDITION OF HASHING, NOT A REPORT FILED AFTER IT ────────
   # This ran wrong for months: the hashing gates ran first, and the defect registry ran
   # last as a dry `--check` that repairs nothing. So CI sealed a tree that still held every
