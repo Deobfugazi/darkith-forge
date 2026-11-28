@@ -138,6 +138,13 @@ need("build.sh" in installer and "gradle" not in installer.lower(),
      "Homekeeper installer uses the raw chain and does not invoke Gradle")
 need("tools/admit_keyboard_spec.sh" in installer,
      "Homekeeper installer invokes canonical indexed keyboard-spec admission")
+admission = (ROOT / "tools/admit_keyboard_spec.sh").read_text()
+need("tools/kb_index.py --write" in admission and "tools/nt_gate.py" in admission
+     and "tools/citation_gate.py" in admission and "proof/nt_claims.json" in admission,
+     "keyboard source admission uses the canonical KB generator, NT witness ledger, and citation gate")
+need("NT14-CANONICAL-SOURCE-CARRIED" in admission and "NT15-CANONICAL-SOURCE-CARRIED" in admission
+     and "KEYBOARD-SINGULAR-INVARIANT-SOURCE-CARRIED" in admission,
+     "admission creates re-runnable provenance witnesses for NT XIV, NT XV, and the keyboard spec")
 need("assets/homekeeper.html" in installer and "packed != expected" in installer,
      "Homekeeper installer copies the HTML into the native APK asset path and verifies packaged bytes")
 
