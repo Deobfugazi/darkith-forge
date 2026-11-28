@@ -83,7 +83,7 @@ python3 tools/kb_index.py
 python3 tools/nt_gate.py
 
 set +e
-python3 tools/citation_gate.py > proof/keyboard-citation-gate.log 2>&1
+python3 tools/citation_gate.py > proof/keyboard-citation-gate.txt 2>&1
 CITATION_RC=$?
 set -e
 case "$CITATION_RC" in
