@@ -42,6 +42,17 @@ class DarkithImeSettings : Activity() {
         }
         root.addView(status)
         root.addView(toggle("Word completion", prefs.prediction) { prefs.prediction = it })
+        root.addView(toggle("Next-word prediction from learned local patterns", prefs.nextWordPrediction) { prefs.nextWordPrediction = it })
+        root.addView(toggle("Learn adjacent words on this device (off by default)", prefs.personalLearning) { prefs.personalLearning = it })
+        root.addView(Button(this).apply {
+            text = "Clear learned next-word patterns"
+            setOnClickListener {
+                val model = PersonalLanguageModel(this@DarkithImeSettings)
+                model.clear()
+                model.close()
+                status.text = "Learned next-word patterns cleared"
+            }
+        })
         root.addView(toggle("Candidate strip", prefs.candidates) { prefs.candidates = it })
         root.addView(toggle("Conservative autocorrect (unique match only)", prefs.autocorrect) { prefs.autocorrect = it })
         root.addView(toggle("Clipboard history capture (off by default)", prefs.clipHistory) { prefs.clipHistory = it })
@@ -72,7 +83,7 @@ class DarkithImeSettings : Activity() {
         renderPersonalWords()
 
         root.addView(TextView(this).apply {
-            text = "Clipboard history is local and captures only while the keyboard is visible. Secret-like clips are rejected heuristically; this is not a perfect sensitive-data detector."
+            text = "Next-word predictions begin only after opt-in local learning has observed word pairs. No corpus is preloaded and no text is sent to a server. Clipboard history is local and captures only while the keyboard is visible. Secret-like clips are rejected heuristically; this is not a perfect sensitive-data detector."
             textSize = 12f
             setPadding(0, 12, 0, 12)
         })
