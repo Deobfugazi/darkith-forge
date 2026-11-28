@@ -24,6 +24,7 @@ object Elrp {
     private val words = HashSet<String>()
     private val suggestible = HashSet<String>()
     private val personal = LinkedHashSet<String>()
+    private val rejected = LinkedHashSet<String>()
     private val byInitial = HashMap<String, MutableList<String>>()
     private val commonRank = HashMap<String, Int>()
     private var loadError: String? = null
@@ -83,8 +84,10 @@ object Elrp {
                 require(accepted > 10000) { "dictionary admission count too small: $accepted" }
                 val overlay = context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE)
                     .getStringSet("personal_words", emptySet()).orEmpty()
-                personal.addAll(overlay.map { it.lowercase(Locale.US) }.filter { it.matches(Regex("[a-z][a-z'’-]{1,39}")) })
-                suggestible.addAll(personal)
+                personal.addAll(overlay.map { it.lowercase(Locale.US) }.filter { it.matches(Regex("[\\p{L}][\\p{L}'’-]{1,39}")) })
+                rejected.addAll(context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE)
+                    .getStringSet("rejected_suggestions", emptySet()).orEmpty().map { it.lowercase(Locale.US) })
+                suggestible.addAll(personal.filter { it !in rejected })
                 suggestible.forEach { word ->
                     if (word.length >= 2) byInitial.getOrPut(word.substring(0, 2)) { ArrayList() }.add(word)
                 }
@@ -97,6 +100,7 @@ object Elrp {
                 words.clear()
                 suggestible.clear()
                 personal.clear()
+                rejected.clear()
                 byInitial.clear()
                 loadError = e.message ?: e.javaClass.simpleName
             }
@@ -146,7 +150,7 @@ object Elrp {
         }
         for (i in 0..w.length) for (c in alphabet) candidates.add(w.substring(0, i) + c + w.substring(i))
         return candidates.asSequence()
-            .filter { it != w && (it in suggestible || it in personal) }
+            .filter { it != w && it !in rejected && (it in suggestible || it in personal) }
             .sortedWith(compareBy<String>({ commonRank[it] ?: Int.MAX_VALUE }, { it }))
             .take(limit)
             .toList()
@@ -154,10 +158,38 @@ object Elrp {
 
     fun personalWords(): Set<String> = synchronized(lock) { personal.toSet() }
 
+    fun exportPersonalWords(): String = personalWords().sorted().joinToString("\\n")
+
+    fun clearPersonalWords(context: Context) {
+        synchronized(lock) {
+            personal.clear()
+            context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
+                .putStringSet("personal_words", emptySet()).apply()
+        }
+    }
+
+    fun rejectSuggestion(context: Context, input: String) {
+        val word = input.trim().lowercase(Locale.US)
+        if (word.isBlank()) return
+        synchronized(lock) {
+            rejected.add(word)
+            context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
+                .putStringSet("rejected_suggestions", rejected.toSet()).apply()
+        }
+    }
+
+    fun clearRejected(context: Context) {
+        synchronized(lock) {
+            rejected.clear()
+            context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
+                .putStringSet("rejected_suggestions", emptySet()).apply()
+        }
+    }
+
     fun addPersonalWord(context: Context, input: String): Boolean {
         ensureLoaded()
         val word = input.trim().lowercase(Locale.US)
-        if (!word.matches(Regex("[a-z][a-z'’-]{1,39}"))) return false
+        if (!word.matches(Regex("[\\p{L}][\\p{L}'’-]{1,39}"))) return false
         synchronized(lock) {
             if (!personal.add(word)) return true
             context.getSharedPreferences("darkith_ime", Context.MODE_PRIVATE).edit()
