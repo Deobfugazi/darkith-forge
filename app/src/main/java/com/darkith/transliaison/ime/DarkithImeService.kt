@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.inputmethodservice.InputMethodService
 import android.os.Build
+import android.os.SystemClock
 import android.text.InputType
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
@@ -257,6 +258,7 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     override fun onToggleIncognito() {
         incognito = !incognito
+        lastCorrection = null
         keyboard?.setIncognito(incognito)
         if (incognito) {
             detachClipboardListener()
@@ -303,18 +305,27 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         val events = runCatching {
             KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD).getEvents(value.toCharArray())
         }.getOrNull() ?: return
-        events.forEach { conn.sendKeyEvent(it) }
+        events.forEach { event ->
+            conn.sendKeyEvent(KeyEvent.changeFlags(event, event.flags or KeyEvent.FLAG_SOFT_KEYBOARD))
+        }
     }
 
     private fun sendKey(conn: InputConnection, keyCode: Int) {
-        conn.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
-        conn.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
+        val down = SystemClock.uptimeMillis()
+        conn.sendKeyEvent(KeyEvent(down, down, KeyEvent.ACTION_DOWN, keyCode, 0, 0,
+            KeyCharacterMap.VIRTUAL_KEYBOARD, 0, KeyEvent.FLAG_SOFT_KEYBOARD))
+        conn.sendKeyEvent(KeyEvent(down, SystemClock.uptimeMillis(), KeyEvent.ACTION_UP, keyCode, 0, 0,
+            KeyCharacterMap.VIRTUAL_KEYBOARD, 0, KeyEvent.FLAG_SOFT_KEYBOARD))
     }
 
     private fun refreshCandidates() {
         val view = keyboard ?: return
         val p = prefs ?: return
         if (!p.candidates || sensitiveField || incognito || limitedEditor) {
+            view.setCandidates(emptyList())
+            return
+        }
+        if (!ic()?.getSelectedText(0).isNullOrEmpty()) {
             view.setCandidates(emptyList())
             return
         }
