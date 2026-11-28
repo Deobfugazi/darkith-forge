@@ -200,6 +200,8 @@ class DarkithBridge(private val context: Context) {
     @JavascriptInterface fun apkInfo(path: String): String = ShellBridge.apkInfo(path)
     @JavascriptInterface fun shellExec(cmd: String): String = ShellBridge.shellExec(cmd)
 
+    /** Arm the human-presence nonce BEFORE shipping a DonorBuilder build (see SynchronicityScheduler). */
+    @JavascriptInterface fun submitNonce(distance: Double): String = SynchronicityScheduler.submitNonce(distance)
     @JavascriptInterface fun donorList(path: String): String = DonorBuilder(context).listEntries(path)
     @JavascriptInterface fun donorRead(apkPath: String, entryName: String): String = DonorBuilder(context).readEntry(apkPath, entryName)
     @JavascriptInterface fun donorWrite(apkPath: String, entryName: String, content: String): String = DonorBuilder(context).writeEntry(apkPath, entryName, content)

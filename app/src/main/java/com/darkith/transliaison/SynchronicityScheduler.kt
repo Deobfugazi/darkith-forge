@@ -1,24 +1,39 @@
 package com.darkith.transliaison
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import kotlin.math.sqrt
 object SynchronicityScheduler {
-    @Volatile private var forgeLatch: CountDownLatch = CountDownLatch(2)
-    @Volatile private var nonceVerified: Boolean = false
-    @Volatile private var buildTimestamp: Long = 0L
+    /*
+     * Two-phase gate (human presence + finished build). The presence proof (the nonce) must be
+     * ARMED BEFORE the build is shipped: the WebView call that ships the build is synchronous, so
+     * the JavaScript thread that would have to submit the nonce is the very thread the build is
+     * blocking. The earlier design (reset(), then wait 10 s inside onBuildComplete for a nonce
+     * that nothing could deliver) could never pass and froze the caller for the whole window.
+     * Now: onBuildComplete never blocks. It consumes one fresh armed nonce or fails fast.
+     */
+    @Volatile private var armedAtMs: Long = 0L
+    @Volatile private var armedDistance: Double = Double.NaN
     private const val BINDING_WINDOW_MS = 10_000L
-    fun reset() { forgeLatch = CountDownLatch(2); nonceVerified = false; buildTimestamp = 0L }
-    fun onBuildComplete(apkPath: String): String {
-        buildTimestamp = System.currentTimeMillis()
-        forgeLatch.countDown()
-        val nonceArrived = try { forgeLatch.await(BINDING_WINDOW_MS, TimeUnit.MILLISECONDS) && nonceVerified } catch (_: InterruptedException) { false }
-        return if (nonceArrived) "OK: SYNCHRONIZED" else "ERROR: TIMEOUT"
-    }
+    private const val MAX_DISTANCE = 2.5
+    private val lock = Any()
+
+    fun reset() { synchronized(lock) { armedAtMs = 0L; armedDistance = Double.NaN } }
+
+    /** Present the human-presence distance D (<= 2.5). Valid for BINDING_WINDOW_MS. */
     fun submitNonce(distance: Double): String {
-        if (distance > 2.5) return "ERROR: NONCE_REJECTED"
-        if (buildTimestamp == 0L) return "ERROR: NO_BUILD_PENDING"
-        if (System.currentTimeMillis() - buildTimestamp > BINDING_WINDOW_MS) return "ERROR: NONCE_STALE"
-        nonceVerified = true; forgeLatch.countDown(); return "OK: NONCE_ACCEPTED"
+        if (distance.isNaN() || distance > MAX_DISTANCE) return "ERROR: NONCE_REJECTED"
+        synchronized(lock) { armedAtMs = System.currentTimeMillis(); armedDistance = distance }
+        return "OK: NONCE_ACCEPTED"
+    }
+
+    /** Called after a build. Consumes the armed nonce (one nonce, one build). Never blocks. */
+    fun onBuildComplete(apkPath: String): String {
+        val now = System.currentTimeMillis()
+        synchronized(lock) {
+            val at = armedAtMs
+            armedAtMs = 0L; armedDistance = Double.NaN
+            if (at == 0L) return "ERROR: NONCE_REQUIRED (call submitNonce before shipping a build)"
+            if (now - at > BINDING_WINDOW_MS) return "ERROR: NONCE_STALE"
+            return "OK: SYNCHRONIZED"
+        }
     }
     fun calculateBurnRate(c: DoubleArray, t: DoubleArray): Double {
         var sum = 0.0

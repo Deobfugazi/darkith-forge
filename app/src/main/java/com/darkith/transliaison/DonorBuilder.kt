@@ -218,24 +218,11 @@ class DonorBuilder(private val context: Context) {
         cacheSigned.copyTo(finalApk, overwrite = true)
         cacheSigned.delete()
 
-        SynchronicityScheduler.reset()
         val syncStatus = SynchronicityScheduler.onBuildComplete("pending")
         if (syncStatus.startsWith("ERROR:")) {
             throw RuntimeException("SYNC_GATE_REFUSED: $syncStatus")
         }
 
-        SynchronicityScheduler.reset()
-        if (syncStatus.startsWith("ERROR:")) {
-        }
-
-        SynchronicityScheduler.reset()
-        if (syncStatus.startsWith("ERROR:")) {
-        }
-
-        SynchronicityScheduler.reset()
-        // The gate awaits the 10s nonce from the WebView
-        if (syncStatus.startsWith("ERROR:")) {
-        }
         try { unsigned.delete() } catch (_: Exception) {}
         try { work.deleteRecursively() } catch (_: Exception) {}
 
