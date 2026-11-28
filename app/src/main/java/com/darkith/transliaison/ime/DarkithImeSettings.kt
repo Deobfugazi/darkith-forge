@@ -57,6 +57,24 @@ class DarkithImeSettings : Activity() {
         root.addView(toggle("Conservative autocorrect (unique match only)", prefs.autocorrect) { prefs.autocorrect = it })
         root.addView(toggle("Clipboard history capture (off by default)", prefs.clipHistory) { prefs.clipHistory = it })
         root.addView(toggle("Protect sensitive fields", prefs.privacyFieldBlock) { prefs.privacyFieldBlock = it })
+        val retention = EditText(this).apply {
+            hint = "Clipboard retention in days (1–365)"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            setText(prefs.clipRetentionDays.toString())
+            singleLine = true
+        }
+        root.addView(retention)
+        root.addView(Button(this).apply {
+            text = "Save clipboard retention"
+            setOnClickListener {
+                val days = retention.text.toString().toIntOrNull()
+                if (days == null || days !in 1..365) status.text = "Retention must be 1–365 days"
+                else {
+                    prefs.clipRetentionDays = days
+                    status.text = "Clipboard retention set to ${prefs.clipRetentionDays} days"
+                }
+            }
+        })
 
         root.addView(TextView(this).apply {
             text = "Personal vocabulary"
@@ -101,7 +119,7 @@ class DarkithImeSettings : Activity() {
         actions.addView(Button(this).apply {
             text = "Clear all"
             setOnClickListener {
-                history.search("", 200).forEach { history.delete(it.id) }
+                history.clearAll()
                 renderHistory(search.text.toString())
             }
         }, LinearLayout.LayoutParams(0, -2, 1f))
