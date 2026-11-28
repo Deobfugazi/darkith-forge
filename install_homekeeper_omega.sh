@@ -6,11 +6,17 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if ! command -v termux-setup-storage >/dev/null 2>&1; then
   pkg install -y termux-tools
 fi
-if [ ! -d "$HOME/storage/downloads" ] && command -v termux-setup-storage >/dev/null 2>&1; then
+if { [ ! -d "$HOME/storage/downloads" ] || [ ! -r "$HOME/storage/downloads" ] || [ ! -w "$HOME/storage/downloads" ]; } && command -v termux-setup-storage >/dev/null 2>&1; then
   termux-setup-storage
 fi
 DOWNLOAD_DIR="$HOME/storage/downloads"
-[ -d "$DOWNLOAD_DIR" ] || DOWNLOAD_DIR="/sdcard/Download"
+if [ ! -d "$DOWNLOAD_DIR" ] || [ ! -r "$DOWNLOAD_DIR" ] || [ ! -w "$DOWNLOAD_DIR" ]; then
+  DOWNLOAD_DIR="/sdcard/Download"
+fi
+[ -d "$DOWNLOAD_DIR" ] && [ -r "$DOWNLOAD_DIR" ] && [ -w "$DOWNLOAD_DIR" ] || {
+  echo "Shared Downloads storage is unavailable. Grant Termux storage permission and rerun." >&2
+  exit 1
+}
 SOURCE="${1:-$DOWNLOAD_DIR/homekeeper(2).html}"
 SPEC="${2:-$DOWNLOAD_DIR/DARKITH-KEYBOARD-SINGULAR-INVARIANT(1).md}"
 SPEC_SHA256="75c0058a83d71ad8593dadd0f4f0003448cc3cfbfb0558e2754e13efad91c4b2"
