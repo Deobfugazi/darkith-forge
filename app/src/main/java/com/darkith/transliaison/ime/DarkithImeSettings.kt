@@ -42,7 +42,7 @@ class DarkithImeSettings : Activity() {
             gravity = Gravity.START
         })
         status = TextView(this).apply {
-            text = Elrp.status()
+            text = "${Elrp.status()} · Learned model: ${model.integrityStatus()} · Clipboard store: ${history.integrityStatus()}"
             textSize = 12f
         }
         root.addView(status)
