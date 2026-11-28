@@ -94,6 +94,12 @@ class PersonalLanguageModel(context: Context) :
     fun deletePair(previous: String, next: String): Int =
         writableDatabase.delete("bigram", "previous=? AND next=?", arrayOf(normalize(previous), normalize(next)))
 
+    fun integrityStatus(): String = runCatching {
+        readableDatabase.rawQuery("PRAGMA integrity_check", null).use { cursor ->
+            if (cursor.moveToFirst()) cursor.getString(0) else "no integrity result"
+        }
+    }.getOrElse { "unavailable: ${it.javaClass.simpleName}" }
+
     fun clear() {
         writableDatabase.delete("bigram", null, null)
     }
