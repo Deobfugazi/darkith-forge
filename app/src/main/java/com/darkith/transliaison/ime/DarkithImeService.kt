@@ -15,6 +15,7 @@ import android.view.inputmethod.InputConnection
 class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
     private var prefs: ImePrefs? = null
     private var clipboardHistory: ClipHistory? = null
+    private var languageModel: PersonalLanguageModel? = null
     private var keyboard: DarkithKeyboardView? = null
     private var composing = StringBuilder()
     private var revision = 0
@@ -27,12 +28,14 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         super.onCreate()
         prefs = ImePrefs(this)
         clipboardHistory = ClipHistory(this)
+        languageModel = PersonalLanguageModel(this)
         Elrp.initialize(applicationContext)
     }
 
     override fun onDestroy() {
         detachClipboardListener()
         clipboardHistory?.close()
+        languageModel?.close()
         super.onDestroy()
     }
 
@@ -114,6 +117,9 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     private fun commitWordAndSpace(conn: InputConnection) {
         val raw = composing.toString()
+        val before = conn.getTextBeforeCursor(120, 0)?.toString().orEmpty()
+        val contextBefore = if (raw.isNotEmpty() && before.endsWith(raw)) before.dropLast(raw.length) else before
+        val previousWord = contextBefore.trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
         var committed = raw
         val p = prefs
         if (raw.isNotBlank() && p?.autocorrect == true && !Elrp.isValid(raw)) {
@@ -122,6 +128,10 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
             if (options.size == 1) committed = options[0]
         }
         conn.commitText(committed + " ", 1)
+        if (raw.isNotBlank() && previousWord.isNotBlank() &&
+            prefs?.personalLearning == true && !sensitiveField) {
+            languageModel?.observe(previousWord, committed)
+        }
         composing.setLength(0)
         revision++
         refreshCandidates()
@@ -155,6 +165,12 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
 
     override fun onCandidate(text: String) {
         val conn = ic() ?: return
+        val raw = composing.toString()
+        if (raw.isEmpty() && prefs?.personalLearning == true && !sensitiveField) {
+            val previous = conn.getTextBeforeCursor(120, 0)?.toString().orEmpty()
+                .trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
+            if (previous.isNotBlank()) languageModel?.observe(previous, text)
+        }
         conn.commitText(text + " ", 1)
         composing.setLength(0)
         revision++
@@ -186,7 +202,11 @@ class DarkithImeService : InputMethodService(), DarkithKeyboardView.Listener {
         }
         val token = composing.toString().trim()
         if (token.isEmpty()) {
-            view.setCandidates(emptyList())
+            val before = ic()?.getTextBeforeCursor(120, 0)?.toString().orEmpty()
+            val previous = before.trimEnd().takeLastWhile { it.isLetter() || it == '\'' || it == '’' }
+            val next = if (p.nextWordPrediction && previous.isNotBlank())
+                languageModel?.predict(previous, 3).orEmpty() else emptyList()
+            view.setCandidates(next)
             return
         }
         val requestRevision = revision
